@@ -8,12 +8,16 @@ import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseEnterEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseEnterHandler;
+import com.emitrom.lienzo.client.core.event.NodeMouseExitEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseExitHandler;
+import com.emitrom.lienzo.client.core.event.NodeMouseOverEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseOverHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
-import java.awt.Color;
+
 
 
 public class EditableRectangle extends Rectangle implements EditableShape {
@@ -72,12 +76,20 @@ public class EditableRectangle extends Rectangle implements EditableShape {
             }
         });
         
-        addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
-            public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseClickEvent) {
-                ShapesUtils.nodeMouseEnterHandler(EditableRectangle.this);
+         
+         addNodeMouseOverHandler(new NodeMouseOverHandler() {
+            public void onNodeMouseOver(NodeMouseOverEvent nodeMouseOverEvent) {
+                ShapesUtils.nodeMouseOverHandler(EditableRectangle.this);
+                
             }
         });
        
+        addNodeMouseExitHandler(new NodeMouseExitHandler() {
+            public void onNodeMouseExit(NodeMouseExitEvent nodeMouseExitEvent) {
+                ShapesUtils.nodeMouseExitHandler(EditableRectangle.this);
+
+            }
+        });
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
@@ -85,18 +97,12 @@ public class EditableRectangle extends Rectangle implements EditableShape {
                 if (topLeft != null) {
                     hideDragPoints();
                 }
-                Layer layer = getLayer();
-                if(topMagnet != null){
-                    placeMagnetPoints(topMagnet, layer, MAGNET_TOP);
-                    placeMagnetPoints(leftMagnet, layer, MAGNET_LEFT);
-                    placeMagnetPoints(rightMagnet, layer, MAGNET_RIGHT);
-                    placeMagnetPoints(bottomMagnet, layer, MAGNET_BOTTOM);
+                if( topMagnet != null){
+                    hideMagnetPoints();
                 }
             }
         });
     }
-
-    
 
     public void showDragPoints() {
         if ( topLeft == null ) {
@@ -123,7 +129,6 @@ public class EditableRectangle extends Rectangle implements EditableShape {
         }
     }
 
-
     public void hideDragPoints() {
         GWT.log("hide");
         if ( topLeft != null ) {
@@ -144,6 +149,30 @@ public class EditableRectangle extends Rectangle implements EditableShape {
 
             layer.draw();
         }
+
+    }
+
+    @Override
+    public void hideMagnetPoints() {
+        GWT.log("hide");
+        if (topMagnet != null) {
+            // can be null, afer the main Shape is dragged, and control points are forcibly removed
+            Layer layer = getLayer();
+            layer.remove(topMagnet);
+            topMagnet = null;
+
+            layer.remove(leftMagnet);
+            leftMagnet = null;
+
+            layer.remove(rightMagnet);
+            rightMagnet = null;
+
+            layer.remove(bottomMagnet);
+            bottomMagnet = null;
+
+            layer.draw();
+        }
+
     }
 
     public void recordStartData(NodeDragStartEvent nodeDragStartEvent) {
@@ -176,38 +205,37 @@ public class EditableRectangle extends Rectangle implements EditableShape {
                 break;
         }
 
+        rect.setDraggable(true)
+                .setStrokeWidth(1)
+                .setStrokeColor(ColorName.BLACK);
 
-        rect.setDraggable( true )
-            .setStrokeWidth( 1 )
-            .setStrokeColor( ColorName.BLACK );
-
-        
-       
-        rect.addNodeDragStartHandler( new NodeDragStartHandler() {
-            public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
+        rect.addNodeDragStartHandler(new NodeDragStartHandler() {
+            public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
                 GWT.log("drag start");
                 recordStartData(nodeDragStartEvent);
             }
         } );
 
-        rect.addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
-                nodeDragMove(EditableRectangle.this, control, nodeDragMoveEvent, getLayer());
+        rect.addNodeDragMoveHandler(new NodeDragMoveHandler() {
+            public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
                 Layer layer = getLayer();
-                if(topMagnet != null){
+                nodeDragMove(EditableRectangle.this, control, nodeDragMoveEvent, layer);
+                if (topMagnet != null) {
                     placeMagnetPoints(topMagnet, layer, MAGNET_TOP);
                     placeMagnetPoints(leftMagnet, layer, MAGNET_LEFT);
                     placeMagnetPoints(rightMagnet, layer, MAGNET_RIGHT);
                     placeMagnetPoints(bottomMagnet, layer, MAGNET_BOTTOM);
                 }
+                layer.draw();
+
             }
             
         } );
         layer.add( rect );
     }
 
-    public static void nodeDragMove( EditableRectangle rect, int control, NodeDragMoveEvent nodeDragMoveEvent, Layer layer) {
-        GWT.log("drag");
+    public static void nodeDragMove(EditableRectangle rect, int control, NodeDragMoveEvent nodeDragMoveEvent, Layer layer) {
+
 
         double deltaX = nodeDragMoveEvent.getX() - rect.getDragEventStartX();
         double deltaY = nodeDragMoveEvent.getY() - rect.getDragEventStartY();
@@ -259,7 +287,6 @@ public class EditableRectangle extends Rectangle implements EditableShape {
                 break;
         }
 
-        layer.draw();
     }
 
     public void showMagnetsPoints() {
@@ -267,21 +294,42 @@ public class EditableRectangle extends Rectangle implements EditableShape {
             final Layer layer = getLayer();
             
             topMagnet = new Circle(5);
+            topMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+                    GWT.log("on a top magnet!!!");
+                }
+            });
             topMagnet.setFillColor(ColorName.YELLOW);
             placeMagnetPoints(topMagnet, layer, MAGNET_TOP);
             
             bottomMagnet = new Circle(5);
+            bottomMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+                    GWT.log("on a bottom magnet!!!");
+                }
+            });
             bottomMagnet.setFillColor(ColorName.YELLOW);
             placeMagnetPoints(bottomMagnet, layer, MAGNET_BOTTOM);
             
             leftMagnet = new Circle(5);
+            leftMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+                    GWT.log("on a left magnet!!!");
+                }
+            });
             leftMagnet.setFillColor(ColorName.YELLOW);
             placeMagnetPoints(leftMagnet, layer, MAGNET_LEFT);
             
             rightMagnet = new Circle(5);
+            rightMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+                    GWT.log("on a right magnet!!!");
+                }
+            });
             rightMagnet.setFillColor(ColorName.YELLOW);
             placeMagnetPoints(rightMagnet, layer, MAGNET_RIGHT);
             
+            layer.draw();
         }
     }
 
@@ -387,6 +435,4 @@ public class EditableRectangle extends Rectangle implements EditableShape {
         this.startHeight = startHeight;
     }
 
-   
-   
 }

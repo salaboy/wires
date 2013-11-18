@@ -17,6 +17,7 @@ public class ShapesUtils {
                
                 if(((EditableShape)iPrimitive).hashCode()  != selectedShape){
                    ((EditableShape)iPrimitive).hideDragPoints();
+                   ((EditableShape)iPrimitive).hideMagnetPoints();
                 }
             }
         }
@@ -30,18 +31,22 @@ public class ShapesUtils {
     }
 
     static void nodeMouseEnterHandler(final EditableShape shape) {
-        GWT.log("enter: " + ":" + shape.getClass().getName());
+        GWT.log("enter showing magnets now: " + ":" + shape.hashCode());
         shape.showMagnetsPoints();
     }
     
-    
+    static void nodeMouseOverHandler(final EditableShape shape) {
+        GWT.log("over showing magnets now: " + ":" + shape.hashCode());
+        shape.showMagnetsPoints();
+    }
     
     static void nodeMouseExitHandler(final EditableShape shape) {
-        GWT.log("exit " + ":" + shape.getClass().getName() );
+        GWT.log("exit hiding magnet points" + ":" + shape.hashCode() );
+        shape.hideMagnetPoints();
 
     }
       static void nodeMouseOutHandler(final EditableShape shape) {
-        GWT.log("out " + ":" + shape.getClass().getName() );
+        GWT.log("out " + ":" + shape.hashCode() );
 
     }
 }

@@ -13,7 +13,6 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Timer;
 
 
 public class EditableCircle extends Circle implements EditableShape {
@@ -315,4 +314,10 @@ public class EditableCircle extends Circle implements EditableShape {
     public void showMagnetsPoints() {
         
     }
+
+    public void hideMagnetPoints() {
+        
+    }
+    
+    
 }

@@ -5,16 +5,12 @@
  */
 package org.kie.wires.client.shapes;
 
-import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseEnterEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseEnterHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseExitEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseExitHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
@@ -23,7 +19,6 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Timer;
 
 /**
  *
@@ -31,7 +26,7 @@ import com.google.gwt.user.client.Timer;
  */
 public class EditableLine extends Line implements EditableShape {
 
-    private Timer t;
+   
 
     private Rectangle start;
     private Rectangle end;
@@ -182,5 +177,9 @@ public class EditableLine extends Line implements EditableShape {
     public void showMagnetsPoints() {
         
     }
+
+    public void hideMagnetPoints() {
+        
+}
 
 }

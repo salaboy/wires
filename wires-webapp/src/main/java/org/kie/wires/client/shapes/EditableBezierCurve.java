@@ -17,7 +17,6 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.user.client.Timer;
 
 public class EditableBezierCurve extends BezierCurve implements EditableShape {
 
@@ -227,6 +226,10 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
     }
 
     public void showMagnetsPoints() {
+        
+    }
+
+    public void hideMagnetPoints() {
         
     }
 }

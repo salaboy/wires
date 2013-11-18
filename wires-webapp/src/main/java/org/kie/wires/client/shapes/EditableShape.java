@@ -9,4 +9,6 @@ public interface EditableShape {
     void showMagnetsPoints();
 
     void hideDragPoints();
+    
+    void hideMagnetPoints();
 }
