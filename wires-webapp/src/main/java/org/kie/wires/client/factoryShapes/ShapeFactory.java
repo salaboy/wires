@@ -24,7 +24,7 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.RootPanel;
 
-public abstract class ShapeFactory<T extends Shape<T>> extends ShapeBuilder {
+public abstract class ShapeFactory<T extends Shape<T>> {
 
     public static String fontFamily = "oblique normal";
 
