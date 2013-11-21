@@ -1,36 +1,66 @@
 package org.kie.wires.client.factoryShapes;
 
+import javax.enterprise.event.Event;
+
+import org.kie.wires.client.events.ShapeAddEvent;
+
+import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Group;
+import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.widget.LienzoPanel;
 
 public class CircleFactory extends ShapeFactory<Circle> {
     
-    private static String description = "Circle";
+    private static String DESCRIPTION = "Circle";
+    
+    
+    public CircleFactory(){
+    }
+    
+    public CircleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent){
+        super(panel, shapeAddEvent);
+        this.drawBoundingBox(group);
+    }
 
     @Override
-    public void drawBoundingBox(Group group) {
+    protected void drawBoundingBox(Group group) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public Shape<Circle> drawShape() {
+    protected Shape<Circle> drawShape(Group group) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void createDescription(Group group) {
+    protected void addShapeHandlers(Shape<Circle> shape, Group group) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void addHandlers(Shape<Circle> shape, Group group) {
+    protected void addBoundingHandlers(Rectangle boundingBox, Group group) {
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    protected NodeMouseDownHandler getNodeMouseDownEvent(Group group) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+
+    
+
+   
+
+    
+    
 
    
 

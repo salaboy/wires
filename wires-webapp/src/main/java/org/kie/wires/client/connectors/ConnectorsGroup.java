@@ -21,19 +21,20 @@ public class ConnectorsGroup extends Composite {
     private Event<ShapeAddEvent> shapeAddEvent;
 
     @Inject
-    private ShapeBuilder shapeBuiler;
-
+    private ShapeBuilder shapeBuilder;
+    
+    
     @PostConstruct
     public void init() {
         LienzoPanel panel = new LienzoPanel(200, 300);
         initWidget(panel);
-        shapeBuiler.layer = new Layer();
-        panel.add(shapeBuiler.layer);
+        Layer layer = new Layer();
+        panel.add(layer);
         Group group1 = new Group();
         group1.setX(0).setY(5);
-        shapeBuiler.layer.add(group1);
-        shapeBuiler.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuiler.layer.draw();
+        layer.add(group1);
+        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
+        layer.draw();
     }
 
 
