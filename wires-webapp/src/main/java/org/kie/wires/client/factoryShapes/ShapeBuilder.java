@@ -5,13 +5,11 @@ import javax.enterprise.event.Event;
 import org.kie.wires.client.events.ShapeAddEvent;
 
 import com.emitrom.lienzo.client.core.shape.Group;
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
 
 public class ShapeBuilder extends Composite {
     
-    public Layer layer;
     
     public ShapeBuilder(){
     }
@@ -21,8 +19,14 @@ public class ShapeBuilder extends Composite {
         case LINE:
             new LineFactory(group, panel, shapeAddEvent);
             break;
+        case RECTANGLE:
+        	new RectangleFactory(group, panel, shapeAddEvent);
+        	break;
+        case CIRCLE:
+        	//TODO
+        	break;	
         default:
-            break;
+        	throw new IllegalStateException("Unrecognized shape type '" + shapeType + "'!");
         }
         
     }
