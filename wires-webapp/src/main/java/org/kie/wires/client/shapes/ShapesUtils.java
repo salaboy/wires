@@ -2,7 +2,6 @@ package org.kie.wires.client.shapes;
 
 import com.emitrom.lienzo.client.core.shape.IPrimitive;
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.google.gwt.core.client.GWT;
 
 public class ShapesUtils {
 
@@ -25,28 +24,28 @@ public class ShapesUtils {
     }
     
     static void nodeMouseClickHandler(final EditableShape shape) {
-        GWT.log("click: " + ":" + shape.hashCode());
+        //GWT.log("click: " + ":" + shape.hashCode());
         selectedShape = shape.hashCode();
         shape.showDragPoints();
     }
 
     static void nodeMouseEnterHandler(final EditableShape shape) {
-        GWT.log("enter showing magnets now: " + ":" + shape.hashCode());
+        //GWT.log("enter showing magnets now: " + ":" + shape.hashCode());
         shape.showMagnetsPoints();
     }
     
     static void nodeMouseOverHandler(final EditableShape shape) {
-        GWT.log("over showing magnets now: " + ":" + shape.hashCode());
+        //GWT.log("over showing magnets now: " + ":" + shape.hashCode());
         shape.showMagnetsPoints();
     }
     
     static void nodeMouseExitHandler(final EditableShape shape) {
-        GWT.log("exit hiding magnet points" + ":" + shape.hashCode() );
+       // GWT.log("exit hiding magnet points" + ":" + shape.hashCode() );
         shape.hideMagnetPoints();
 
     }
       static void nodeMouseOutHandler(final EditableShape shape) {
-        GWT.log("out " + ":" + shape.hashCode() );
+       // GWT.log("out " + ":" + shape.hashCode() );
 
     }
 }

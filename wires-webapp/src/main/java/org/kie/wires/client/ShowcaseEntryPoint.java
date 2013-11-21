@@ -111,12 +111,6 @@ public class ShowcaseEntryPoint {
                             }
                         } )
                         .endMenu()
-                        .newTopLevelMenu( "Perspectives" )
-                        .withItems( getPerspectives() )
-                        .endMenu()
-                        .newTopLevelMenu( "Screens" )
-                        .withItems( getScreens() )
-                        .endMenu()
                         .newTopLevelMenu( "Logout" )
                         .position( MenuPosition.RIGHT )
                         .respondsWith( new Command() {

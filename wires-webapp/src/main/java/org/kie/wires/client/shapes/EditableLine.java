@@ -5,20 +5,33 @@
  */
 package org.kie.wires.client.shapes;
 
+import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
+import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
+import com.emitrom.lienzo.client.core.event.NodeMouseEnterEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseEnterHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseExitEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseExitHandler;
+import com.emitrom.lienzo.client.core.event.NodeMouseOverEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseOverHandler;
+import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.kie.wires.client.util.UUID;
+import org.kie.wires.client.util.collision.Projection;
+import org.kie.wires.client.util.collision.Vector;
 
 /**
  *
@@ -26,7 +39,7 @@ import com.google.gwt.core.client.GWT;
  */
 public class EditableLine extends Line implements EditableShape {
 
-   
+    private String id;
 
     private Rectangle start;
     private Rectangle end;
@@ -42,8 +55,22 @@ public class EditableLine extends Line implements EditableShape {
     private double initialEndPointX;
     private double initialEndPointY;
 
+    private double currentDragX;
+    private double currentDragY;
+
+    private boolean beingDragged;
+
+    private static final int MAGNET_START = 0;
+    private static final int MAGNET_END = 1;
+   
+
+    private Circle startMagnet;
+    private Circle endMagnet;
+    
+    
     public EditableLine(double x1, double y1, double x2, double y2) {
         super(x1, y1, x2, y2);
+        this.id = UUID.uuid();
     }
 
     @Override
@@ -59,31 +86,60 @@ public class EditableLine extends Line implements EditableShape {
             }
         });
 
-        addNodeMouseExitHandler(new NodeMouseExitHandler() {
+        addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+            public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+                ShapesUtils.nodeMouseEnterHandler(EditableLine.this);
 
+            }
+        });
+
+        addNodeMouseOverHandler(new NodeMouseOverHandler() {
+            public void onNodeMouseOver(NodeMouseOverEvent nodeMouseOverEvent) {
+                ShapesUtils.nodeMouseOverHandler(EditableLine.this);
+
+            }
+        });
+
+        addNodeMouseExitHandler(new NodeMouseExitHandler() {
             public void onNodeMouseExit(NodeMouseExitEvent nodeMouseExitEvent) {
                 ShapesUtils.nodeMouseExitHandler(EditableLine.this);
-            }
 
-        ;
-        } );
+            }
+        });
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
+
                 if (start != null) {
                     hideDragPoints();
+                }
+                if (startMagnet != null) {
+                    hideMagnetPoints();
                 }
             }
         });
 
-        
-    }
+        addNodeDragMoveHandler(new NodeDragMoveHandler() {
+            public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
+                beingDragged = true;
+                currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
+                currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
 
-   
+            }
+        });
+
+        addNodeDragEndHandler(new NodeDragEndHandler() {
+            public void onNodeDragEnd(NodeDragEndEvent event) {
+                beingDragged = false;
+
+            }
+        });
+
+    }
 
     @Override
     public void showDragPoints() {
-        if(start == null){
+        if (start == null) {
             final Layer layer = getLayer();
             start = new Rectangle(10, 10);
             end = new Rectangle(10, 10);
@@ -97,7 +153,7 @@ public class EditableLine extends Line implements EditableShape {
 
     @Override
     public void hideDragPoints() {
-        GWT.log("hide");
+
         if (start != null) {
             // can be null, afer the main Shape is dragged, and control points are forcibly removed
             Layer layer = getLayer();
@@ -114,8 +170,9 @@ public class EditableLine extends Line implements EditableShape {
 
     private void createControlPoints(final Rectangle start, final Rectangle end, final Layer layer) {
         Point2DArray array = getPoints();
-        start.setX(getX() - 5);
-        start.setY(getY() - 5 );
+        
+        start.setX(getX() + array.getPoint(0).getX() - 5);
+        start.setY(getY() + array.getPoint(0).getY() - 5);
 
         start.addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
@@ -135,6 +192,7 @@ public class EditableLine extends Line implements EditableShape {
                 array.getPoint(0).setX(initialStartPointX + deltaX);
                 array.getPoint(0).setY(initialStartPointY + deltaY);
 
+                
                 layer.draw();
             }
         });
@@ -160,6 +218,7 @@ public class EditableLine extends Line implements EditableShape {
                 array.getPoint(1).setX(initialEndPointX + deltaX);
                 array.getPoint(1).setY(initialEndPointY + deltaY);
 
+                
                 layer.draw();
             }
         });
@@ -175,11 +234,144 @@ public class EditableLine extends Line implements EditableShape {
     }
 
     public void showMagnetsPoints() {
-        
+         if (startMagnet == null) {
+            final Layer layer = getLayer();
+
+            startMagnet = new Circle(5);
+            startMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+
+                }
+            });
+            startMagnet.setFillColor(ColorName.YELLOW);
+            placeMagnetPoints(startMagnet, layer, MAGNET_START);
+
+            endMagnet = new Circle(5);
+            endMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
+                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+
+                }
+            });
+            endMagnet.setFillColor(ColorName.YELLOW);
+            placeMagnetPoints(endMagnet, layer, MAGNET_END);
+
+            layer.draw();
+        }
     }
 
     public void hideMagnetPoints() {
+       if (startMagnet != null) {
+            // can be null, afer the main Shape is dragged, and control points are forcibly removed
+            Layer layer = getLayer();
+            layer.remove(startMagnet);
+            startMagnet = null;
+
+            layer.remove(endMagnet);
+            endMagnet = null;
+
+            layer.draw();
+        }
+    }
+
+    private void placeMagnetPoints(Circle magnet, Layer layer, int control) {
+        Point2DArray points = getPoints();
         
-}
+        switch (control) {
+            case MAGNET_START:
+                magnet.setX(getX() + points.getPoint(0).getX());
+                magnet.setY(getY() + points.getPoint(0).getY());
+                break;
+            case MAGNET_END:
+                magnet.setX(getX() + points.getPoint(1).getX());
+                magnet.setY(getY() + points.getPoint(1).getY());
+                break;
+           
+        }
+        layer.add(magnet);
+    }
+    
+    public boolean collidesWith(EditableShape shape) {
+        List<Vector> axes = getAxes();
+        axes.addAll(shape.getAxes());
+        return !separationOnAxes(axes, shape);
+    }
+
+    public boolean separationOnAxes(List<Vector> axes, EditableShape shape) {
+        for (int i = 0; i < axes.size(); ++i) {
+            Vector axis = axes.get(i);
+            Projection projection1 = shape.project(axis);
+            Projection projection2 = this.project(axis);
+
+            if (!projection1.overlaps(projection2)) {
+                return true; // there is no need to continue testing
+            }
+        }
+        return false;
+    }
+
+    public List<Vector> getAxes() {
+        Vector v1 = new Vector();
+        Vector v2 = new Vector();
+        List<Vector> axes = new ArrayList<Vector>();
+
+        // THIS IS HARDCODED HERE BUT IT CAN BE A LOOP FOR POLYGONS
+        // start
+        v1.setX(getCurrentDragX());
+        v1.setY(getCurrentDragY());
+        Point2DArray points = getPoints();
+        Point2D point = points.getPoint(1);
+
+        // end
+        v2.setX(getCurrentDragX() + point.getX());
+        v2.setY(getCurrentDragY() + point.getY());
+
+        axes.add(v1.edge(v2).normal());
+
+        return axes;
+    }
+
+    public Projection project(Vector axis) {
+        List<Double> scalars = new ArrayList<Double>();
+        Vector v1 = new Vector();
+
+        // start
+        v1.setX(getCurrentDragX());
+        v1.setY(getCurrentDragY());
+
+        scalars.add(v1.dotProduct(axis));
+
+        
+        Point2DArray points = getPoints();
+        Point2D point = points.getPoint(1);
+        v1 = new Vector();
+        // end
+        v1.setX(getCurrentDragX() + point.getX());
+        v1.setY(getCurrentDragY() + point.getY());
+
+        scalars.add(v1.dotProduct(axis));
+
+
+        Double min = Collections.min(scalars);
+        Double max = Collections.max(scalars);
+
+        return new Projection(min, max);
+
+    }
+
+    public boolean isBeingDragged() {
+        return beingDragged;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public double getCurrentDragX() {
+        return currentDragX;
+    }
+
+    public double getCurrentDragY() {
+        return currentDragY;
+    }
 
 }

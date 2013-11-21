@@ -74,27 +74,28 @@ public class ShapesGroup extends Composite {
                 style.setTop(panel.getAbsoluteTop() + event.getY(), Unit.PX);
                 style.setZIndex(100);
 
-                final EditableRectangle floatingShape = new EditableRectangle(30, 30) {
+                final EditableRectangle floatingShape = new EditableRectangle(30, 30); 
+                //{
 
-                    public DragConstraintEnforcer getDragConstraints() {
-                        return new DragConstraintEnforcer() {
-
-                            public void adjust(Point2D dxy) {
-                                dxy.setX(snap(dxy.getX()));
-                                dxy.setY(snap(dxy.getY()));
-                            }
-
-                            private double snap(double x) {
-                                int w = 25;
-                                return w * Math.round(x / w);
-                            }
-
-                            public void startDrag(DragContext dragContext) {
-                                // not used
-                            }
-                        };
-                    }
-                };
+//                    public DragConstraintEnforcer getDragConstraints() {
+//                        return new DragConstraintEnforcer() {
+//
+//                            public void adjust(Point2D dxy) {
+//                                dxy.setX(snap(dxy.getX()));
+//                                dxy.setY(snap(dxy.getY()));
+//                            }
+//
+//                            private double snap(double x) {
+//                                int w = 25;
+//                                return w * Math.round(x / w);
+//                            }
+//
+//                            public void startDrag(DragContext dragContext) {
+//                                // not used
+//                            }
+//                        };
+//                    }
+               // };
 
                 floatingShape.setX(0).setY(0)
                         .setStrokeColor(Color.rgbToBrowserHexColor(255, 0, 0))
