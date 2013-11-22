@@ -11,18 +11,14 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.shapes.EditableShape;
+import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -131,28 +127,28 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     public void detectCollisions() {
-        EditableShape shapeDragged = null;
+        EditableShape shapeActive = null;
         //if (shapeBeingDragged) {
            
             for (IPrimitive<?> iPrimitive : layer) {
                 if (iPrimitive instanceof EditableShape) {
-                    if (((EditableShape) iPrimitive).isBeingDragged()) {
-                        shapeDragged = ((EditableShape) iPrimitive);
+                    if (((EditableShape) iPrimitive).isBeingDragged() || ((EditableShape) iPrimitive).isBeingResized() ) {
+                        shapeActive = ((EditableShape) iPrimitive);
                     }
 
                 }
             }
            
             
-            if (shapeDragged != null) {
+            if (shapeActive != null) {
                 for (IPrimitive<?> iPrimitive : layer) {
                     if (iPrimitive instanceof EditableShape) {
                         
-                        if (!((EditableShape) iPrimitive).getId().equals(shapeDragged.getId()) &&
-                               shapeDragged.collidesWith(((EditableShape) iPrimitive))) {
+                        if (!((EditableShape) iPrimitive).getId().equals(shapeActive.getId()) &&
+                               ((CollidableShape)shapeActive).collidesWith(((CollidableShape) iPrimitive))) {
                             ((EditableShape) iPrimitive).showMagnetsPoints();
                         }else{
-                             ((EditableShape) iPrimitive).hideDragPoints();
+                             ((EditableShape) iPrimitive).hideMagnetPoints();
                         }
                     }
                 }

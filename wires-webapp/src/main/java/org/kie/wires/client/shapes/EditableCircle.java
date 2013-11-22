@@ -353,6 +353,10 @@ public class EditableCircle extends Circle implements EditableShape {
     public double getCurrentDragY() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public boolean isBeingResized() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }

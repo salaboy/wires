@@ -21,14 +21,15 @@ import com.emitrom.lienzo.shared.core.types.ColorName;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.kie.wires.client.util.UUID;
 import org.kie.wires.client.util.collision.Projection;
 import org.kie.wires.client.util.collision.Vector;
 
-public class EditableRectangle extends Rectangle implements EditableShape {
+public class EditableRectangle extends Rectangle implements EditableShape, CollidableShape {
 
     private String id;
-
+    
     private static final int CONTROL_TOP_LEFT = 0;
     private static final int CONTROL_BOTTOM_LEFT = 1;
     private static final int CONTROL_TOP_RIGHT = 2;
@@ -61,24 +62,26 @@ public class EditableRectangle extends Rectangle implements EditableShape {
     private double startHeight;
 
     private boolean beingDragged = false;
+    private boolean beingResized = false;
 
     public EditableRectangle(double width, double height) {
         super(width, height);
         setDraggable(true);
-        id = UUID.uuid();
+        this.id = UUID.uuid();
     }
 
     public EditableRectangle(double width, double height, double cornerRadius) {
         super(width, height, cornerRadius);
         setDraggable(true);
-        id = UUID.uuid();
+        this.id = UUID.uuid();
     }
 
     public String getId() {
         return id;
     }
+
     
-    
+
     public void init(double x, double y) {
         setX(x);
         setY(y);
@@ -128,14 +131,14 @@ public class EditableRectangle extends Rectangle implements EditableShape {
                 beingDragged = true;
                 currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
-                
+
             }
         });
 
         addNodeDragEndHandler(new NodeDragEndHandler() {
             public void onNodeDragEnd(NodeDragEndEvent event) {
                 beingDragged = false;
-                
+
             }
         });
 
@@ -256,6 +259,7 @@ public class EditableRectangle extends Rectangle implements EditableShape {
         rect.addNodeDragMoveHandler(new NodeDragMoveHandler() {
             public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
                 Layer layer = getLayer();
+                beingResized = true;
                 nodeDragMove(EditableRectangle.this, control, nodeDragMoveEvent, layer);
                 if (topMagnet != null) {
                     placeMagnetPoints(topMagnet, layer, MAGNET_TOP);
@@ -268,6 +272,14 @@ public class EditableRectangle extends Rectangle implements EditableShape {
             }
 
         });
+
+        rect.addNodeDragEndHandler(new NodeDragEndHandler() {
+            public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
+                beingResized = false;
+            }
+
+        });
+
         layer.add(rect);
     }
 
@@ -283,22 +295,32 @@ public class EditableRectangle extends Rectangle implements EditableShape {
 
                 rect.setWidth(rect.getStartWidth() - deltaX);
                 rect.setHeight(rect.getStartHeight() - deltaY);
+
+                rect.setCurrentDragX(rect.getStartX() + deltaX);
+                rect.setCurrentDragY(rect.getStartY() + deltaY);
+
                 break;
             case CONTROL_BOTTOM_LEFT:
                 rect.setX(rect.getStartX() + deltaX);
 
                 rect.setWidth(rect.getStartWidth() - deltaX);
                 rect.setHeight(rect.getStartHeight() + deltaY);
+
+                rect.setCurrentDragX(rect.getStartX() + deltaX);
+
                 break;
             case CONTROL_TOP_RIGHT:
                 rect.setY(rect.getStartY() + deltaY);
 
                 rect.setWidth(rect.getStartWidth() + deltaX);
                 rect.setHeight(rect.getStartHeight() - deltaY);
+
+                rect.setCurrentDragY(rect.getStartY() + deltaY);
                 break;
             case CONTROL_BOTTOM_RIGHT:
                 rect.setWidth(rect.getStartWidth() + deltaX);
                 rect.setHeight(rect.getStartHeight() + deltaY);
+
                 break;
         }
 
@@ -469,25 +491,6 @@ public class EditableRectangle extends Rectangle implements EditableShape {
         this.startHeight = startHeight;
     }
 
-    public boolean collidesWith(EditableShape shape) {
-        List<Vector> axes = getAxes();
-        axes.addAll(shape.getAxes());
-        return !separationOnAxes(axes, shape);
-    }
-
-    public boolean separationOnAxes(List<Vector> axes, EditableShape shape) {
-        for (int i = 0; i < axes.size(); ++i) {
-            Vector axis = axes.get(i);
-            Projection projection1 = shape.project(axis);
-            Projection projection2 = this.project(axis);
-
-            if (!projection1.overlaps(projection2)) {
-                return true; // there is no need to continue testing
-            }
-        }
-        return false;
-    }
-
     public List<Vector> getAxes() {
         Vector v1 = new Vector();
         Vector v2 = new Vector();
@@ -581,8 +584,31 @@ public class EditableRectangle extends Rectangle implements EditableShape {
 
     }
 
+    public boolean collidesWith(CollidableShape shape) {
+        List<Vector> axes = getAxes();
+        axes.addAll(shape.getAxes());
+        return !separationOnAxes(axes, shape);
+    }
+
+    public boolean separationOnAxes(List<Vector> axes, CollidableShape shape) {
+        for (int i = 0; i < axes.size(); ++i) {
+            Vector axis = axes.get(i);
+            Projection projection1 = shape.project(axis);
+            Projection projection2 = this.project(axis);
+
+            if (!projection1.overlaps(projection2)) {
+                return true; // there is no need to continue testing
+            }
+        }
+        return false;
+    }
+
     public boolean isBeingDragged() {
         return beingDragged;
+    }
+
+    public boolean isBeingResized() {
+        return beingResized;
     }
 
     public double getCurrentDragX() {
@@ -593,9 +619,18 @@ public class EditableRectangle extends Rectangle implements EditableShape {
         return currentDragY;
     }
 
+    public void setCurrentDragX(double currentDragX) {
+        this.currentDragX = currentDragX;
+    }
+
+    public void setCurrentDragY(double currentDragY) {
+        this.currentDragY = currentDragY;
+    }
+
+    
     @Override
     public String toString() {
-        return "EditableRectangle{" + "id=" + id + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
+        return "EditableRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
     }
 
 }

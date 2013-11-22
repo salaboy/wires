@@ -29,6 +29,7 @@ import com.emitrom.lienzo.shared.core.types.ColorName;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.kie.wires.client.util.UUID;
 import org.kie.wires.client.util.collision.Projection;
 import org.kie.wires.client.util.collision.Vector;
@@ -37,10 +38,9 @@ import org.kie.wires.client.util.collision.Vector;
  *
  * @author salaboy
  */
-public class EditableLine extends Line implements EditableShape {
+public class EditableLine extends Line implements EditableShape, CollidableShape {
 
     private String id;
-
     private Rectangle start;
     private Rectangle end;
 
@@ -54,23 +54,27 @@ public class EditableLine extends Line implements EditableShape {
     private double initialStartPointY;
     private double initialEndPointX;
     private double initialEndPointY;
-
+    
     private double currentDragX;
     private double currentDragY;
 
     private boolean beingDragged;
 
+    private boolean beingResized;
+
     private static final int MAGNET_START = 0;
     private static final int MAGNET_END = 1;
-   
 
     private Circle startMagnet;
     private Circle endMagnet;
-    
-    
+
     public EditableLine(double x1, double y1, double x2, double y2) {
         super(x1, y1, x2, y2);
         this.id = UUID.uuid();
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -109,7 +113,7 @@ public class EditableLine extends Line implements EditableShape {
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
-
+                recordStartData(nodeDragStartEvent);
                 if (start != null) {
                     hideDragPoints();
                 }
@@ -122,8 +126,11 @@ public class EditableLine extends Line implements EditableShape {
         addNodeDragMoveHandler(new NodeDragMoveHandler() {
             public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
                 beingDragged = true;
-                currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
+
+               currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
+                
+//                
 
             }
         });
@@ -137,6 +144,22 @@ public class EditableLine extends Line implements EditableShape {
 
     }
 
+    public void recordStartData(NodeDragStartEvent nodeDragStartEvent) {
+        dragEventStartX = nodeDragStartEvent.getX();
+        dragEventStartY = nodeDragStartEvent.getY();
+        
+        
+        Point2DArray points = getPoints();
+        Point2D startPoint = points.getPoint(0);
+        Point2D endPoint = points.getPoint(1);
+        
+        initialStartPointX = startPoint.getX();
+        initialStartPointY = startPoint.getY();
+       
+        initialEndPointX = endPoint.getX();
+        initialEndPointY = endPoint.getY();
+    }
+    
     @Override
     public void showDragPoints() {
         if (start == null) {
@@ -170,7 +193,7 @@ public class EditableLine extends Line implements EditableShape {
 
     private void createControlPoints(final Rectangle start, final Rectangle end, final Layer layer) {
         Point2DArray array = getPoints();
-        
+
         start.setX(getX() + array.getPoint(0).getX() - 5);
         start.setY(getY() + array.getPoint(0).getY() - 5);
 
@@ -185,6 +208,7 @@ public class EditableLine extends Line implements EditableShape {
 
         start.addNodeDragMoveHandler(new NodeDragMoveHandler() {
             public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
+                beingResized = true;
                 double deltaX = nodeDragMoveEvent.getX() - dragEventStartX;
                 double deltaY = nodeDragMoveEvent.getY() - dragEventStartY;
 
@@ -192,8 +216,14 @@ public class EditableLine extends Line implements EditableShape {
                 array.getPoint(0).setX(initialStartPointX + deltaX);
                 array.getPoint(0).setY(initialStartPointY + deltaY);
 
-                
                 layer.draw();
+            }
+        });
+
+        start.addNodeDragEndHandler(new NodeDragEndHandler() {
+            public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
+                beingResized = false;
+
             }
         });
 
@@ -211,6 +241,7 @@ public class EditableLine extends Line implements EditableShape {
 
         end.addNodeDragMoveHandler(new NodeDragMoveHandler() {
             public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
+                beingResized = true;
                 double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
                 double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
 
@@ -218,8 +249,14 @@ public class EditableLine extends Line implements EditableShape {
                 array.getPoint(1).setX(initialEndPointX + deltaX);
                 array.getPoint(1).setY(initialEndPointY + deltaY);
 
-                
                 layer.draw();
+            }
+        });
+
+        end.addNodeDragEndHandler(new NodeDragEndHandler() {
+            public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
+                beingResized = false;
+
             }
         });
 
@@ -234,7 +271,7 @@ public class EditableLine extends Line implements EditableShape {
     }
 
     public void showMagnetsPoints() {
-         if (startMagnet == null) {
+        if (startMagnet == null) {
             final Layer layer = getLayer();
 
             startMagnet = new Circle(5);
@@ -260,7 +297,7 @@ public class EditableLine extends Line implements EditableShape {
     }
 
     public void hideMagnetPoints() {
-       if (startMagnet != null) {
+        if (startMagnet != null) {
             // can be null, afer the main Shape is dragged, and control points are forcibly removed
             Layer layer = getLayer();
             layer.remove(startMagnet);
@@ -275,7 +312,7 @@ public class EditableLine extends Line implements EditableShape {
 
     private void placeMagnetPoints(Circle magnet, Layer layer, int control) {
         Point2DArray points = getPoints();
-        
+
         switch (control) {
             case MAGNET_START:
                 magnet.setX(getX() + points.getPoint(0).getX());
@@ -285,18 +322,18 @@ public class EditableLine extends Line implements EditableShape {
                 magnet.setX(getX() + points.getPoint(1).getX());
                 magnet.setY(getY() + points.getPoint(1).getY());
                 break;
-           
+
         }
         layer.add(magnet);
     }
-    
-    public boolean collidesWith(EditableShape shape) {
+
+    public boolean collidesWith(CollidableShape shape) {
         List<Vector> axes = getAxes();
         axes.addAll(shape.getAxes());
         return !separationOnAxes(axes, shape);
     }
 
-    public boolean separationOnAxes(List<Vector> axes, EditableShape shape) {
+    public boolean separationOnAxes(List<Vector> axes, CollidableShape shape) {
         for (int i = 0; i < axes.size(); ++i) {
             Vector axis = axes.get(i);
             Projection projection1 = shape.project(axis);
@@ -316,14 +353,16 @@ public class EditableLine extends Line implements EditableShape {
 
         // THIS IS HARDCODED HERE BUT IT CAN BE A LOOP FOR POLYGONS
         // start
-        v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY());
         Point2DArray points = getPoints();
-        Point2D point = points.getPoint(1);
+        Point2D startPoint = points.getPoint(0);
+        v1.setX(getCurrentDragX() + startPoint.getX());
+        v1.setY(getCurrentDragY() + startPoint.getY());
+
+        Point2D endPoint = points.getPoint(1);
 
         // end
-        v2.setX(getCurrentDragX() + point.getX());
-        v2.setY(getCurrentDragY() + point.getY());
+        v2.setX(getCurrentDragX() + endPoint.getX());
+        v2.setY(getCurrentDragY() + endPoint.getY());
 
         axes.add(v1.edge(v2).normal());
 
@@ -334,22 +373,21 @@ public class EditableLine extends Line implements EditableShape {
         List<Double> scalars = new ArrayList<Double>();
         Vector v1 = new Vector();
 
+        Point2DArray points = getPoints();
+        Point2D startPoint = points.getPoint(0);
         // start
-        v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY());
+        v1.setX(getCurrentDragX() + startPoint.getX());
+        v1.setY(getCurrentDragY() + startPoint.getY());
 
         scalars.add(v1.dotProduct(axis));
 
-        
-        Point2DArray points = getPoints();
-        Point2D point = points.getPoint(1);
+        Point2D endPoint = points.getPoint(1);
         v1 = new Vector();
         // end
-        v1.setX(getCurrentDragX() + point.getX());
-        v1.setY(getCurrentDragY() + point.getY());
+        v1.setX(getCurrentDragX() +  + endPoint.getX());
+        v1.setY(getCurrentDragY() + endPoint.getY());
 
         scalars.add(v1.dotProduct(axis));
-
 
         Double min = Collections.min(scalars);
         Double max = Collections.max(scalars);
@@ -362,8 +400,40 @@ public class EditableLine extends Line implements EditableShape {
         return beingDragged;
     }
 
-    public String getId() {
-        return id;
+    public boolean isBeingResized() {
+        return beingResized;
+    }
+
+    public double getInitialStartPointX() {
+        return initialStartPointX;
+    }
+
+    public double getInitialStartPointY() {
+        return initialStartPointY;
+    }
+
+    public double getInitialEndPointX() {
+        return initialEndPointX;
+    }
+
+    public double getInitialEndPointY() {
+        return initialEndPointY;
+    }
+
+    public double getDragEventStartX() {
+        return dragEventStartX;
+    }
+
+    public double getDragEventStartY() {
+        return dragEventStartY;
+    }
+
+    public double getDragEventEndX() {
+        return dragEventEndX;
+    }
+
+    public double getDragEventEndY() {
+        return dragEventEndY;
     }
 
     public double getCurrentDragX() {
@@ -373,5 +443,7 @@ public class EditableLine extends Line implements EditableShape {
     public double getCurrentDragY() {
         return currentDragY;
     }
+    
+    
 
 }
