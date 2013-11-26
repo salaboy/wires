@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.factoryShapes.ShapeBuilder;
+import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.kie.wires.client.factoryShapes.ShapeType;
 
 import com.emitrom.lienzo.client.core.shape.Group;
@@ -26,7 +27,7 @@ public class ConnectorsGroup extends Composite {
     
     @PostConstruct
     public void init() {
-        LienzoPanel panel = new LienzoPanel(200, 300);
+        LienzoPanel panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL, ShapeFactoryUtil.HEIGHT_PANEL);
         initWidget(panel);
         Layer layer = new Layer();
         panel.add(layer);

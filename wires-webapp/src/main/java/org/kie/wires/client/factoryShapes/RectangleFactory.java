@@ -1,5 +1,7 @@
 package org.kie.wires.client.factoryShapes;
 
+import java.util.Map;
+
 import javax.enterprise.event.Event;
 
 import org.kie.wires.client.events.ShapeAddEvent;
@@ -15,27 +17,31 @@ import com.emitrom.lienzo.client.widget.LienzoPanel;
 public class RectangleFactory extends ShapeFactory<Rectangle> {
 
     private static String DESCRIPTION = "Box";
+    
+    private int shapes;
 
     public RectangleFactory() {
 
     }
 
-    public RectangleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent) {
+    public RectangleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent
+            , Map<Integer, Integer> shapesByCategory) {
         super(panel, shapeAddEvent);
+        shapes = shapesByCategory.get(this.getCategory());
         this.drawBoundingBox(group);
     }
 
     @Override
     protected void drawBoundingBox(Group group) {
-        this.addBoundingHandlers(createBoundingBox(group), group);
-        this.addShapeHandlers(drawShape(group), group);
-        group.add(super.createDescription(group, DESCRIPTION));
+        this.addBoundingHandlers(createBoundingBox(group, shapes), group);
+        this.addShapeHandlers(drawShape(), group);
+        group.add(super.createDescription(DESCRIPTION, shapes));
     }
 
     @Override
-    protected Shape<Rectangle> drawShape(Group group) {
+    protected Shape<Rectangle> drawShape() {
         final Rectangle rectangle = new Rectangle(30, 30);
-        setAttributes(rectangle, getX(group), getY(group), group);
+        setAttributes(rectangle, getX(), getY());
         return rectangle;
     }
 
@@ -56,7 +62,7 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final EditableRectangle floatingShape = new EditableRectangle(70, 40);
-                setAttributes(floatingShape, getFloatingX(group), getFloatingY(group), group);
+                setAttributes(floatingShape, getFloatingX(), getFloatingY());
 
                 setFloatingPanel(floatingShape, 40, 70, event);
             }
@@ -65,33 +71,38 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
         return nodeMouseDownHandler;
     }
 
-    private void setAttributes(Rectangle floatingShape, double x, double y, Group group) {
+    private void setAttributes(Rectangle floatingShape, double x, double y) {
         floatingShape.setX(x)
                     .setY(y)
-                    .setStrokeColor(RGB_STROKE_SHAPE)
-                    .setStrokeWidth(RGB_STROKE_WIDTH_SHAPE)
-                    .setFillColor(RGB_FILL_SHAPE)
+                    .setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
+                    .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
+                    .setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
                     .setDraggable(false);
     }
 
     // this value must be calculated
-    private double getX(Group group) {
-        return 10;
+    private double getX() {
+        return 10 + super.calculateX(shapes);
     }
 
     // this value must be calculated
-    private double getY(Group group) {
-        return 5;
+    private double getY() {
+        return 5 + super.calculateY(shapes);
     }
 
     // this value must be calculated
-    private double getFloatingX(Group group) {
+    private double getFloatingX() {
         return 0;
     }
 
     // this value must be calculated
-    private double getFloatingY(Group group) {
+    private double getFloatingY() {
         return 0;
+    }
+
+    @Override
+    protected int getCategory() {
+        return ShapeType.RECTANGLE.getCategory();
     }
 
 }
