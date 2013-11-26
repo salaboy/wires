@@ -61,7 +61,7 @@ public class LineFactory extends ShapeFactory<Line> {
                         getFloatingX2(group), getFloatingY2(group));
                 floatingShape.setStrokeColor(RGB_STROKE_SHAPE).setStrokeWidth(RGB_STROKE_WIDTH_SHAPE).setDraggable(false);
 
-                setFloatingPanel(floatingShape, event);
+                setFloatingPanel(floatingShape,30,30, event);
             }
         };
 

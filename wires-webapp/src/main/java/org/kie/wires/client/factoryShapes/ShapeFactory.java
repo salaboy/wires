@@ -45,9 +45,9 @@ public abstract class ShapeFactory<T extends Shape<T>> {
     
     protected static final String RGB_STROKE_SHAPE = Color.rgbToBrowserHexColor(255, 0, 0);
     
-    protected static final String RGB_FILL_SHAPE = Color.rgbToBrowserHexColor(0, 255, 255);
+    protected static final String RGB_FILL_SHAPE = Color.rgbToBrowserHexColor(240, 240, 240);
     
-    protected static final int RGB_STROKE_WIDTH_SHAPE = 2;
+    protected static final int RGB_STROKE_WIDTH_SHAPE = 3;
 
     protected static String FONT_FAMILY_DESCRIPTION = "oblique normal";
 
@@ -77,9 +77,9 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return boundingBox;
     }
     
-    protected void setFloatingPanel(final Shape<T> floatingShape, NodeMouseDownEvent event){
+    protected void setFloatingPanel(final Shape<T> floatingShape, int height, int width, NodeMouseDownEvent event){
         final Layer floatingLayer = new Layer();
-        final LienzoPanel floatingPanel = new LienzoPanel(30, 30);
+        final LienzoPanel floatingPanel = new LienzoPanel(width, height);
         floatingLayer.add(floatingShape);
         floatingPanel.add(floatingLayer);
         floatingLayer.draw();

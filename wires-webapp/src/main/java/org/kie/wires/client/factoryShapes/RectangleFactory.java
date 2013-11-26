@@ -55,10 +55,10 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
     protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
-                final EditableRectangle floatingShape = new EditableRectangle(30, 30);
+                final EditableRectangle floatingShape = new EditableRectangle(70, 40);
                 setAttributes(floatingShape, getFloatingX(group), getFloatingY(group), group);
 
-                setFloatingPanel(floatingShape, event);
+                setFloatingPanel(floatingShape, 40, 70, event);
             }
         };
 

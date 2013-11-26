@@ -1,5 +1,8 @@
 package org.kie.wires.client.shapes;
 
+import com.emitrom.lienzo.client.core.shape.Shape;
+import java.util.List;
+
 public interface EditableShape {
     
     String getId();
@@ -9,6 +12,8 @@ public interface EditableShape {
     void showDragPoints();
     
     void showMagnetsPoints();
+    
+    List<Shape> getMagnets();
 
     void hideDragPoints();
     

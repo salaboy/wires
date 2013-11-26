@@ -23,9 +23,11 @@ import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.GWT;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +56,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     private double initialStartPointY;
     private double initialEndPointX;
     private double initialEndPointY;
-    
+
     private double currentDragX;
     private double currentDragY;
 
@@ -82,7 +84,9 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
         setX(x);
         setY(y);
-
+        currentDragX = x;
+        currentDragY = y;
+        
         addNodeMouseClickHandler(new NodeMouseClickHandler() {
             public void onNodeMouseClick(NodeMouseClickEvent nodeMouseClickEvent) {
                 ShapesUtils.nodeMouseClickHandler(EditableLine.this);
@@ -127,11 +131,9 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
             public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
                 beingDragged = true;
 
-               currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
+                currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
                 
-//                
-
             }
         });
 
@@ -147,19 +149,18 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     public void recordStartData(NodeDragStartEvent nodeDragStartEvent) {
         dragEventStartX = nodeDragStartEvent.getX();
         dragEventStartY = nodeDragStartEvent.getY();
-        
-        
+
         Point2DArray points = getPoints();
         Point2D startPoint = points.getPoint(0);
         Point2D endPoint = points.getPoint(1);
-        
+
         initialStartPointX = startPoint.getX();
         initialStartPointY = startPoint.getY();
-       
+
         initialEndPointX = endPoint.getX();
         initialEndPointY = endPoint.getY();
     }
-    
+
     @Override
     public void showDragPoints() {
         if (start == null) {
@@ -215,7 +216,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
                 Point2DArray array = getPoints();
                 array.getPoint(0).setX(initialStartPointX + deltaX);
                 array.getPoint(0).setY(initialStartPointY + deltaY);
-
+                                
                 layer.draw();
             }
         });
@@ -244,7 +245,9 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
                 beingResized = true;
                 double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
                 double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
-
+                
+                
+                
                 Point2DArray array = getPoints();
                 array.getPoint(1).setX(initialEndPointX + deltaX);
                 array.getPoint(1).setY(initialEndPointY + deltaY);
@@ -384,7 +387,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         Point2D endPoint = points.getPoint(1);
         v1 = new Vector();
         // end
-        v1.setX(getCurrentDragX() +  + endPoint.getX());
+        v1.setX(getCurrentDragX() + +endPoint.getX());
         v1.setY(getCurrentDragY() + endPoint.getY());
 
         scalars.add(v1.dotProduct(axis));
@@ -443,7 +446,17 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     public double getCurrentDragY() {
         return currentDragY;
     }
+
+    public List<Shape> getMagnets() {
+        ArrayList<Shape> magnets = new ArrayList<Shape>(2);
+        magnets.add(startMagnet);
+        magnets.add(endMagnet);
+        return magnets;
+    }
     
-    
+     @Override
+    public String toString() {
+        return "EditableLine{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
+    }
 
 }
