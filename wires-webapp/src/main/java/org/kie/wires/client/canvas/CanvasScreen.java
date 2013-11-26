@@ -11,11 +11,13 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
+import java.util.List;
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.shapes.EditableShape;
 import org.kie.wires.client.shapes.collision.CollidableShape;
@@ -52,8 +54,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
         layer = new Layer();
 
         panel.add(layer);
-        
-       
+
 //        panel.addMouseDownHandler(new MouseDownHandler() {
 //
 //            public void onMouseDown(MouseDownEvent event) {
@@ -67,17 +68,14 @@ public class CanvasScreen extends Composite implements RequiresResize {
 //                shapeBeingDragged = false;
 //            }
 //        });
-
         panel.addMouseMoveHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent event) {
-               
-                detectCollisions();
-               
+
+                detectCollisions(event);
+
             }
         });
-        
-        
-        
+
         layer.draw();
 
     }
@@ -120,40 +118,62 @@ public class CanvasScreen extends Composite implements RequiresResize {
         shape.setDraggable(true);
 
         ((EditableShape) shape).init(x, y);
-        
+
         layer.add(shape);
 
         layer.draw();
     }
 
-    public void detectCollisions() {
+    public void detectCollisions(MouseMoveEvent event) {
         EditableShape shapeActive = null;
         //if (shapeBeingDragged) {
-           
+
+        for (IPrimitive<?> iPrimitive : layer) {
+            if (iPrimitive instanceof EditableShape) {
+                if (((EditableShape) iPrimitive).isBeingDragged() || ((EditableShape) iPrimitive).isBeingResized()) {
+                    shapeActive = ((EditableShape) iPrimitive);
+                }
+
+            }
+        }
+
+        if (shapeActive != null) {
             for (IPrimitive<?> iPrimitive : layer) {
                 if (iPrimitive instanceof EditableShape) {
-                    if (((EditableShape) iPrimitive).isBeingDragged() || ((EditableShape) iPrimitive).isBeingResized() ) {
-                        shapeActive = ((EditableShape) iPrimitive);
-                    }
 
-                }
-            }
-           
-            
-            if (shapeActive != null) {
-                for (IPrimitive<?> iPrimitive : layer) {
-                    if (iPrimitive instanceof EditableShape) {
-                        
-                        if (!((EditableShape) iPrimitive).getId().equals(shapeActive.getId()) &&
-                               ((CollidableShape)shapeActive).collidesWith(((CollidableShape) iPrimitive))) {
-                            ((EditableShape) iPrimitive).showMagnetsPoints();
-                        }else{
-                             ((EditableShape) iPrimitive).hideMagnetPoints();
+                    if (!((EditableShape) iPrimitive).getId().equals(shapeActive.getId())
+                            && ((CollidableShape) shapeActive).collidesWith(((CollidableShape) iPrimitive))) {
+                        ((EditableShape) iPrimitive).showMagnetsPoints();
+                        List<Shape> magnets = ((EditableShape) iPrimitive).getMagnets();
+                        double finalDistance = 1000;
+                        Shape selectedMagnet = null;
+                        for (Shape magnet : magnets) {
+                            double deltaX = event.getX() - magnet.getX();
+                            double deltaY = event.getY() - magnet.getY();
+                            double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+
+                            if (finalDistance > distance) {
+                                finalDistance = distance;
+                                selectedMagnet = magnet;
+                            }
                         }
+                        GWT.log("Selected Magnet : " + selectedMagnet + " - finalDistance: " + finalDistance);
+                        if (selectedMagnet != null) {
+                            selectedMagnet.setScale(3);
+//                            for (Shape magnet : magnets) {
+//                                if ((magnet.getX() != selectedMagnet.getX() && magnet.getY() != selectedMagnet.getY())) {
+//                                    selectedMagnet.setScale(1);
+//                                }
+//                            }
+                        }
+
+                    } else {
+                        ((EditableShape) iPrimitive).hideMagnetPoints();
                     }
                 }
             }
-       // }
+        }
+        // }
 
     }
 

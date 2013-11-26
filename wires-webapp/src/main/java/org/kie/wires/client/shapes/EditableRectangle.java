@@ -17,6 +17,7 @@ import com.emitrom.lienzo.client.core.event.NodeMouseOverHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,7 +86,9 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
     public void init(double x, double y) {
         setX(x);
         setY(y);
-
+        currentDragX = x;
+        currentDragY = y;
+        
         addNodeMouseClickHandler(new NodeMouseClickHandler() {
             public void onNodeMouseClick(NodeMouseClickEvent nodeMouseClickEvent) {
                 ShapesUtils.nodeMouseClickHandler(EditableRectangle.this);
@@ -131,7 +134,6 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
                 beingDragged = true;
                 currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
-
             }
         });
 
@@ -627,6 +629,14 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
         this.currentDragY = currentDragY;
     }
 
+    public List<Shape> getMagnets(){
+        ArrayList<Shape> magnets = new ArrayList<Shape>();
+        magnets.add(topMagnet);
+        magnets.add(rightMagnet);
+        magnets.add(leftMagnet);
+        magnets.add(bottomMagnet);
+        return magnets;
+    }
     
     @Override
     public String toString() {

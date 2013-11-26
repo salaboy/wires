@@ -57,10 +57,10 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         group.add(boundingBox);
         return boundingBox;
     }
-
-    protected void setFloatingPanel(final Shape<T> floatingShape, NodeMouseDownEvent event) {
+    
+    protected void setFloatingPanel(final Shape<T> floatingShape, int height, int width, NodeMouseDownEvent event){
         final Layer floatingLayer = new Layer();
-        final LienzoPanel floatingPanel = new LienzoPanel(30, 30);
+        final LienzoPanel floatingPanel = new LienzoPanel(width, height);
         floatingLayer.add(floatingShape);
         floatingPanel.add(floatingLayer);
         floatingLayer.draw();
