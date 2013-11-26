@@ -34,6 +34,27 @@ public class ShapesGroup extends Composite {
         group1.setX(5).setY(5);
         layer.add(group1);
         shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        
+        
         layer.draw();
     }
 
