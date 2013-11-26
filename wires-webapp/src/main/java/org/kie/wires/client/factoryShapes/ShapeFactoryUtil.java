@@ -5,10 +5,12 @@ import com.emitrom.lienzo.shared.core.types.Color;
 public class ShapeFactoryUtil {
 
     // stencil
-    public static final int STENCIL_WIDTH = 260;
+    public static final int BOUNDINGS_BY_STENCIL = 5;
+    public static final int WIDTH_STENCIL = (ShapeFactoryUtil.BOUNDINGS_BY_STENCIL * ShapeFactoryUtil.WIDTH_BOUNDING)
+                    + (ShapeFactoryUtil.BOUNDINGS_BY_STENCIL * ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING);
 
     // panel
-    public static final int WIDTH_PANEL = 200;
+    public static final int WIDTH_PANEL = ShapeFactoryUtil.WIDTH_STENCIL + 5;
     public static final int HEIGHT_PANEL = 300;
 
     // bounding

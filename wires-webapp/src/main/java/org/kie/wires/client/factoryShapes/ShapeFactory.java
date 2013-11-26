@@ -121,22 +121,23 @@ public abstract class ShapeFactory<T extends Shape<T>> {
     }
 
     protected int calculateX(int shapes) {
-        int calc = shapes > 1 ? (getPositionInRow(shapes) - 1) : 0;
-        return calc > 0 ? (ShapeFactoryUtil.WIDTH_BOUNDING * calc) + ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING * calc
-                : ShapeFactoryUtil.WIDTH_BOUNDING * calc;
+        int x = shapes > 1 ? (getPositionInRow(shapes) - 1) : 0;
+        return x > 0 ? (ShapeFactoryUtil.WIDTH_BOUNDING * x) + ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING * x
+                : ShapeFactoryUtil.WIDTH_BOUNDING * x;
     }
 
     protected int calculateY(int shapes) {
         int y = shapes > 1 ? this.getRow(shapes) : 0;
-        return y * ShapeFactoryUtil.HEIGHT_BOUNDING;
+        return y > 0 ? (y * ShapeFactoryUtil.HEIGHT_BOUNDING) + ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING * y
+                        : y * ShapeFactoryUtil.HEIGHT_BOUNDING ;
     }
 
     private int getRow(int shapes) {
-        return Math.round((shapes * ShapeFactoryUtil.WIDTH_BOUNDING) / ShapeFactoryUtil.STENCIL_WIDTH);
+        return Math.round((shapes * ShapeFactoryUtil.WIDTH_BOUNDING) / ShapeFactoryUtil.WIDTH_STENCIL);
     }
 
     private int shapesByRow() {
-        return Math.round(ShapeFactoryUtil.STENCIL_WIDTH / ShapeFactoryUtil.WIDTH_BOUNDING);
+        return Math.round(ShapeFactoryUtil.WIDTH_STENCIL / ShapeFactoryUtil.WIDTH_BOUNDING);
     }
 
     private int getPositionInRow(int shapes) {

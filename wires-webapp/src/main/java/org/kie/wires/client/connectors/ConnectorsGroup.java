@@ -34,25 +34,6 @@ public class ConnectorsGroup extends Composite {
         group1.setX(0).setY(5);
         layer.add(group1);
         shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
-        shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
         layer.draw();
     }
 
