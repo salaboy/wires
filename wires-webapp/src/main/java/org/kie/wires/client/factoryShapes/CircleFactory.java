@@ -67,7 +67,7 @@ public class CircleFactory extends ShapeFactory<Circle> {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final Layer floatingLayer = new Layer();
                 final LienzoPanel floatingPanel = new LienzoPanel(50, 50);
-                final Circle floatingShape = new EditableCircle(15);
+                final EditableCircle floatingShape = new EditableCircle(15);
                 setAttributes(floatingShape, 17, 17);
                 floatingLayer.add(floatingShape);
                 floatingPanel.add(floatingLayer);

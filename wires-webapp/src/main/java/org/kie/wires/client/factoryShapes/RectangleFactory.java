@@ -76,22 +76,18 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
                 .setDraggable(false);
     }
 
-    // this value must be calculated
     private double getX() {
         return 10 + super.calculateX(shapes);
     }
 
-    // this value must be calculated
     private double getY() {
         return 5 + super.calculateY(shapes);
     }
 
-    // this value must be calculated
     private double getFloatingX() {
         return 0;
     }
 
-    // this value must be calculated
     private double getFloatingY() {
         return 0;
     }

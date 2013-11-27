@@ -1,5 +1,7 @@
 package org.kie.wires.client.connectors;
 
+import java.util.HashMap;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -33,6 +35,7 @@ public class ConnectorsGroup extends Composite {
         Group group1 = new Group();
         group1.setX(0).setY(5);
         layer.add(group1);
+        ShapeBuilder.shapesByCategory = new HashMap<Integer, Integer>();
         shapeBuilder.newShape(group1, ShapeType.LINE, panel, shapeAddEvent);
         layer.draw();
     }

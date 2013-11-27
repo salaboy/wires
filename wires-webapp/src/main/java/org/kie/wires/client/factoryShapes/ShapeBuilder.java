@@ -1,6 +1,5 @@
 package org.kie.wires.client.factoryShapes;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.event.Event;
@@ -9,12 +8,11 @@ import org.kie.wires.client.events.ShapeAddEvent;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 
 public class ShapeBuilder extends Composite {
 
-    private static Map<Integer, Integer> shapesByCategory;
+    public static Map<Integer, Integer> shapesByCategory;
 
     public ShapeBuilder() {
     }
@@ -39,9 +37,6 @@ public class ShapeBuilder extends Composite {
 
     public void setShapesByCategory(ShapeType shapeType) {
         boolean exist = false;
-        if (shapesByCategory == null) {
-            shapesByCategory = new HashMap<Integer, Integer>();
-        }
         for (Map.Entry<Integer, Integer> entry : shapesByCategory.entrySet()) {
             if (entry.getKey().equals(shapeType.getCategory())) {
                 exist = true;
