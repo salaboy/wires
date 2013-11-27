@@ -63,8 +63,7 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final EditableRectangle floatingShape = new EditableRectangle(70, 40);
                 setAttributes(floatingShape, getFloatingX(), getFloatingY());
-
-                setFloatingPanel(floatingShape, 40, 70, event);
+                setFloatingPanel(floatingShape, 40, 70, event, null);
             }
         };
 

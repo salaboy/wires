@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public abstract class ShapeFactory<T extends Shape<T>> {
 
+
     protected ShapeFactory() {
 
     }
@@ -49,6 +50,9 @@ public abstract class ShapeFactory<T extends Shape<T>> {
 
     protected abstract int getCategory();
 
+    protected static final int ZINDEX = 100;
+
+    
     protected Rectangle createBoundingBox(Group group, int shapes) {
         final Rectangle boundingBox = new Rectangle(ShapeFactoryUtil.WIDTH_BOUNDING, ShapeFactoryUtil.HEIGHT_BOUNDING);
         boundingBox.setX(this.getXBoundingBox(shapes)).setY(this.getYBoundingBox(shapes))
@@ -58,17 +62,18 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return boundingBox;
     }
 
-    protected void setFloatingPanel(final Shape<T> floatingShape, int height, int width, NodeMouseDownEvent event) {
+    protected void setFloatingPanel(final Shape<T> floatingShape, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
         final Layer floatingLayer = new Layer();
         final LienzoPanel floatingPanel = new LienzoPanel(width, height);
         floatingLayer.add(floatingShape);
         floatingPanel.add(floatingLayer);
         floatingLayer.draw();
-
-        final Style style = getFloatingStyle(floatingPanel, event);
-
+        final Style style = styleFloating != null ? styleFloating : getFloatingStyle(floatingPanel, event);
         RootPanel.get().add(floatingPanel);
-
+        setFloatingHandlers(style, floatingPanel, floatingShape);
+    }
+    
+    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final Shape<T> floatingShape){
         final HandlerRegistration[] handlerRegs = new HandlerRegistration[2];
         handlerRegs[0] = RootPanel.get().addDomHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
@@ -91,7 +96,6 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return this.calculateX(shapes);
     }
 
-    // this value must be calculated
     private double getYBoundingBox(int shapes) {
         return calculateY(shapes);
     }
@@ -100,17 +104,16 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return 12 + this.calculateX(shapes);
     }
 
-    // this value must be calculated
     protected double getYText(int shapes) {
         return 46 + calculateY(shapes);
     }
 
-    private Style getFloatingStyle(LienzoPanel floatingPanel, NodeMouseDownEvent event) {
+    protected Style getFloatingStyle(LienzoPanel floatingPanel, NodeMouseDownEvent event) {
         Style style = floatingPanel.getElement().getStyle();
         style.setPosition(Position.ABSOLUTE);
         style.setLeft(panel.getAbsoluteLeft() + event.getX(), Unit.PX);
         style.setTop(panel.getAbsoluteTop() + event.getY(), Unit.PX);
-        style.setZIndex(100);
+        style.setZIndex(ZINDEX);
         return style;
     }
 
@@ -128,8 +131,8 @@ public abstract class ShapeFactory<T extends Shape<T>> {
 
     protected int calculateY(int shapes) {
         int y = shapes > 1 ? this.getRow(shapes) : 0;
-        return y > 0 ? (y * ShapeFactoryUtil.HEIGHT_BOUNDING) + ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING * y
-                        : y * ShapeFactoryUtil.HEIGHT_BOUNDING ;
+        return y > 0 ? (y * ShapeFactoryUtil.HEIGHT_BOUNDING) + ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING * y : y
+                * ShapeFactoryUtil.HEIGHT_BOUNDING;
     }
 
     private int getRow(int shapes) {

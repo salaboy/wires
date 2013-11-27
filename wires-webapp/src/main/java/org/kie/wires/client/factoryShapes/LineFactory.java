@@ -67,8 +67,7 @@ public class LineFactory extends ShapeFactory<Line> {
                 final Line floatingShape = new EditableLine(getFloatingX1(), getFloatingY1(), getFloatingX2(), getFloatingY2());
                 floatingShape.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
                         .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setDraggable(false);
-
-                setFloatingPanel(floatingShape, 30, 30, event);
+                setFloatingPanel(floatingShape, 30, 30, event, null);
             }
         };
 
@@ -93,7 +92,7 @@ public class LineFactory extends ShapeFactory<Line> {
     }
 
     private double getFloatingX1() {
-        return 0 * shapes;
+        return 0;
     }
 
     // this value must be calculated
