@@ -26,7 +26,7 @@ public class LineFactory extends ShapeFactory<Line> {
     }
 
     public LineFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
-            Map<Integer, Integer> shapesByCategory) {
+            Map<ShapeCategory, Integer> shapesByCategory) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
         this.drawBoundingBox(group);
@@ -111,7 +111,7 @@ public class LineFactory extends ShapeFactory<Line> {
     }
 
     @Override
-    protected int getCategory() {
+    protected ShapeCategory getCategory() {
         return ShapeType.LINE.getCategory();
     }
 

@@ -48,7 +48,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
 
     protected abstract NodeMouseDownHandler getNodeMouseDownEvent(Group group);
 
-    protected abstract int getCategory();
+    protected abstract ShapeCategory getCategory();
 
     protected static final int ZINDEX = 100;
 
