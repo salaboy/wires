@@ -27,7 +27,7 @@ public class CircleFactory extends ShapeFactory<Circle> {
     }
 
     public CircleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
-            Map<Integer, Integer> shapesByCategory) {
+            Map<ShapeCategory, Integer> shapesByCategory) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
         this.drawBoundingBox(group);
@@ -82,7 +82,7 @@ public class CircleFactory extends ShapeFactory<Circle> {
     }
 
     @Override
-    protected int getCategory() {
+    protected ShapeCategory getCategory() {
         return ShapeType.CIRCLE.getCategory();
     }
 
