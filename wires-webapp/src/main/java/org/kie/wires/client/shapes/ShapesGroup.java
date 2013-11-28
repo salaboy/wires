@@ -1,5 +1,7 @@
 package org.kie.wires.client.shapes;
 
+import java.util.HashMap;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -34,7 +36,9 @@ public class ShapesGroup extends Composite {
         Group group1 = new Group();
         group1.setX(5).setY(5);
         layer.add(group1);
+        ShapeBuilder.shapesByCategory = new HashMap<Integer, Integer>();
         shapeBuilder.newShape(group1, ShapeType.RECTANGLE, panel, shapeAddEvent);
+        shapeBuilder.newShape(group1, ShapeType.CIRCLE, panel, shapeAddEvent);
         layer.draw();
     }
 

@@ -1,5 +1,10 @@
 package org.kie.wires.client.shapes;
 
+import java.util.List;
+
+import org.kie.wires.client.util.collision.Projection;
+import org.kie.wires.client.util.collision.Vector;
+
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
@@ -14,9 +19,6 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
-import java.util.List;
-import org.kie.wires.client.util.collision.Projection;
-import org.kie.wires.client.util.collision.Vector;
 
 
 public class EditableCircle extends Circle implements EditableShape {
