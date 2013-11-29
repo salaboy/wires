@@ -88,7 +88,7 @@ public class CircleFactory extends ShapeFactory<Circle> {
 
     private void setAttributes(Circle circle, double x, double y) {
         circle.setX(x).setY(y).setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
-                .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
+                .setStrokeWidth(ShapeFactoryUtil.STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
                 .setDraggable(false);
     }
 

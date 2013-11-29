@@ -43,7 +43,7 @@ public class LineFactory extends ShapeFactory<Line> {
     public Shape<Line> drawShape() {
         Line line = new EditableLine(getX1(), getY1(), getX2(), getY2());
         line.setDragBounds(new DragBounds(150, 260, 150, 150));
-        line.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
+        line.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.STROKE_WIDTH_SHAPE)
                 .setDraggable(false);
         return line;
     }
@@ -66,7 +66,7 @@ public class LineFactory extends ShapeFactory<Line> {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final EditableLine floatingShape = new EditableLine(getFloatingX1(), getFloatingY1(), getFloatingX2(), getFloatingY2());
                 floatingShape.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
-                        .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setDraggable(false);
+                        .setStrokeWidth(ShapeFactoryUtil.STROKE_WIDTH_SHAPE).setDraggable(false);
                 setFloatingPanel(floatingShape, 30, 30, event, null);
             }
         };
