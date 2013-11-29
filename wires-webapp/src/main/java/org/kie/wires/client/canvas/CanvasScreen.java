@@ -144,6 +144,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
                     if (!((EditableShape) iPrimitive).getId().equals(shapeActive.getId())
                             && ((CollidableShape) shapeActive).collidesWith(((CollidableShape) iPrimitive))) {
                         ((EditableShape) iPrimitive).showMagnetsPoints();
+
                         List<Shape> magnets = ((EditableShape) iPrimitive).getMagnets();
                         double finalDistance = 1000;
                         Shape selectedMagnet = null;
@@ -156,19 +157,42 @@ public class CanvasScreen extends Composite implements RequiresResize {
                                 finalDistance = distance;
                                 selectedMagnet = magnet;
                             }
+                            magnet.setScale(1);
+                            magnet.setAlpha(1);
                         }
-                        GWT.log("Selected Magnet : " + selectedMagnet + " - finalDistance: " + finalDistance);
+
                         if (selectedMagnet != null) {
-                            selectedMagnet.setScale(3);
-//                            for (Shape magnet : magnets) {
-//                                if ((magnet.getX() != selectedMagnet.getX() && magnet.getY() != selectedMagnet.getY())) {
-//                                    selectedMagnet.setScale(1);
+                            selectedMagnet.setScale(2);
+                            selectedMagnet.setAlpha(0.5);
+
+                            //shapeActive.showMagnetsPoints();
+//                            List<Shape> magnets2 = shapeActive.getMagnets();
+//
+//                            finalDistance = 1000;
+//                            Shape selectedMagnet2 = null;
+//                            for (Shape magnet : magnets2) {
+//                                double deltaX = selectedMagnet.getX() - magnet.getX();
+//                                double deltaY = selectedMagnet.getY() - magnet.getY();
+//                                double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+//
+//                                if (finalDistance > distance) {
+//                                    finalDistance = distance;
+//                                    selectedMagnet2 = magnet;
 //                                }
+//                                magnet.setScale(1);
+//
 //                            }
+//                            if (selectedMagnet2 != null) {
+//                                selectedMagnet2.setFillColor(ColorName.GREEN);
+//                                selectedMagnet2.setScale(2);
+//                                selectedMagnet2.setAlpha(0.5);
+//                            }
+
                         }
 
                     } else {
-                        ((EditableShape) iPrimitive).hideMagnetPoints();
+                         ((EditableShape) iPrimitive).hideMagnetPoints();
+                       
                     }
                 }
             }

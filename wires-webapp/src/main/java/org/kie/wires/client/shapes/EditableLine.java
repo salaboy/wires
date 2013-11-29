@@ -121,9 +121,9 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
                 if (start != null) {
                     hideDragPoints();
                 }
-                if (startMagnet != null) {
-                    hideMagnetPoints();
-                }
+//                if (startMagnet != null) {
+//                    hideMagnetPoints();
+//                }
             }
         });
 
@@ -133,6 +133,8 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
                 currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
+                
+               
                 
             }
         });
@@ -216,7 +218,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
                 Point2DArray array = getPoints();
                 array.getPoint(0).setX(initialStartPointX + deltaX);
                 array.getPoint(0).setY(initialStartPointY + deltaY);
-                                
+                
                 layer.draw();
             }
         });
@@ -224,7 +226,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         start.addNodeDragEndHandler(new NodeDragEndHandler() {
             public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
                 beingResized = false;
-
+                
             }
         });
 
@@ -237,6 +239,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
                 dragEventEndY = nodeDragStartEvent.getY();
                 initialEndPointX = getPoints().getPoint(1).getX();
                 initialEndPointY = getPoints().getPoint(1).getY();
+                
             }
         });
 
@@ -251,7 +254,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
                 Point2DArray array = getPoints();
                 array.getPoint(1).setX(initialEndPointX + deltaX);
                 array.getPoint(1).setY(initialEndPointY + deltaY);
-
+                
                 layer.draw();
             }
         });
@@ -259,7 +262,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         end.addNodeDragEndHandler(new NodeDragEndHandler() {
             public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
                 beingResized = false;
-
+                
             }
         });
 
@@ -276,7 +279,6 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     public void showMagnetsPoints() {
         if (startMagnet == null) {
             final Layer layer = getLayer();
-
             startMagnet = new Circle(5);
             startMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
                 public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {

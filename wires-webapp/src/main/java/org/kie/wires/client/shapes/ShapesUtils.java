@@ -41,7 +41,9 @@ public class ShapesUtils {
     
     static void nodeMouseExitHandler(final EditableShape shape) {
        // GWT.log("exit hiding magnet points" + ":" + shape.hashCode() );
-        shape.hideMagnetPoints();
+        if(!shape.isBeingDragged()){
+            shape.hideMagnetPoints();
+        }   
 
     }
       static void nodeMouseOutHandler(final EditableShape shape) {
