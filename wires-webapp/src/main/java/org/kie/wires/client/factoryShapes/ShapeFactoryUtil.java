@@ -28,6 +28,6 @@ public class ShapeFactoryUtil {
     // shapes
     public static final String RGB_STROKE_SHAPE = Color.rgbToBrowserHexColor(255, 0, 0);
     public static final String RGB_FILL_SHAPE = Color.rgbToBrowserHexColor(0, 255, 255);
-    public static final int RGB_STROKE_WIDTH_SHAPE = 2;
+    public static final int STROKE_WIDTH_SHAPE = 2;
 
 }

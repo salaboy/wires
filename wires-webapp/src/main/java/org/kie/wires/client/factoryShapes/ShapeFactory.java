@@ -100,6 +100,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return calculateY(shapes);
     }
 
+    // TODO: the text should be centered 
     protected double getXText(int shapes) {
         return 12 + this.calculateX(shapes);
     }

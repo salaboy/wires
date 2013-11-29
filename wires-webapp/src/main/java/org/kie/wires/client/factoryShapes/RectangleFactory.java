@@ -72,7 +72,7 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
 
     private void setAttributes(Rectangle floatingShape, double x, double y) {
         floatingShape.setX(x).setY(y).setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
-                .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
+                .setStrokeWidth(ShapeFactoryUtil.STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
                 .setDraggable(false);
     }
 
