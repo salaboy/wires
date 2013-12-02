@@ -93,7 +93,7 @@ public class CircleFactory extends ShapeFactory<Circle> {
     }
 
     private double getX() {
-        return 25 + super.calculateX(shapes);
+        return 24 + super.calculateX(shapes);
     }
 
     private double getY() {
