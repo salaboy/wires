@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Composite;
 public class StencilBuilder extends Composite {
 
     private static final int X_ACCORDION = 0;
+    
     private static final int Y_ACCORDION = 5;
     
     public static Map<ShapeCategory, Integer> shapesByCategory;

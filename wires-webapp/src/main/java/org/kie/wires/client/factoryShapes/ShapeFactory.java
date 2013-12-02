@@ -100,8 +100,10 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return calculateY(shapes);
     }
 
-    protected double getXText(int shapes) {
-        return 12 + this.calculateX(shapes);
+    protected double getXText(int shapes, String text) {
+        double xText = (text.length() * ShapeFactoryUtil.FONT_SIZE_WIDTH) / 2;
+        double position = (ShapeFactoryUtil.WIDTH_BOUNDING / 2 - xText);  
+        return position + this.calculateX(shapes);
     }
 
     protected double getYText(int shapes) {
@@ -119,7 +121,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
 
     protected Text createDescription(String description, int shapes) {
         Text text = new Text(description, ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION, ShapeFactoryUtil.FONT_SIZE_DESCRIPTION);
-        text.setX(this.getXText(shapes)).setY(this.getYText(shapes)).setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
+        text.setX(this.getXText(shapes, description)).setY(this.getYText(shapes)).setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
         return text;
     }
 

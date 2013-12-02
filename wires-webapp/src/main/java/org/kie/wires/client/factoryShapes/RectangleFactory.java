@@ -77,7 +77,7 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
     }
 
     private double getX() {
-        return 10 + super.calculateX(shapes);
+        return 11 + super.calculateX(shapes);
     }
 
     private double getY() {

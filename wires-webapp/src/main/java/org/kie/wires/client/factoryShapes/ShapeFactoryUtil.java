@@ -20,10 +20,11 @@ public class ShapeFactoryUtil {
     public static final String RGB_STROKE_BOUNDING = Color.rgbToBrowserHexColor(219, 217, 217);
     public static final int SPACE_BETWEEN_BOUNDING = 2;
 
-    // description
+    // text
     public static final String RGB_TEXT_DESCRIPTION = Color.rgbToBrowserHexColor(188, 187, 189);
     public static final String FONT_FAMILY_DESCRIPTION = "oblique normal";
     public static final double FONT_SIZE_DESCRIPTION = 10;
+    public static final double FONT_SIZE_WIDTH = 6;
 
     // shapes
     public static final String RGB_STROKE_SHAPE = Color.rgbToBrowserHexColor(255, 0, 0);
