@@ -16,6 +16,7 @@
 package org.kie.wires.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
+
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -26,6 +27,7 @@ import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
 import static org.uberfire.workbench.model.PanelType.*;
+
 import org.uberfire.workbench.model.Position;
 import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 
@@ -35,31 +37,37 @@ import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 @ApplicationScoped
 @WorkbenchPerspective(identifier = "WiresMainPerspective" , isDefault = true)
 public class WiresMainPerspective {
- 
+
+    private static final String WIRES = "Wires";
+    
+    private static final String WIRES_LAYERS_SCREEN = "WiresLayersScreen";
+    private static final String WIRES_PALETTE_SCREEN = "WiresPaletteScreen";
+    private static final String WIRES_CANVAS_SCREEN = "WiresCanvasScreen";
+    
+    private static final int MIN_WIDTH_PANEL = 200;
+    private static final int WIDTH_PANEL = 300;
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        final PerspectiveDefinition p = new PerspectiveDefinitionImpl( ROOT_STATIC );
-        p.setName( "Wires" );
+        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( ROOT_STATIC );
+        perspective.setName( WIRES );
         
-        p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "WiresCanvasScreen" ) ) );
-        final PanelDefinition west = new PanelDefinitionImpl(PanelType.MULTI_LIST);
-        west.setWidth( 300 );
-        west.setMinWidth( 200 );
-        west.addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "WiresPaletteScreen" ) ) );
-        p.getRoot().insertChild( Position.WEST, west );
-        p.setTransient( true );
+        perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( WIRES_CANVAS_SCREEN ) ) );
 
-        return p;
+        this.createPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
+        this.createPanel(perspective, Position.EAST, WIRES_LAYERS_SCREEN);
+
+        perspective.setTransient( true );
+
+        return perspective;
+    }
+    
+    private void createPanel(PerspectiveDefinition p, Position position, String identifierPanel){
+        final PanelDefinition panel = new PanelDefinitionImpl(PanelType.MULTI_LIST);
+        panel.setWidth( WIDTH_PANEL );
+        panel.setMinWidth( MIN_WIDTH_PANEL );
+        panel.addPart( new PartDefinitionImpl( new DefaultPlaceRequest( identifierPanel ) ) );
+        p.getRoot().insertChild( position, panel );
     }
 
-//    @WorkbenchToolBar
-//    public ToolBar buildToolBar() {
-//       
-//    }
-//
-//    @WorkbenchMenu
-//    public Menus buildMenuBar() {
-//        
-//    }
 }
