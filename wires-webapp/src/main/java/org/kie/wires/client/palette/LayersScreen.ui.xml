@@ -5,11 +5,8 @@
 
   <g:SimplePanel>
     <b:Accordion>
-      <b:AccordionGroup heading="Shapes" defaultOpen="true">
-        <g:SimplePanel ui:field="shapes"/>
-      </b:AccordionGroup>
-      <b:AccordionGroup heading="Connectors">
-          <g:SimplePanel ui:field="connectors"/>
+      <b:AccordionGroup heading="Layers" defaultOpen="true">
+        <g:SimplePanel ui:field="layers"/>
       </b:AccordionGroup>
     </b:Accordion>
   </g:SimplePanel>
