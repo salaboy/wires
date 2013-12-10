@@ -26,20 +26,21 @@ public class StencilBuilder extends Composite {
 
     public StencilBuilder(Event<ShapeAddEvent> shapeAddEvent, ShapeCategory shapeCategory) {
         shapesByCategory = new HashMap<ShapeCategory, Integer>();
-        LienzoPanel panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL, ShapeFactoryUtil.HEIGHT_PANEL);
+        LienzoPanel panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL,
+                calculateHeight(this.getAccountShapesByCategory(shapeCategory)));
         super.initWidget(panel);
         Layer layer = new Layer();
         panel.add(layer);
         Group group = new Group();
         group.setX(X_ACCORDION).setY(Y_ACCORDION);
         layer.add(group);
-        for(ShapeType shapeType : ShapeType.values()){
-            if(shapeType.getCategory().equals(shapeCategory)){
+        for (ShapeType shapeType : ShapeType.values()) {
+            if (shapeType.getCategory().equals(shapeCategory)) {
                 this.newShape(group, shapeType, panel, shapeAddEvent);
             }
         }
         layer.draw();
-        
+
     }
 
     public void newShape(Group group, final ShapeType shapeType, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent) {
@@ -72,6 +73,27 @@ public class StencilBuilder extends Composite {
         if (!exist) {
             shapesByCategory.put(shapeType.getCategory(), 1);
         }
+    }
+    
+    private int getAccountShapesByCategory(ShapeCategory shapeCategory) {
+        int account = 0;
+        for (ShapeType shapeType : ShapeType.values()) {
+            if (shapeType.getCategory().equals(shapeCategory)) {
+                account++;
+            }
+        }
+        return account;
+    }
+
+    private int calculateHeight(int shapes) {
+        int y = shapes > 1 ? this.getRow(shapes) : 0;
+        y = y > 0 ? (y * ShapeFactoryUtil.HEIGHT_BOUNDING) + ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING * y : y
+                * ShapeFactoryUtil.HEIGHT_BOUNDING;
+        return y + ShapeFactoryUtil.HEIGHT_BOUNDING + 15;
+    }
+
+    private int getRow(int shapes) {
+        return Math.round((shapes * ShapeFactoryUtil.WIDTH_BOUNDING) / ShapeFactoryUtil.WIDTH_STENCIL);
     }
     
 
