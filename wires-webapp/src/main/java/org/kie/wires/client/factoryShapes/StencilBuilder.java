@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 
 import org.kie.wires.client.events.ShapeAddEvent;
+import org.kie.wires.client.palette.LayersScreen;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
@@ -20,11 +21,12 @@ public class StencilBuilder extends Composite {
     
     public static Map<ShapeCategory, Integer> shapesByCategory;
     
+
     public StencilBuilder() {
         
     }
 
-    public StencilBuilder(Event<ShapeAddEvent> shapeAddEvent, ShapeCategory shapeCategory) {
+    public StencilBuilder(Event<ShapeAddEvent> shapeAddEvent, ShapeCategory shapeCategory, LayersScreen layersScreen) {
         shapesByCategory = new HashMap<ShapeCategory, Integer>();
         LienzoPanel panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL,
                 calculateHeight(this.getAccountShapesByCategory(shapeCategory)));
@@ -36,18 +38,18 @@ public class StencilBuilder extends Composite {
         layer.add(group);
         for (ShapeType shapeType : ShapeType.values()) {
             if (shapeType.getCategory().equals(shapeCategory)) {
-                this.newShape(group, shapeType, panel, shapeAddEvent);
+                this.newShape(group, shapeType, panel, shapeAddEvent, layersScreen);
             }
         }
         layer.draw();
 
     }
 
-    public void newShape(Group group, final ShapeType shapeType, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent) {
+    public void newShape(Group group, final ShapeType shapeType, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent, LayersScreen layersScreen) {
         this.setShapesByCategory(shapeType);
         switch (shapeType) {
         case LINE:
-            new LineFactory(group, panel, shapeAddEvent, shapesByCategory);
+            new LineFactory(group, panel, shapeAddEvent, shapesByCategory, layersScreen);
             break;
         case RECTANGLE:
             new RectangleFactory(group, panel, shapeAddEvent, shapesByCategory);
