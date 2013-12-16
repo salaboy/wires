@@ -1,19 +1,3 @@
-/*
- * Copyright 2012 JBoss Inc
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.kie.wires.client.palette;
 
 import javax.annotation.PostConstruct;
@@ -22,8 +6,8 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.factoryShapes.StencilBuilder;
 import org.kie.wires.client.factoryShapes.ShapeCategory;
+import org.kie.wires.client.factoryShapes.StencilBuilder;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -55,14 +39,13 @@ public class PaletteScreen extends Composite implements RequiresResize {
 
     @Inject
     private Event<ShapeAddEvent> shapeAddEvent;
-    
+
     @Inject
     private LayersScreen layersScreen;
 
     @PostConstruct
     public void init() {
         super.initWidget(uiBinder.createAndBindUi(this));
-        GWT.log("%%%%%%%%%%%%%%%%%%%%% @PostConstruct");
         this.drawStencil();
     }
 
@@ -83,17 +66,14 @@ public class PaletteScreen extends Composite implements RequiresResize {
         int width = getParent().getOffsetWidth();
         super.setPixelSize(width, height);
     }
-    
-    private void drawStencil(){
+
+    private void drawStencil() {
         newAccordion(shapes, ShapeCategory.SHAPES);
         newAccordion(connectors, ShapeCategory.CONNECTORS);
     }
-    
-    private void newAccordion(SimplePanel panel, ShapeCategory category){
+
+    private void newAccordion(SimplePanel panel, ShapeCategory category) {
         panel.add(new StencilBuilder(shapeAddEvent, category, layersScreen));
     }
-    
-    
-    
 
 }

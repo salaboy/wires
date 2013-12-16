@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-
 @Dependent
 @WorkbenchScreen(identifier = "WiresLayersScreen")
 public class LayersScreen extends Composite implements RequiresResize {
@@ -35,26 +34,24 @@ public class LayersScreen extends Composite implements RequiresResize {
 
     @UiField
     public SimplePanel layers;
-    
-    private LienzoPanel panel;
-    
-    private Group group; 
-    
-    private Layer layer;
 
+    private LienzoPanel panel;
+
+    private Group group;
+
+    private Layer layer;
 
     @PostConstruct
     public void init() {
         super.initWidget(uiBinder.createAndBindUi(this));
-        panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL,
-				ShapeFactoryUtil.HEIGHT_PANEL);
-		layer = new Layer();
-		panel.add(layer);
-		group = new Group();
-		group.setX(0).setY(5);
-		layer.add(group);
+        panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL, ShapeFactoryUtil.HEIGHT_PANEL);
+        layer = new Layer();
+        panel.add(layer);
+        group = new Group();
+        group.setX(0).setY(5);
+        layer.add(group);
         layers.add(panel);
-        
+
     }
 
     @WorkbenchPartTitle
@@ -74,12 +71,11 @@ public class LayersScreen extends Composite implements RequiresResize {
         int width = getParent().getOffsetWidth();
         super.setPixelSize(width, height);
     }
-    
-    public void initDrawLayer(final ShapeType shapeType){
-    	LayerBuilder builder = new LayerBuilder();
-    	builder.newLayer(group, shapeType, panel);
-    	layer.draw();
+
+    public void initDrawLayer(final ShapeType shapeType) {
+        LayerBuilder builder = new LayerBuilder();
+        builder.newLayer(group, shapeType, panel);
+        layer.draw();
     }
-    
 
 }

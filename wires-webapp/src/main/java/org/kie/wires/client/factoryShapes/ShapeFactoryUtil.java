@@ -7,7 +7,7 @@ public class ShapeFactoryUtil {
     // stencil
     public static final int BOUNDINGS_BY_STENCIL = 5;
     public static final int WIDTH_STENCIL = (ShapeFactoryUtil.BOUNDINGS_BY_STENCIL * ShapeFactoryUtil.WIDTH_BOUNDING)
-                    + (ShapeFactoryUtil.BOUNDINGS_BY_STENCIL * ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING);
+            + (ShapeFactoryUtil.BOUNDINGS_BY_STENCIL * ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING);
 
     // panel
     public static final int WIDTH_PANEL = ShapeFactoryUtil.WIDTH_STENCIL + 5;
@@ -19,8 +19,8 @@ public class ShapeFactoryUtil {
     public static final String RGB_FILL_BOUNDING = Color.rgbToBrowserHexColor(255, 255, 255);
     public static final String RGB_STROKE_BOUNDING = Color.rgbToBrowserHexColor(219, 217, 217);
     public static final int SPACE_BETWEEN_BOUNDING = 2;
-    
-    //bounding Layer
+
+    // bounding Layer
     public static final int WIDTH_BOUNDING_LAYER = 250;
     public static final int HEIGHT_BOUNDING_LAYER = 30;
 

@@ -22,7 +22,6 @@ public class LineFactory extends ShapeFactory<Line> {
     private static String DESCRIPTION = "Line";
 
     private static int shapes;
-    
 
     public LineFactory() {
     }
@@ -32,7 +31,7 @@ public class LineFactory extends ShapeFactory<Line> {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
         this.drawBoundingBox(group);
-        //layersScreen.initDrawLayer(ShapeType.LINE);
+        // layersScreen.initDrawLayer(ShapeType.LINE);
     }
 
     @Override
@@ -67,11 +66,12 @@ public class LineFactory extends ShapeFactory<Line> {
     protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
-                final EditableLine floatingShape = new EditableLine(getFloatingX1(), getFloatingY1(), getFloatingX2(), getFloatingY2());
+                final EditableLine floatingShape = new EditableLine(getFloatingX1(), getFloatingY1(), getFloatingX2(),
+                        getFloatingY2());
                 floatingShape.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
                         .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setDraggable(false);
                 setFloatingPanel(floatingShape, 30, 30, event, null);
-                //layersScreen.initDrawLayer(ShapeType.LINE);
+                // layersScreen.initDrawLayer(ShapeType.LINE);
             }
         };
 
