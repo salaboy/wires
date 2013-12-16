@@ -16,14 +16,13 @@ import com.google.gwt.user.client.ui.Composite;
 public class StencilBuilder extends Composite {
 
     private static final int X_ACCORDION = 0;
-    
+
     private static final int Y_ACCORDION = 5;
-    
+
     public static Map<ShapeCategory, Integer> shapesByCategory;
-    
 
     public StencilBuilder() {
-        
+
     }
 
     public StencilBuilder(Event<ShapeAddEvent> shapeAddEvent, ShapeCategory shapeCategory, LayersScreen layersScreen) {
@@ -45,7 +44,8 @@ public class StencilBuilder extends Composite {
 
     }
 
-    public void newShape(Group group, final ShapeType shapeType, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent, LayersScreen layersScreen) {
+    public void newShape(Group group, final ShapeType shapeType, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
+            LayersScreen layersScreen) {
         this.setShapesByCategory(shapeType);
         switch (shapeType) {
         case LINE:
@@ -76,7 +76,7 @@ public class StencilBuilder extends Composite {
             shapesByCategory.put(shapeType.getCategory(), 1);
         }
     }
-    
+
     private int getAccountShapesByCategory(ShapeCategory shapeCategory) {
         int account = 0;
         for (ShapeType shapeType : ShapeType.values()) {
@@ -97,6 +97,5 @@ public class StencilBuilder extends Composite {
     private int getRow(int shapes) {
         return Math.round((shapes * ShapeFactoryUtil.WIDTH_BOUNDING) / ShapeFactoryUtil.WIDTH_STENCIL);
     }
-    
 
 }
