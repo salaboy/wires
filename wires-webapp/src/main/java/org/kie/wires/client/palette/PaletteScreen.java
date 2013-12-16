@@ -55,10 +55,14 @@ public class PaletteScreen extends Composite implements RequiresResize {
 
     @Inject
     private Event<ShapeAddEvent> shapeAddEvent;
+    
+    @Inject
+    private LayersScreen layersScreen;
 
     @PostConstruct
     public void init() {
         super.initWidget(uiBinder.createAndBindUi(this));
+        GWT.log("%%%%%%%%%%%%%%%%%%%%% @PostConstruct");
         this.drawStencil();
     }
 
@@ -86,7 +90,7 @@ public class PaletteScreen extends Composite implements RequiresResize {
     }
     
     private void newAccordion(SimplePanel panel, ShapeCategory category){
-        panel.add(new StencilBuilder(shapeAddEvent, category));
+        panel.add(new StencilBuilder(shapeAddEvent, category, layersScreen));
     }
     
     

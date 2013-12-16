@@ -54,8 +54,8 @@ public class WiresMainPerspective {
         
         perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( WIRES_CANVAS_SCREEN ) ) );
 
-        this.createPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
         this.createPanel(perspective, Position.EAST, WIRES_LAYERS_SCREEN);
+        this.createPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
 
         perspective.setTransient( true );
 
