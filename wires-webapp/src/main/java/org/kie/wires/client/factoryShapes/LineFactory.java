@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.palette.LayersScreen;
 import org.kie.wires.client.shapes.EditableLine;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
@@ -27,7 +26,7 @@ public class LineFactory extends ShapeFactory<Line> {
     }
 
     public LineFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
-            Map<ShapeCategory, Integer> shapesByCategory, LayersScreen layersScreen) {
+            Map<ShapeCategory, Integer> shapesByCategory) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
         this.drawBoundingBox(group);

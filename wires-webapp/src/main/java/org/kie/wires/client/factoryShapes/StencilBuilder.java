@@ -25,7 +25,7 @@ public class StencilBuilder extends Composite {
 
     }
 
-    public StencilBuilder(Event<ShapeAddEvent> shapeAddEvent, ShapeCategory shapeCategory, LayersScreen layersScreen) {
+    public StencilBuilder(Event<ShapeAddEvent> shapeAddEvent, ShapeCategory shapeCategory) {
         shapesByCategory = new HashMap<ShapeCategory, Integer>();
         LienzoPanel panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL,
                 calculateHeight(this.getAccountShapesByCategory(shapeCategory)));
@@ -37,19 +37,18 @@ public class StencilBuilder extends Composite {
         layer.add(group);
         for (ShapeType shapeType : ShapeType.values()) {
             if (shapeType.getCategory().equals(shapeCategory)) {
-                this.newShape(group, shapeType, panel, shapeAddEvent, layersScreen);
+                this.newShape(group, shapeType, panel, shapeAddEvent);
             }
         }
         layer.draw();
 
     }
 
-    public void newShape(Group group, final ShapeType shapeType, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
-            LayersScreen layersScreen) {
+    public void newShape(Group group, final ShapeType shapeType, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent) {
         this.setShapesByCategory(shapeType);
         switch (shapeType) {
         case LINE:
-            new LineFactory(group, panel, shapeAddEvent, shapesByCategory, layersScreen);
+            new LineFactory(group, panel, shapeAddEvent, shapesByCategory);
             break;
         case RECTANGLE:
             new RectangleFactory(group, panel, shapeAddEvent, shapesByCategory);

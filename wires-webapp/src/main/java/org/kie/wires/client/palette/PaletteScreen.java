@@ -40,8 +40,6 @@ public class PaletteScreen extends Composite implements RequiresResize {
     @Inject
     private Event<ShapeAddEvent> shapeAddEvent;
 
-    @Inject
-    private LayersScreen layersScreen;
 
     @PostConstruct
     public void init() {
@@ -73,7 +71,7 @@ public class PaletteScreen extends Composite implements RequiresResize {
     }
 
     private void newAccordion(SimplePanel panel, ShapeCategory category) {
-        panel.add(new StencilBuilder(shapeAddEvent, category, layersScreen));
+        panel.add(new StencilBuilder(shapeAddEvent, category));
     }
 
 }
