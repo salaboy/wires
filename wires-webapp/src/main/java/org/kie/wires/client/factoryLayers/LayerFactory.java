@@ -4,7 +4,6 @@ import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
-import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
@@ -13,9 +12,9 @@ public abstract class LayerFactory<T extends Shape<T>> {
 
     protected abstract void drawBoundingBox(Group group);
 
-    protected abstract Shape<Line> drawLayer();
+    protected abstract Shape<T> drawLayer();
 
-    protected abstract void addShapeHandlers(Shape<Line> shape, Group group);
+    protected abstract void addShapeHandlers(Shape<T> shape, Group group);
 
     protected abstract NodeMouseDownHandler getNodeMouseDownEvent(final Group group);
 

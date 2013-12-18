@@ -30,10 +30,10 @@ public class LayerBuilder extends Composite {
             new LayerLineFactory(group, panel, layers);
             break;
         case RECTANGLE:
-            // TODO
+            new LayerRectangleFactory(group, panel, layers);
             break;
         case CIRCLE:
-            // TODO
+            new LayerCircleFactory(group, panel, layers);
             break;
         default:
             throw new IllegalStateException("Unrecognized layer type '" + shapeType + "'!");

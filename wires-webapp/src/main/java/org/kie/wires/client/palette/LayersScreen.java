@@ -51,7 +51,6 @@ public class LayersScreen extends Composite implements RequiresResize {
         group.setX(0).setY(5);
         layer.add(group);
         layers.add(panel);
-
     }
 
     @WorkbenchPartTitle
