@@ -10,6 +10,8 @@ import com.emitrom.lienzo.client.core.shape.Text;
 
 public abstract class LayerFactory<T extends Shape<T>> {
 
+    private static final int LAYERS_BY_ROW = 1;
+
     protected abstract void drawBoundingBox(Group group);
 
     protected abstract Shape<T> drawLayer();
@@ -53,15 +55,15 @@ public abstract class LayerFactory<T extends Shape<T>> {
     }
 
     private int getPositionInRow(int shapes) {
-        return (shapes - this.shapesByRow()) >= 1 ? (shapes - (this.shapesByRow() * getRow(shapes))) : shapes;
+        return (shapes - this.layersByRow()) >= 1 ? (shapes - (this.layersByRow() * getRow(shapes))) : shapes;
     }
 
     private int getRow(int layers) {
         return Math.round((layers * ShapeFactoryUtil.WIDTH_BOUNDING_LAYER) / ShapeFactoryUtil.WIDTH_STENCIL);
     }
 
-    private int shapesByRow() {
-        return 1;
+    private int layersByRow() {
+        return LAYERS_BY_ROW;
     }
 
     protected Text createDescription(String description, int shapes) {

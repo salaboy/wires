@@ -34,7 +34,7 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
     @Override
     public Shape<Rectangle> drawLayer() {
         final Rectangle rectangle = new Rectangle(15, 15);
-        setAttributes(rectangle, getX(), getY());
+        this.setAttributes(rectangle, getX(), getY());
         return rectangle;
     }
 

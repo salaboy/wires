@@ -12,6 +12,8 @@ import com.emitrom.lienzo.client.widget.LienzoPanel;
 
 public class LayerCircleFactory extends LayerFactory<Circle> {
 
+    private static final int RADIUS = 7;
+
     private static final String DESCRIPTION = "Circle";
 
     private static int layers;
@@ -34,7 +36,7 @@ public class LayerCircleFactory extends LayerFactory<Circle> {
 
     @Override
     public Shape<Circle> drawLayer() {
-        final Circle circle = new Circle(7);
+        final Circle circle = new Circle(RADIUS);
         setAttributes(circle, this.getX(), this.getY());
         return circle;
     }
