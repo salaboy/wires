@@ -5,6 +5,7 @@ import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
+import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
@@ -19,13 +20,16 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
     }
 
-    public LayerRectangleFactory(Group group, LienzoPanel panel, Integer lay) {
+    public LayerRectangleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer) {
         layers = lay;
-        this.drawBoundingBox(group);
+        this.drawBoundingBox(group, layer);
     }
 
     @Override
-    public void drawBoundingBox(Group group) {
+    public void drawBoundingBox(Group group, Layer layer) {
+        final Double x = this.getX() + 218;
+        final Double y = this.getY() + 5;
+        super.createOptions(layer, x.intValue(), y.intValue());
         this.addBoundingHandlers(super.createBoundingBox(group, layers), group);
         this.addShapeHandlers(this.drawLayer(), group);
         group.add(super.createDescription(DESCRIPTION, layers));

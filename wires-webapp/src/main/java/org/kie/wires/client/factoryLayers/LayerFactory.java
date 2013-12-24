@@ -3,16 +3,22 @@ package org.kie.wires.client.factoryLayers;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
+import com.emitrom.lienzo.client.core.image.PictureLoadedHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
+import com.emitrom.lienzo.client.core.shape.Layer;
+import com.emitrom.lienzo.client.core.shape.Picture;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
+import com.google.gwt.core.client.GWT;
 
 public abstract class LayerFactory<T extends Shape<T>> {
 
     private static final int LAYERS_BY_ROW = 1;
+    
+    private ResourcesLayers resource = GWT.create( ResourcesLayers.class );
 
-    protected abstract void drawBoundingBox(Group group);
+    protected abstract void drawBoundingBox(Group group, Layer layer);
 
     protected abstract Shape<T> drawLayer();
 
@@ -70,6 +76,30 @@ public abstract class LayerFactory<T extends Shape<T>> {
         Text text = new Text(description, ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION, ShapeFactoryUtil.FONT_SIZE_DESCRIPTION);
         text.setX(45).setY(this.getYText(shapes)).setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
         return text;
+    }
+    
+    protected void createOptions(final Layer layer, final int x, final int y){
+        new Picture(resource.delete(), false).onLoad(new PictureLoadedHandler() {
+            @Override  
+            public void onPictureLoaded(Picture picture) {
+                picture.setX(x);
+                picture.setY(y);
+                layer.add(picture);
+                layer.draw();
+                  
+            }  
+        });  
+        
+        new Picture(resource.view(), false).onLoad(new PictureLoadedHandler() {
+            @Override  
+            public void onPictureLoaded(Picture picture) {
+                picture.setX(x - 19);
+                picture.setY(y);
+                layer.add(picture);
+                layer.draw();
+                  
+            }  
+        });  
     }
 
 }

@@ -6,6 +6,7 @@ import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Group;
+import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
@@ -22,13 +23,16 @@ public class LayerCircleFactory extends LayerFactory<Circle> {
 
     }
 
-    public LayerCircleFactory(Group group, LienzoPanel panel, Integer lay) {
+    public LayerCircleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer) {
         layers = lay;
-        this.drawBoundingBox(group);
+        this.drawBoundingBox(group, layer);
     }
 
     @Override
-    public void drawBoundingBox(Group group) {
+    public void drawBoundingBox(Group group, Layer layer) {
+        final Double x = this.getX() + 212;
+        final Double y = this.getY() - 2;
+        super.createOptions(layer, x.intValue(), y.intValue());
         this.addBoundingHandlers(super.createBoundingBox(group, layers), group);
         this.addShapeHandlers(this.drawLayer(), group);
         group.add(super.createDescription(DESCRIPTION, layers));

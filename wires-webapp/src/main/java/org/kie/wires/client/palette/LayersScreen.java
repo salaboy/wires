@@ -81,7 +81,7 @@ public class LayersScreen extends Composite implements RequiresResize {
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
         accountLayers += 1;
-        new LayerBuilder(group, shapeAddEvent.getShape(), panel, accountLayers);
+        new LayerBuilder(group, shapeAddEvent.getShape(), panel, layer, accountLayers);
         layer.draw();
     }
 
