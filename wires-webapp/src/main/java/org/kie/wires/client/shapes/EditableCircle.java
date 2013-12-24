@@ -65,7 +65,7 @@ public class EditableCircle extends Circle implements EditableShape {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
                
                 if (top != null) {
-                    hideDragPoints();
+                    hideControlPoints();
                 }
             }
         });
@@ -144,7 +144,7 @@ public class EditableCircle extends Circle implements EditableShape {
     }
 
    
-    public void showDragPoints() {
+    public void showControlPoints() {
         if ( top == null ) {
             GWT.log("show");
 
@@ -168,7 +168,7 @@ public class EditableCircle extends Circle implements EditableShape {
     }
 
 
-    public void hideDragPoints() {
+    public void hideControlPoints() {
         GWT.log("hide");
         if ( top != null ) {
             // can be null, afer the main Shape is dragged, and control points are forcibly removed

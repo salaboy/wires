@@ -75,7 +75,7 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
               
                 if (groupStart != null) {
-                    hideDragPoints();
+                    hideControlPoints();
                 }
 
                 controlStartX = nodeDragStartEvent.getX();
@@ -119,7 +119,7 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
     }
 
    
-    public void showDragPoints() {
+    public void showControlPoints() {
         if (groupStart == null) {
             final Point2DArray array = getControlPoints();
 
@@ -151,7 +151,7 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
         }
     }
 
-    public void hideDragPoints() {
+    public void hideControlPoints() {
         if ( groupStart != null ) {
             Layer layer = getLayer();
 

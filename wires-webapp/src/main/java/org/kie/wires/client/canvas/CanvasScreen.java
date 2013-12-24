@@ -19,8 +19,12 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import java.util.List;
 import org.kie.wires.client.events.ShapeAddEvent;
+import org.kie.wires.client.shapes.EditableLine;
+import org.kie.wires.client.shapes.EditableRectangle;
 import org.kie.wires.client.shapes.EditableShape;
 import org.kie.wires.client.shapes.collision.CollidableShape;
+import org.kie.wires.client.shapes.collision.Magnet;
+import org.kie.wires.client.shapes.collision.StickableShape;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -143,12 +147,12 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
                     if (!((EditableShape) iPrimitive).getId().equals(shapeActive.getId())
                             && ((CollidableShape) shapeActive).collidesWith(((CollidableShape) iPrimitive))) {
-                        ((EditableShape) iPrimitive).showMagnetsPoints();
+                        ((StickableShape) iPrimitive).showMagnetsPoints();
 
-                        List<Shape> magnets = ((EditableShape) iPrimitive).getMagnets();
+                        List<Magnet> magnets = ((StickableShape) iPrimitive).getMagnets();
                         double finalDistance = 1000;
-                        Shape selectedMagnet = null;
-                        for (Shape magnet : magnets) {
+                        Magnet selectedMagnet = null;
+                        for (Magnet magnet : magnets) {
                             double deltaX = event.getX() - magnet.getX();
                             double deltaY = event.getY() - magnet.getY();
                             double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
@@ -157,13 +161,14 @@ public class CanvasScreen extends Composite implements RequiresResize {
                                 finalDistance = distance;
                                 selectedMagnet = magnet;
                             }
-                            magnet.setScale(1);
-                            magnet.setAlpha(1);
+                            magnet.setMagnetActive(false);
                         }
 
                         if (selectedMagnet != null) {
-                            selectedMagnet.setScale(2);
-                            selectedMagnet.setAlpha(0.5);
+                            selectedMagnet.setMagnetActive(true);
+//                            if(shapeActive instanceof EditableLine){
+//                                selectedMagnet.attachControlPoint(((EditableLine) shapeActive).getStartControlPoint());
+//                            }
 
                             //shapeActive.showMagnetsPoints();
 //                            List<Shape> magnets2 = shapeActive.getMagnets();
@@ -191,7 +196,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
                         }
 
                     } else {
-                         ((EditableShape) iPrimitive).hideMagnetPoints();
+                         ((StickableShape) iPrimitive).hideMagnetPoints();
                        
                     }
                 }

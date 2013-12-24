@@ -19,19 +19,19 @@ import com.emitrom.lienzo.client.core.event.NodeMouseExitEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseExitHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseOverEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseOverHandler;
-import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
-import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.kie.wires.client.shapes.collision.CollidableShape;
+import org.kie.wires.client.shapes.collision.ControlPoint;
+import org.kie.wires.client.shapes.collision.LineControlPointImpl;
+import org.kie.wires.client.shapes.collision.Magnet;
+import org.kie.wires.client.shapes.collision.LineMagnetImpl;
+import org.kie.wires.client.shapes.collision.StickableShape;
 import org.kie.wires.client.util.UUID;
 import org.kie.wires.client.util.collision.Projection;
 import org.kie.wires.client.util.collision.Vector;
@@ -40,22 +40,11 @@ import org.kie.wires.client.util.collision.Vector;
  *
  * @author salaboy
  */
-public class EditableLine extends Line implements EditableShape, CollidableShape {
+public class EditableLine extends Line implements EditableShape, CollidableShape, StickableShape {
 
     private String id;
-    private Rectangle start;
-    private Rectangle end;
-
-    private double dragEventStartX;
-    private double dragEventStartY;
-
-    private double dragEventEndX;
-    private double dragEventEndY;
-
-    private double initialStartPointX;
-    private double initialStartPointY;
-    private double initialEndPointX;
-    private double initialEndPointY;
+    private ControlPoint startControlPoint;
+    private ControlPoint endControlPoint;
 
     private double currentDragX;
     private double currentDragY;
@@ -63,12 +52,9 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     private boolean beingDragged;
 
     private boolean beingResized;
-
-    private static final int MAGNET_START = 0;
-    private static final int MAGNET_END = 1;
-
-    private Circle startMagnet;
-    private Circle endMagnet;
+    
+    private Magnet startMagnet;
+    private Magnet endMagnet;
 
     public EditableLine(double x1, double y1, double x2, double y2) {
         super(x1, y1, x2, y2);
@@ -118,12 +104,9 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
                 recordStartData(nodeDragStartEvent);
-                if (start != null) {
-                    hideDragPoints();
+                if (startControlPoint != null) {
+                    hideControlPoints();
                 }
-//                if (startMagnet != null) {
-//                    hideMagnetPoints();
-//                }
             }
         });
 
@@ -149,153 +132,75 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     }
 
     public void recordStartData(NodeDragStartEvent nodeDragStartEvent) {
-        dragEventStartX = nodeDragStartEvent.getX();
-        dragEventStartY = nodeDragStartEvent.getY();
+        
 
         Point2DArray points = getPoints();
         Point2D startPoint = points.getPoint(0);
         Point2D endPoint = points.getPoint(1);
-
-        initialStartPointX = startPoint.getX();
-        initialStartPointY = startPoint.getY();
-
-        initialEndPointX = endPoint.getX();
-        initialEndPointY = endPoint.getY();
+        
+//        dragEventStartX = nodeDragStartEvent.getX();
+//        dragEventStartY = nodeDragStartEvent.getY();
+//
+//        initialStartPointX = startPoint.getX();
+//        initialStartPointY = startPoint.getY();
+//
+//        initialEndPointX = endPoint.getX();
+//        initialEndPointY = endPoint.getY();
     }
 
+    public ControlPoint getStartControlPoint() {
+        return startControlPoint;
+    }
+
+    public ControlPoint getEndControlPoint() {
+        return endControlPoint;
+    }
+    
+    
+
     @Override
-    public void showDragPoints() {
-        if (start == null) {
+    public void showControlPoints() {
+        if (startControlPoint == null) {
             final Layer layer = getLayer();
-            start = new Rectangle(10, 10);
-            end = new Rectangle(10, 10);
-            start.setFillColor(ShapesUtils.LIGHT_BLUE);
-            end.setFillColor(ShapesUtils.LIGHT_BLUE);
-            createControlPoints(start, end, getLayer());
+            startControlPoint = new LineControlPointImpl(this, ControlPoint.CONTROL_START);
+            startControlPoint.initControlPoint(getLayer());
+            endControlPoint = new LineControlPointImpl(this, ControlPoint.CONTROL_END);
+            endControlPoint.initControlPoint( getLayer());
+            
 
             layer.draw();
         }
     }
 
     @Override
-    public void hideDragPoints() {
+    public void hideControlPoints() {
 
-        if (start != null) {
+        if (startControlPoint != null) {
             // can be null, afer the main Shape is dragged, and control points are forcibly removed
             Layer layer = getLayer();
 
-            layer.remove(start);
-            start = null;
+            layer.remove((LineControlPointImpl)startControlPoint);
+            startControlPoint = null;
 
-            layer.remove(end);
-            end = null;
+            layer.remove((LineControlPointImpl)endControlPoint);
+            endControlPoint = null;
 
             layer.draw();
         }
     }
 
-    private void createControlPoints(final Rectangle start, final Rectangle end, final Layer layer) {
-        Point2DArray array = getPoints();
-
-        start.setX(getX() + array.getPoint(0).getX() - 5);
-        start.setY(getY() + array.getPoint(0).getY() - 5);
-
-        start.addNodeDragStartHandler(new NodeDragStartHandler() {
-            public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
-                dragEventStartX = nodeDragStartEvent.getX();
-                dragEventStartY = nodeDragStartEvent.getY();
-                initialStartPointX = getPoints().getPoint(0).getX();
-                initialStartPointY = getPoints().getPoint(0).getY();
-            }
-        });
-
-        start.addNodeDragMoveHandler(new NodeDragMoveHandler() {
-            public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                beingResized = true;
-                double deltaX = nodeDragMoveEvent.getX() - dragEventStartX;
-                double deltaY = nodeDragMoveEvent.getY() - dragEventStartY;
-
-                Point2DArray array = getPoints();
-                array.getPoint(0).setX(initialStartPointX + deltaX);
-                array.getPoint(0).setY(initialStartPointY + deltaY);
-                
-                layer.draw();
-            }
-        });
-
-        start.addNodeDragEndHandler(new NodeDragEndHandler() {
-            public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                beingResized = false;
-                
-            }
-        });
-
-        end.setX(getX() + array.getPoint(1).getX() - 5);
-        end.setY(getY() + array.getPoint(1).getY() - 5);
-
-        end.addNodeDragStartHandler(new NodeDragStartHandler() {
-            public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
-                dragEventEndX = nodeDragStartEvent.getX();
-                dragEventEndY = nodeDragStartEvent.getY();
-                initialEndPointX = getPoints().getPoint(1).getX();
-                initialEndPointY = getPoints().getPoint(1).getY();
-                
-            }
-        });
-
-        end.addNodeDragMoveHandler(new NodeDragMoveHandler() {
-            public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                beingResized = true;
-                double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
-                double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
-                
-                
-                
-                Point2DArray array = getPoints();
-                array.getPoint(1).setX(initialEndPointX + deltaX);
-                array.getPoint(1).setY(initialEndPointY + deltaY);
-                
-                layer.draw();
-            }
-        });
-
-        end.addNodeDragEndHandler(new NodeDragEndHandler() {
-            public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                beingResized = false;
-                
-            }
-        });
-
-        start.setDraggable(true).setStrokeWidth(1)
-                .setStrokeColor(ColorName.BLACK);
-        end.setDraggable(true)
-                .setStrokeWidth(1)
-                .setStrokeColor(ColorName.BLACK);
-        layer.add(start);
-        layer.add(end);
-
-    }
+    
 
     public void showMagnetsPoints() {
         if (startMagnet == null) {
             final Layer layer = getLayer();
-            startMagnet = new Circle(5);
-            startMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
-                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
+            startMagnet = new LineMagnetImpl(this);
+           
+            startMagnet.placeMagnetPoints( layer, Magnet.MAGNET_START);
 
-                }
-            });
-            startMagnet.setFillColor(ColorName.YELLOW);
-            placeMagnetPoints(startMagnet, layer, MAGNET_START);
-
-            endMagnet = new Circle(5);
-            endMagnet.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
-                public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
-
-                }
-            });
-            endMagnet.setFillColor(ColorName.YELLOW);
-            placeMagnetPoints(endMagnet, layer, MAGNET_END);
+            endMagnet = new LineMagnetImpl(this);
+           
+            endMagnet.placeMagnetPoints(layer, Magnet.MAGNET_END);
 
             layer.draw();
         }
@@ -305,31 +210,15 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         if (startMagnet != null) {
             // can be null, afer the main Shape is dragged, and control points are forcibly removed
             Layer layer = getLayer();
-            layer.remove(startMagnet);
+            
+            layer.remove((LineMagnetImpl)startMagnet);
             startMagnet = null;
 
-            layer.remove(endMagnet);
+            layer.remove((LineMagnetImpl)endMagnet);
             endMagnet = null;
 
             layer.draw();
         }
-    }
-
-    private void placeMagnetPoints(Circle magnet, Layer layer, int control) {
-        Point2DArray points = getPoints();
-
-        switch (control) {
-            case MAGNET_START:
-                magnet.setX(getX() + points.getPoint(0).getX());
-                magnet.setY(getY() + points.getPoint(0).getY());
-                break;
-            case MAGNET_END:
-                magnet.setX(getX() + points.getPoint(1).getX());
-                magnet.setY(getY() + points.getPoint(1).getY());
-                break;
-
-        }
-        layer.add(magnet);
     }
 
     public boolean collidesWith(CollidableShape shape) {
@@ -405,41 +294,15 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         return beingDragged;
     }
 
+    public void setBeingResized(boolean beingResized) {
+        this.beingResized = beingResized;
+    }
+    
     public boolean isBeingResized() {
         return beingResized;
     }
 
-    public double getInitialStartPointX() {
-        return initialStartPointX;
-    }
-
-    public double getInitialStartPointY() {
-        return initialStartPointY;
-    }
-
-    public double getInitialEndPointX() {
-        return initialEndPointX;
-    }
-
-    public double getInitialEndPointY() {
-        return initialEndPointY;
-    }
-
-    public double getDragEventStartX() {
-        return dragEventStartX;
-    }
-
-    public double getDragEventStartY() {
-        return dragEventStartY;
-    }
-
-    public double getDragEventEndX() {
-        return dragEventEndX;
-    }
-
-    public double getDragEventEndY() {
-        return dragEventEndY;
-    }
+   
 
     public double getCurrentDragX() {
         return currentDragX;
@@ -449,8 +312,8 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         return currentDragY;
     }
 
-    public List<Shape> getMagnets() {
-        ArrayList<Shape> magnets = new ArrayList<Shape>(2);
+    public List<Magnet> getMagnets() {
+        ArrayList<Magnet> magnets = new ArrayList<Magnet>(2);
         magnets.add(startMagnet);
         magnets.add(endMagnet);
         return magnets;
