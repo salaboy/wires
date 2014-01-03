@@ -1,5 +1,8 @@
 package org.kie.wires.client.factoryLayers;
 
+import javax.enterprise.event.Event;
+
+import org.kie.wires.client.events.DrawnShapesEvent;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
@@ -20,25 +23,33 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
     }
 
-    public LayerRectangleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer) {
+    public LayerRectangleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer,
+            Event<DrawnShapesEvent> drawnShapesEvent) {
+        super(layer);
+        layerGroup = new LayerGroup();
         layers = lay;
-        this.drawBoundingBox(group, layer);
+        int positionLayer = listLayerGroup.size() + 1;
+        this.drawBoundingBox(group, layer, drawnShapesEvent, positionLayer);
+        listLayerGroup.put(listLayerGroup.size() + 1, layerGroup);
     }
 
     @Override
-    public void drawBoundingBox(Group group, Layer layer) {
+    public void drawBoundingBox(Group group, Layer layer, Event<DrawnShapesEvent> drawnShapesEvent, int positionLayer) {
         final Double x = this.getX() + 218;
         final Double y = this.getY() + 5;
-        super.createOptions(layer, x.intValue(), y.intValue());
-        this.addBoundingHandlers(super.createBoundingBox(group, layers), group);
+        super.createOptions(layer, x.intValue(), y.intValue(), drawnShapesEvent, positionLayer, group, layerGroup);
+        Rectangle bounding = super.createBoundingBox(group, layers);
+        this.addBoundingHandlers(bounding, group);
         this.addShapeHandlers(this.drawLayer(), group);
         group.add(super.createDescription(DESCRIPTION, layers));
+        layerGroup.setBounding(bounding);
     }
 
     @Override
     public Shape<Rectangle> drawLayer() {
         final Rectangle rectangle = new Rectangle(15, 15);
         this.setAttributes(rectangle, getX(), getY());
+        layerGroup.setShape(rectangle);
         return rectangle;
     }
 
