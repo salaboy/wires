@@ -1,26 +1,15 @@
 package org.kie.wires.client.canvas;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 
-import com.emitrom.lienzo.client.core.shape.GridLayer;
-import com.emitrom.lienzo.client.core.shape.IPrimitive;
-import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Shape;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RequiresResize;
-import java.util.List;
+import org.kie.wires.client.events.DrawnShapesEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.shapes.EditableLine;
-import org.kie.wires.client.shapes.EditableRectangle;
 import org.kie.wires.client.shapes.EditableShape;
 import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.kie.wires.client.shapes.collision.Magnet;
@@ -30,19 +19,35 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnOpen;
 
+import com.emitrom.lienzo.client.core.shape.GridLayer;
+import com.emitrom.lienzo.client.core.shape.IPrimitive;
+import com.emitrom.lienzo.client.core.shape.Layer;
+import com.emitrom.lienzo.client.core.shape.Line;
+import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.widget.LienzoPanel;
+import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RequiresResize;
+
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")
 public class CanvasScreen extends Composite implements RequiresResize {
 
     private LienzoPanel panel;
     private Layer layer;
-    private boolean shapeBeingDragged;
+    public static Map<Integer, Shape> drawnShapes;
+    public static int accountLayers;
 
     public CanvasScreen() {
     }
 
     @PostConstruct
     public void init() {
+        accountLayers = 0;
+        drawnShapes = new HashMap<Integer, Shape>();
         panel = new LienzoPanel(800, 600);
 
         initWidget(panel);
@@ -100,8 +105,10 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
+        accountLayers += 1;
         Shape shape = shapeAddEvent.getShape();
         shape.getLayer().remove(shape);
+        drawnShapes.put(accountLayers, shape);
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
         } else if (shapeAddEvent.getX() > panel.getAbsoluteLeft() + panel.getWidth() || shapeAddEvent.getY() > panel.getAbsoluteTop() + panel.getHeight()) {
@@ -217,6 +224,12 @@ public class CanvasScreen extends Composite implements RequiresResize {
             panel.setPixelSize(800, 600);
         }
         layer.draw();
+    }
+    
+    public void removeShape(@Observes DrawnShapesEvent drawnShapesEvent){
+        layer.remove(drawnShapes.get(drawnShapesEvent.getKeyDrawnShapes()));
+        layer.draw();
+        
     }
 
 }

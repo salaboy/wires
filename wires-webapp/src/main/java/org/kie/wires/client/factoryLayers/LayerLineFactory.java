@@ -1,5 +1,8 @@
 package org.kie.wires.client.factoryLayers;
 
+import javax.enterprise.event.Event;
+
+import org.kie.wires.client.events.DrawnShapesEvent;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.kie.wires.client.shapes.EditableLine;
 
@@ -18,25 +21,30 @@ public class LayerLineFactory extends LayerFactory<Line> {
     private static final String DESCRIPTION = "Line";
 
     private static int layers;
-    
 
     public LayerLineFactory() {
 
     }
 
-    public LayerLineFactory(Group group, LienzoPanel panel, Integer lay, Layer layer) {
+    public LayerLineFactory(Group group, LienzoPanel panel, Integer lay, Layer layer, Event<DrawnShapesEvent> drawnShapesEvent) {
+        super(layer);
+        layerGroup = new LayerGroup();
         layers = lay;
-        this.drawBoundingBox(group, layer);
+        int positionLayer = listLayerGroup.size() + 1;
+        this.drawBoundingBox(group, layer, drawnShapesEvent, positionLayer);
+        listLayerGroup.put(listLayerGroup.size() + 1, layerGroup);
     }
 
     @Override
-    public void drawBoundingBox(Group group, Layer layer) {
+    public void drawBoundingBox(Group group, Layer layer, Event<DrawnShapesEvent> drawnShapesEvent, int positionLayer) {
         final Double x = this.getX1() + 218;
         final Double y = this.getY1() + 5;
-        super.createOptions(layer, x.intValue(), y.intValue());
-        this.addBoundingHandlers(super.createBoundingBox(group, layers), group);
+        super.createOptions(layer, x.intValue(), y.intValue(), drawnShapesEvent, positionLayer, group, layerGroup);
+        Rectangle bounding = super.createBoundingBox(group, layers);
+        this.addBoundingHandlers(bounding, group);
         this.addShapeHandlers(this.drawLayer(), group);
         group.add(super.createDescription(DESCRIPTION, layers));
+        layerGroup.setBounding(bounding);
     }
 
     @Override
@@ -45,6 +53,7 @@ public class LayerLineFactory extends LayerFactory<Line> {
         line.setDragBounds(new DragBounds(150, 260, 150, 150));
         line.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
                 .setDraggable(false);
+        layerGroup.setShape(line);
         return line;
     }
 
@@ -92,6 +101,5 @@ public class LayerLineFactory extends LayerFactory<Line> {
     private double getY2() {
         return 20 + super.calculateY(layers);
     }
-    
 
 }

@@ -1,7 +1,15 @@
 package org.kie.wires.client.factoryLayers;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.enterprise.event.Event;
+
+import org.kie.wires.client.events.DrawnShapesEvent;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 
+import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.image.PictureLoadedHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
@@ -15,10 +23,11 @@ import com.google.gwt.core.client.GWT;
 public abstract class LayerFactory<T extends Shape<T>> {
 
     private static final int LAYERS_BY_ROW = 1;
-    
-    private ResourcesLayers resource = GWT.create( ResourcesLayers.class );
 
-    protected abstract void drawBoundingBox(Group group, Layer layer);
+    private ResourcesLayers resource = GWT.create(ResourcesLayers.class);
+
+    protected abstract void drawBoundingBox(Group group, Layer layer, Event<DrawnShapesEvent> drawnShapesEvent,
+            int positionLayer);
 
     protected abstract Shape<T> drawLayer();
 
@@ -27,6 +36,22 @@ public abstract class LayerFactory<T extends Shape<T>> {
     protected abstract NodeMouseDownHandler getNodeMouseDownEvent(final Group group);
 
     protected abstract void addBoundingHandlers(Rectangle boundingBox, Group group);
+
+    protected static Map<Integer, LayerGroup> listLayerGroup;
+
+    protected static Layer layer;
+
+    protected LayerGroup layerGroup;
+
+    public LayerFactory() {
+    }
+
+    public LayerFactory(Layer l) {
+        if (listLayerGroup == null) {
+            listLayerGroup = new HashMap<Integer, LayerGroup>();
+        }
+        layer = l;
+    }
 
     protected Rectangle createBoundingBox(Group group, int layers) {
         final Rectangle boundingBox = new Rectangle(ShapeFactoryUtil.WIDTH_BOUNDING_LAYER,
@@ -75,31 +100,54 @@ public abstract class LayerFactory<T extends Shape<T>> {
     protected Text createDescription(String description, int shapes) {
         Text text = new Text(description, ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION, ShapeFactoryUtil.FONT_SIZE_DESCRIPTION);
         text.setX(45).setY(this.getYText(shapes)).setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
+        layerGroup.setDescription(text);
         return text;
     }
-    
-    protected void createOptions(final Layer layer, final int x, final int y){
-        new Picture(resource.delete(), false).onLoad(new PictureLoadedHandler() {
-            @Override  
-            public void onPictureLoaded(Picture picture) {
-                picture.setX(x);
-                picture.setY(y);
-                layer.add(picture);
-                layer.draw();
-                  
-            }  
-        });  
-        
-        new Picture(resource.view(), false).onLoad(new PictureLoadedHandler() {
-            @Override  
+
+    protected void createOptions(final Layer layer, final int x, final int y, final Event<DrawnShapesEvent> drawnShapesEvent,
+            final int positionLayer, final Group group, final LayerGroup layerGroup) {
+        new Picture(resource.delete(), true).onLoad(new PictureLoadedHandler() {
+            @Override
+            public void onPictureLoaded(Picture deletePicture) {
+                deletePicture.setX(x);
+                deletePicture.setY(y);
+                layer.add(deletePicture);
+
+                deletePicture.addNodeMouseClickHandler(new NodeMouseClickHandler() {
+                    @Override
+                    public void onNodeMouseClick(NodeMouseClickEvent event) {
+                        DrawnShapesEvent ev = new DrawnShapesEvent(positionLayer);
+                        ev.setListLayerGroup(listLayerGroup);
+                        drawnShapesEvent.fire(ev);
+                    }
+                });
+                layerGroup.setDeleteButton(deletePicture);
+
+            }
+        });
+
+        new Picture(resource.view(), true).onLoad(new PictureLoadedHandler() {
+            @Override
             public void onPictureLoaded(Picture picture) {
                 picture.setX(x - 19);
                 picture.setY(y);
                 layer.add(picture);
+
+                // picture.addNodeMouseClickHandler(new NodeMouseClickHandler()
+                // {
+                // @Override
+                // public void onNodeMouseClick(NodeMouseClickEvent event) {
+                // GWT.log("view ");
+                // }
+                // });
+                layerGroup.setViewButton(picture);
+
                 layer.draw();
-                  
-            }  
-        });  
+                // group.add(picture);
+
+            }
+        });
+
     }
 
 }
