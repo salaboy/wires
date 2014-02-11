@@ -46,12 +46,19 @@ with the DefaultBlockingServlet. If you change this setting, make a backup of th
 profile in pom.xml to use that. -->
         <servlet-name>ErraiServlet</servlet-name>
         <servlet-class>org.jboss.errai.bus.server.servlet.DefaultBlockingServlet</servlet-class>
-        <init-param>
+        <!-- <init-param>
             <param-name>service-locator</param-name>
             <param-value>org.jboss.errai.cdi.server.CDIServiceLocator</param-value>
-        </init-param>
+        </init-param> -->
+        <init-param>
+    		<param-name>auto-discover-services</param-name>
+    		<param-value>true</param-value>
+    	</init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    
+    
     <servlet-mapping>
         <servlet-name>ErraiServlet</servlet-name>
         <url-pattern>*.erraiBus</url-pattern>
@@ -64,15 +71,28 @@ profile in pom.xml to use that. -->
         <resource-env-ref-name>BeanManager</resource-env-ref-name>
         <resource-env-ref-type>javax.enterprise.inject.spi.BeanManager</resource-env-ref-type>
     </resource-env-ref>
+    
+    
     <resource-env-ref>
+    <description>Object factory for the Errai Service</description>
+    <resource-env-ref-name>ErraiService</resource-env-ref-name>
+    <resource-env-ref-type>org.jboss.errai.bus.server.service.ErraiService</resource-env-ref-type>
+  </resource-env-ref>
+
+  <context-param>
+    <param-name>errai.properties</param-name>
+    <param-value>/WEB-INF/errai.properties</param-value>
+  </context-param>
+    
+    <!-- <resource-env-ref>
         <description>Object factory for the Errai Service</description>
         <resource-env-ref-name>ErraiService</resource-env-ref-name>
         <resource-env-ref-type>org.jboss.errai.bus.server.service.ErraiService</resource-env-ref-type>
-    </resource-env-ref>
-    <context-param>
+    </resource-env-ref> -->
+    <!-- <context-param>
         <param-name>errai.properties</param-name>
         <param-value>/WEB-INF/errai.properties</param-value>
-    </context-param>
+    </context-param> -->
     <context-param>
         <param-name>login.config</param-name>
         <param-value>/WEB-INF/login.config</param-value>

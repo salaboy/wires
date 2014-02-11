@@ -26,11 +26,11 @@ public class LayerLineFactory extends LayerFactory<Line> {
 
     public LayerLineFactory(Group group, LienzoPanel panel, Integer lay, Layer layer) {
         layers = lay;
-        this.drawBoundingBox(group, layer);
+        this.drawBoundingBox(group, layer, null);
     }
 
     @Override
-    public void drawBoundingBox(Group group, Layer layer) {
+    public void drawBoundingBox(Group group, Layer layer, String template) {
         final Double x = this.getX1() + 218;
         final Double y = this.getY1() + 5;
         super.createOptions(layer, x.intValue(), y.intValue());

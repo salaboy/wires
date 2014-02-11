@@ -27,6 +27,8 @@ public class WiresMainPerspective {
     private static final String WIRES_LAYERS_SCREEN = "WiresLayersScreen";
     private static final String WIRES_PALETTE_SCREEN = "WiresPaletteScreen";
     private static final String WIRES_CANVAS_SCREEN = "WiresCanvasScreen";
+    private static final String WIRES_TEMPLATE_SCREEN = "WiresTemplateScreen";
+    
 
     private static final int MIN_WIDTH_PANEL = 200;
     private static final int WIDTH_PANEL = 300;
@@ -38,7 +40,8 @@ public class WiresMainPerspective {
 
         perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(WIRES_CANVAS_SCREEN)));
 
-        this.createPanel(perspective, Position.EAST, WIRES_LAYERS_SCREEN);
+        this.createPanel1(perspective, Position.EAST);
+        //this.createPanel1(perspective, Position.EAST, WIRES_TEMPLATE_SCREEN);
         this.createPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
 
         perspective.setTransient(true);
@@ -52,6 +55,32 @@ public class WiresMainPerspective {
         panel.setMinWidth(MIN_WIDTH_PANEL);
         panel.addPart(new PartDefinitionImpl(new DefaultPlaceRequest(identifierPanel)));
         p.getRoot().insertChild(position, panel);
+    }
+    
+    private void createPanel1(PerspectiveDefinition p, Position position) {
+        final PanelDefinition panel = new PanelDefinitionImpl(PanelType.MULTI_LIST);
+        panel.setWidth(WIDTH_PANEL);
+        panel.setMinWidth(MIN_WIDTH_PANEL);
+        panel.setHeight(380);
+        panel.setMinHeight(250);
+        panel.addPart(new PartDefinitionImpl(new DefaultPlaceRequest(WIRES_TEMPLATE_SCREEN)));
+        
+        
+        final PanelDefinition panel1 = new PanelDefinitionImpl(PanelType.MULTI_LIST);
+        panel1.setWidth(WIDTH_PANEL);
+        panel1.setMinWidth(MIN_WIDTH_PANEL);
+        panel1.setHeight(180);
+        panel1.setMinHeight(150);
+        panel1.appendChild(Position.SOUTH, panel);
+        panel1.addPart(new PartDefinitionImpl(new DefaultPlaceRequest(WIRES_LAYERS_SCREEN)));
+        p.getRoot().insertChild(position, panel1);
+        
+        
+        
+        
+        
+        
+        
     }
 
 }

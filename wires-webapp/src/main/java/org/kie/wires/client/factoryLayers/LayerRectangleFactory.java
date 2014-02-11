@@ -1,7 +1,10 @@
 package org.kie.wires.client.factoryLayers;
 
+import org.jboss.errai.common.client.api.Caller;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 
+import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
@@ -9,6 +12,7 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
+import com.hernsys.bayesian.client.entry.BayesianService;
 
 public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
@@ -16,23 +20,48 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
     private static int layers;
 
+    private Caller<BayesianService> bayesianService;
+
+    private LienzoPanel panel;
+
     public LayerRectangleFactory() {
 
     }
 
-    public LayerRectangleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer) {
+    public LayerRectangleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer, String template,
+            Caller<BayesianService> bayesianService) {
         layers = lay;
-        this.drawBoundingBox(group, layer);
+        this.panel = panel;
+        this.bayesianService = bayesianService;
+        this.drawBoundingBox(group, layer, template);
     }
 
     @Override
-    public void drawBoundingBox(Group group, Layer layer) {
+    public void drawBoundingBox(Group group, Layer layer, String template) {
         final Double x = this.getX() + 218;
         final Double y = this.getY() + 5;
-        super.createOptions(layer, x.intValue(), y.intValue());
         this.addBoundingHandlers(super.createBoundingBox(group, layers), group);
-        this.addShapeHandlers(this.drawLayer(), group);
-        group.add(super.createDescription(DESCRIPTION, layers));
+        String text = DESCRIPTION;
+        if (template != null) {
+            text = template;
+            this.addShapeClick(this.drawLayer(), group, template);
+        } else {
+            super.createOptions(layer, x.intValue(), y.intValue());
+            this.addShapeHandlers(this.drawLayer(), group);
+        }
+        group.add(super.createDescription(text, layers));
+    }
+
+    private void addShapeClick(Shape<Rectangle> shape, final Group group, final String xml03File) {
+        shape.addNodeMouseClickHandler(new NodeMouseClickHandler() {
+
+            @Override
+            public void onNodeMouseClick(NodeMouseClickEvent event) {
+                BayesianFactory bayesianFactory = new BayesianFactory(panel, bayesianService);
+                bayesianFactory.init(xml03File);
+            }
+        });
+        group.add(shape);
     }
 
     @Override

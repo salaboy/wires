@@ -36,15 +36,16 @@ public class PaletteScreen extends Composite implements RequiresResize {
 
     @UiField
     public SimplePanel connectors;
-
+    
     @Inject
     private Event<ShapeAddEvent> shapeAddEvent;
-
+    
 
     @PostConstruct
     public void init() {
         super.initWidget(uiBinder.createAndBindUi(this));
         this.drawStencil();
+        
     }
 
     @WorkbenchPartTitle
