@@ -31,6 +31,7 @@ public class LineFactory extends ShapeFactory<Line> {
         shapes = shapesByCategory.get(this.getCategory());
         this.drawBoundingBox(group);
         // layersScreen.initDrawLayer(ShapeType.LINE);
+        
     }
 
     @Override

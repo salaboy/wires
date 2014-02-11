@@ -18,7 +18,7 @@ public abstract class LayerFactory<T extends Shape<T>> {
     
     private ResourcesLayers resource = GWT.create( ResourcesLayers.class );
 
-    protected abstract void drawBoundingBox(Group group, Layer layer);
+    protected abstract void drawBoundingBox(Group group, Layer layer, String template);
 
     protected abstract Shape<T> drawLayer();
 
