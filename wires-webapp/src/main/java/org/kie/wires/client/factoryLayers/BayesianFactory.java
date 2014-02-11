@@ -7,6 +7,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.kie.wires.client.shapes.EditableRectangle;
+import org.kie.wires.client.utils.BayesianUtils;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -41,21 +42,13 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
     /* progress bar */
     private Timer timer;
     private boolean infinite;
-    private static int substrateWidth = 300;
-    private static int substrateHeight = 34;
+    
     private String substrateColor = "#666";
-    private LinearGradient substrateGradient;
 
     private int progressWidth = 15;
-    private int progressHeight = 34;
-    private LinearGradient progressGradient;
-
-    private Text progressPercentage;
+    
 
     private Caller<BayesianService> bayesianService;
-
-    private static int positionX_base = 293;
-    private static int positionY_base = 50;
 
     private static List<LienzoPanel> components;
     private static List<LienzoPanel> progressComponents;
@@ -65,18 +58,18 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
         this.panel = panel;
         this.bayesianService = bayesianService;
         infinite = true;
-        if(components == null){
+        if (components == null) {
             components = new ArrayList<LienzoPanel>();
         }
-        if(progressComponents==null){
+        if (progressComponents == null) {
             progressComponents = new ArrayList<LienzoPanel>();
         }
-        
+
     }
 
     public void init(String xml03File) {
-        final int positionX = (int) (positionX_base + 400);
-        final int positionY = (int) (positionY_base + 400);
+        final int positionX = (int) (BayesianUtils.positionX_base + 400);
+        final int positionY = (int) (BayesianUtils.positionY_base + 400);
         clearComponents(components);
         clearComponents(progressComponents);
         drawProgressBar(positionX, positionY);
@@ -102,25 +95,25 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
 
     }
 
-    
-
     private void drawProgressBar(final int positionX, final int positionY) {
-        progressPercentage = new Text("Loading...", "Lucida Console", 12).setFillColor(ColorName.WHITE.getValue())
+        final int substrateWidth = 300;
+        final int progressHeight = 34;
+        final Text progressPercentage = new Text("Loading...", "Lucida Console", 12).setFillColor(ColorName.WHITE.getValue())
                 .setStrokeColor(substrateColor).setTextBaseLine(TextBaseLine.MIDDLE).setTextAlign(TextAlign.CENTER);
-        
-        
-        drawProgressBarComponent(Color.rgbToBrowserHexColor(197, 216, 214), positionX, positionY, substrateWidth, substrateHeight, 200, Color.rgbToBrowserHexColor(197, 216, 214), false);
+
+        drawProgressBarComponent(Color.rgbToBrowserHexColor(197, 216, 214), positionX, positionY, substrateWidth,
+                BayesianUtils.substrateHeight, 200, Color.rgbToBrowserHexColor(197, 216, 214), false);
         timer = new Timer() {
             @Override
             public void run() {
                 progressWidth++;
-                GWT.log("progressWidth "  + progressWidth);
-                if((progressWidth > substrateWidth - 4)){
+                GWT.log("progressWidth " + progressWidth);
+                if ((progressWidth > substrateWidth - 4)) {
                     timer.cancel();
-                }else if (!infinite) {
+                } else if (!infinite) {
                     timer.cancel();
                     clearComponents(progressComponents);
-                }else{
+                } else {
                     GWT.log("***entro else");
                     progressPercentage.setText("Loading...");
                     progressPercentage.setX(progressPercentage.getX() + 140);
@@ -133,17 +126,16 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
                     floatingLayer.draw();
                     getFloatingStyle(floatingPanel, positionX, positionY, 120);
                     RootPanel.get().add(floatingPanel);
-                    
-                    
-                    
-                    drawProgressBarComponent(Color.rgbToBrowserHexColor(102, 183, 176), positionX, positionY, progressWidth, progressHeight, 300, Color.rgbToBrowserHexColor(102, 183, 176), true);
-                }    
-                
+
+                    drawProgressBarComponent(Color.rgbToBrowserHexColor(102, 183, 176), positionX, positionY, progressWidth,
+                            progressHeight, 300, Color.rgbToBrowserHexColor(102, 183, 176), true);
+                }
+
             }
         };
         timer.scheduleRepeating(1);
     }
-    
+
     private void drawText(String color, int positionX, int positionY, int width, int height, int zindex, String borderColor,
             String description, int fontSize) {
         final Text text = new Text(description, "Times", fontSize);
@@ -161,11 +153,11 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
 
     private void drawNode(BayesVariable node) {
         int fontSize = 10;
-        String[][] colors = getNodeColors();
+        String[][] colors = BayesianUtils.getNodeColors();
         int widthNode = 110;
         double position[][] = node.getPosition();
-        int positionX = (int) (positionX_base + Math.round(position[0][0]));
-        int positionY = (int) (positionY_base + Math.round(position[0][1]));
+        int positionX = (int) (BayesianUtils.positionX_base + Math.round(position[0][0]));
+        int positionY = (int) (BayesianUtils.positionY_base + Math.round(position[0][1]));
         String borderColor = colors[0][0];
 
         // header
@@ -201,26 +193,23 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
         floatingLayer.add(component);
         floatingPanel.add(floatingLayer);
         floatingLayer.draw();
-        
+
         getFloatingStyle(floatingPanel, positionX, positionY, zindex);
         RootPanel.get().add(floatingPanel);
     }
-    
-    private void drawProgressBarComponent(String color, int positionX, int positionY, int width, int height, int zindex, String borderColor, boolean progress) {
+
+    private void drawProgressBarComponent(String color, int positionX, int positionY, int width, int height, int zindex,
+            String borderColor, boolean progress) {
         final EditableRectangle component = new EditableRectangle(width, height);
-        if(progress){
-            progressGradient = new LinearGradient(0, -50, 0, 50);
+        if (progress) {
+            LinearGradient progressGradient = new LinearGradient(0, -50, 0, 50);
             progressGradient.addColorStop(0.5, "#4DA4F3");
             progressGradient.addColorStop(0.8, "#ADD9FF");
             progressGradient.addColorStop(1, "#9ED1FF");
             component.setFillGradient(progressGradient);
-        }else{
-            substrateGradient = new LinearGradient(0, substrateHeight, 0, 0);
-            substrateGradient.addColorStop(0.4, "rgba(255,255,255, 0.1)");
-            substrateGradient.addColorStop(0.6, "rgba(255,255,255, 0.7)");
-            substrateGradient.addColorStop(0.9, "rgba(255,255,255,0.4)");
-            substrateGradient.addColorStop(1, "rgba(189,189,189,1)");
-            component.setFillGradient(substrateGradient).setShadow(new Shadow(substrateColor, 5, 3, 3)).setStrokeColor(substrateColor).setStrokeWidth(1);
+        } else {
+            component.setFillGradient(BayesianUtils.getSubstrateGradient()).setShadow(new Shadow(substrateColor, 5, 3, 3))
+                    .setStrokeColor(substrateColor).setStrokeWidth(1);
         }
         component.setX(getFloatingX()).setY(getFloatingY()).setDraggable(false);
         final Layer floatingLayer = new Layer();
@@ -231,7 +220,7 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
         floatingLayer.add(component);
         floatingPanel.add(floatingLayer);
         floatingLayer.draw();
-        
+
         getFloatingStyle(floatingPanel, positionX, positionY, zindex);
         RootPanel.get().add(floatingPanel);
     }
@@ -243,8 +232,8 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
         int height = 8;
         int zindex = 120;
         int positionX, positionY, widthFill;
-        positionX = (int) (positionX_base + Math.round(position[0][0])) + 45;
-        positionY = (int) (positionY_base + Math.round(position[0][1])) + 20;
+        positionX = (int) (BayesianUtils.positionX_base + Math.round(position[0][0])) + 45;
+        positionY = (int) (BayesianUtils.positionY_base + Math.round(position[0][1])) + 20;
         String borderColor = fillColor;
         for (int i = 0; i < outcomes.length; i++) {
             // Porcentual bar
@@ -300,52 +289,6 @@ public class BayesianFactory /* extends ShapeFactory<Rectangle> */{
                 .setFillColor(fillColor).setDraggable(false);
 
     }
-
-    private String[][] getNodeColors() {
-        double rand = Math.random();
-        String colors[][] = new String[2][2];
-        String headerColor = Color.rgbToBrowserHexColor(255, 0, 0);
-        String fillColor = Color.rgbToBrowserHexColor(255, 0, 0);
-        if (rand < 0.1) {
-            headerColor = Color.rgbToBrowserHexColor(102, 183, 176);
-            fillColor = Color.rgbToBrowserHexColor(197, 216, 214);
-
-        } else if (rand > 0.1 && rand < 0.2) {
-            headerColor = Color.rgbToBrowserHexColor(179, 99, 150);
-            fillColor = Color.rgbToBrowserHexColor(213, 186, 216);
-
-        } else if (rand > 0.2 && rand < 0.3) {
-            headerColor = Color.rgbToBrowserHexColor(120, 101, 186);
-            fillColor = Color.rgbToBrowserHexColor(210, 204, 229);
-
-        } else if (rand > 0.3 && rand < 0.4) {
-            headerColor = Color.rgbToBrowserHexColor(169, 181, 99);
-            fillColor = Color.rgbToBrowserHexColor(221, 224, 205);
-
-        } else if (rand > 0.4 && rand < 0.5) {
-            headerColor = Color.rgbToBrowserHexColor(89, 177, 140);
-            fillColor = Color.rgbToBrowserHexColor(182, 199, 191);
-
-        } else if (rand > 0.5 && rand < 0.6) {
-            headerColor = Color.rgbToBrowserHexColor(186, 183, 102);
-            fillColor = Color.rgbToBrowserHexColor(222, 219, 202);
-
-        } else if (rand > 0.6 && rand < 0.7) {
-            headerColor = Color.rgbToBrowserHexColor(191, 102, 104);
-            fillColor = Color.rgbToBrowserHexColor(230, 210, 211);
-
-        } else if (rand > 0.7) {
-            headerColor = Color.rgbToBrowserHexColor(108, 156, 218);
-            fillColor = Color.rgbToBrowserHexColor(187, 194, 204);
-
-        }
-        // String colors[][] = {headerColor, fillColor};
-        colors[0][0] = fillColor;
-        colors[0][1] = headerColor;
-        return colors;
-
-    }
-
 
     private double getFloatingX() {
         return 0;
