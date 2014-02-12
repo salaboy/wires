@@ -34,8 +34,8 @@ public class FileNavigatorContext extends Composite {
     @Inject
     private FileNavigator fileNavigator;
 
-    @Inject
-    private org.uberfire.client.workbench.context.WorkbenchContext context;
+//    @Inject
+//    private org.uberfire.client.workbench.context.WorkbenchContext context;
 
     @UiField
     SimplePanel container;

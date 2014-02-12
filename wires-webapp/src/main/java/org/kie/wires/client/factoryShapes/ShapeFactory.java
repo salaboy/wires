@@ -37,7 +37,8 @@ public abstract class ShapeFactory<T extends Shape<T>> {
     protected LienzoPanel panel;
 
     protected Event<ShapeAddEvent> shapeAddEvent;
-
+    
+    
     protected abstract void drawBoundingBox(Group group);
 
     protected abstract Shape<T> drawShape();
@@ -62,7 +63,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return boundingBox;
     }
 
-    protected void setFloatingPanel(final Shape<T> floatingShape, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
+    protected void setFloatingPanel(final Shape<?> floatingShape, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
         final Layer floatingLayer = new Layer();
         final LienzoPanel floatingPanel = new LienzoPanel(width, height);
         floatingLayer.add(floatingShape);
@@ -73,7 +74,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         setFloatingHandlers(style, floatingPanel, floatingShape);
     }
     
-    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final Shape<T> floatingShape){
+    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final Shape<?> floatingShape){
         final HandlerRegistration[] handlerRegs = new HandlerRegistration[2];
         handlerRegs[0] = RootPanel.get().addDomHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent mouseMoveEvent) {

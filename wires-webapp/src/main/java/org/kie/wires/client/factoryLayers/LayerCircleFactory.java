@@ -24,12 +24,12 @@ public class LayerCircleFactory extends LayerFactory<Circle> {
     }
 
     public LayerCircleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer) {
+    	this.drawBoundingBox(group, layer, null);
         layers = lay;
-        this.drawBoundingBox(group, layer);
     }
 
     @Override
-    public void drawBoundingBox(Group group, Layer layer) {
+    public void drawBoundingBox(Group group, Layer layer, String template) {
         final Double x = this.getX() + 212;
         final Double y = this.getY() - 2;
         super.createOptions(layer, x.intValue(), y.intValue());

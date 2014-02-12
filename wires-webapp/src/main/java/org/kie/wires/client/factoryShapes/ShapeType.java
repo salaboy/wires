@@ -11,6 +11,7 @@ public enum ShapeType {
     RECTANGLE(ShapeCategory.SHAPES);
     
     
+    
 
     private ShapeType(ShapeCategory category) {
         this.category = category;
