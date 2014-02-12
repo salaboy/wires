@@ -1,26 +1,16 @@
 package org.kie.wires.client.canvas;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
-import com.emitrom.lienzo.client.core.shape.GridLayer;
-import com.emitrom.lienzo.client.core.shape.IPrimitive;
-import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Shape;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RequiresResize;
-import java.util.List;
+import org.jboss.errai.common.client.api.Caller;
+import org.kie.wires.client.events.BayesianEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.shapes.EditableLine;
-import org.kie.wires.client.shapes.EditableRectangle;
+import org.kie.wires.client.factoryLayers.BayesianFactory;
 import org.kie.wires.client.shapes.EditableShape;
 import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.kie.wires.client.shapes.collision.Magnet;
@@ -30,6 +20,21 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnOpen;
 
+import com.emitrom.lienzo.client.core.shape.GridLayer;
+import com.emitrom.lienzo.client.core.shape.Group;
+import com.emitrom.lienzo.client.core.shape.IPrimitive;
+import com.emitrom.lienzo.client.core.shape.Layer;
+import com.emitrom.lienzo.client.core.shape.Line;
+import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.widget.LienzoPanel;
+import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RequiresResize;
+import com.hernsys.bayesian.client.entry.BayesianService;
+
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")
 public class CanvasScreen extends Composite implements RequiresResize {
@@ -37,6 +42,11 @@ public class CanvasScreen extends Composite implements RequiresResize {
     private LienzoPanel panel;
     private Layer layer;
     private boolean shapeBeingDragged;
+    private Group group;
+    private static final int X = 0;
+    private static final int Y = 5;
+    @Inject
+    private Caller<BayesianService> bayesianService;        
 
     public CanvasScreen() {
     }
@@ -47,8 +57,10 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
         initWidget(panel);
 
-        Line line1 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLUE).setAlpha(0.5);  // primary line
-        Line line2 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.GREEN).setAlpha(0.5); // secondary line
+        Line line1 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLUE).setAlpha(0.5); // primary
+                                                                                        // line
+        Line line2 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.GREEN).setAlpha(0.5); // secondary
+                                                                                         // line
         line2.setDashArray(2, 2); // the secondary lines are dashed lines
 
         GridLayer gridLayer = new GridLayer(100, line1, 25, line2);
@@ -59,19 +71,23 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
         panel.add(layer);
 
-//        panel.addMouseDownHandler(new MouseDownHandler() {
-//
-//            public void onMouseDown(MouseDownEvent event) {
-//                shapeBeingDragged = true;
-//            }
-//        });
-//
-//        panel.addMouseUpHandler(new MouseUpHandler() {
-//
-//            public void onMouseUp(MouseUpEvent event) {
-//                shapeBeingDragged = false;
-//            }
-//        });
+        group = new Group();
+        group.setX(X).setY(Y);
+        layer.add(group);
+
+        // panel.addMouseDownHandler(new MouseDownHandler() {
+        //
+        // public void onMouseDown(MouseDownEvent event) {
+        // shapeBeingDragged = true;
+        // }
+        // });
+        //
+        // panel.addMouseUpHandler(new MouseUpHandler() {
+        //
+        // public void onMouseUp(MouseUpEvent event) {
+        // shapeBeingDragged = false;
+        // }
+        // });
         panel.addMouseMoveHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent event) {
 
@@ -104,7 +120,8 @@ public class CanvasScreen extends Composite implements RequiresResize {
         shape.getLayer().remove(shape);
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
-        } else if (shapeAddEvent.getX() > panel.getAbsoluteLeft() + panel.getWidth() || shapeAddEvent.getY() > panel.getAbsoluteTop() + panel.getHeight()) {
+        } else if (shapeAddEvent.getX() > panel.getAbsoluteLeft() + panel.getWidth()
+                || shapeAddEvent.getY() > panel.getAbsoluteTop() + panel.getHeight()) {
             return;
         }
         int x = shapeAddEvent.getX() - panel.getAbsoluteLeft();
@@ -130,7 +147,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
     public void detectCollisions(MouseMoveEvent event) {
         EditableShape shapeActive = null;
-        //if (shapeBeingDragged) {
+        // if (shapeBeingDragged) {
 
         for (IPrimitive<?> iPrimitive : layer) {
             if (iPrimitive instanceof EditableShape) {
@@ -166,38 +183,42 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
                         if (selectedMagnet != null) {
                             selectedMagnet.setMagnetActive(true);
-//                            if(shapeActive instanceof EditableLine){
-//                                selectedMagnet.attachControlPoint(((EditableLine) shapeActive).getStartControlPoint());
-//                            }
+                            // if(shapeActive instanceof EditableLine){
+                            // selectedMagnet.attachControlPoint(((EditableLine)
+                            // shapeActive).getStartControlPoint());
+                            // }
 
-                            //shapeActive.showMagnetsPoints();
-//                            List<Shape> magnets2 = shapeActive.getMagnets();
-//
-//                            finalDistance = 1000;
-//                            Shape selectedMagnet2 = null;
-//                            for (Shape magnet : magnets2) {
-//                                double deltaX = selectedMagnet.getX() - magnet.getX();
-//                                double deltaY = selectedMagnet.getY() - magnet.getY();
-//                                double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-//
-//                                if (finalDistance > distance) {
-//                                    finalDistance = distance;
-//                                    selectedMagnet2 = magnet;
-//                                }
-//                                magnet.setScale(1);
-//
-//                            }
-//                            if (selectedMagnet2 != null) {
-//                                selectedMagnet2.setFillColor(ColorName.GREEN);
-//                                selectedMagnet2.setScale(2);
-//                                selectedMagnet2.setAlpha(0.5);
-//                            }
+                            // shapeActive.showMagnetsPoints();
+                            // List<Shape> magnets2 = shapeActive.getMagnets();
+                            //
+                            // finalDistance = 1000;
+                            // Shape selectedMagnet2 = null;
+                            // for (Shape magnet : magnets2) {
+                            // double deltaX = selectedMagnet.getX() -
+                            // magnet.getX();
+                            // double deltaY = selectedMagnet.getY() -
+                            // magnet.getY();
+                            // double distance = Math.sqrt(Math.pow(deltaX, 2) +
+                            // Math.pow(deltaY, 2));
+                            //
+                            // if (finalDistance > distance) {
+                            // finalDistance = distance;
+                            // selectedMagnet2 = magnet;
+                            // }
+                            // magnet.setScale(1);
+                            //
+                            // }
+                            // if (selectedMagnet2 != null) {
+                            // selectedMagnet2.setFillColor(ColorName.GREEN);
+                            // selectedMagnet2.setScale(2);
+                            // selectedMagnet2.setAlpha(0.5);
+                            // }
 
                         }
 
                     } else {
-                         ((StickableShape) iPrimitive).hideMagnetPoints();
-                       
+                        ((StickableShape) iPrimitive).hideMagnetPoints();
+
                     }
                 }
             }
@@ -217,6 +238,11 @@ public class CanvasScreen extends Composite implements RequiresResize {
             panel.setPixelSize(800, 600);
         }
         layer.draw();
+    }
+
+    public void addNewPanel(@Observes BayesianEvent event) {
+        group.removeAll();
+        new BayesianFactory(group, panel, bayesianService, event.getTemplate(), layer);
     }
 
 }

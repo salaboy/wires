@@ -1,6 +1,8 @@
 package org.kie.wires.client.factoryLayers;
 
-import org.jboss.errai.common.client.api.Caller;
+import javax.enterprise.event.Event;
+
+import org.kie.wires.client.events.BayesianEvent;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
@@ -11,8 +13,6 @@ import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.hernsys.bayesian.client.entry.BayesianService;
 
 public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
@@ -20,19 +20,15 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
     private static int layers;
 
-    private Caller<BayesianService> bayesianService;
-
-    private LienzoPanel panel;
+    private Event<BayesianEvent> bayesianEvent;
 
     public LayerRectangleFactory() {
 
     }
 
-    public LayerRectangleFactory(Group group, LienzoPanel panel, Integer lay, Layer layer, String template,
-            Caller<BayesianService> bayesianService) {
+    public LayerRectangleFactory(Group group, Integer lay, Layer layer, String template, Event<BayesianEvent> bayesianEvent) {
         layers = lay;
-        this.panel = panel;
-        this.bayesianService = bayesianService;
+        this.bayesianEvent = bayesianEvent;
         this.drawBoundingBox(group, layer, template);
     }
 
@@ -57,8 +53,7 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
             @Override
             public void onNodeMouseClick(NodeMouseClickEvent event) {
-                BayesianFactory bayesianFactory = new BayesianFactory(panel, bayesianService);
-                bayesianFactory.init(xml03File);
+                bayesianEvent.fire(new BayesianEvent(xml03File));
             }
         });
         group.add(shape);
