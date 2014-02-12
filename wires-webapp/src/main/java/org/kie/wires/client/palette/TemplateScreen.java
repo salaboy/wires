@@ -2,9 +2,10 @@ package org.kie.wires.client.palette;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.jboss.errai.common.client.api.Caller;
+import org.kie.wires.client.events.BayesianEvent;
 import org.kie.wires.client.factoryLayers.LayerBuilder;
 import org.kie.wires.client.factoryShapes.ShapeCategory;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
@@ -25,13 +26,12 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.hernsys.bayesian.client.entry.BayesianService;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresTemplateScreen")
 public class TemplateScreen extends Composite implements RequiresResize {
-	
-	interface ViewBinder extends UiBinder<Widget, TemplateScreen> {
+
+    interface ViewBinder extends UiBinder<Widget, TemplateScreen> {
 
     }
 
@@ -49,17 +49,15 @@ public class TemplateScreen extends Composite implements RequiresResize {
     private static final int X = 0;
 
     private static final int Y = 5;
-    
+
     public static int accountLayers;
-    
+
     @Inject
-    private Caller<BayesianService> bayesianServices;
-    
-    
+    private Event<BayesianEvent> bayesianEvent;
 
     @PostConstruct
     public void init() {
-    	accountLayers = 0;
+        accountLayers = 0;
         super.initWidget(uiBinder.createAndBindUi(this));
         panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL, ShapeFactoryUtil.HEIGHT_PANEL);
         layer = new Layer();
@@ -88,29 +86,30 @@ public class TemplateScreen extends Composite implements RequiresResize {
         int width = getParent().getOffsetWidth();
         super.setPixelSize(width, height);
     }
-    
+
     private void drawStencil() {
         newAccordion(templates, ShapeCategory.BAYESIAN);
     }
-    
+
     private void newAccordion(SimplePanel simplePanel, ShapeCategory category) {
-    	accountLayers += 1;
-    	final Shape<Rectangle> rectangle = new Rectangle(10, 10);
-    	rectangle.setX(0).setY(5).setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
-        .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
-        .setDraggable(false);
-    	new LayerBuilder(group, rectangle, panel, layer, accountLayers, "dog-problem.xml03", bayesianServices);
-    	
-    	accountLayers += 1;
-    	new LayerBuilder(group, rectangle, panel, layer, accountLayers, "cancer.xml03", bayesianServices);
-    	
+        final Shape<Rectangle> rectangle = new Rectangle(10, 10);
+        rectangle.setX(X).setY(Y).setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
+                .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
+                .setDraggable(false);
+        newBayesianExample(rectangle, "dog-problem.xml03");
+        newBayesianExample(rectangle, "alarm.xml03");
+        newBayesianExample(rectangle, "cancer.xml03");
+        newBayesianExample(rectangle, "asia.xml03");
+        newBayesianExample(rectangle, "car-starts.xml03");
+        newBayesianExample(rectangle, "elimbel2.xml03");
+        newBayesianExample(rectangle, "hailfinder25.xml03");
+        newBayesianExample(rectangle, "john-mary-call.xml03");
         layer.draw();
     }
 
-//    public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
-//        new LayerBuilder(group, shapeAddEvent.getShape(), panel, layer, accountLayers);
-//        layer.draw();
-//    }
-
+    private void newBayesianExample(Shape<Rectangle> rectangle, String fileExample) {
+        accountLayers += 1;
+        new LayerBuilder(group, rectangle, panel, layer, accountLayers, fileExample, bayesianEvent);
+    }
 
 }
