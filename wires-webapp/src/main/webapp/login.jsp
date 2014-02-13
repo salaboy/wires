@@ -146,7 +146,7 @@
   </div>
 
   <div id="login-content">
-    <form action="j_security_check" method="post">
+    <form action="uf_security_check" method="post">
       <p>
         <label>Username</label>
         <input value="" name="uf_username" class="text-input" type="text"/>
