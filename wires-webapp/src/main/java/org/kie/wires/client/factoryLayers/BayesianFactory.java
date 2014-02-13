@@ -35,8 +35,6 @@ import com.hernsys.bayesian.client.model.BayesVariable;
 public class BayesianFactory {
 
     protected LienzoPanel panel;
-
-    private static String pathaXmlExample = "/media/horacio/C/java/comunidad-jboss/OTHERS/xstream/xstream-backend/src/main/java/com/hernsys/bayesian/client/resources/";
     private Timer timer;
     private boolean infinite;
     private int progressWidth = 15;
@@ -75,7 +73,7 @@ public class BayesianFactory {
                 infinite = false;
                 return false;
             }
-        }).buildXml03(pathaXmlExample + xml03File);
+        }).buildXml03(BayesianUtils.relativePath + xml03File);
     }
 
     private void clearComponents(List<LienzoPanel> comp) {
@@ -166,7 +164,7 @@ public class BayesianFactory {
         drawText(Color.rgbToBrowserHexColor(104, 104, 104), positionX, positionY, width, height, borderColor, node.getName(),
                 fontSize, group, layer);
 
-        // porcentual bar and fill bar
+        
         drawPorcentualbar(node.getOutcomes(), widthNode, position, colors[0][1], node.getProbabilities(), group, layer);
     }
 
