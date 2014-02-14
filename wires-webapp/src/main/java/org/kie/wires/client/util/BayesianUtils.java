@@ -1,4 +1,4 @@
-package org.kie.wires.client.utils;
+package org.kie.wires.client.util;
 
 import com.emitrom.lienzo.client.core.types.LinearGradient;
 import com.emitrom.lienzo.client.core.types.Shadow;

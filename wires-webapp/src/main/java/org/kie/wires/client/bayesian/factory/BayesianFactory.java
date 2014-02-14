@@ -1,4 +1,4 @@
-package org.kie.wires.client.factoryLayers;
+package org.kie.wires.client.bayesian.factory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.kie.wires.client.shapes.EditableRectangle;
-import org.kie.wires.client.utils.BayesianUtils;
+import org.kie.wires.client.util.BayesianUtils;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -28,9 +28,9 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.hernsys.bayesian.client.entry.BayesianService;
-import com.hernsys.bayesian.client.model.BayesNetwork;
-import com.hernsys.bayesian.client.model.BayesVariable;
+import com.xstream.bayesian.client.entry.BayesianService;
+import com.xstream.bayesian.client.model.BayesNetwork;
+import com.xstream.bayesian.client.model.BayesVariable;
 
 public class BayesianFactory {
 
@@ -91,7 +91,7 @@ public class BayesianFactory {
         final int substrateWidth = 300;
         final int progressHeight = 34;
 
-        final Text progressPercentage = new Text("Drawing...", BayesianUtils.fontFamilyProgressBar,
+        final Text progressPercentage = new Text("Loading...", BayesianUtils.fontFamilyProgressBar,
                 BayesianUtils.fontSizeProgressBar).setFillColor(ColorName.WHITE.getValue())
                 .setStrokeColor(BayesianUtils.substrateColor).setTextBaseLine(TextBaseLine.MIDDLE)
                 .setTextAlign(TextAlign.CENTER);
@@ -108,7 +108,7 @@ public class BayesianFactory {
                     timer.cancel();
                     clearComponents(progressComponents);
                 } else {
-                    progressPercentage.setText("Drawing...");
+                    progressPercentage.setText("Loading...");
                     progressPercentage.setX(progressPercentage.getX() + 140);
                     progressPercentage.setY(progressPercentage.getY() + 15);
 

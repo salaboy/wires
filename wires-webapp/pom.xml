@@ -3,6 +3,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.kie</groupId>
+		<artifactId>wires</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+
+
 	<groupId>org.kie</groupId>
 	<artifactId>wires-webapp</artifactId>
 	<packaging>war</packaging>
@@ -10,6 +19,7 @@
 
 	<name>Wires WebApp</name>
 	<description>Wires WebApp</description>
+	
 	<properties>
 		<lienzo.version>1.2-RELEASE</lienzo.version>
 		<uberfire.version>0.4.0-SNAPSHOT</uberfire.version>
@@ -164,8 +174,8 @@
 		</dependency>
 		<!-- xstream api -->
 		<dependency>
-			<groupId>com.hernsys</groupId>
-			<artifactId>xstream-impl</artifactId>
+			<groupId>org.kie</groupId>
+			<artifactId>wires-bayesian</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

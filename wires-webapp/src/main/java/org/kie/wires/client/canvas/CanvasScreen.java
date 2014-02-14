@@ -8,9 +8,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
+import org.kie.wires.client.bayesian.factory.BayesianFactory;
 import org.kie.wires.client.events.BayesianEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.factoryLayers.BayesianFactory;
 import org.kie.wires.client.shapes.EditableShape;
 import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.kie.wires.client.shapes.collision.Magnet;
@@ -33,7 +33,7 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
-import com.hernsys.bayesian.client.entry.BayesianService;
+import com.xstream.bayesian.client.entry.BayesianService;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")
