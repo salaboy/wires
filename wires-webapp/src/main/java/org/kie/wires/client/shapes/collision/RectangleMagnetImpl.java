@@ -6,11 +6,10 @@
 package org.kie.wires.client.shapes.collision;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.shared.core.types.ColorName;
 import java.util.ArrayList;
 import java.util.List;
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
 import static org.kie.wires.client.shapes.collision.Magnet.*;
 import org.kie.wires.client.util.UUID;
 
@@ -26,19 +25,22 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
     
     private Rectangle shape;
     
-    public RectangleMagnetImpl(Rectangle shape) {
-        this(5);
+    private int type;
+    
+    public RectangleMagnetImpl(Rectangle shape, int type) {
+        this(6);
         this.shape = shape;
+        this.type = type;
     }
 
     public RectangleMagnetImpl(double radius) {
         super(radius);
-        setFillColor(ColorName.YELLOW);
+        setFillColor(MAGNET_RGB_FILL_SHAPE);
         this.id = UUID.uuid();
     }
 
-    public void placeMagnetPoints(Layer layer, int control) {
-        switch (control) {
+    public void placeMagnetPoints() {
+        switch (type) {
             case MAGNET_TOP:
                 setX(shape.getX() + (shape.getWidth() / 2));
                 setY(shape.getY());
@@ -56,7 +58,7 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
                 setY(shape.getY() + (shape.getHeight() / 2));
                 break;
         }
-        layer.add(this);
+        
     }
     
      public void setMagnetActive(boolean active) {

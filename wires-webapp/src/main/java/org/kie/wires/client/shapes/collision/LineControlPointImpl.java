@@ -2,6 +2,10 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ *//*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package org.kie.wires.client.shapes.collision;
 
@@ -16,9 +20,8 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
 import org.kie.wires.client.shapes.EditableLine;
-import org.kie.wires.client.shapes.ShapesUtils;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -47,11 +50,12 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         this(10, 10);
         this.shape = shape;
         this.controlType = controlType;
+        setFillColor(CP_RGB_FILL_COLOR);
+
     }
 
     public LineControlPointImpl(double width, double height) {
         super(width, height);
-        setFillColor(ShapesUtils.LIGHT_BLUE);
         id = UUID.uuid();
     }
 
@@ -71,9 +75,9 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         return id;
     }
 
-    public void initControlPoint(final Layer layer) {
+    public void placeControlPoint(final Layer layer) {
 
-        moveControlPoint(layer);
+        moveControlPoint();
 
         switch (controlType) {
             case ControlPoint.CONTROL_START:
@@ -84,6 +88,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         dragEventStartY = nodeDragStartEvent.getY();
                         initialStartPointX = shape.getPoints().getPoint(0).getX();
                         initialStartPointY = shape.getPoints().getPoint(0).getY();
+                        ((StickableShape) shape).hideMagnetPoints();
                     }
                 });
 
@@ -111,12 +116,13 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                 setDraggable(true).setStrokeWidth(1)
                         .setStrokeColor(ColorName.BLACK);
 
-                layer.add(this);
+                
                 break;
             case ControlPoint.CONTROL_END:
 
                 addNodeDragStartHandler(new NodeDragStartHandler() {
                     public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
+                        ((StickableShape) shape).hideMagnetPoints();
                         dragEventEndX = nodeDragStartEvent.getX();
                         dragEventEndY = nodeDragStartEvent.getY();
                         initialEndPointX = shape.getPoints().getPoint(1).getX();
@@ -148,7 +154,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                 setDraggable(true)
                         .setStrokeWidth(1)
                         .setStrokeColor(ColorName.BLACK);
-                layer.add(this);
+                
                 break;
         }
 
@@ -156,20 +162,20 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
     public void udpateShape(Layer layer, double x, double y) {
         Point2DArray array = shape.getPoints();
-        
+
         switch (controlType) {
             case ControlPoint.CONTROL_START:
-                array.getPoint(0).setX( x);
-                array.getPoint(0).setY( y);
-        
-                layer.draw();
+                array.getPoint(0).setX(  x - shape.getX() );
+                array.getPoint(0).setY( y - shape.getY() );
+
                 break;
             case ControlPoint.CONTROL_END:
-                array.getPoint(1).setX(x);
-                array.getPoint(1).setY(y);
-                layer.draw();
+                array.getPoint(1).setX( x - (shape.getX() ) );
+                array.getPoint(1).setY( y - (shape.getY() ) );
+
                 break;
         }
+        layer.draw();
 
     }
 
@@ -190,7 +196,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         setVisible(visible);
     }
 
-    public void moveControlPoint(Layer layer) {
+    public void moveControlPoint() {
         Point2DArray array = shape.getPoints();
         switch (controlType) {
             case ControlPoint.CONTROL_START:
@@ -205,6 +211,48 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                 break;
         }
 
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.initialStartPointX) ^ (Double.doubleToLongBits(this.initialStartPointX) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.initialStartPointY) ^ (Double.doubleToLongBits(this.initialStartPointY) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.initialEndPointX) ^ (Double.doubleToLongBits(this.initialEndPointX) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.initialEndPointY) ^ (Double.doubleToLongBits(this.initialEndPointY) >>> 32));
+        hash = 89 * hash + (this.shape != null ? this.shape.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LineControlPointImpl other = (LineControlPointImpl) obj;
+        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.initialStartPointX) != Double.doubleToLongBits(other.initialStartPointX)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.initialStartPointY) != Double.doubleToLongBits(other.initialStartPointY)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.initialEndPointX) != Double.doubleToLongBits(other.initialEndPointX)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.initialEndPointY) != Double.doubleToLongBits(other.initialEndPointY)) {
+            return false;
+        }
+        if (this.shape != other.shape && (this.shape == null || !this.shape.equals(other.shape))) {
+            return false;
+        }
+        return true;
     }
 
 }

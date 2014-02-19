@@ -1,7 +1,6 @@
 package org.kie.wires.client.shapes;
 
-import com.emitrom.lienzo.client.core.shape.IPrimitive;
-import com.emitrom.lienzo.client.core.shape.Layer;
+import org.kie.wires.client.canvas.CanvasScreen;
 import org.kie.wires.client.shapes.collision.StickableShape;
 
 public class ShapesUtils {
@@ -10,45 +9,29 @@ public class ShapesUtils {
     
     public static int selectedShape;
     
-    static void deselectAllOtherShapes(Layer layer){
-      
-        for (IPrimitive<?> iPrimitive : layer) {
-            if(iPrimitive instanceof EditableShape){
-               
-                if(((EditableShape)iPrimitive).hashCode()  != selectedShape){
-                   ((EditableShape)iPrimitive).hideControlPoints();
-                   ((StickableShape)iPrimitive).hideMagnetPoints();
+    public static void deselectAllOtherShapes(){
+        for (EditableShape shape: CanvasScreen.shapesInCanvas) {
+                if(shape.hashCode()  != selectedShape){
+                   shape.hideControlPoints();
+                   ((StickableShape)shape).hideMagnetPoints();
                 }
-            }
         }
       
     }
     
-    static void nodeMouseClickHandler(final EditableShape shape) {
-        //GWT.log("click: " + ":" + shape.hashCode());
+    public static void deselectAllShapes(){
+        selectedShape = 0;
+        deselectAllOtherShapes();
+    }
+    public static void nodeMouseClickHandler(final EditableShape shape) {
+//        GWT.log("click: " + ":" + shape.hashCode() + "Showing control points!");
         selectedShape = shape.hashCode();
         shape.showControlPoints();
     }
 
-    static void nodeMouseEnterHandler(final StickableShape shape) {
-        //GWT.log("enter showing magnets now: " + ":" + shape.hashCode());
-        shape.showMagnetsPoints();
-    }
     
-    static void nodeMouseOverHandler(final StickableShape shape) {
-        //GWT.log("over showing magnets now: " + ":" + shape.hashCode());
-        shape.showMagnetsPoints();
-    }
     
-    static void nodeMouseExitHandler(final EditableShape shape) {
-       // GWT.log("exit hiding magnet points" + ":" + shape.hashCode() );
-//        if(!shape.isBeingDragged()){
-//            ((StickableShape)shape).hideMagnetPoints();
-//        }   
 
-    }
-      static void nodeMouseOutHandler(final EditableShape shape) {
-       // GWT.log("out " + ":" + shape.hashCode() );
-
-    }
+    
+    
 }

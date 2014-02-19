@@ -6,12 +6,11 @@
 package org.kie.wires.client.shapes.collision;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
-import com.emitrom.lienzo.shared.core.types.ColorName;
 import java.util.ArrayList;
 import java.util.List;
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -20,26 +19,29 @@ import org.kie.wires.client.util.UUID;
  */
 public class LineMagnetImpl extends Circle implements Magnet {
 
-    private List<ControlPoint> attachedControlPoints = new ArrayList<ControlPoint>();
+    private final List<ControlPoint> attachedControlPoints = new ArrayList<ControlPoint>();
 
     private String id;
     private Line shape;
     
-    public LineMagnetImpl(Line shape) {
-       this(5);
+    private int type;
+    
+    public LineMagnetImpl(Line shape, int type) {
+       this(6);
        this.shape = shape;
+       this.type = type;
     }
 
     public LineMagnetImpl(double radius) {
         super(radius);
-        setFillColor(ColorName.YELLOW);
+        setFillColor(MAGNET_RGB_FILL_SHAPE);
         this.id = UUID.uuid();
     }
 
-    public void placeMagnetPoints( Layer layer, int control) {
+    public void placeMagnetPoints( ) {
         Point2DArray points = shape.getPoints();
 
-        switch (control) {
+        switch (type) {
             case MAGNET_START:
                 setX(shape.getX() + points.getPoint(0).getX());
                 setY(shape.getY() + points.getPoint(0).getY());
@@ -50,7 +52,7 @@ public class LineMagnetImpl extends Circle implements Magnet {
                 break;
 
         }
-        layer.add(this);
+        
     }
 
     public void setMagnetActive(boolean active) {

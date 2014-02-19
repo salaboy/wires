@@ -45,7 +45,7 @@ public class EditableCircle extends Circle implements EditableShape {
 
     
 
-    public void init(double x, double y) {
+    public void init(double x, double y, Layer layer) {
         setX( x );
         setY( y );
 
@@ -55,11 +55,7 @@ public class EditableCircle extends Circle implements EditableShape {
             }
         });
 
-        addNodeMouseExitHandler(new NodeMouseExitHandler() {
-            public void onNodeMouseExit(NodeMouseExitEvent nodeMouseExitEvent) {
-                ShapesUtils.nodeMouseExitHandler(EditableCircle.this);
-            }
-        });
+
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
@@ -230,11 +226,7 @@ public class EditableCircle extends Circle implements EditableShape {
             }
         });
 
-        rect.addNodeMouseExitHandler(new NodeMouseExitHandler() {
-            public void onNodeMouseExit(NodeMouseExitEvent nodeMouseExitEvent) {
-                ShapesUtils.nodeMouseExitHandler(EditableCircle.this);
-            }
-        });
+      
 
         rect.addNodeDragStartHandler( new NodeDragStartHandler() {
             public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {

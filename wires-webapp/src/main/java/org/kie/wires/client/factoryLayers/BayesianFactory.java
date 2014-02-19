@@ -36,7 +36,7 @@ public class BayesianFactory {
 
     protected LienzoPanel panel;
 
-    private static String pathaXmlExample = "/media/horacio/C/java/comunidad-jboss/OTHERS/xstream/xstream-backend/src/main/java/com/hernsys/bayesian/client/resources/";
+    private static String pathaXmlExample = "/Users/salaboy/Projects/xstream/xstream-backend/src/main/java/com/hernsys/bayesian/client/resources/";
     private Timer timer;
     private boolean infinite;
     private int progressWidth = 15;
