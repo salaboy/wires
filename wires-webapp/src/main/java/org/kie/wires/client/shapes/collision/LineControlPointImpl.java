@@ -21,6 +21,7 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_STROKE_WIDTH_SHAPE;
 import org.kie.wires.client.shapes.EditableLine;
 import org.kie.wires.client.util.UUID;
 
@@ -47,11 +48,11 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
     private int controlType = 0;
 
     public LineControlPointImpl(Line shape, int controlType) {
-        this(10, 10);
+        this(12, 12);
         this.shape = shape;
         this.controlType = controlType;
         setFillColor(CP_RGB_FILL_COLOR);
-
+        setStrokeWidth(CP_RGB_STROKE_WIDTH_SHAPE);
     }
 
     public LineControlPointImpl(double width, double height) {

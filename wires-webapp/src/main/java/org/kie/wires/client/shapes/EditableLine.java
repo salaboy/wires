@@ -21,6 +21,7 @@ import com.emitrom.lienzo.client.core.types.Point2DArray;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.kie.wires.client.shapes.collision.ControlPoint;
 import org.kie.wires.client.shapes.collision.LineControlPointImpl;
@@ -50,15 +51,16 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
     private Magnet startMagnet;
     private Magnet endMagnet;
-    
-    private boolean showingMagnets  = false;
+
+    private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
 
     public EditableLine(double x1, double y1, double x2, double y2) {
         super(x1, y1, x2, y2);
+
         this.id = UUID.uuid();
-        
-        setStrokeWidth(3);
+        setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE);
+
         startMagnet = new LineMagnetImpl(this, Magnet.MAGNET_START);
         endMagnet = new LineMagnetImpl(this, Magnet.MAGNET_END);
 
@@ -90,7 +92,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
-                recordStartData(nodeDragStartEvent);
+                // recordStartData(nodeDragStartEvent);
 
                 hideControlPoints();
                 hideMagnetPoints();
@@ -114,7 +116,6 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
             }
         });
-
     }
 
     public void recordStartData(NodeDragStartEvent nodeDragStartEvent) {
@@ -146,7 +147,6 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
             showingControlPoints = true;
         }
 
-       
     }
 
     @Override
@@ -161,7 +161,6 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
         }
 
-     
     }
 
     public void showMagnetsPoints() {
@@ -175,7 +174,6 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
             showingMagnets = true;
         }
 
-     
     }
 
     public void hideMagnetPoints() {
@@ -185,7 +183,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
             layer.remove((Shape) endMagnet);
             showingMagnets = false;
         }
-      
+
     }
 
     public boolean collidesWith(CollidableShape shape) {
@@ -287,6 +285,35 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     @Override
     public String toString() {
         return "EditableLine{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
+    }
+
+    public void attachControlPointToMagent(Magnet selectedMagnet) {
+        double startX = ((Shape) getStartControlPoint()).getX();
+        double startY = ((Shape) getStartControlPoint()).getY();
+        double endX = ((Shape) getEndControlPoint()).getX();
+        double endY = ((Shape) getEndControlPoint()).getY();
+
+        double deltaStartX = selectedMagnet.getX() - startX;
+        double deltaStartY = selectedMagnet.getY() - startY;
+
+        double startDistance = Math.sqrt(Math.pow(deltaStartX, 2)
+                + Math.pow(deltaStartY, 2));
+
+        double deltaEndX = selectedMagnet.getX() - endX;
+        double deltaEndY = selectedMagnet.getY() - endY;
+
+        double endDistance = Math.sqrt(Math.pow(deltaEndX, 2)
+                + Math.pow(deltaEndY, 2));
+
+        if (endDistance < startDistance) {
+            if (!selectedMagnet.getAttachedControlPoints().contains(getEndControlPoint())) {
+                selectedMagnet.attachControlPoint(getEndControlPoint());
+            }
+        } else {
+            if (!selectedMagnet.getAttachedControlPoints().contains(getStartControlPoint())) {
+                selectedMagnet.attachControlPoint(getStartControlPoint());
+            }
+        }
     }
 
 }

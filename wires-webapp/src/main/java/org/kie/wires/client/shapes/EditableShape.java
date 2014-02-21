@@ -19,5 +19,7 @@ public interface EditableShape {
     double getX();
 
     double getY();
+    
+    
 
 }

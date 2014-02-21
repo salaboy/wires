@@ -85,27 +85,26 @@ public class CanvasScreen extends Composite implements RequiresResize {
         group.setX(X).setY(Y);
         layer.add(group);
 
-        
         panel.addMouseDownHandler(new MouseDownHandler() {
 
             public void onMouseDown(MouseDownEvent event) {
-                 
+
                 draggingShape = true;
             }
         });
-              
+
         panel.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
                 //ShapesUtils.deselectAllShapes();
             }
         });
-        
+
         panel.addMouseMoveHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent event) {
                 //GWT.log("Iprimitives = "+ layer.getChildNodes().length());
-                if(draggingShape){
-                    detectCollisions(event); 
+                if (draggingShape) {
+                    detectCollisions(event);
                 }
             }
         });
@@ -113,48 +112,19 @@ public class CanvasScreen extends Composite implements RequiresResize {
         panel.addMouseUpHandler(new MouseUpHandler() {
             public void onMouseUp(MouseUpEvent event) {
                 //Connect the shapes on MouseUp only
-                
+
                 draggingShape = false;
                 if (selectedMagnet != null && shapeActive != null) {
-                    if (shapeActive instanceof EditableLine) {
-                        if (shapeActive instanceof EditableLine) {
-                            // Need to select which control point will attached to the magent
-                            double startX = ((Shape) ((EditableLine) shapeActive).getStartControlPoint()).getX();
-                            double startY = ((Shape) ((EditableLine) shapeActive).getStartControlPoint()).getY();
-                            double endX = ((Shape) ((EditableLine) shapeActive).getEndControlPoint()).getX();
-                            double endY = ((Shape) ((EditableLine) shapeActive).getEndControlPoint()).getY();
 
-                            double deltaStartX = selectedMagnet.getX() - startX;
-                            double deltaStartY = selectedMagnet.getY() - startY;
+                    ((StickableShape) shapeActive).attachControlPointToMagent(selectedMagnet);
 
-                            double startDistance = Math.sqrt(Math.pow(deltaStartX, 2)
-                                    + Math.pow(deltaStartY, 2));
-
-                            double deltaEndX = selectedMagnet.getX() - endX;
-                            double deltaEndY = selectedMagnet.getY() - endY;
-
-                            double endDistance = Math.sqrt(Math.pow(deltaEndX, 2)
-                                    + Math.pow(deltaEndY, 2));
-
-                            if (endDistance < startDistance) {
-                                if (!selectedMagnet.getAttachedControlPoints().contains(((EditableLine) shapeActive).getEndControlPoint())) {
-                                    selectedMagnet.attachControlPoint(((EditableLine) shapeActive).getEndControlPoint());
-                                }
-                            } else {
-                                if (!selectedMagnet.getAttachedControlPoints().contains(((EditableLine) shapeActive).getStartControlPoint())) {
-                                    selectedMagnet.attachControlPoint(((EditableLine) shapeActive).getStartControlPoint());
-                                }
-                            }
-                        }
-                        if (!selectedMagnet.getAttachedControlPoints().isEmpty()) {
-                            ((Shape) selectedMagnet).setFillColor(ColorName.RED);
-                        }
+                    if (!selectedMagnet.getAttachedControlPoints().isEmpty()) {
+                        ((Shape) selectedMagnet).setFillColor(ColorName.RED);
                     }
-
                 }
 
-               
             }
+
         });
 
         layer.draw();
@@ -199,12 +169,10 @@ public class CanvasScreen extends Composite implements RequiresResize {
         y = 25 * Math.abs(y / 25);
         shape.setDraggable(true);
 
-        
-
         layer.add(shape);
 
         ((EditableShape) shape).init(x, y, layer);
-        
+
         shapesInCanvas.add((EditableShape) shape);
 
         layer.draw();

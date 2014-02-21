@@ -34,10 +34,12 @@ public class ShapeFactoryUtil {
     public static final String RGB_STROKE_SHAPE = "#999999";
     public static final String RGB_FILL_SHAPE = "#f2f2f2";
     public static final int RGB_STROKE_WIDTH_SHAPE = 2;
+    public static final int RGB_STROKE_WIDTH_LINE = 4;
     
     // Control Points
     
     public static final String CP_RGB_FILL_COLOR = "#0000FF";
+    public static final int CP_RGB_STROKE_WIDTH_SHAPE = 1;
     
     // Magnets
     public static final String MAGNET_RGB_FILL_SHAPE = "#f2f2f2";

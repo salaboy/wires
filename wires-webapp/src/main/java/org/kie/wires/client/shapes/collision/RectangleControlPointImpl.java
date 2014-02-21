@@ -19,6 +19,7 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_STROKE_WIDTH_SHAPE;
 import org.kie.wires.client.shapes.EditableRectangle;
 import static org.kie.wires.client.shapes.collision.ControlPoint.*;
 import org.kie.wires.client.util.UUID;
@@ -39,7 +40,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
     private int controlType;
 
     public RectangleControlPointImpl(Rectangle shape, int controlType) {
-        this(10, 10);
+        this(12, 12);
         this.shape = shape;
         this.controlType = controlType;
         
@@ -65,7 +66,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         moveControlPoint();
 
         setDraggable(true)
-                .setStrokeWidth(1)
+                .setStrokeWidth(CP_RGB_STROKE_WIDTH_SHAPE)
                 .setStrokeColor(ColorName.BLACK);
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
