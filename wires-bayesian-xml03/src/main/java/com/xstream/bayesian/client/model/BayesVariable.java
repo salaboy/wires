@@ -16,7 +16,9 @@ public class BayesVariable implements Serializable {
     private String type;
     double[][] position;
 
-    private List<String> incomingNodes;
+    private List<String> given;
+    
+    private List<BayesVariable> incomingNodes;
 
     public BayesVariable() {
 
@@ -29,13 +31,13 @@ public class BayesVariable implements Serializable {
         this.outcomes = outcomes;
     }
 
-    public BayesVariable(String name, int id, List<String> outcomes, double[][] probabilities, List<String> incomingNodes,
+    public BayesVariable(String name, int id, List<String> outcomes, double[][] probabilities, List<String> given,
             double[][] position) {
         this.name = name;
         this.id = id;
         this.probabilities = probabilities;
         this.outcomes = outcomes;
-        this.incomingNodes = incomingNodes;
+        this.given = given;
         this.position = position;
     }
 
@@ -49,14 +51,6 @@ public class BayesVariable implements Serializable {
 
     public double[][] getProbabilities() {
         return probabilities;
-    }
-
-    public List<String> getIncomingNodes() {
-        return incomingNodes;
-    }
-
-    public void setIncomingNodes(List<String> incomingNodes) {
-        this.incomingNodes = incomingNodes;
     }
 
     public String getType() {
@@ -93,6 +87,22 @@ public class BayesVariable implements Serializable {
 
     public void setOutcomes(List<String> outcomes) {
         this.outcomes = outcomes;
+    }
+
+    public List<String> getGiven() {
+        return given;
+    }
+
+    public void setGiven(List<String> given) {
+        this.given = given;
+    }
+
+    public List<BayesVariable> getIncomingNodes() {
+        return incomingNodes;
+    }
+
+    public void setIncomingNodes(List<BayesVariable> incomingNodes) {
+        this.incomingNodes = incomingNodes;
     }
 
 

@@ -1,4 +1,4 @@
-package com.xstream.bayesian.service.impl;
+package com.bayesian.xstream.service.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;

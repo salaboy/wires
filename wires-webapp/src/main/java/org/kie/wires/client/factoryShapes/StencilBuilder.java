@@ -10,7 +10,6 @@ import org.kie.wires.client.events.ShapeAddEvent;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.Composite;
 
 public class StencilBuilder extends Composite {
@@ -37,7 +36,6 @@ public class StencilBuilder extends Composite {
         layer.add(group);
         for (ShapeType shapeType : ShapeType.values()) {
             if (shapeType.getCategory().equals(shapeCategory)) {
-            	GWT.log(" shapeCategory " + shapeCategory.name());
                 this.newShape(group, shapeType, panel, shapeAddEvent);
             }
         }

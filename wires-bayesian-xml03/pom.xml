@@ -9,34 +9,12 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.kie</groupId>
 	<artifactId>wires-bayesian-xml03</artifactId>
-	<version>1.0-SNAPSHOT</version>
 
-	<name>wires-bayesian-xml03</name>
-	<description>Xstream Bayesian xml03</description>
-
-
-
-	<properties>
-		<errai.version>2.2.0.Final</errai.version>
-		<gwt.version>2.4.0</gwt.version>
-		<gwt.maven.version>2.4.0</gwt.maven.version>
-		<slf4j.version>1.6.1</slf4j.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
-	</properties>
-
+	<name>Wires Bayesian xml03</name>
+	<description>Wires Bayesian xml03</description>
 
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- Project Dependencies -->
 		<dependency>
 			<groupId>org.jboss.errai</groupId>
@@ -55,10 +33,6 @@
 			<artifactId>errai-ioc</artifactId>
 			<version>${errai.version}</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>org.jboss.errai</groupId> <artifactId>errai-tools</artifactId> 
-			<version>${errai.version}</version> </dependency> -->
-
 
 		<!-- GWT and GWT Extensions -->
 		<dependency>
@@ -79,25 +53,21 @@
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
-			<version>1.0-SP4</version>
+			<version>${cdi-api.version}</version>
 			<!-- <scope>provided</scope> -->
 		</dependency>
 
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.3</version>
+			<version>${xstream.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava-collections</artifactId>
-			<version>r03</version>
+			<version>${guava.version}</version>
 		</dependency>
-		
-		
-
-
 	</dependencies>
 
 	<build>
@@ -127,7 +97,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
-
 </project>

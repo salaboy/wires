@@ -7,12 +7,12 @@ import java.util.List;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class BayesNetwork<T> implements Serializable {
+public class BayesNetwork implements Serializable {
 
     private static final long serialVersionUID = 6231201134802600033L;
 
     private String name;
-    private List<T> nodos;
+    private List<BayesVariable> nodos;
 
     public BayesNetwork() {
 
@@ -20,7 +20,7 @@ public class BayesNetwork<T> implements Serializable {
 
     public BayesNetwork(String name) {
         // TODO implement Guava
-        this.nodos = new ArrayList<T>();
+        this.nodos = new ArrayList<BayesVariable>();
         this.name = name;
     }
 
@@ -32,11 +32,11 @@ public class BayesNetwork<T> implements Serializable {
         this.name = name;
     }
 
-    public List<T> getNodos() {
+    public List<BayesVariable> getNodos() {
         return nodos;
     }
 
-    public void setNodos(List<T> nodos) {
+    public void setNodos(List<BayesVariable> nodos) {
         this.nodos = nodos;
     }
 

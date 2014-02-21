@@ -4,17 +4,22 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.wires.client.bayesian.factory.BayesianFactory;
 import org.kie.wires.client.events.BayesianEvent;
+import org.kie.wires.client.events.LayerEvent;
+import org.kie.wires.client.events.ProbabilityEvent;
+import org.kie.wires.client.events.ProgressEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.shapes.EditableShape;
 import org.kie.wires.client.shapes.collision.CollidableShape;
 import org.kie.wires.client.shapes.collision.Magnet;
 import org.kie.wires.client.shapes.collision.StickableShape;
+import org.kie.wires.client.util.LienzoUtils;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -46,7 +51,13 @@ public class CanvasScreen extends Composite implements RequiresResize {
     private static final int X = 0;
     private static final int Y = 5;
     @Inject
-    private Caller<BayesianService> bayesianService;        
+    private Caller<BayesianService> bayesianService;
+    @Inject
+    private Event<LayerEvent> layerEvent;
+    @Inject
+    private Event<ProbabilityEvent> probabilityEvent;
+    @Inject
+    private Event<ProgressEvent> progressEvent;
 
     public CanvasScreen() {
     }
@@ -242,7 +253,18 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
     public void addNewPanel(@Observes BayesianEvent event) {
         group.removeAll();
-        new BayesianFactory(group, panel, bayesianService, event.getTemplate(), layer);
+        new BayesianFactory(group, panel, bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, progressEvent);
+    }
+    
+    public void progressBar(@Observes ProgressEvent event){
+        if(event.getShapes() != null && !event.getShapes().isEmpty()){
+            for(Shape shape : event.getShapes()){
+                group.remove(shape);
+            }
+            layer.draw();
+        }else if(LienzoUtils.progressShapes == null){
+            LienzoUtils.drawProgressBar(group, layer, panel, progressEvent);
+        }
     }
 
 }

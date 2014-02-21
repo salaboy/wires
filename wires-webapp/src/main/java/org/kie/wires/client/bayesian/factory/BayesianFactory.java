@@ -1,145 +1,78 @@
 package org.kie.wires.client.bayesian.factory;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.enterprise.event.Event;
 
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
-import org.kie.wires.client.shapes.EditableRectangle;
+import org.kie.wires.client.events.LayerEvent;
+import org.kie.wires.client.events.ProbabilityEvent;
+import org.kie.wires.client.events.ProgressEvent;
 import org.kie.wires.client.util.BayesianUtils;
+import org.kie.wires.client.util.LienzoUtils;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
-import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.Color;
-import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.emitrom.lienzo.shared.core.types.TextAlign;
-import com.emitrom.lienzo.shared.core.types.TextBaseLine;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.Timer;
+import com.google.common.collect.Lists;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.xstream.bayesian.client.entry.BayesianService;
 import com.xstream.bayesian.client.model.BayesNetwork;
 import com.xstream.bayesian.client.model.BayesVariable;
 
-public class BayesianFactory {
+public class BayesianFactory extends BaseFactory {
 
     protected LienzoPanel panel;
-    private Timer timer;
-    private boolean infinite;
-    private int progressWidth = 15;
     private Caller<BayesianService> bayesianService;
-    private static List<LienzoPanel> progressComponents;
+    private Event<LayerEvent> layerEvent;
+    private Event<ProbabilityEvent> probabilityEvent;
+    private Event<ProgressEvent> progressEvent;
+    private List<BayesVariable> nodes;
+    
 
     public BayesianFactory(Group group, LienzoPanel panel, Caller<BayesianService> bayesianService, String xml03File,
-            Layer layer) {
+            Layer layer, Event<LayerEvent> layerEvent, Event<ProbabilityEvent> probabilityEvent, Event<ProgressEvent> progressEvent) {
         this.panel = panel;
         this.bayesianService = bayesianService;
-        infinite = true;
-        if (progressComponents == null) {
-            progressComponents = new ArrayList<LienzoPanel>();
-        }
+        this.layerEvent = layerEvent;
+        this.progressEvent = progressEvent;
+        this.probabilityEvent = probabilityEvent;
+        LienzoUtils.loadingProgressBar = true;
         init(xml03File, group, layer);
 
     }
 
     public void init(final String xml03File, final Group group, final Layer layer) {
         clearScreen(group, layer);
-        drawProgressBar();
+        //LienzoUtils.drawProgressBar();
+        progressEvent.fire(new ProgressEvent(null));
+        this.drawLabelFile(xml03File, group, layer);
         bayesianService.call(new RemoteCallback<BayesNetwork>() {
             @Override
             public void callback(final BayesNetwork response) {
-                for (Object bay : response.getNodos()) {
-                    drawNode((BayesVariable) bay, group, layer);
+                nodes = Lists.newArrayList();
+                for (BayesVariable bay : response.getNodos()) {
+                    drawNode(bay, group, layer);
                 }
-                infinite = false;
-
+                LienzoUtils.loadingProgressBar = false;
+                layerEvent.fire(new LayerEvent(nodes));
+                layer.draw();
             }
         }, new ErrorCallback() {
 
             @Override
             public boolean error(Object message, Throwable throwable) {
                 Window.alert("Sorry.. the " + xml03File + " could not be read..");
-                infinite = false;
+                LienzoUtils.loadingProgressBar = false;
                 return false;
             }
         }).buildXml03(BayesianUtils.relativePath + xml03File);
-    }
-
-    private void clearComponents(List<LienzoPanel> comp) {
-        for (LienzoPanel entry : comp) {
-            entry.removeAll();
-            comp = new ArrayList<LienzoPanel>();
-        }
-
-    }
-
-    private void drawProgressBar() {
-        final int positionX = (int) (BayesianUtils.positionX_base + 550);
-        final int positionY = (int) (BayesianUtils.positionY_base + 300);
-
-        final int substrateWidth = 300;
-        final int progressHeight = 34;
-
-        final Text progressPercentage = new Text("Loading...", BayesianUtils.fontFamilyProgressBar,
-                BayesianUtils.fontSizeProgressBar).setFillColor(ColorName.WHITE.getValue())
-                .setStrokeColor(BayesianUtils.substrateColor).setTextBaseLine(TextBaseLine.MIDDLE)
-                .setTextAlign(TextAlign.CENTER);
-
-        drawProgressBarComponent(Color.rgbToBrowserHexColor(197, 216, 214), positionX, positionY, substrateWidth,
-                BayesianUtils.substrateHeight, 200, Color.rgbToBrowserHexColor(197, 216, 214), false);
-        timer = new Timer() {
-            @Override
-            public void run() {
-                progressWidth += 4;
-                if ((progressWidth > substrateWidth - 4)) {
-                    timer.cancel();
-                } else if (!infinite) {
-                    timer.cancel();
-                    clearComponents(progressComponents);
-                } else {
-                    progressPercentage.setText("Loading...");
-                    progressPercentage.setX(progressPercentage.getX() + 140);
-                    progressPercentage.setY(progressPercentage.getY() + 15);
-
-                    Layer floatingLayer = new Layer();
-                    LienzoPanel floatingPanel = new LienzoPanel(220, 25);
-
-                    progressComponents.add(floatingPanel);
-
-                    floatingLayer.add(progressPercentage);
-                    floatingPanel.add(floatingLayer);
-                    floatingLayer.draw();
-
-                    getFloatingStyle(floatingPanel, positionX, positionY, 120);
-
-                    RootPanel.get().add(floatingPanel);
-
-                    drawProgressBarComponent(Color.rgbToBrowserHexColor(102, 183, 176), positionX, positionY, progressWidth,
-                            progressHeight, 300, Color.rgbToBrowserHexColor(102, 183, 176), true);
-                }
-
-            }
-        };
-        timer.scheduleRepeating(1);
-    }
-
-    private void drawText(String color, int positionX, int positionY, int width, int height, String borderColor,
-            String description, int fontSize, Group group, Layer layer) {
-        final Text text = new Text(description, "Times", fontSize);
-        text.setX(positionX + 8).setY(positionY + 15);
-        group.add(text);
-        layer.draw();
     }
 
     private void drawNode(BayesVariable node, Group group, Layer layer) {
@@ -154,52 +87,30 @@ public class BayesianFactory {
         // node
         int width = widthNode;
         int height = 70;
-        drawComponent(colors[0][0], positionX, positionY, width, height, borderColor, group, layer);
+        super.drawComponent(colors[0][0], positionX, positionY, width, height, borderColor, group, layer);
 
         // header
         width = widthNode;
         height = 25;
         positionY = positionY - height;
-        drawComponent(colors[0][1], positionX, positionY, width, height, borderColor, group, layer);
-        drawText(Color.rgbToBrowserHexColor(104, 104, 104), positionX, positionY, width, height, borderColor, node.getName(),
-                fontSize, group, layer);
+        super.drawComponent(colors[0][1], positionX, positionY, width, height, borderColor, group, layer);
+        super.drawText(Color.rgbToBrowserHexColor(104, 104, 104), positionX, positionY, width, height, borderColor,
+                node.getName(), fontSize, group, layer);
+        // labels (layers perspective)
+        nodes.add(node);
 
-        
+        // draw porcentual bar
         drawPorcentualbar(node.getOutcomes(), widthNode, position, colors[0][1], node.getProbabilities(), group, layer);
     }
 
-    private void drawComponent(String color, int positionX, int positionY, int width, int height, String borderColor,
-            Group group, Layer layer) {
-        if (borderColor == null) {
-            borderColor = Color.rgbToBrowserHexColor(0, 0, 0);
-        }
-        final EditableRectangle component = new EditableRectangle(width, height);
-        setAttributes(component, color, positionX, positionY, borderColor);
-        group.add(component);
-        layer.draw();
-    }
+    private void drawLabelFile(String nameFile, Group group, Layer layer) {
 
-    private void drawProgressBarComponent(String color, int positionX, int positionY, int width, int height, int zindex,
-            String borderColor, boolean progress) {
-        final EditableRectangle component = new EditableRectangle(width, height);
-        if (progress) {
-            component.setFillGradient(BayesianUtils.getProgressGradient());
-        } else {
-            component.setFillGradient(BayesianUtils.getSubstrateGradient()).setShadow(BayesianUtils.getSubstrateShadow())
-                    .setStrokeColor(BayesianUtils.substrateColor).setStrokeWidth(1);
-        }
-        component.setX(getFloatingX()).setY(getFloatingY()).setDraggable(false);
-        final Layer floatingLayer = new Layer();
-        final LienzoPanel floatingPanel = new LienzoPanel(width, height);
+        super.drawComponent(BayesianUtils.bgColorContainer, BayesianUtils.positionXContainer, BayesianUtils.positionYContainer,
+                BayesianUtils.widthContainer, BayesianUtils.heightContainer, BayesianUtils.borderContainer, group, layer);
 
-        progressComponents.add(floatingPanel);
-
-        floatingLayer.add(component);
-        floatingPanel.add(floatingLayer);
-        floatingLayer.draw();
-
-        getFloatingStyle(floatingPanel, positionX, positionY, zindex);
-        RootPanel.get().add(floatingPanel);
+        super.drawText(BayesianUtils.colorTextLabel, BayesianUtils.positionXTextLabel, BayesianUtils.positionYTextLabel,
+                BayesianUtils.widthTextLabel, BayesianUtils.heightTextLabel, BayesianUtils.colorTextLabel, nameFile,
+                BayesianUtils.fontSizeTextLabel, group, layer);
     }
 
     private void drawPorcentualbar(List<String> outcomes, int widthNode, double position[][], String fillColor,
@@ -215,13 +126,13 @@ public class BayesianFactory {
         for (int i = 0; i < outcomes.size(); i++) {
             // Porcentual bar
             positionY += 14;
-            drawText(Color.rgbToBrowserHexColor(0, 0, 0), positionX - 63, positionY - 8, width, height, borderColor,
+            super.drawText(Color.rgbToBrowserHexColor(0, 0, 0), positionX - 63, positionY - 8, width, height, borderColor,
                     outcomes.get(i), fontSize, group, layer);
-            drawComponent(Color.rgbToBrowserHexColor(255, 255, 255), positionX, positionY, width, height, borderColor, group,
-                    layer);
+            super.drawComponent(Color.rgbToBrowserHexColor(255, 255, 255), positionX, positionY, width, height, borderColor,
+                    group, layer);
             // fill bar
             widthFill = calculatePorcentage(probabilities, width, i);
-            drawComponent(fillColor, positionX, positionY, widthFill, height, borderColor, group, layer);
+            super.drawComponent(fillColor, positionX, positionY, widthFill, height, borderColor, group, layer);
         }
     }
 
@@ -253,33 +164,13 @@ public class BayesianFactory {
         return nodeMouseDownHandler;
     }
 
-    protected Style getFloatingStyle(LienzoPanel floatingPanel, int positionX, int positionY, int zIndex) {
-        Style style = floatingPanel.getElement().getStyle();
-        style.setPosition(Position.ABSOLUTE);
-        style.setLeft(positionX, Unit.PX);
-        style.setTop(positionY, Unit.PX);
-        style.setZIndex(zIndex);
-        return style;
-    }
-
-    private void setAttributes(Shape<?> floatingShape, String fillColor, double x, double y, String borderColor) {
-        floatingShape.setX(x).setY(y).setStrokeColor(borderColor).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
-                .setFillColor(fillColor).setDraggable(false);
-
-    }
-
     private void clearScreen(Group group, Layer layer) {
         group.removeAll();
         layer.draw();
-        clearComponents(progressComponents);
-    }
-
-    private double getFloatingX() {
-        return 0;
-    }
-
-    private double getFloatingY() {
-        return 0;
+        //LienzoUtils.clearProgressBar(progressEvent);
+        progressEvent.fire(new ProgressEvent(LienzoUtils.progressShapes));
+        layerEvent.fire(new LayerEvent(null));
+        probabilityEvent.fire(new ProbabilityEvent(null));
     }
 
 }
