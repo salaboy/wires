@@ -15,6 +15,9 @@ import java.util.List;
  */
 public interface StickableShape {
     List<Magnet> getMagnets();
+    
+    void attachControlPointToMagent(Magnet selectedMagnet);
+    
     void showMagnetsPoints();
     void hideMagnetPoints();
 }

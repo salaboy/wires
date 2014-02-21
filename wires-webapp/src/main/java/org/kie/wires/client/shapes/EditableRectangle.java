@@ -8,15 +8,9 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseEnterEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseEnterHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseExitEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseExitHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseOverEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseOverHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.google.gwt.core.client.GWT;
+import com.emitrom.lienzo.client.core.shape.Shape;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,23 +50,39 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
 
     private boolean beingDragged = false;
 
+    private boolean showingMagnets = false;
+    private boolean showingControlPoints = false;
+
     public EditableRectangle(double width, double height) {
-        super(width, height);
+        this(width, height, 3);
+
         setDraggable(true);
-        this.id = UUID.uuid();
     }
 
     public EditableRectangle(double width, double height, double cornerRadius) {
+
         super(width, height, cornerRadius);
         setDraggable(true);
+
         this.id = UUID.uuid();
+
+        topMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_TOP);
+        rightMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_RIGHT);
+        bottomMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_BOTTOM);
+        leftMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_LEFT);
+
+        topLeftControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_LEFT);
+        topRightControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_RIGHT);
+        bottomLeftControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_LEFT);
+        bottomRightControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_RIGHT);
+
     }
 
     public String getId() {
         return id;
     }
 
-    public void init(double x, double y) {
+    public void init(double x, double y, Layer layer) {
         setX(x);
         setY(y);
         currentDragX = x;
@@ -80,29 +90,10 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
 
         addNodeMouseClickHandler(new NodeMouseClickHandler() {
             public void onNodeMouseClick(NodeMouseClickEvent nodeMouseClickEvent) {
+                Layer layer = getLayer();
                 ShapesUtils.nodeMouseClickHandler(EditableRectangle.this);
-                ShapesUtils.deselectAllOtherShapes(getLayer());
-            }
-        });
-
-        addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
-            public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
-                ShapesUtils.nodeMouseEnterHandler(EditableRectangle.this);
-
-            }
-        });
-
-        addNodeMouseOverHandler(new NodeMouseOverHandler() {
-            public void onNodeMouseOver(NodeMouseOverEvent nodeMouseOverEvent) {
-                ShapesUtils.nodeMouseOverHandler(EditableRectangle.this);
-
-            }
-        });
-
-        addNodeMouseExitHandler(new NodeMouseExitHandler() {
-            public void onNodeMouseExit(NodeMouseExitEvent nodeMouseExitEvent) {
-                ShapesUtils.nodeMouseExitHandler(EditableRectangle.this);
-
+                ShapesUtils.deselectAllOtherShapes();
+                layer.draw();
             }
         });
 
@@ -110,10 +101,10 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
 
                 if (topLeftControlPoint != null) {
-                    //hideControlPoints();
+                    hideControlPoints();
                 }
                 if (topMagnet != null) {
-                    //hideMagnetPoints();
+                    hideMagnetPoints();
                 }
             }
         });
@@ -123,34 +114,50 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
                 beingDragged = true;
                 currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
-//                Layer layer = getLayer();
-//
-//                for (Object cp : topMagnet.getAttachedControlPoints()) {
-//                    ((ControlPoint) cp).setControlPointVisible(true);
-//                    ((ControlPoint) cp).setControlPointX(currentDragX + (EditableRectangle.this.getWidth() / 2));
-//                    ((ControlPoint) cp).setControlPointY(currentDragY);
-//                    ((ControlPoint) cp).udpateShape(layer, currentDragX , currentDragY);
-//                }
-//                for (Object cp : leftMagnet.getAttachedControlPoints()) {
-//                    ((ControlPoint) cp).setControlPointVisible(true);
-//                    ((ControlPoint) cp).setControlPointX(currentDragX);
-//                    ((ControlPoint) cp).setControlPointY(currentDragY + (EditableRectangle.this.getHeight() / 2));
-//                    ((ControlPoint) cp).udpateShape(layer, currentDragX , currentDragY);
-//                }
-//                for (Object cp : rightMagnet.getAttachedControlPoints()) {
-//                    ((ControlPoint) cp).setControlPointVisible(true);
-//                    ((ControlPoint) cp).setControlPointX(currentDragX + EditableRectangle.this.getWidth());
-//                    ((ControlPoint) cp).setControlPointY(currentDragY + (EditableRectangle.this.getHeight() / 2));
-//                    ((ControlPoint) cp).udpateShape(layer, currentDragX , currentDragY);
-//                }
-//                for (Object cp : bottomMagnet.getAttachedControlPoints()) {
-//                    ((ControlPoint) cp).setControlPointVisible(true);
-//                    ((ControlPoint) cp).setControlPointX(currentDragX + (EditableRectangle.this.getWidth() / 2));
-//                    ((ControlPoint) cp).setControlPointY(currentDragY + EditableRectangle.this.getHeight());
-//                    
-//                    ((ControlPoint) cp).udpateShape(layer, nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX() , nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY());
-//                }
-//                layer.draw();
+                Layer layer = getLayer();
+
+                if (topMagnet != null && !topMagnet.getAttachedControlPoints().isEmpty()) {
+                    //GWT.log("there are attached control points to topMagnet " + topMagnet.getAttachedControlPoints().size());
+                    for (Object cp : topMagnet.getAttachedControlPoints()) {
+
+                        ((ControlPoint) cp).setControlPointVisible(true);
+                        ((ControlPoint) cp).setControlPointX(currentDragX + (EditableRectangle.this.getWidth() / 2) - 5);
+                        ((ControlPoint) cp).setControlPointY(currentDragY - 5);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX + (EditableRectangle.this.getWidth() / 2), currentDragY);
+
+                    }
+                }
+                if (leftMagnet != null && !leftMagnet.getAttachedControlPoints().isEmpty()) {
+                    for (Object cp : leftMagnet.getAttachedControlPoints()) {
+                        //  GWT.log("there are attached control points to leftMagnet " + leftMagnet.getAttachedControlPoints().size());
+                        ((ControlPoint) cp).setControlPointVisible(true);
+                        ((ControlPoint) cp).setControlPointX(currentDragX - 5);
+                        ((ControlPoint) cp).setControlPointY(currentDragY + (EditableRectangle.this.getHeight() / 2) - 5);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX, currentDragY + (EditableRectangle.this.getHeight() / 2));
+
+                    }
+                }
+                if (rightMagnet != null && !rightMagnet.getAttachedControlPoints().isEmpty()) {
+                    for (Object cp : rightMagnet.getAttachedControlPoints()) {
+                        // GWT.log("there are attached control points to rightMagnet " + rightMagnet.getAttachedControlPoints().size());
+                        ((ControlPoint) cp).setControlPointVisible(true);
+                        ((ControlPoint) cp).setControlPointX(currentDragX + EditableRectangle.this.getWidth() - 5);
+                        ((ControlPoint) cp).setControlPointY(currentDragY + (EditableRectangle.this.getHeight() / 2) - 5);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX + EditableRectangle.this.getWidth(), currentDragY + (EditableRectangle.this.getHeight() / 2));
+
+                    }
+                }
+                if (bottomMagnet != null && !bottomMagnet.getAttachedControlPoints().isEmpty()) {
+                    for (Object cp : bottomMagnet.getAttachedControlPoints()) {
+                        //  GWT.log("there are attached control points to bottomMagnet " + bottomMagnet.getAttachedControlPoints().size());
+                        ((ControlPoint) cp).setControlPointVisible(true);
+                        ((ControlPoint) cp).setControlPointX(currentDragX + (EditableRectangle.this.getWidth() / 2) - 5);
+                        ((ControlPoint) cp).setControlPointY(currentDragY + EditableRectangle.this.getHeight() - 5);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX + (EditableRectangle.this.getWidth() / 2), currentDragY + EditableRectangle.this.getHeight());
+
+                    }
+                }
+                layer.draw();
             }
         });
 
@@ -160,108 +167,70 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
 
             }
         });
-
     }
 
     public void showControlPoints() {
         final Layer layer = getLayer();
-        if (topLeftControlPoint == null) {
-            // Can be null, if we enter, after an exit but the timer has not removed the points yet
+        if (topLeftControlPoint != null && !showingControlPoints) {
+            layer.add((Shape) topLeftControlPoint);
+            layer.add((Shape) topRightControlPoint);
+            layer.add((Shape) bottomLeftControlPoint);
+            layer.add((Shape) bottomRightControlPoint);
 
-            topLeftControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_LEFT);
-
-            topLeftControlPoint.initControlPoint(layer);
-
-            bottomLeftControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_LEFT);
-
-            bottomLeftControlPoint.initControlPoint(layer);
-
-            topRightControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_RIGHT);
-
-            topRightControlPoint.initControlPoint(layer);
-
-            bottomRightControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_RIGHT);
-
-            bottomRightControlPoint.initControlPoint(layer);
-
-            layer.draw();
-        } else {
-
-            topLeftControlPoint.setControlPointVisible(true);
-            topLeftControlPoint.moveControlPoint(layer);
-            bottomLeftControlPoint.setControlPointVisible(true);
-            bottomLeftControlPoint.moveControlPoint(layer);
-            topRightControlPoint.setControlPointVisible(true);
-            topRightControlPoint.moveControlPoint(layer);
-            bottomRightControlPoint.setControlPointVisible(true);
-            bottomRightControlPoint.moveControlPoint(layer);
-            layer.draw();
+            topLeftControlPoint.placeControlPoint(layer);
+            bottomLeftControlPoint.placeControlPoint(layer);
+            topRightControlPoint.placeControlPoint(layer);
+            bottomRightControlPoint.placeControlPoint(layer);
+            showingControlPoints = true;
         }
+
     }
 
     public void hideControlPoints() {
 
-        if (topLeftControlPoint != null) {
-            // can be null, afer the main Shape is dragged, and control points are forcibly removed
-            Layer layer = getLayer();
-
-            topLeftControlPoint.setControlPointVisible(false);
-            topLeftControlPoint.moveControlPoint(layer);
-            bottomLeftControlPoint.setControlPointVisible(false);
-            bottomLeftControlPoint.moveControlPoint(layer);
-            topRightControlPoint.setControlPointVisible(false);
-            topRightControlPoint.moveControlPoint(layer);
-            bottomRightControlPoint.setControlPointVisible(false);
-            bottomRightControlPoint.moveControlPoint(layer);
-            layer.draw();
+        // can be null, afer the main Shape is dragged, and control points are forcibly removed
+        Layer layer = getLayer();
+        if (topLeftControlPoint != null && showingControlPoints) {
+            layer.remove((Shape) topLeftControlPoint);
+            layer.remove((Shape) bottomLeftControlPoint);
+            layer.remove((Shape) topRightControlPoint);
+            layer.remove((Shape) bottomRightControlPoint);
+            showingControlPoints = false;
         }
 
     }
 
     @Override
     public void hideMagnetPoints() {
-
-        if (topMagnet != null) {
-
-            Layer layer = getLayer();
-
-            topMagnet.setMagnetVisible(false);
-
-            leftMagnet.setMagnetVisible(false);
-
-            rightMagnet.setMagnetVisible(false);
-
-            bottomMagnet.setMagnetVisible(false);
-
-            layer.draw();
+        Layer layer = getLayer();
+        if (topMagnet != null && showingMagnets) {
+            layer.remove((Shape) topMagnet);
+            layer.remove((Shape) leftMagnet);
+            layer.remove((Shape) rightMagnet);
+            layer.remove((Shape) bottomMagnet);
+            showingMagnets = false;
         }
 
     }
 
     public void showMagnetsPoints() {
         final Layer layer = getLayer();
-        if (topMagnet == null) {
+        if (topMagnet != null && !showingMagnets) {
+            layer.add((Shape) topMagnet);
+            layer.add((Shape) leftMagnet);
+            layer.add((Shape) rightMagnet);
+            layer.add((Shape) bottomMagnet);
 
-            topMagnet = new RectangleMagnetImpl(this);
-            topMagnet.placeMagnetPoints(layer, Magnet.MAGNET_TOP);
-            bottomMagnet = new RectangleMagnetImpl(this);
-            bottomMagnet.placeMagnetPoints(layer, Magnet.MAGNET_BOTTOM);
-            leftMagnet = new RectangleMagnetImpl(this);
-            leftMagnet.placeMagnetPoints(layer, Magnet.MAGNET_LEFT);
-            rightMagnet = new RectangleMagnetImpl(this);
-            rightMagnet.placeMagnetPoints(layer, Magnet.MAGNET_RIGHT);
+            topMagnet.placeMagnetPoints();
 
-            layer.draw();
-        } else {
-            topMagnet.setMagnetVisible(true);
-            topMagnet.placeMagnetPoints(layer, Magnet.MAGNET_TOP);
-            bottomMagnet.setMagnetVisible(true);
-            bottomMagnet.placeMagnetPoints(layer, Magnet.MAGNET_BOTTOM);
-            leftMagnet.setMagnetVisible(true);
-            leftMagnet.placeMagnetPoints(layer, Magnet.MAGNET_LEFT);
-            rightMagnet.setMagnetVisible(true);
-            rightMagnet.placeMagnetPoints(layer, Magnet.MAGNET_RIGHT);
+            bottomMagnet.placeMagnetPoints();
+
+            leftMagnet.placeMagnetPoints();
+
+            rightMagnet.placeMagnetPoints();
+            showingMagnets = true;
         }
+
     }
 
     public Magnet getTopMagnet() {
@@ -480,6 +449,62 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
     @Override
     public String toString() {
         return "EditableRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
+    }
+
+    public void attachControlPointToMagent(Magnet selectedMagnet) {
+        double topLeftX = ((Shape) getTopLeftControlPoint()).getX();
+        double topLeftY = ((Shape) getTopLeftControlPoint()).getY();
+        double bottomLeftX = ((Shape) getBottomLeftControlPoint()).getX();
+        double bottomLeftY = ((Shape) getBottomLeftControlPoint()).getY();
+        double topRightX = ((Shape) getTopRightControlPoint()).getX();
+        double topRightY = ((Shape) getTopRightControlPoint()).getY();
+
+        double bottomRightX = ((Shape) getBottomRightControlPoint()).getX();
+        double bottomRightY = ((Shape) getBottomRightControlPoint()).getY();
+
+        double deltaTopLeftX = selectedMagnet.getX() - topLeftX;
+        double deltaTopLeftY = selectedMagnet.getY() - topLeftY;
+
+        double topLeftDistance = Math.sqrt(Math.pow(deltaTopLeftX, 2)
+                + Math.pow(deltaTopLeftY, 2));
+
+        double deltaBottomLeftX = selectedMagnet.getX() - bottomLeftX;
+        double deltaBottomLeftY = selectedMagnet.getY() - bottomLeftY;
+
+        double bottomLeftDistance = Math.sqrt(Math.pow(deltaBottomLeftX, 2)
+                + Math.pow(deltaBottomLeftY, 2));
+
+        double deltaTopRightX = selectedMagnet.getX() - topRightX;
+        double deltaTopRightY = selectedMagnet.getY() - topRightY;
+
+        double topRightDistance = Math.sqrt(Math.pow(deltaTopRightX, 2)
+                + Math.pow(deltaTopRightY, 2));
+
+        double deltaBottomRightX = selectedMagnet.getX() - bottomRightX;
+        double deltaBottomRightY = selectedMagnet.getY() - bottomRightY;
+
+        double bottomRightDistance = Math.sqrt(Math.pow(deltaBottomRightX, 2)
+                + Math.pow(deltaBottomRightY, 2));
+
+        
+        
+        if (topLeftDistance < bottomLeftDistance && topLeftDistance < topRightDistance && topLeftDistance < topLeftDistance) {
+            if (!selectedMagnet.getAttachedControlPoints().contains(getTopLeftControlPoint())) {
+                selectedMagnet.attachControlPoint(getTopLeftControlPoint());
+            }
+        } else if(bottomLeftDistance < topLeftDistance && bottomLeftDistance < topRightDistance && bottomLeftDistance < bottomRightDistance ){
+            if (!selectedMagnet.getAttachedControlPoints().contains(getBottomLeftControlPoint())) {
+                selectedMagnet.attachControlPoint(getBottomLeftControlPoint());
+            }
+        } else if(topRightDistance < topLeftDistance && topRightDistance < bottomLeftDistance && topRightDistance < bottomRightDistance ){
+            if (!selectedMagnet.getAttachedControlPoints().contains(getTopRightControlPoint())) {
+                selectedMagnet.attachControlPoint(getTopRightControlPoint());
+            }
+        } else if(bottomRightDistance < topLeftDistance && bottomRightDistance < bottomLeftDistance && bottomRightDistance < topRightDistance ){
+            if (!selectedMagnet.getAttachedControlPoints().contains(getBottomRightControlPoint())) {
+                selectedMagnet.attachControlPoint(getBottomRightControlPoint());
+            }
+        }
     }
 
 }

@@ -2,6 +2,10 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ *//*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package org.kie.wires.client.shapes.collision;
 
@@ -14,8 +18,9 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_STROKE_WIDTH_SHAPE;
 import org.kie.wires.client.shapes.EditableRectangle;
-import org.kie.wires.client.shapes.ShapesUtils;
 import static org.kie.wires.client.shapes.collision.ControlPoint.*;
 import org.kie.wires.client.util.UUID;
 
@@ -35,15 +40,17 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
     private int controlType;
 
     public RectangleControlPointImpl(Rectangle shape, int controlType) {
-        this(10, 10);
+        this(12, 12);
         this.shape = shape;
         this.controlType = controlType;
+        
     }
 
     public RectangleControlPointImpl(double width, double height) {
         super(width, height);
-        setFillColor(ShapesUtils.LIGHT_BLUE);
         id = UUID.uuid();
+        setFillColor(CP_RGB_FILL_COLOR);
+        
     }
 
     public String getId() {
@@ -54,32 +61,35 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         return shape;
     }
 
-    public void initControlPoint(Layer layer) {
+    public void placeControlPoint(final Layer layer) {
 
-        moveControlPoint(layer);
+        moveControlPoint();
 
         setDraggable(true)
-                .setStrokeWidth(1)
+                .setStrokeWidth(CP_RGB_STROKE_WIDTH_SHAPE)
                 .setStrokeColor(ColorName.BLACK);
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
-
+                ((StickableShape) shape).hideMagnetPoints();
+                ((EditableRectangle) shape).setBeingResized(true);
                 recordStartData(shape, nodeDragStartEvent);
             }
         });
 
         addNodeDragMoveHandler(new NodeDragMoveHandler() {
             public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                Layer layer = getLayer();
-                ((EditableRectangle) shape).setBeingResized(true);
+
+                
+                
                 nodeDragMove((EditableRectangle) shape, nodeDragMoveEvent, layer);
-                if (((EditableRectangle) shape).getTopMagnet() != null) {
-                    ((EditableRectangle) shape).getTopMagnet().placeMagnetPoints(layer, Magnet.MAGNET_TOP);
-                    ((EditableRectangle) shape).getLeftMagnet().placeMagnetPoints(layer, Magnet.MAGNET_LEFT);
-                    ((EditableRectangle) shape).getRightMagnet().placeMagnetPoints(layer, Magnet.MAGNET_RIGHT);
-                    ((EditableRectangle) shape).getBottomMagnet().placeMagnetPoints(layer, Magnet.MAGNET_BOTTOM);
-                }
+//                if (((EditableRectangle) shape).getTopMagnet() != null) {
+//                    
+//                    ((EditableRectangle) shape).getTopMagnet().placeMagnetPoints(layer, Magnet.MAGNET_TOP);
+//                    ((EditableRectangle) shape).getLeftMagnet().placeMagnetPoints(layer, Magnet.MAGNET_LEFT);
+//                    ((EditableRectangle) shape).getRightMagnet().placeMagnetPoints(layer, Magnet.MAGNET_RIGHT);
+//                    ((EditableRectangle) shape).getBottomMagnet().placeMagnetPoints(layer, Magnet.MAGNET_BOTTOM);
+//                }
                 layer.draw();
 
             }
@@ -93,10 +103,10 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
         });
 
-        layer.add(this);
+
     }
 
-    public void moveControlPoint(Layer layer) {
+    public void moveControlPoint() {
         switch (controlType) {
             case CONTROL_TOP_LEFT:
                 setX(shape.getX() - 5);
@@ -223,13 +233,39 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
     public void udpateShape(Layer layer, double x, double y) {
         nodeDragMove((EditableRectangle) shape, x, y, layer);
-        if (((EditableRectangle) shape).getTopMagnet() != null) {
-            ((EditableRectangle) shape).getTopMagnet().placeMagnetPoints(layer, Magnet.MAGNET_TOP);
-            ((EditableRectangle) shape).getLeftMagnet().placeMagnetPoints(layer, Magnet.MAGNET_LEFT);
-            ((EditableRectangle) shape).getRightMagnet().placeMagnetPoints(layer, Magnet.MAGNET_RIGHT);
-            ((EditableRectangle) shape).getBottomMagnet().placeMagnetPoints(layer, Magnet.MAGNET_BOTTOM);
-        }
+
+        ((EditableRectangle) shape).getTopMagnet().placeMagnetPoints();
+        ((EditableRectangle) shape).getLeftMagnet().placeMagnetPoints();
+        ((EditableRectangle) shape).getRightMagnet().placeMagnetPoints();
+        ((EditableRectangle) shape).getBottomMagnet().placeMagnetPoints();
+
         layer.draw();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 29 * hash + (this.shape != null ? this.shape.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RectangleControlPointImpl other = (RectangleControlPointImpl) obj;
+        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+            return false;
+        }
+        if (this.shape != other.shape && (this.shape == null || !this.shape.equals(other.shape))) {
+            return false;
+        }
+        return true;
     }
 
 }

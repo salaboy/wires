@@ -22,9 +22,10 @@ public interface Magnet {
     static final int MAGNET_RIGHT = 4;
     static final int MAGNET_LEFT = 5;
 
-    void placeMagnetPoints(Layer layer, int control);
+    void placeMagnetPoints();
     
     double getX();
+    
     double getY();
     
     void setMagnetActive(boolean active);

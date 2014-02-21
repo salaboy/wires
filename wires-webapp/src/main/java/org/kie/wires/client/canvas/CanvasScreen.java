@@ -1,5 +1,8 @@
 package org.kie.wires.client.canvas;
 
+import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -27,14 +30,19 @@ import org.uberfire.lifecycle.OnOpen;
 
 import com.emitrom.lienzo.client.core.shape.GridLayer;
 import com.emitrom.lienzo.client.core.shape.Group;
-import com.emitrom.lienzo.client.core.shape.IPrimitive;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -46,7 +54,6 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
     private LienzoPanel panel;
     private Layer layer;
-    private boolean shapeBeingDragged;
     private Group group;
     private static final int X = 0;
     private static final int Y = 5;
@@ -59,6 +66,12 @@ public class CanvasScreen extends Composite implements RequiresResize {
     @Inject
     private Event<ProgressEvent> progressEvent;
 
+    private EditableShape shapeActive = null;
+    private Magnet selectedMagnet = null;
+    private boolean draggingShape = false;
+
+    public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
+
     public CanvasScreen() {
     }
 
@@ -69,9 +82,9 @@ public class CanvasScreen extends Composite implements RequiresResize {
         initWidget(panel);
 
         Line line1 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLUE).setAlpha(0.5); // primary
-                                                                                        // line
+        // line
         Line line2 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.GREEN).setAlpha(0.5); // secondary
-                                                                                         // line
+        // line
         line2.setDashArray(2, 2); // the secondary lines are dashed lines
 
         GridLayer gridLayer = new GridLayer(100, line1, 25, line2);
@@ -86,25 +99,46 @@ public class CanvasScreen extends Composite implements RequiresResize {
         group.setX(X).setY(Y);
         layer.add(group);
 
-        // panel.addMouseDownHandler(new MouseDownHandler() {
-        //
-        // public void onMouseDown(MouseDownEvent event) {
-        // shapeBeingDragged = true;
-        // }
-        // });
-        //
-        // panel.addMouseUpHandler(new MouseUpHandler() {
-        //
-        // public void onMouseUp(MouseUpEvent event) {
-        // shapeBeingDragged = false;
-        // }
-        // });
+        panel.addMouseDownHandler(new MouseDownHandler() {
+
+            public void onMouseDown(MouseDownEvent event) {
+
+                draggingShape = true;
+            }
+        });
+
+        panel.addClickHandler(new ClickHandler() {
+
+            public void onClick(ClickEvent event) {
+                //ShapesUtils.deselectAllShapes();
+            }
+        });
+
         panel.addMouseMoveHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent event) {
+                //GWT.log("Iprimitives = "+ layer.getChildNodes().length());
+                if (draggingShape) {
+                    detectCollisions(event);
+                }
+            }
+        });
 
-                detectCollisions(event);
+        panel.addMouseUpHandler(new MouseUpHandler() {
+            public void onMouseUp(MouseUpEvent event) {
+                //Connect the shapes on MouseUp only
+
+                draggingShape = false;
+                if (selectedMagnet != null && shapeActive != null) {
+
+                    ((StickableShape) shapeActive).attachControlPointToMagent(selectedMagnet);
+
+                    if (!selectedMagnet.getAttachedControlPoints().isEmpty()) {
+                        ((Shape) selectedMagnet).setFillColor(ColorName.RED);
+                    }
+                }
 
             }
+
         });
 
         layer.draw();
@@ -149,93 +183,53 @@ public class CanvasScreen extends Composite implements RequiresResize {
         y = 25 * Math.abs(y / 25);
         shape.setDraggable(true);
 
-        ((EditableShape) shape).init(x, y);
-
         layer.add(shape);
+
+        ((EditableShape) shape).init(x, y, layer);
+
+        shapesInCanvas.add((EditableShape) shape);
 
         layer.draw();
     }
 
     public void detectCollisions(MouseMoveEvent event) {
-        EditableShape shapeActive = null;
-        // if (shapeBeingDragged) {
-
-        for (IPrimitive<?> iPrimitive : layer) {
-            if (iPrimitive instanceof EditableShape) {
-                if (((EditableShape) iPrimitive).isBeingDragged() || ((EditableShape) iPrimitive).isBeingResized()) {
-                    shapeActive = ((EditableShape) iPrimitive);
-                }
-
+        shapeActive = null;
+        //GWT.log(" # of shapes in canvas: "+shapesInCanvas.size());
+        for (EditableShape shape : shapesInCanvas) {
+            if (shape.isBeingDragged() || shape.isBeingResized()) {
+                shapeActive = shape;
             }
         }
-
         if (shapeActive != null) {
-            for (IPrimitive<?> iPrimitive : layer) {
-                if (iPrimitive instanceof EditableShape) {
+            for (EditableShape shape : shapesInCanvas) {
+                if (!shape.getId().equals(shapeActive.getId())
+                        && ((CollidableShape) shapeActive).collidesWith(((CollidableShape) shape))) {
 
-                    if (!((EditableShape) iPrimitive).getId().equals(shapeActive.getId())
-                            && ((CollidableShape) shapeActive).collidesWith(((CollidableShape) iPrimitive))) {
-                        ((StickableShape) iPrimitive).showMagnetsPoints();
+                    ((StickableShape) shape).showMagnetsPoints();
 
-                        List<Magnet> magnets = ((StickableShape) iPrimitive).getMagnets();
-                        double finalDistance = 1000;
-                        Magnet selectedMagnet = null;
-                        for (Magnet magnet : magnets) {
-                            double deltaX = event.getX() - magnet.getX();
-                            double deltaY = event.getY() - magnet.getY();
-                            double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                    List<Magnet> magnets = ((StickableShape) shape).getMagnets();
+                    double finalDistance = 1000;
 
-                            if (finalDistance > distance) {
-                                finalDistance = distance;
-                                selectedMagnet = magnet;
-                            }
-                            magnet.setMagnetActive(false);
+                    for (Magnet magnet : magnets) {
+                        double deltaX = event.getX() - magnet.getX();
+                        double deltaY = event.getY() - magnet.getY();
+                        double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+
+                        if (finalDistance > distance) {
+
+                            finalDistance = distance;
+                            selectedMagnet = magnet;
                         }
-
-                        if (selectedMagnet != null) {
-                            selectedMagnet.setMagnetActive(true);
-                            // if(shapeActive instanceof EditableLine){
-                            // selectedMagnet.attachControlPoint(((EditableLine)
-                            // shapeActive).getStartControlPoint());
-                            // }
-
-                            // shapeActive.showMagnetsPoints();
-                            // List<Shape> magnets2 = shapeActive.getMagnets();
-                            //
-                            // finalDistance = 1000;
-                            // Shape selectedMagnet2 = null;
-                            // for (Shape magnet : magnets2) {
-                            // double deltaX = selectedMagnet.getX() -
-                            // magnet.getX();
-                            // double deltaY = selectedMagnet.getY() -
-                            // magnet.getY();
-                            // double distance = Math.sqrt(Math.pow(deltaX, 2) +
-                            // Math.pow(deltaY, 2));
-                            //
-                            // if (finalDistance > distance) {
-                            // finalDistance = distance;
-                            // selectedMagnet2 = magnet;
-                            // }
-                            // magnet.setScale(1);
-                            //
-                            // }
-                            // if (selectedMagnet2 != null) {
-                            // selectedMagnet2.setFillColor(ColorName.GREEN);
-                            // selectedMagnet2.setScale(2);
-                            // selectedMagnet2.setAlpha(0.5);
-                            // }
-
-                        }
-
-                    } else {
-                        ((StickableShape) iPrimitive).hideMagnetPoints();
-
+                        magnet.setMagnetActive(false);
+                        ((Shape) magnet).setFillColor(MAGNET_RGB_FILL_SHAPE);
+                    }
+                    if (selectedMagnet != null) {
+                        ((Shape) selectedMagnet).setFillColor(ColorName.GREEN);
                     }
                 }
+
             }
         }
-        // }
-
     }
 
     @Override
