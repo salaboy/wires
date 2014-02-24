@@ -1,7 +1,5 @@
 package org.kie.wires.client.canvas;
 
-import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +17,6 @@ import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.events.ProgressEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.shapes.EditableShape;
-import org.kie.wires.client.shapes.collision.CollidableShape;
-import org.kie.wires.client.shapes.collision.Magnet;
-import org.kie.wires.client.shapes.collision.StickableShape;
 import org.kie.wires.client.util.LienzoUtils;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -37,16 +32,11 @@ import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.xstream.bayesian.client.entry.BayesianService;
+
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")
@@ -66,10 +56,6 @@ public class CanvasScreen extends Composite implements RequiresResize {
     @Inject
     private Event<ProgressEvent> progressEvent;
 
-    private EditableShape shapeActive = null;
-    private Magnet selectedMagnet = null;
-    private boolean draggingShape = false;
-
     public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
 
     public CanvasScreen() {
@@ -88,59 +74,25 @@ public class CanvasScreen extends Composite implements RequiresResize {
         line2.setDashArray(2, 2); // the secondary lines are dashed lines
 
         GridLayer gridLayer = new GridLayer(100, line1, 25, line2);
-
-        panel.add(gridLayer);
-
         layer = new Layer();
-
-        panel.add(layer);
-
-        group = new Group();
-        group.setX(X).setY(Y);
-        layer.add(group);
-
-        panel.addMouseDownHandler(new MouseDownHandler() {
-
-            public void onMouseDown(MouseDownEvent event) {
-
-                draggingShape = true;
-            }
-        });
+      
+        panel.setBackgroundLayer(gridLayer);
+        
+        gridLayer.moveToBottom();
+        gridLayer.setListening(false);
+        
+        
+        panel.getScene().add(layer);
 
         panel.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                //ShapesUtils.deselectAllShapes();
+               // ShapesUtils.deselectAllShapes();
             }
         });
 
-        panel.addMouseMoveHandler(new MouseMoveHandler() {
-            public void onMouseMove(MouseMoveEvent event) {
-                //GWT.log("Iprimitives = "+ layer.getChildNodes().length());
-                if (draggingShape) {
-                    detectCollisions(event);
-                }
-            }
-        });
-
-        panel.addMouseUpHandler(new MouseUpHandler() {
-            public void onMouseUp(MouseUpEvent event) {
-                //Connect the shapes on MouseUp only
-
-                draggingShape = false;
-                if (selectedMagnet != null && shapeActive != null) {
-
-                    ((StickableShape) shapeActive).attachControlPointToMagent(selectedMagnet);
-
-                    if (!selectedMagnet.getAttachedControlPoints().isEmpty()) {
-                        ((Shape) selectedMagnet).setFillColor(ColorName.RED);
-                    }
-                }
-
-            }
-
-        });
-
+        
+        gridLayer.draw();
         layer.draw();
 
     }
@@ -190,46 +142,6 @@ public class CanvasScreen extends Composite implements RequiresResize {
         shapesInCanvas.add((EditableShape) shape);
 
         layer.draw();
-    }
-
-    public void detectCollisions(MouseMoveEvent event) {
-        shapeActive = null;
-        //GWT.log(" # of shapes in canvas: "+shapesInCanvas.size());
-        for (EditableShape shape : shapesInCanvas) {
-            if (shape.isBeingDragged() || shape.isBeingResized()) {
-                shapeActive = shape;
-            }
-        }
-        if (shapeActive != null) {
-            for (EditableShape shape : shapesInCanvas) {
-                if (!shape.getId().equals(shapeActive.getId())
-                        && ((CollidableShape) shapeActive).collidesWith(((CollidableShape) shape))) {
-
-                    ((StickableShape) shape).showMagnetsPoints();
-
-                    List<Magnet> magnets = ((StickableShape) shape).getMagnets();
-                    double finalDistance = 1000;
-
-                    for (Magnet magnet : magnets) {
-                        double deltaX = event.getX() - magnet.getX();
-                        double deltaY = event.getY() - magnet.getY();
-                        double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-
-                        if (finalDistance > distance) {
-
-                            finalDistance = distance;
-                            selectedMagnet = magnet;
-                        }
-                        magnet.setMagnetActive(false);
-                        ((Shape) magnet).setFillColor(MAGNET_RGB_FILL_SHAPE);
-                    }
-                    if (selectedMagnet != null) {
-                        ((Shape) selectedMagnet).setFillColor(ColorName.GREEN);
-                    }
-                }
-
-            }
-        }
     }
 
     @Override
