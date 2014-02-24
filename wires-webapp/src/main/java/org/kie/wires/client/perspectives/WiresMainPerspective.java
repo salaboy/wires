@@ -3,9 +3,7 @@ package org.kie.wires.client.perspectives;
 import static org.uberfire.workbench.model.PanelType.ROOT_STATIC;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 
-import org.kie.wires.client.events.BayesianEvent;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -16,8 +14,6 @@ import org.uberfire.workbench.model.Position;
 import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
-
-import com.google.gwt.core.shared.GWT;
 
 /**
  * A Perspective to show File Explorer
@@ -50,10 +46,10 @@ public class WiresMainPerspective {
         this.createPanelWithChild(perspective, Position.EAST);
         //this.createPanel1(perspective, Position.EAST, WIRES_TEMPLATE_SCREEN);
         this.drawPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
+        this.drawPanel(perspective, Position.SOUTH, BAYESIAN_SOUTH_SCREEN);
 
         perspective.setTransient(true);
 
-        pepe();
         
         return perspective;
     }
@@ -82,11 +78,4 @@ public class WiresMainPerspective {
         panel.addPart(new PartDefinitionImpl(new DefaultPlaceRequest(identifierPanel)));
         return panel;
     }
-    
-    public void pepe(){
-        this.drawPanel(perspective, Position.SOUTH, BAYESIAN_SOUTH_SCREEN);
-    }
-    
-    
-
 }

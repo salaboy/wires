@@ -6,6 +6,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.wires.client.events.BayesianEvent;
+import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.factoryLayers.LayerBuilder;
 import org.kie.wires.client.factoryShapes.ShapeCategory;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
@@ -54,7 +55,7 @@ public class TemplateScreen extends Composite implements RequiresResize {
 
     @Inject
     private Event<BayesianEvent> bayesianEvent;
-
+    
     @PostConstruct
     public void init() {
         accountLayers = 0;
@@ -109,7 +110,7 @@ public class TemplateScreen extends Composite implements RequiresResize {
 
     private void newBayesianExample(Shape<Rectangle> rectangle, String fileExample) {
         accountLayers += 1;
-        new LayerBuilder(group, rectangle, panel, layer, accountLayers, fileExample, bayesianEvent);
+        new LayerBuilder(group, rectangle, panel, layer, accountLayers, fileExample, bayesianEvent, null, null);
     }
 
 }

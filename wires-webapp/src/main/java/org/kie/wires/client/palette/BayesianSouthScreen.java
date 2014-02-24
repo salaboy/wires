@@ -2,7 +2,10 @@ package org.kie.wires.client.palette;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 
+import org.kie.wires.client.bayesian.factory.ProbabilityFactory;
+import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -48,7 +51,7 @@ public class BayesianSouthScreen extends Composite implements RequiresResize {
     @PostConstruct
     public void init() {
         super.initWidget(uiBinder.createAndBindUi(this));
-        panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL, ShapeFactoryUtil.HEIGHT_PANEL);
+        panel = new LienzoPanel(1200, ShapeFactoryUtil.HEIGHT_PANEL);
         layer = new Layer();
         panel.add(layer);
         group = new Group();
@@ -73,6 +76,14 @@ public class BayesianSouthScreen extends Composite implements RequiresResize {
         int height = getParent().getOffsetHeight();
         int width = getParent().getOffsetWidth();
         super.setPixelSize(width, height);
+    }
+    
+    public void myResponseObserver(@Observes ProbabilityEvent event) {
+    	group.removeAll();
+    	if(event.getVariable() != null){
+    	    new ProbabilityFactory(event.getVariable(), group, layer);
+    	}
+    	layer.draw();
     }
 
 
