@@ -44,10 +44,10 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
     private double dragEventEndX;
     private double dragEventEndY;
 
-    private Line shape;
+    private EditableLine shape;
     private int controlType = 0;
 
-    public LineControlPointImpl(Line shape, int controlType) {
+    public LineControlPointImpl(EditableLine shape, int controlType) {
         this(12, 12);
         this.shape = shape;
         this.controlType = controlType;
@@ -68,7 +68,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         return shape;
     }
 
-    public void setShape(Line shape) {
+    public void setShape(EditableLine shape) {
         this.shape = shape;
     }
 
@@ -103,7 +103,11 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         array.getPoint(0).setX(initialStartPointX + deltaX);
                         array.getPoint(0).setY(initialStartPointY + deltaY);
 
+                        Magnet selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
+                        CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);    
+                        
                         layer.draw();
+                        
                     }
                 });
 
@@ -141,6 +145,9 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         Point2DArray array = shape.getPoints();
                         array.getPoint(1).setX(initialEndPointX + deltaX);
                         array.getPoint(1).setY(initialEndPointY + deltaY);
+                        
+                        Magnet selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
+                        CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
 
                         layer.draw();
                     }

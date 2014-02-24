@@ -35,11 +35,11 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
     private String id;
 
-    private Rectangle shape;
+    private EditableRectangle shape;
 
     private int controlType;
 
-    public RectangleControlPointImpl(Rectangle shape, int controlType) {
+    public RectangleControlPointImpl(EditableRectangle shape, int controlType) {
         this(12, 12);
         this.shape = shape;
         this.controlType = controlType;
@@ -83,13 +83,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
                 
                 
                 nodeDragMove((EditableRectangle) shape, nodeDragMoveEvent, layer);
-//                if (((EditableRectangle) shape).getTopMagnet() != null) {
-//                    
-//                    ((EditableRectangle) shape).getTopMagnet().placeMagnetPoints(layer, Magnet.MAGNET_TOP);
-//                    ((EditableRectangle) shape).getLeftMagnet().placeMagnetPoints(layer, Magnet.MAGNET_LEFT);
-//                    ((EditableRectangle) shape).getRightMagnet().placeMagnetPoints(layer, Magnet.MAGNET_RIGHT);
-//                    ((EditableRectangle) shape).getBottomMagnet().placeMagnetPoints(layer, Magnet.MAGNET_BOTTOM);
-//                }
+
                 layer.draw();
 
             }
