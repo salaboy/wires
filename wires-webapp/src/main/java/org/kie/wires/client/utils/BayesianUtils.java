@@ -15,6 +15,8 @@ public class BayesianUtils {
 
     public static String fontFamilyProgressBar = "Lucida Console";
     public static int fontSizeProgressBar = 12;
+    
+    public static String relativePath = "/src/main/java/org/kie/wires/client/bayesian/resources/";
 
     public static String[][] getNodeColors() {
         double rand = Math.random();

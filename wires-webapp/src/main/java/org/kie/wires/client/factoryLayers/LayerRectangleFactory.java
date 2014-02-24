@@ -53,7 +53,7 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
             @Override
             public void onNodeMouseClick(NodeMouseClickEvent event) {
-                bayesianEvent.fire(new BayesianEvent(xml03File));
+            	bayesianEvent.fire(new BayesianEvent(xml03File));
             }
         });
         group.add(shape);

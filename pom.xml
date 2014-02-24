@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.kie</groupId>
+  <artifactId>wires</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Wires - Canvas</name>
+
+  <modules>
+    <module>wires-webapp</module>
+    <module>wires-bayesian-xml03</module>
+    <module>wires-bayesian</module>	
+  </modules>
+
+<properties>
+		<lienzo.version>1.2-RELEASE</lienzo.version>
+		<uberfire.version>0.4.0-SNAPSHOT</uberfire.version>
+		<errai.version>2.4.1.Final</errai.version>
+		<gwt.version>2.5.1</gwt.version>
+		<jetty.version>6.1.25</jetty.version>
+		<weld.version>1.1.13.Final</weld.version>
+		<cdi-api.version>1.0-SP4</cdi-api.version>
+		<logback.version>1.0.9</logback.version>
+		<slf4j.version>1.7.2</slf4j.version>
+		<mgwt.version>1.2.0-SNAPSHOT</mgwt.version>
+		<kie.workbench.version>6.1.0-SNAPSHOT</kie.workbench.version>
+		<bayesian-api.version>1.0-SNAPSHOT</bayesian-api.version>
+		<xstream.version>1.3</xstream.version>
+		<guava.version>r03</guava.version>
+	</properties>
+
+</project>
