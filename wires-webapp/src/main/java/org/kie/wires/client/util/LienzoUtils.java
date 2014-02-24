@@ -17,26 +17,25 @@ import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.emitrom.lienzo.shared.core.types.TextAlign;
 import com.emitrom.lienzo.shared.core.types.TextBaseLine;
 import com.google.common.collect.Lists;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Timer;
 
 public class LienzoUtils {
 
+    private static final String LABEL_PROGRESS_BAR = "Loading...";
     private static int progressWidth = 1;
     public static boolean loadingProgressBar;
     public static List<Shape<?>> progressShapes;
     private static int xProgressBar = 400;
     private static int yProgressBar = 300;
 
-    public static void drawProgressBar(final Group group, final Layer layer, final LienzoPanel panel, final Event<ProgressEvent> progressEvent) {
+    public static void drawProgressBar(final Group group, final Layer layer, final LienzoPanel panel,
+            final Event<ProgressEvent> progressEvent) {
         progressWidth = 1;
         progressShapes = Lists.newArrayList();
         final int substrateWidth = 300;
         final int progressHeight = 34;
 
-        final Text progressPercentage = new Text("Loading...", BayesianUtils.fontFamilyProgressBar,
+        final Text progressPercentage = new Text(LABEL_PROGRESS_BAR, BayesianUtils.fontFamilyProgressBar,
                 BayesianUtils.fontSizeProgressBar).setFillColor(ColorName.WHITE.getValue())
                 .setStrokeColor(BayesianUtils.substrateColor).setTextBaseLine(TextBaseLine.MIDDLE)
                 .setTextAlign(TextAlign.CENTER);
@@ -55,11 +54,11 @@ public class LienzoUtils {
                     progressEvent.fire(new ProgressEvent(LienzoUtils.progressShapes));
                     progressShapes = null;
                 } else {
-                    
+
                     drawComponentProgressBar(Color.rgbToBrowserHexColor(102, 183, 176), progressWidth, progressHeight, 300,
                             Color.rgbToBrowserHexColor(102, 183, 176), true, group);
 
-                    progressPercentage.setText("Loading...").setX(xProgressBar + 100).setY(yProgressBar + 18);
+                    progressPercentage.setText(LABEL_PROGRESS_BAR).setX(xProgressBar + 100).setY(yProgressBar + 18);
                     progressShapes.add(progressPercentage);
                     group.add(progressPercentage);
                     layer.draw();
@@ -85,14 +84,5 @@ public class LienzoUtils {
     }
 
     
-
-    public static Style getFloatingStyle(LienzoPanel floatingPanel, int positionX, int positionY, int zIndex) {
-        Style style = floatingPanel.getElement().getStyle();
-        style.setPosition(Position.ABSOLUTE);
-        style.setLeft(positionX, Unit.PX);
-        style.setTop(positionY, Unit.PX);
-        style.setZIndex(zIndex);
-        return style;
-    }
 
 }

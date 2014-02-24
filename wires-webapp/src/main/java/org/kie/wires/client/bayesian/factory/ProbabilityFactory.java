@@ -51,7 +51,7 @@ public class ProbabilityFactory extends BaseFactory {
     private void drawNodeSelected(BayesVariable node, int positionX, int positionY, int width, int height, Group group,
             Layer layer) {
         super.drawComponent(Color.rgbToBrowserHexColor(183, 198, 201), positionX, positionY, width, height,
-                Color.rgbToBrowserHexColor(183, 198, 201), group, layer);
+                Color.rgbToBrowserHexColor(183, 198, 201), group, layer, false);
 
         super.drawText(BayesianUtils.colorTextLabel, positionX + 2, positionY + 35, width, height,
                 BayesianUtils.colorTextLabel, node.getName(), BayesianUtils.fontSizeTextLabel, group, layer);
@@ -61,7 +61,7 @@ public class ProbabilityFactory extends BaseFactory {
             int heightOptions, Group group, Layer layer) {
         for (String outcome : node.getOutcomes()) {
             super.drawComponent(Color.rgbToBrowserHexColor(200, 216, 203), positionXOptions, positionYOptions, widthOptions,
-                    heightOptions, Color.rgbToBrowserHexColor(200, 216, 203), group, layer);
+                    heightOptions, Color.rgbToBrowserHexColor(200, 216, 203), group, layer, false);
 
             super.drawText(BayesianUtils.colorTextLabel, positionXOptions + 2, positionYOptions
                     + (20 / node.getOutcomes().size()), widthOptions, heightOptions, BayesianUtils.colorTextLabel, outcome,
@@ -79,7 +79,8 @@ public class ProbabilityFactory extends BaseFactory {
         for (int i = 0; i < probabilities.length / node.getOutcomes().size(); i++) {
             for (int j = 0; j < node.getOutcomes().size(); j++) {
                 super.drawComponent(Color.rgbToBrowserHexColor(255, 255, 255), positionXValues, positionYValues,
-                        widthPorcentualValue, heightPorcentualValue, Color.rgbToBrowserHexColor(183, 198, 201), group, layer);
+                        widthPorcentualValue, heightPorcentualValue, Color.rgbToBrowserHexColor(183, 198, 201), group, layer,
+                        false);
 
                 super.drawText(BayesianUtils.colorTextLabel, positionXValues + 2, positionYValues
                         + (20 / node.getOutcomes().size()), widthPorcentualValue, heightPorcentualValue,
@@ -126,7 +127,7 @@ public class ProbabilityFactory extends BaseFactory {
 
                 // draw label
                 super.drawComponent(color, positionXIncoming, positionYIncoming, widthIncoming, heightIncoming, color, group,
-                        layer);
+                        layer, false);
 
                 super.drawText(BayesianUtils.colorTextLabel, positionXIncoming + 5, positionYIncoming, widthIncoming,
                         heightIncoming, BayesianUtils.colorTextLabel, nod.getName(), BayesianUtils.fontSizeTextLabel, group,
@@ -141,10 +142,9 @@ public class ProbabilityFactory extends BaseFactory {
                                 widthOptions, heightOptions);
                     }
                 } else {
-                    int sizeOutcomesPrevIncomingNode = node.getIncomingNodes().get(incomingPosition - 1).getOutcomes().size(); 
+                    int sizeOutcomesPrevIncomingNode = node.getIncomingNodes().get(incomingPosition - 1).getOutcomes().size();
                     drawPorcentualIncoming(nod, positionYIncoming, heightIncoming, group, layer, widthPorcentualValue
-                            * sizeOutcomesPrevIncomingNode, widthOptions,
-                            heightOptions);
+                            * sizeOutcomesPrevIncomingNode, widthOptions, heightOptions);
                 }
                 incomingPosition += 1;
 
@@ -159,7 +159,7 @@ public class ProbabilityFactory extends BaseFactory {
             int widthPorcentualValue, int widthOptions, int heightOptions) {
         for (String out : nod.getOutcomes()) {
             super.drawComponent(Color.rgbToBrowserHexColor(200, 216, 203), positionXPorc, positionYIncoming,
-                    widthPorcentualValue, heightIncoming, Color.rgbToBrowserHexColor(200, 216, 203), group, layer);
+                    widthPorcentualValue, heightIncoming, Color.rgbToBrowserHexColor(200, 216, 203), group, layer, false);
 
             super.drawText(BayesianUtils.colorTextLabel, positionXPorc + 2, positionYIncoming, widthOptions, heightOptions,
                     BayesianUtils.colorTextLabel, out, BayesianUtils.fontSizeTextLabel, group, layer);

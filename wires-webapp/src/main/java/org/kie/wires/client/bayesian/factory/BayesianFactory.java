@@ -34,10 +34,10 @@ public class BayesianFactory extends BaseFactory {
     private Event<ProbabilityEvent> probabilityEvent;
     private Event<ProgressEvent> progressEvent;
     private List<BayesVariable> nodes;
-    
 
     public BayesianFactory(Group group, LienzoPanel panel, Caller<BayesianService> bayesianService, String xml03File,
-            Layer layer, Event<LayerEvent> layerEvent, Event<ProbabilityEvent> probabilityEvent, Event<ProgressEvent> progressEvent) {
+            Layer layer, Event<LayerEvent> layerEvent, Event<ProbabilityEvent> probabilityEvent,
+            Event<ProgressEvent> progressEvent) {
         this.panel = panel;
         this.bayesianService = bayesianService;
         this.layerEvent = layerEvent;
@@ -50,7 +50,6 @@ public class BayesianFactory extends BaseFactory {
 
     public void init(final String xml03File, final Group group, final Layer layer) {
         clearScreen(group, layer);
-        //LienzoUtils.drawProgressBar();
         progressEvent.fire(new ProgressEvent(null));
         this.drawLabelFile(xml03File, group, layer);
         bayesianService.call(new RemoteCallback<BayesNetwork>() {
@@ -87,13 +86,13 @@ public class BayesianFactory extends BaseFactory {
         // node
         int width = widthNode;
         int height = 70;
-        super.drawComponent(colors[0][0], positionX, positionY, width, height, borderColor, group, layer);
+        super.drawComponent(colors[0][0], positionX, positionY, width, height, borderColor, group, layer, true);
 
         // header
         width = widthNode;
         height = 25;
         positionY = positionY - height;
-        super.drawComponent(colors[0][1], positionX, positionY, width, height, borderColor, group, layer);
+        super.drawComponent(colors[0][1], positionX, positionY, width, height, borderColor, group, layer, true);
         super.drawText(Color.rgbToBrowserHexColor(104, 104, 104), positionX, positionY, width, height, borderColor,
                 node.getName(), fontSize, group, layer);
         // labels (layers perspective)
@@ -106,7 +105,7 @@ public class BayesianFactory extends BaseFactory {
     private void drawLabelFile(String nameFile, Group group, Layer layer) {
 
         super.drawComponent(BayesianUtils.bgColorContainer, BayesianUtils.positionXContainer, BayesianUtils.positionYContainer,
-                BayesianUtils.widthContainer, BayesianUtils.heightContainer, BayesianUtils.borderContainer, group, layer);
+                BayesianUtils.widthContainer, BayesianUtils.heightContainer, BayesianUtils.borderContainer, group, layer, true);
 
         super.drawText(BayesianUtils.colorTextLabel, BayesianUtils.positionXTextLabel, BayesianUtils.positionYTextLabel,
                 BayesianUtils.widthTextLabel, BayesianUtils.heightTextLabel, BayesianUtils.colorTextLabel, nameFile,
@@ -129,10 +128,10 @@ public class BayesianFactory extends BaseFactory {
             super.drawText(Color.rgbToBrowserHexColor(0, 0, 0), positionX - 63, positionY - 8, width, height, borderColor,
                     outcomes.get(i), fontSize, group, layer);
             super.drawComponent(Color.rgbToBrowserHexColor(255, 255, 255), positionX, positionY, width, height, borderColor,
-                    group, layer);
+                    group, layer, true);
             // fill bar
             widthFill = calculatePorcentage(probabilities, width, i);
-            super.drawComponent(fillColor, positionX, positionY, widthFill, height, borderColor, group, layer);
+            super.drawComponent(fillColor, positionX, positionY, widthFill, height, borderColor, group, layer, false);
         }
     }
 
@@ -145,8 +144,6 @@ public class BayesianFactory extends BaseFactory {
         }
         porcentual *= 100;
         int result = (int) ((porcentual * maxWidthFill) / 100);
-        // minus 1 minus 1 - border width
-        result -= 1;
         return result;
     }
 
@@ -167,7 +164,6 @@ public class BayesianFactory extends BaseFactory {
     private void clearScreen(Group group, Layer layer) {
         group.removeAll();
         layer.draw();
-        //LienzoUtils.clearProgressBar(progressEvent);
         progressEvent.fire(new ProgressEvent(LienzoUtils.progressShapes));
         layerEvent.fire(new LayerEvent(null));
         probabilityEvent.fire(new ProbabilityEvent(null));

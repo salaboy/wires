@@ -5,6 +5,7 @@ import org.kie.wires.client.shapes.EditableRectangle;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
+import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.shared.core.types.Color;
@@ -15,11 +16,11 @@ public class BaseFactory {
 	private static final String defaultBorderColor = ShapeFactoryUtil.RGB_STROKE_SHAPE;
     
     protected void drawComponent(String color, int positionX, int positionY, int width, int height, String borderColor,
-            Group group, Layer layer) {
+            Group group, Layer layer, boolean isEditable) {
         if (borderColor == null) {
             borderColor = Color.rgbToBrowserHexColor(0, 0, 0);
         }
-        final EditableRectangle component = new EditableRectangle(width, height);
+        Shape<?> component = (isEditable) ? new EditableRectangle(width, height) : new Rectangle(width, height); 
         setAttributes(component, color, positionX, positionY, borderColor);
         group.add(component);
         
