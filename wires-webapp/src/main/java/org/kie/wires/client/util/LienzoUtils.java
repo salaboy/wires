@@ -35,12 +35,12 @@ public class LienzoUtils {
         final int substrateWidth = 300;
         final int progressHeight = 34;
 
-        final Text progressPercentage = new Text(LABEL_PROGRESS_BAR, BayesianUtils.fontFamilyProgressBar,
-                BayesianUtils.fontSizeProgressBar).setFillColor(ColorName.WHITE.getValue())
-                .setStrokeColor(BayesianUtils.substrateColor).setTextBaseLine(TextBaseLine.MIDDLE)
+        final Text progressPercentage = new Text(LABEL_PROGRESS_BAR, BayesianUtils.FONT_FAMILY_PROGRESS_BAR,
+                BayesianUtils.FONT_SIZE_PROGRESS_BAR).setFillColor(ColorName.WHITE.getValue())
+                .setStrokeColor(BayesianUtils.SUBSTRATE_COLOR).setTextBaseLine(TextBaseLine.MIDDLE)
                 .setTextAlign(TextAlign.CENTER);
 
-        drawComponentProgressBar(Color.rgbToBrowserHexColor(197, 216, 214), substrateWidth, BayesianUtils.substrateHeight, 200,
+        drawComponentProgressBar(Color.rgbToBrowserHexColor(197, 216, 214), substrateWidth, BayesianUtils.SUBSTRATE_HEIGHT, 200,
                 Color.rgbToBrowserHexColor(197, 216, 214), false, group);
         Timer timer = new Timer() {
             @Override
@@ -76,7 +76,7 @@ public class LienzoUtils {
             component.setFillGradient(BayesianUtils.getProgressGradient());
         } else {
             component.setFillGradient(BayesianUtils.getSubstrateGradient()).setShadow(BayesianUtils.getSubstrateShadow())
-                    .setStrokeColor(BayesianUtils.substrateColor).setStrokeWidth(1);
+                    .setStrokeColor(BayesianUtils.SUBSTRATE_COLOR).setStrokeWidth(1);
         }
         component.setX(xProgressBar).setY(yProgressBar).setDraggable(false);
         progressShapes.add(component);
