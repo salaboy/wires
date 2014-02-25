@@ -17,17 +17,14 @@ import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.events.ProgressEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.shapes.EditableShape;
-import org.kie.wires.client.util.LienzoUtils;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnOpen;
 
 import com.emitrom.lienzo.client.core.shape.GridLayer;
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +33,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.xstream.bayesian.client.entry.BayesianService;
+import org.kie.wires.client.events.ReadyEvent;
+import org.kie.wires.client.shapes.BaseGroupShape;
+import org.kie.wires.client.shapes.EditableRectangle;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")
@@ -43,7 +43,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
     private LienzoPanel panel;
     private Layer layer;
-    private Group group;
+
     private static final int X = 0;
     private static final int Y = 5;
     @Inject
@@ -54,6 +54,9 @@ public class CanvasScreen extends Composite implements RequiresResize {
     private Event<ProbabilityEvent> probabilityEvent;
     @Inject
     private Event<ProgressEvent> progressEvent;
+    
+    @Inject
+    private Event<ReadyEvent> readyEvent;
 
     public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
 
@@ -73,26 +76,21 @@ public class CanvasScreen extends Composite implements RequiresResize {
         line2.setDashArray(2, 2); // the secondary lines are dashed lines
 
         GridLayer gridLayer = new GridLayer(100, line1, 25, line2);
-        group = new Group();
-        layer = new Layer();
-        layer.add(group);
-      
+
         panel.setBackgroundLayer(gridLayer);
-        
+
         gridLayer.moveToBottom();
         gridLayer.setListening(false);
-        
-        
+        layer = new Layer();
         panel.getScene().add(layer);
 
         panel.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-               // ShapesUtils.deselectAllShapes();
+                // ShapesUtils.deselectAllShapes();
             }
         });
 
-        
         gridLayer.draw();
         layer.draw();
 
@@ -114,7 +112,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
-        Shape shape = shapeAddEvent.getShape();
+        BaseGroupShape shape = shapeAddEvent.getShape();
         shape.getLayer().remove(shape);
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
@@ -158,19 +156,31 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     public void addNewPanel(@Observes BayesianEvent event) {
-        group.removeAll();
-        new BayesianFactory(group, panel, bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, progressEvent);
+
+        BayesianFactory bayesianFactory = new BayesianFactory(panel, bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent, progressEvent);
+        
+        
     }
     
-    public void progressBar(@Observes ProgressEvent event){
-        if(event.getShapes() != null && !event.getShapes().isEmpty()){
-            for(Shape shape : event.getShapes()){
-                group.remove(shape);
-            }
-            layer.draw();
-        }else if(LienzoUtils.progressShapes == null){
-            LienzoUtils.drawProgressBar(group, layer, panel, progressEvent);
+    
+    public void addNodes(@Observes ReadyEvent event){
+        for (EditableRectangle shape : event.getBayesianNodes()) {
+            layer.add(shape);
+            shapesInCanvas.add((EditableShape) shape);
         }
+        layer.draw();
+        
+    
     }
 
+//    public void progressBar(@Observes ProgressEvent event){
+//        if(event.getShapes() != null && !event.getShapes().isEmpty()){
+//            for(Shape shape : event.getShapes()){
+//                group.remove(shape);
+//            }
+//            layer.draw();
+//        }else if(LienzoUtils.progressShapes == null){
+//            LienzoUtils.drawProgressBar(group, layer, panel, progressEvent);
+//        }
+//    }
 }

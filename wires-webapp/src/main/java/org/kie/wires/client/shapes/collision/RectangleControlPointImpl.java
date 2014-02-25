@@ -57,7 +57,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         return id;
     }
 
-    public Rectangle getShape() {
+    public EditableRectangle getShape() {
         return shape;
     }
 
@@ -108,26 +108,26 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
                 break;
             case CONTROL_BOTTOM_LEFT:
                 setX(shape.getX() - 5);
-                setY(shape.getY() + shape.getHeight() - 5);
+                setY(shape.getY() + shape.getRectangle().getHeight() - 5);
                 break;
             case CONTROL_TOP_RIGHT:
-                setX(shape.getX() + shape.getWidth() - 5);
+                setX(shape.getX() + shape.getRectangle().getWidth() - 5);
                 setY(shape.getY() - 5);
                 break;
             case CONTROL_BOTTOM_RIGHT:
-                setX(shape.getX() + shape.getWidth() - 5);
-                setY(shape.getY() + shape.getHeight() - 5);
+                setX(shape.getX() + shape.getRectangle().getWidth() - 5);
+                setY(shape.getY() + shape.getRectangle().getHeight() - 5);
                 break;
         }
     }
 
-    public void recordStartData(Rectangle destination, NodeDragStartEvent nodeDragStartEvent) {
+    public void recordStartData(EditableRectangle destination, NodeDragStartEvent nodeDragStartEvent) {
         dragEventStartX = nodeDragStartEvent.getX();
         dragEventStartY = nodeDragStartEvent.getY();
         ((EditableRectangle) destination).setStartX(destination.getX());
         ((EditableRectangle) destination).setStartY(destination.getY());
-        ((EditableRectangle) destination).setStartHeight(destination.getHeight());
-        ((EditableRectangle) destination).setStartWidth(destination.getWidth());
+        ((EditableRectangle) destination).setStartHeight(destination.getRectangle().getHeight());
+        ((EditableRectangle) destination).setStartWidth(destination.getRectangle().getWidth());
 
     }
 
@@ -137,8 +137,8 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
                 rect.setX(rect.getStartX() + deltaX);
                 rect.setY(rect.getStartY() + deltaY);
 
-                rect.setWidth(rect.getStartWidth() - deltaX);
-                rect.setHeight(rect.getStartHeight() - deltaY);
+                rect.getRectangle().setWidth(rect.getStartWidth() - deltaX);
+                rect.getRectangle().setHeight(rect.getStartHeight() - deltaY);
 
                 rect.setCurrentDragX(rect.getStartX() + deltaX);
                 rect.setCurrentDragY(rect.getStartY() + deltaY);
@@ -147,8 +147,8 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
             case CONTROL_BOTTOM_LEFT:
                 rect.setX(rect.getStartX() + deltaX);
 
-                rect.setWidth(rect.getStartWidth() - deltaX);
-                rect.setHeight(rect.getStartHeight() + deltaY);
+                rect.getRectangle().setWidth(rect.getStartWidth() - deltaX);
+                rect.getRectangle().setHeight(rect.getStartHeight() + deltaY);
 
                 rect.setCurrentDragX(rect.getStartX() + deltaX);
 
@@ -156,14 +156,14 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
             case CONTROL_TOP_RIGHT:
                 rect.setY(rect.getStartY() + deltaY);
 
-                rect.setWidth(rect.getStartWidth() + deltaX);
-                rect.setHeight(rect.getStartHeight() - deltaY);
+                rect.getRectangle().setWidth(rect.getStartWidth() + deltaX);
+                rect.getRectangle().setHeight(rect.getStartHeight() - deltaY);
 
                 rect.setCurrentDragY(rect.getStartY() + deltaY);
                 break;
             case CONTROL_BOTTOM_RIGHT:
-                rect.setWidth(rect.getStartWidth() + deltaX);
-                rect.setHeight(rect.getStartHeight() + deltaY);
+                rect.getRectangle().setWidth(rect.getStartWidth() + deltaX);
+                rect.getRectangle().setHeight(rect.getStartHeight() + deltaY);
 
                 break;
         }
@@ -175,15 +175,15 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
                 break;
             case CONTROL_BOTTOM_LEFT:
                 rect.getTopLeftControlPoint().setControlPointX(rect.getX() - 5);
-                rect.getBottomRightControlPoint().setControlPointY(rect.getY() + rect.getHeight() - 5);
+                rect.getBottomRightControlPoint().setControlPointY(rect.getY() + rect.getRectangle().getHeight() - 5);
                 break;
             case CONTROL_TOP_RIGHT:
                 rect.getTopLeftControlPoint().setControlPointY(rect.getY() - 5);
-                rect.getBottomRightControlPoint().setControlPointX(rect.getX() + rect.getWidth() - 5);
+                rect.getBottomRightControlPoint().setControlPointX(rect.getX() + rect.getRectangle().getWidth() - 5);
                 break;
             case CONTROL_BOTTOM_RIGHT:
-                rect.getBottomLeftControlPoint().setControlPointY(rect.getY() + rect.getHeight() - 5);
-                rect.getTopRightControlPoint().setControlPointX(rect.getX() + rect.getWidth() - 5);
+                rect.getBottomLeftControlPoint().setControlPointY(rect.getY() + rect.getRectangle().getHeight() - 5);
+                rect.getTopRightControlPoint().setControlPointX(rect.getX() + rect.getRectangle().getWidth() - 5);
                 break;
         }
     }

@@ -24,7 +24,7 @@ import org.kie.wires.client.util.UUID;
 import org.kie.wires.client.util.collision.Projection;
 import org.kie.wires.client.util.collision.Vector;
 
-public class EditableRectangle extends Rectangle implements EditableShape, CollidableShape, StickableShape {
+public class EditableRectangle extends BaseGroupShape {
 
     private final String id;
 
@@ -38,8 +38,8 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
     private Magnet bottomMagnet;
     private Magnet leftMagnet;
 
-    private boolean beingResized = false;
-
+    private Rectangle rectangle;
+    
     private double currentDragX;
     private double currentDragY;
 
@@ -49,6 +49,7 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
     private double startHeight;
 
     private boolean beingDragged = false;
+    private boolean beingResized = false;
 
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
@@ -61,9 +62,9 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
 
     public EditableRectangle(double width, double height, double cornerRadius) {
 
-        super(width, height, cornerRadius);
-        setDraggable(true);
-
+        rectangle = new Rectangle(width, height, cornerRadius);
+        add(rectangle);
+        
         this.id = UUID.uuid();
 
         topMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_TOP);
@@ -83,6 +84,7 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
     }
 
     public void init(double x, double y, Layer layer) {
+        super.init();
         setX(x);
         setY(y);
         currentDragX = x;
@@ -121,9 +123,9 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
                     for (Object cp : topMagnet.getAttachedControlPoints()) {
 
                         ((ControlPoint) cp).setControlPointVisible(true);
-                        ((ControlPoint) cp).setControlPointX(currentDragX + (EditableRectangle.this.getWidth() / 2) - 5);
+                        ((ControlPoint) cp).setControlPointX(currentDragX + (rectangle.getWidth() / 2) - 5);
                         ((ControlPoint) cp).setControlPointY(currentDragY - 5);
-                        ((ControlPoint) cp).udpateShape(layer, currentDragX + (EditableRectangle.this.getWidth() / 2), currentDragY);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX + (rectangle.getWidth() / 2), currentDragY);
 
                     }
                 }
@@ -132,8 +134,8 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
                         //  GWT.log("there are attached control points to leftMagnet " + leftMagnet.getAttachedControlPoints().size());
                         ((ControlPoint) cp).setControlPointVisible(true);
                         ((ControlPoint) cp).setControlPointX(currentDragX - 5);
-                        ((ControlPoint) cp).setControlPointY(currentDragY + (EditableRectangle.this.getHeight() / 2) - 5);
-                        ((ControlPoint) cp).udpateShape(layer, currentDragX, currentDragY + (EditableRectangle.this.getHeight() / 2));
+                        ((ControlPoint) cp).setControlPointY(currentDragY + (rectangle.getHeight() / 2) - 5);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX, currentDragY + (rectangle.getHeight() / 2));
 
                     }
                 }
@@ -141,9 +143,9 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
                     for (Object cp : rightMagnet.getAttachedControlPoints()) {
                         // GWT.log("there are attached control points to rightMagnet " + rightMagnet.getAttachedControlPoints().size());
                         ((ControlPoint) cp).setControlPointVisible(true);
-                        ((ControlPoint) cp).setControlPointX(currentDragX + EditableRectangle.this.getWidth() - 5);
-                        ((ControlPoint) cp).setControlPointY(currentDragY + (EditableRectangle.this.getHeight() / 2) - 5);
-                        ((ControlPoint) cp).udpateShape(layer, currentDragX + EditableRectangle.this.getWidth(), currentDragY + (EditableRectangle.this.getHeight() / 2));
+                        ((ControlPoint) cp).setControlPointX(currentDragX + rectangle.getWidth() - 5);
+                        ((ControlPoint) cp).setControlPointY(currentDragY + (rectangle.getHeight() / 2) - 5);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX + rectangle.getWidth(), currentDragY + (rectangle.getHeight() / 2));
 
                     }
                 }
@@ -151,9 +153,9 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
                     for (Object cp : bottomMagnet.getAttachedControlPoints()) {
                         //  GWT.log("there are attached control points to bottomMagnet " + bottomMagnet.getAttachedControlPoints().size());
                         ((ControlPoint) cp).setControlPointVisible(true);
-                        ((ControlPoint) cp).setControlPointX(currentDragX + (EditableRectangle.this.getWidth() / 2) - 5);
-                        ((ControlPoint) cp).setControlPointY(currentDragY + EditableRectangle.this.getHeight() - 5);
-                        ((ControlPoint) cp).udpateShape(layer, currentDragX + (EditableRectangle.this.getWidth() / 2), currentDragY + EditableRectangle.this.getHeight());
+                        ((ControlPoint) cp).setControlPointX(currentDragX + (rectangle.getWidth() / 2) - 5);
+                        ((ControlPoint) cp).setControlPointY(currentDragY + rectangle.getHeight() - 5);
+                        ((ControlPoint) cp).udpateShape(layer, currentDragX + (rectangle.getWidth() / 2), currentDragY + rectangle.getHeight());
 
                     }
                 }
@@ -252,7 +254,7 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
     public double getStartX() {
         return startX;
     }
-
+    
     public void setStartX(double startX) {
         this.startX = startX;
     }
@@ -260,7 +262,7 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
     public double getStartY() {
         return startY;
     }
-
+   
     public void setStartY(double startY) {
         this.startY = startY;
     }
@@ -292,7 +294,7 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
         v1.setY(getCurrentDragY());
 
         // top - right
-        v2.setX(getCurrentDragX() + getWidth());
+        v2.setX(getCurrentDragX() + rectangle.getWidth());
         v2.setY(getCurrentDragY());
 
         axes.add(v1.edge(v2).normal());
@@ -300,24 +302,24 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
         v1 = new Vector();
         v2 = new Vector();
         // top - right 
-        v1.setX(getCurrentDragX() + getWidth());
+        v1.setX(getCurrentDragX() + rectangle.getWidth());
         v1.setY(getCurrentDragY());
 
         // bottom - right
-        v2.setX(getCurrentDragX() + getWidth());
-        v2.setY(getCurrentDragY() + getHeight());
+        v2.setX(getCurrentDragX() + rectangle.getWidth());
+        v2.setY(getCurrentDragY() + rectangle.getHeight());
 
         axes.add(v1.edge(v2).normal());
 
         v1 = new Vector();
         v2 = new Vector();
         // bottom - right
-        v1.setX(getCurrentDragX() + getWidth());
-        v1.setY(getCurrentDragY() + getHeight());
+        v1.setX(getCurrentDragX() + rectangle.getWidth());
+        v1.setY(getCurrentDragY() + rectangle.getHeight());
 
         // bottom - left
         v2.setX(getCurrentDragX());
-        v2.setY(getCurrentDragY() + getHeight());
+        v2.setY(getCurrentDragY() + rectangle.getHeight());
 
         axes.add(v1.edge(v2).normal());
 
@@ -325,7 +327,7 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
         v2 = new Vector();
         // bottom - left
         v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY() + getHeight());
+        v1.setY(getCurrentDragY() + rectangle.getHeight());
 
         // top - left
         v2.setX(getCurrentDragX());
@@ -348,22 +350,22 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
 
         v1 = new Vector();
         // top - right
-        v1.setX(getCurrentDragX() + getWidth());
+        v1.setX(getCurrentDragX() + rectangle.getWidth());
         v1.setY(getCurrentDragY());
 
         scalars.add(v1.dotProduct(axis));
 
         v1 = new Vector();
         // bottom - right
-        v1.setX(getCurrentDragX() + getWidth());
-        v1.setY(getCurrentDragY() + getHeight());
+        v1.setX(getCurrentDragX() + rectangle.getWidth());
+        v1.setY(getCurrentDragY() + rectangle.getHeight());
 
         scalars.add(v1.dotProduct(axis));
 
         v1 = new Vector();
         // bottom - left
         v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY() + getHeight());
+        v1.setY(getCurrentDragY() + rectangle.getHeight());
 
         scalars.add(v1.dotProduct(axis));
 
@@ -438,13 +440,7 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
         return magnets;
     }
 
-    public boolean isBeingResized() {
-        return beingResized;
-    }
-
-    public void setBeingResized(boolean beingResized) {
-        this.beingResized = beingResized;
-    }
+    
 
     @Override
     public String toString() {
@@ -506,5 +502,19 @@ public class EditableRectangle extends Rectangle implements EditableShape, Colli
             }
         }
     }
+
+    public boolean isBeingResized() {
+        return beingResized;
+    }
+
+    public void setBeingResized(boolean beingResized) {
+        this.beingResized = beingResized;
+    }
+
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
+    
+    
 
 }

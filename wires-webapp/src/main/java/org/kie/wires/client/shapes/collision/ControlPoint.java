@@ -10,7 +10,7 @@
 package org.kie.wires.client.shapes.collision;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Shape;
+import org.kie.wires.client.shapes.BaseGroupShape;
 
 /**
  *
@@ -38,7 +38,7 @@ public interface ControlPoint {
     
     void moveControlPoint();
     
-    Shape getShape();
+    BaseGroupShape getShape();
     
     int getControlType();
     

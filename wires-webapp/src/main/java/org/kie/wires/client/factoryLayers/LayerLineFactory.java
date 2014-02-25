@@ -41,11 +41,11 @@ public class LayerLineFactory extends LayerFactory<Line> {
 
     @Override
     public Shape<Line> drawLayer() {
-        Line line = new EditableLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
-        line.setDragBounds(new DragBounds(150, 260, 150, 150));
-        line.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
+        EditableLine editableLine = new EditableLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
+        editableLine.getLine().setDragBounds(new DragBounds(150, 260, 150, 150));
+        editableLine.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
                 .setDraggable(false);
-        return line;
+        return editableLine.getLine();
     }
 
     @Override

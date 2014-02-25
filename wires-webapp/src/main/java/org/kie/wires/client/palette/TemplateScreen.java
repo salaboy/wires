@@ -6,7 +6,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.wires.client.events.BayesianEvent;
-import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.factoryLayers.LayerBuilder;
 import org.kie.wires.client.factoryShapes.ShapeCategory;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
@@ -93,7 +92,7 @@ public class TemplateScreen extends Composite implements RequiresResize {
     }
 
     private void newAccordion(SimplePanel simplePanel, ShapeCategory category) {
-        final Shape<Rectangle> rectangle = new Rectangle(10, 10);
+        final Rectangle rectangle = new Rectangle(10, 10);
         rectangle.setX(X).setY(Y).setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
                 .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
                 .setDraggable(false);
@@ -108,7 +107,7 @@ public class TemplateScreen extends Composite implements RequiresResize {
         layer.draw();
     }
 
-    private void newBayesianExample(Shape<Rectangle> rectangle, String fileExample) {
+    private void newBayesianExample(Rectangle rectangle, String fileExample) {
         accountLayers += 1;
         new LayerBuilder(group, rectangle, panel, layer, accountLayers, fileExample, bayesianEvent, null, null);
     }

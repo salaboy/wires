@@ -27,7 +27,6 @@ import org.kie.wires.client.shapes.collision.ControlPoint;
 import org.kie.wires.client.shapes.collision.LineControlPointImpl;
 import org.kie.wires.client.shapes.collision.LineMagnetImpl;
 import org.kie.wires.client.shapes.collision.Magnet;
-import org.kie.wires.client.shapes.collision.StickableShape;
 import org.kie.wires.client.util.UUID;
 import org.kie.wires.client.util.collision.Projection;
 import org.kie.wires.client.util.collision.Vector;
@@ -36,7 +35,7 @@ import org.kie.wires.client.util.collision.Vector;
  *
  * @author salaboy
  */
-public class EditableLine extends Line implements EditableShape, CollidableShape, StickableShape {
+public class EditableLine extends BaseGroupShape {
 
     private String id;
     private ControlPoint startControlPoint;
@@ -48,6 +47,8 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     private boolean beingDragged;
 
     private boolean beingResized;
+    
+    private Line line;
 
     private Magnet startMagnet;
     private Magnet endMagnet;
@@ -56,10 +57,10 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
     private boolean showingControlPoints = false;
 
     public EditableLine(double x1, double y1, double x2, double y2) {
-        super(x1, y1, x2, y2);
+        line = new Line(x1, y1, x2, y2);
 
         this.id = UUID.uuid();
-        setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE);
+        line.setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE);
 
         startMagnet = new LineMagnetImpl(this, Magnet.MAGNET_START);
         endMagnet = new LineMagnetImpl(this, Magnet.MAGNET_END);
@@ -69,13 +70,19 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
     }
 
+    public Line getLine() {
+        return line;
+    }
+
+    
+    
     public String getId() {
         return id;
     }
 
     @Override
     public void init(double x, double y, Layer layer) {
-
+        super.init();
         setX(x);
         setY(y);
         currentDragX = x;
@@ -116,11 +123,12 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
             }
         });
+        add(line);
     }
 
     public void recordStartData(NodeDragStartEvent nodeDragStartEvent) {
 
-        Point2DArray points = getPoints();
+        Point2DArray points = line.getPoints();
         Point2D startPoint = points.getPoint(0);
         Point2D endPoint = points.getPoint(1);
 
@@ -212,7 +220,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
 
         // THIS IS HARDCODED HERE BUT IT CAN BE A LOOP FOR POLYGONS
         // start
-        Point2DArray points = getPoints();
+        Point2DArray points = line.getPoints();
         Point2D startPoint = points.getPoint(0);
         v1.setX(getCurrentDragX() + startPoint.getX());
         v1.setY(getCurrentDragY() + startPoint.getY());
@@ -232,7 +240,7 @@ public class EditableLine extends Line implements EditableShape, CollidableShape
         List<Double> scalars = new ArrayList<Double>();
         Vector v1 = new Vector();
 
-        Point2DArray points = getPoints();
+        Point2DArray points = line.getPoints();
         Point2D startPoint = points.getPoint(0);
         // start
         v1.setX(getCurrentDragX() + startPoint.getX());

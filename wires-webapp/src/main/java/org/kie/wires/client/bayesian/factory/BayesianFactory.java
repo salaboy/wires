@@ -1,23 +1,12 @@
 package org.kie.wires.client.bayesian.factory;
 
-import java.util.List;
-
-import javax.enterprise.event.Event;
-
-import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.ErrorCallback;
-import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.wires.client.events.LayerEvent;
-import org.kie.wires.client.events.ProbabilityEvent;
-import org.kie.wires.client.events.ProgressEvent;
-import org.kie.wires.client.util.BayesianUtils;
-import org.kie.wires.client.util.LienzoUtils;
-
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.Color;
 import com.google.common.collect.Lists;
@@ -25,6 +14,20 @@ import com.google.gwt.user.client.Window;
 import com.xstream.bayesian.client.entry.BayesianService;
 import com.xstream.bayesian.client.model.BayesNetwork;
 import com.xstream.bayesian.client.model.BayesVariable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.enterprise.event.Event;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
+import org.jboss.errai.common.client.api.RemoteCallback;
+import org.kie.wires.client.bayesian.shapes.EditableBayesianNode;
+import org.kie.wires.client.events.LayerEvent;
+import org.kie.wires.client.events.ProbabilityEvent;
+import org.kie.wires.client.events.ProgressEvent;
+import org.kie.wires.client.events.ReadyEvent;
+import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
+import org.kie.wires.client.util.BayesianUtils;
+import org.kie.wires.client.util.LienzoUtils;
 
 public class BayesianFactory extends BaseFactory {
 
@@ -33,34 +36,39 @@ public class BayesianFactory extends BaseFactory {
     private Event<LayerEvent> layerEvent;
     private Event<ProbabilityEvent> probabilityEvent;
     private Event<ProgressEvent> progressEvent;
+    private Event<ReadyEvent> readyEvent;
     private List<BayesVariable> nodes;
+    
+    private List<EditableBayesianNode> bayesianNodes = new ArrayList<EditableBayesianNode>();
 
-    public BayesianFactory(Group group, LienzoPanel panel, Caller<BayesianService> bayesianService, String xml03File,
-            Layer layer, Event<LayerEvent> layerEvent, Event<ProbabilityEvent> probabilityEvent,
+    public BayesianFactory( LienzoPanel panel, Caller<BayesianService> bayesianService, String xml03File,
+            Layer layer, Event<LayerEvent> layerEvent, Event<ProbabilityEvent> probabilityEvent, Event<ReadyEvent> readyEvent,
             Event<ProgressEvent> progressEvent) {
         this.panel = panel;
         this.bayesianService = bayesianService;
         this.layerEvent = layerEvent;
         this.progressEvent = progressEvent;
         this.probabilityEvent = probabilityEvent;
+        this.readyEvent = readyEvent;
         LienzoUtils.loadingProgressBar = true;
-        init(xml03File, group, layer);
+        init(xml03File, layer);
 
     }
 
-    public void init(final String xml03File, final Group group, final Layer layer) {
-        clearScreen(group, layer);
+    public void init(final String xml03File, final Layer layer) {
+        clearScreen(layer);
         progressEvent.fire(new ProgressEvent(null));
-        this.drawLabelFile(xml03File, group, layer);
+        this.drawLabelFile(xml03File, layer);
         bayesianService.call(new RemoteCallback<BayesNetwork>() {
             @Override
             public void callback(final BayesNetwork response) {
                 nodes = Lists.newArrayList();
                 for (BayesVariable bay : response.getNodos()) {
-                    drawNode(bay, group, layer);
+                    drawNode(bay, layer);
                 }
                 LienzoUtils.loadingProgressBar = false;
                 layerEvent.fire(new LayerEvent(nodes));
+                readyEvent.fire(new ReadyEvent(bayesianNodes));
                 layer.draw();
             }
         }, new ErrorCallback() {
@@ -72,9 +80,11 @@ public class BayesianFactory extends BaseFactory {
                 return false;
             }
         }).buildXml03(BayesianUtils.relativePath + xml03File);
+        
+        
     }
 
-    private void drawNode(BayesVariable node, Group group, Layer layer) {
+    private void drawNode(BayesVariable node,  Layer layer) {
         int fontSize = 10;
         String[][] colors = BayesianUtils.getNodeColors();
         int widthNode = 135;
@@ -86,34 +96,54 @@ public class BayesianFactory extends BaseFactory {
         // node
         int width = widthNode;
         int height = 70;
-        super.drawComponent(colors[0][0], positionX, positionY, width, height, borderColor, group, layer, true);
-
+        
+        EditableBayesianNode bayesianNode = new EditableBayesianNode(node.getName(), width, height);
+        
+        
+//        bayesianNode.setStrokeColor(borderColor).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
+//                .setFillColor(colors[0][0]);
+       // Shape<?> drawComponent = super.drawComponent(colors[0][0], positionX, positionY, width, height, borderColor, layer, true);
+       
+        
+        
         // header
-        width = widthNode;
-        height = 25;
-        positionY = positionY - height;
-        super.drawComponent(colors[0][1], positionX, positionY, width, height, borderColor, group, layer, true);
-        super.drawText(Color.rgbToBrowserHexColor(104, 104, 104), positionX, positionY, width, height, borderColor,
-                node.getName(), fontSize, group, layer);
+//        width = widthNode;
+//        height = 25;
+//        positionY = positionY - height;
+        
+//        Shape<?> drawComponent1 = super.drawComponent(colors[0][1], positionX, positionY, width, height, borderColor, layer, true);
+//        
+//        Text drawText = super.drawText(Color.rgbToBrowserHexColor(104, 104, 104), positionX, positionY, width, height, borderColor,
+//                node.getName(), fontSize,  layer);
+//        
+       
+        
+        bayesianNode.init(positionX, positionY, layer);
+        
+       // bayesianNodes.add(drawText);
         // labels (layers perspective)
         nodes.add(node);
+        
 
         // draw porcentual bar
-        drawPorcentualbar(node.getOutcomes(), widthNode, position, colors[0][1], node.getProbabilities(), group, layer);
+        drawPorcentualbar(node.getOutcomes(), widthNode, position, colors[0][1], node.getProbabilities(), layer);
+        
+        bayesianNodes.add(bayesianNode);
+        
     }
 
-    private void drawLabelFile(String nameFile, Group group, Layer layer) {
+    private void drawLabelFile(String nameFile,  Layer layer) {
 
         super.drawComponent(BayesianUtils.bgColorContainer, BayesianUtils.positionXContainer, BayesianUtils.positionYContainer,
-                BayesianUtils.widthContainer, BayesianUtils.heightContainer, BayesianUtils.borderContainer, group, layer, true);
+                BayesianUtils.widthContainer, BayesianUtils.heightContainer, BayesianUtils.borderContainer, layer, true);
 
         super.drawText(BayesianUtils.colorTextLabel, BayesianUtils.positionXTextLabel, BayesianUtils.positionYTextLabel,
                 BayesianUtils.widthTextLabel, BayesianUtils.heightTextLabel, BayesianUtils.colorTextLabel, nameFile,
-                BayesianUtils.fontSizeTextLabel, group, layer);
+                BayesianUtils.fontSizeTextLabel, layer);
     }
 
     private void drawPorcentualbar(List<String> outcomes, int widthNode, double position[][], String fillColor,
-            double probabilities[][], Group group, Layer layer) {
+            double probabilities[][],  Layer layer) {
         int fontSize = 9;
         int width = widthNode - 75;
         int height = 8;
@@ -126,12 +156,12 @@ public class BayesianFactory extends BaseFactory {
             // Porcentual bar
             positionY += 14;
             super.drawText(Color.rgbToBrowserHexColor(0, 0, 0), positionX - 63, positionY - 8, width, height, borderColor,
-                    outcomes.get(i), fontSize, group, layer);
+                    outcomes.get(i), fontSize,  layer);
             super.drawComponent(Color.rgbToBrowserHexColor(255, 255, 255), positionX, positionY, width, height, borderColor,
-                    group, layer, true);
+                     layer, true);
             // fill bar
             widthFill = calculatePorcentage(probabilities, width, i);
-            super.drawComponent(fillColor, positionX, positionY, widthFill, height, borderColor, group, layer, false);
+            super.drawComponent(fillColor, positionX, positionY, widthFill, height, borderColor,  layer, false);
         }
     }
 
@@ -161,12 +191,12 @@ public class BayesianFactory extends BaseFactory {
         return nodeMouseDownHandler;
     }
 
-    private void clearScreen(Group group, Layer layer) {
-        group.removeAll();
+    private void clearScreen( Layer layer) {
         layer.draw();
         progressEvent.fire(new ProgressEvent(LienzoUtils.progressShapes));
         layerEvent.fire(new LayerEvent(null));
         probabilityEvent.fire(new ProbabilityEvent(null));
     }
 
+    
 }

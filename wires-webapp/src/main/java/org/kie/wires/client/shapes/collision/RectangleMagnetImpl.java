@@ -6,10 +6,10 @@
 package org.kie.wires.client.shapes.collision;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
+import org.kie.wires.client.shapes.EditableRectangle;
 import static org.kie.wires.client.shapes.collision.Magnet.*;
 import org.kie.wires.client.util.UUID;
 
@@ -23,11 +23,11 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
     
     private String id;
     
-    private Rectangle shape;
+    private EditableRectangle shape;
     
     private int type;
     
-    public RectangleMagnetImpl(Rectangle shape, int type) {
+    public RectangleMagnetImpl(EditableRectangle shape, int type) {
         this(6);
         this.shape = shape;
         this.type = type;
@@ -42,20 +42,20 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
     public void placeMagnetPoints() {
         switch (type) {
             case MAGNET_TOP:
-                setX(shape.getX() + (shape.getWidth() / 2));
+                setX(shape.getX() + (shape.getRectangle().getWidth() / 2));
                 setY(shape.getY());
                 break;
             case MAGNET_BOTTOM:
-                setX(shape.getX() + (shape.getWidth() / 2));
-                setY(shape.getY() + shape.getHeight());
+                setX(shape.getX() + (shape.getRectangle().getWidth() / 2));
+                setY(shape.getY() + shape.getRectangle().getHeight());
                 break;
             case MAGNET_RIGHT:
-                setX(shape.getX() + shape.getWidth());
-                setY(shape.getY() + (shape.getHeight() / 2));
+                setX(shape.getX() + shape.getRectangle().getWidth());
+                setY(shape.getY() + (shape.getRectangle().getHeight() / 2));
                 break;
             case MAGNET_LEFT:
                 setX(shape.getX());
-                setY(shape.getY() + (shape.getHeight() / 2));
+                setY(shape.getY() + (shape.getRectangle().getHeight() / 2));
                 break;
         }
         

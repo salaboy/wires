@@ -5,7 +5,6 @@ import javax.enterprise.event.Event;
 import org.kie.wires.client.events.BayesianEvent;
 import org.kie.wires.client.events.ProbabilityEvent;
 
-import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
@@ -34,9 +33,10 @@ public class LayerBuilder extends Composite {
             new LayerLineFactory(group, panel, accountLayers, layer);
         } else if (shape instanceof Rectangle) {
             new LayerRectangleFactory(group, accountLayers, layer, template, bayesianEvent);
-        } else if (shape instanceof Circle) {
-            new LayerCircleFactory(group, panel, accountLayers, layer);
-        }
+        } 
+//        else if (shape instanceof EditableCircle) {
+//            new LayerCircleFactory(group, panel, accountLayers, layer);
+//        }
     }
 
 }

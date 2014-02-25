@@ -43,11 +43,12 @@ public class LineFactory extends ShapeFactory<Line> {
 
     @Override
     public Shape<Line> drawShape() {
-        Line line = new EditableLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
-        line.setDragBounds(new DragBounds(150, 260, 150, 150));
-        line.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE)
+        EditableLine editableLine = new EditableLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
+        
+        editableLine.getLine().setDragBounds(new DragBounds(150, 260, 150, 150));
+        editableLine.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE)
                 .setDraggable(false);
-        return line;
+        return editableLine.getLine();
     }
 
     @Override
@@ -68,7 +69,7 @@ public class LineFactory extends ShapeFactory<Line> {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final EditableLine floatingShape = new EditableLine(getFloatingX1(), getFloatingY1(), getFloatingX2(),
                         getFloatingY2());
-                floatingShape.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
+                floatingShape.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
                         .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE).setDraggable(false);
                 setFloatingPanel(floatingShape, 30, 30, event, null);
                 // layersScreen.initDrawLayer(ShapeType.LINE);

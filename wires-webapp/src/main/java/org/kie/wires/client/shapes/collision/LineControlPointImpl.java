@@ -16,12 +16,12 @@ import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_STROKE_WIDTH_SHAPE;
+import org.kie.wires.client.shapes.BaseGroupShape;
 import org.kie.wires.client.shapes.EditableLine;
 import org.kie.wires.client.util.UUID;
 
@@ -64,7 +64,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         return controlType;
     }
 
-    public Line getShape() {
+    public BaseGroupShape getShape() {
         return shape;
     }
 
@@ -87,8 +87,8 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                     public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
                         dragEventStartX = nodeDragStartEvent.getX();
                         dragEventStartY = nodeDragStartEvent.getY();
-                        initialStartPointX = shape.getPoints().getPoint(0).getX();
-                        initialStartPointY = shape.getPoints().getPoint(0).getY();
+                        initialStartPointX = shape.getLine().getPoints().getPoint(0).getX();
+                        initialStartPointY = shape.getLine().getPoints().getPoint(0).getY();
                         ((StickableShape) shape).hideMagnetPoints();
                     }
                 });
@@ -99,7 +99,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         double deltaX = nodeDragMoveEvent.getX() - dragEventStartX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventStartY;
 
-                        Point2DArray array = shape.getPoints();
+                        Point2DArray array = shape.getLine().getPoints();
                         array.getPoint(0).setX(initialStartPointX + deltaX);
                         array.getPoint(0).setY(initialStartPointY + deltaY);
 
@@ -130,8 +130,8 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         ((StickableShape) shape).hideMagnetPoints();
                         dragEventEndX = nodeDragStartEvent.getX();
                         dragEventEndY = nodeDragStartEvent.getY();
-                        initialEndPointX = shape.getPoints().getPoint(1).getX();
-                        initialEndPointY = shape.getPoints().getPoint(1).getY();
+                        initialEndPointX = shape.getLine().getPoints().getPoint(1).getX();
+                        initialEndPointY = shape.getLine().getPoints().getPoint(1).getY();
 
                     }
                 });
@@ -142,7 +142,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
 
-                        Point2DArray array = shape.getPoints();
+                        Point2DArray array = shape.getLine().getPoints();
                         array.getPoint(1).setX(initialEndPointX + deltaX);
                         array.getPoint(1).setY(initialEndPointY + deltaY);
                         
@@ -169,7 +169,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
     }
 
     public void udpateShape(Layer layer, double x, double y) {
-        Point2DArray array = shape.getPoints();
+        Point2DArray array = shape.getLine().getPoints();
 
         switch (controlType) {
             case ControlPoint.CONTROL_START:
@@ -205,7 +205,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
     }
 
     public void moveControlPoint() {
-        Point2DArray array = shape.getPoints();
+        Point2DArray array = shape.getLine().getPoints();
         switch (controlType) {
             case ControlPoint.CONTROL_START:
 

@@ -73,7 +73,7 @@ public class CircleFactory extends ShapeFactory<Circle> {
                 floatingPanel.add(floatingLayer);
                 floatingLayer.draw();
                 RootPanel.get().add(floatingPanel);
-                setFloatingHandlers(getFloatingStyle(floatingPanel, event), floatingPanel, floatingShape);
+//                setFloatingHandlers(getFloatingStyle(floatingPanel, event), floatingPanel, floatingShape);
             }
 
         };

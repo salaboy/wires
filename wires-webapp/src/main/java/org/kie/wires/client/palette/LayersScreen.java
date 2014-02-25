@@ -28,6 +28,8 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xstream.bayesian.client.model.BayesVariable;
+import org.kie.wires.client.shapes.EditableLine;
+import org.kie.wires.client.shapes.EditableRectangle;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresLayersScreen")
@@ -90,7 +92,11 @@ public class LayersScreen extends Composite implements RequiresResize {
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
         accountLayers += 1;
-        buildNewLayer(shapeAddEvent.getShape(), null);
+        if(shapeAddEvent.getShape() instanceof EditableRectangle){
+            buildNewLayer(((EditableRectangle)shapeAddEvent.getShape()).getRectangle(), null);
+        }else  if(shapeAddEvent.getShape() instanceof EditableLine){
+            buildNewLayer(((EditableLine)shapeAddEvent.getShape()).getLine(), null);
+        }
         layer.draw();
     }
 
@@ -107,7 +113,7 @@ public class LayersScreen extends Composite implements RequiresResize {
         layer.draw();
     }
 
-    private void buildNewLayer(Shape<?> shape, BayesVariable node) {
+    private void buildNewLayer(Shape shape, BayesVariable node) {
         new LayerBuilder(group, shape, panel, layer, accountLayers, null, null, node, probabilityEvent);
     }
 
