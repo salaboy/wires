@@ -2,6 +2,8 @@ package org.kie.wires.client.util;
 
 import java.util.Map;
 
+import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
+
 import com.emitrom.lienzo.client.core.types.LinearGradient;
 import com.emitrom.lienzo.client.core.types.Shadow;
 import com.emitrom.lienzo.shared.core.types.Color;
@@ -9,34 +11,47 @@ import com.google.common.collect.ImmutableMap;
 
 public class BayesianUtils {
 
-    public static int positionX_base = 0;
-    public static int positionY_base = 25;
+    // node
+    public static int WIDTH_NODE = 135;
+    public static int HEIGHT_HEADER = 25;
 
-    public static int substrateHeight = 34;
+    // header node
+    public static int FONT_SIZE_HEADER_NODE = 10;
+    public static int LABEL_POSITION_X_DEFAULT = 8;
+    public static int LABEL_POSITION_Y_DEFAULT = 15;
 
-    public static String substrateColor = "#666";
+    // porcentual bar
+    public static final String DEFAULT_PORCENTUAL_FILL_COLOR = ShapeFactoryUtil.RGB_FILL_SHAPE;
+    public static final String DEFAULT_PORCENTUAL_BORDER_COLOR = ShapeFactoryUtil.RGB_STROKE_SHAPE;
+    public static final int HEIGHT_PORCENTUAL_BAR = 8;
+    public static final int FONT_SIZE_PORCENTUAL_BAR = 9;
+    public static final int WIDTH_PORCENTUAL_BAR = BayesianUtils.WIDTH_NODE - 75;
 
-    public static String fontFamilyProgressBar = "Lucida Console";
-    public static int fontSizeProgressBar = 12;
+    public static int POSITION_X_BASE = 0;
+    public static int POSITION_Y_BASE = 25;
 
-    public static String relativePath = "/src/main/java/org/kie/wires/client/bayesian/resources/";
-    
-    
-    //label
-    public static String bgColorContainer = Color.rgbToBrowserHexColor(236, 236, 236);
-    public static String borderContainer = Color.rgbToBrowserHexColor(236, 236, 236);
-    public static int positionXContainer = 0;
-    public static int positionYContainer = -4;
-    public static int widthContainer = 250;
-    public static int heightContainer = 23;
-    public static int fontSizeTextLabel = 9;
-    public static String colorTextLabel = Color.rgbToBrowserHexColor(141, 147, 144);
-    public static int positionXTextLabel = 40;
-    public static int positionYTextLabel = 0;
-    public static int widthTextLabel = 150;
-    public static int heightTextLabel = 18;
-    
-    
+    public static int SUBSTRATE_HEIGHT = 34;
+
+    public static String SUBSTRATE_COLOR = "#666";
+
+    public static String FONT_FAMILY_PROGRESS_BAR = "Lucida Console";
+    public static int FONT_SIZE_PROGRESS_BAR = 12;
+
+    public static String RELATIVE_PATH = "/src/main/java/org/kie/wires/client/bayesian/resources/";
+
+    // label
+    public static String BG_COLOR_CONTAINER = Color.rgbToBrowserHexColor(236, 236, 236);
+    public static String BORDER_CONTAINER = Color.rgbToBrowserHexColor(236, 236, 236);
+    public static int POSITION_X_CONTAINER = 0;
+    public static int POSITION_Y_CONTAINER = -4;
+    public static int WIDTH_CONTAINER = 250;
+    public static int HEIGHT_CONTAINER = 23;
+    public static int FONT_SIZE_TEXT_LABEL = 9;
+    public static String COLOR_TEXT_LABEL = Color.rgbToBrowserHexColor(141, 147, 144);
+    public static int POSITION_X_TEXT_LABEL = 40;
+    public static int POSITION_Y_TEXT_LABEL = 0;
+    public static int WIDTH_TEXT_LABEL = 150;
+    public static int HEIGHT_TEXT_LABEL = 18;
 
     private static ImmutableMap<Double, String[][]> nodeColors = ImmutableMap
             .<Double, String[][]> builder()
@@ -59,14 +74,14 @@ public class BayesianUtils {
             .put(0.9,
                     new String[][] { { Color.rgbToBrowserHexColor(108, 156, 218), Color.rgbToBrowserHexColor(187, 194, 204) } })
             .put(1.0,
-                    new String[][] { { Color.rgbToBrowserHexColor(108, 156, 218), Color.rgbToBrowserHexColor(187, 194, 204) } })        
+                    new String[][] { { Color.rgbToBrowserHexColor(108, 156, 218), Color.rgbToBrowserHexColor(187, 194, 204) } })
             .build();
 
     public static String[][] getNodeColors() {
         double rand = Math.random();
         String colors[][] = new String[2][2];
         for (Map.Entry<Double, String[][]> entry : nodeColors.entrySet()) {
-            if(rand < entry.getKey() && rand > (entry.getKey() - 0.1)){
+            if (rand < entry.getKey() && rand > (entry.getKey() - 0.1)) {
                 colors[0][0] = entry.getValue()[0][1];
                 colors[0][1] = entry.getValue()[0][0];
             }
@@ -76,7 +91,7 @@ public class BayesianUtils {
     }
 
     public static LinearGradient getSubstrateGradient() {
-        LinearGradient substrateGradient = new LinearGradient(0, substrateHeight, 0, 0);
+        LinearGradient substrateGradient = new LinearGradient(0, SUBSTRATE_HEIGHT, 0, 0);
         substrateGradient.addColorStop(0.4, "rgba(255,255,255, 0.1)");
         substrateGradient.addColorStop(0.6, "rgba(255,255,255, 0.7)");
         substrateGradient.addColorStop(0.9, "rgba(255,255,255,0.4)");
@@ -93,7 +108,7 @@ public class BayesianUtils {
     }
 
     public static Shadow getSubstrateShadow() {
-        return new Shadow(BayesianUtils.substrateColor, 5, 3, 3);
+        return new Shadow(BayesianUtils.SUBSTRATE_COLOR, 5, 3, 3);
     }
 
 }

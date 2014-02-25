@@ -157,7 +157,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
     public void addNewPanel(@Observes BayesianEvent event) {
 
-        BayesianFactory bayesianFactory = new BayesianFactory(panel, bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent, progressEvent);
+        new BayesianFactory(panel, bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent, progressEvent);
         
         
     }

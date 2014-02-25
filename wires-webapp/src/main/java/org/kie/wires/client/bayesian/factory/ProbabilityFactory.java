@@ -51,21 +51,21 @@ public class ProbabilityFactory extends BaseFactory {
     private void drawNodeSelected(BayesVariable node, int positionX, int positionY, int width, int height, 
             Layer layer) {
         super.drawComponent(Color.rgbToBrowserHexColor(183, 198, 201), positionX, positionY, width, height,
-                Color.rgbToBrowserHexColor(183, 198, 201), layer, false);
+                Color.rgbToBrowserHexColor(183, 198, 201), false);
 
-        super.drawText(BayesianUtils.colorTextLabel, positionX + 2, positionY + 35, width, height,
-                BayesianUtils.colorTextLabel, node.getName(), BayesianUtils.fontSizeTextLabel, layer);
+        super.drawText(BayesianUtils.COLOR_TEXT_LABEL, positionX + 2, positionY + 35, width, height,
+                BayesianUtils.COLOR_TEXT_LABEL, node.getName(), BayesianUtils.FONT_SIZE_TEXT_LABEL);
     }
 
     private void drawPorcentualOptions(BayesVariable node, int positionXOptions, int positionYOptions, int widthOptions,
             int heightOptions, Layer layer) {
         for (String outcome : node.getOutcomes()) {
             super.drawComponent(Color.rgbToBrowserHexColor(200, 216, 203), positionXOptions, positionYOptions, widthOptions,
-                    heightOptions, Color.rgbToBrowserHexColor(200, 216, 203), layer, false);
+                    heightOptions, Color.rgbToBrowserHexColor(200, 216, 203), false);
 
-            super.drawText(BayesianUtils.colorTextLabel, positionXOptions + 2, positionYOptions
-                    + (20 / node.getOutcomes().size()), widthOptions, heightOptions, BayesianUtils.colorTextLabel, outcome,
-                    BayesianUtils.fontSizeTextLabel,  layer);
+            super.drawText(BayesianUtils.COLOR_TEXT_LABEL, positionXOptions + 2, positionYOptions
+                    + (20 / node.getOutcomes().size()), widthOptions, heightOptions, BayesianUtils.COLOR_TEXT_LABEL, outcome,
+                    BayesianUtils.FONT_SIZE_TEXT_LABEL);
 
             positionYOptions += heightOptions;
         }
@@ -79,13 +79,12 @@ public class ProbabilityFactory extends BaseFactory {
         for (int i = 0; i < probabilities.length / node.getOutcomes().size(); i++) {
             for (int j = 0; j < node.getOutcomes().size(); j++) {
                 super.drawComponent(Color.rgbToBrowserHexColor(255, 255, 255), positionXValues, positionYValues,
-                        widthPorcentualValue, heightPorcentualValue, Color.rgbToBrowserHexColor(183, 198, 201),  layer,
+                        widthPorcentualValue, heightPorcentualValue, Color.rgbToBrowserHexColor(183, 198, 201),
                         false);
 
-                super.drawText(BayesianUtils.colorTextLabel, positionXValues + 2, positionYValues
+                super.drawText(BayesianUtils.COLOR_TEXT_LABEL, positionXValues + 2, positionYValues
                         + (20 / node.getOutcomes().size()), widthPorcentualValue, heightPorcentualValue,
-                        BayesianUtils.colorTextLabel, String.valueOf(probabilities[i][j]), BayesianUtils.fontSizeTextLabel,
-                        layer);
+                        BayesianUtils.COLOR_TEXT_LABEL, String.valueOf(probabilities[i][j]), BayesianUtils.FONT_SIZE_TEXT_LABEL);
 
                 positionYValues += heightPorcentualValue;
             }
@@ -126,12 +125,10 @@ public class ProbabilityFactory extends BaseFactory {
             for (BayesVariable nod : node.getIncomingNodes()) {
 
                 // draw label
-                super.drawComponent(color, positionXIncoming, positionYIncoming, widthIncoming, heightIncoming, color, 
-                        layer, false);
+                super.drawComponent(color, positionXIncoming, positionYIncoming, widthIncoming, heightIncoming, color, false);
 
-                super.drawText(BayesianUtils.colorTextLabel, positionXIncoming + 5, positionYIncoming, widthIncoming,
-                        heightIncoming, BayesianUtils.colorTextLabel, nod.getName(), BayesianUtils.fontSizeTextLabel, 
-                        layer);
+                super.drawText(BayesianUtils.COLOR_TEXT_LABEL, positionXIncoming + 5, positionYIncoming, widthIncoming,
+                        heightIncoming, BayesianUtils.COLOR_TEXT_LABEL, nod.getName(), BayesianUtils.FONT_SIZE_TEXT_LABEL);
 
                 // draw porcentual options
                 positionXPorc = positionXIncoming + widthIncoming;
@@ -159,10 +156,10 @@ public class ProbabilityFactory extends BaseFactory {
             int widthPorcentualValue, int widthOptions, int heightOptions) {
         for (String out : nod.getOutcomes()) {
             super.drawComponent(Color.rgbToBrowserHexColor(200, 216, 203), positionXPorc, positionYIncoming,
-                    widthPorcentualValue, heightIncoming, Color.rgbToBrowserHexColor(200, 216, 203), layer, false);
+                    widthPorcentualValue, heightIncoming, Color.rgbToBrowserHexColor(200, 216, 203), false);
 
-            super.drawText(BayesianUtils.colorTextLabel, positionXPorc + 2, positionYIncoming, widthOptions, heightOptions,
-                    BayesianUtils.colorTextLabel, out, BayesianUtils.fontSizeTextLabel,  layer);
+            super.drawText(BayesianUtils.COLOR_TEXT_LABEL, positionXPorc + 2, positionYIncoming, widthOptions, heightOptions,
+                    BayesianUtils.COLOR_TEXT_LABEL, out, BayesianUtils.FONT_SIZE_TEXT_LABEL);
 
             positionXPorc += widthPorcentualValue;
 
