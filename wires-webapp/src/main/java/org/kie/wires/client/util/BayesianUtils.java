@@ -13,6 +13,7 @@ public class BayesianUtils {
 
     // node
     public static int WIDTH_NODE = 135;
+    public static int HEIGHT_NODE = 83;
     public static int HEIGHT_HEADER = 25;
 
     // header node
@@ -26,6 +27,7 @@ public class BayesianUtils {
     public static final int HEIGHT_PORCENTUAL_BAR = 8;
     public static final int FONT_SIZE_PORCENTUAL_BAR = 9;
     public static final int WIDTH_PORCENTUAL_BAR = BayesianUtils.WIDTH_NODE - 75;
+    public static final int POSITION_X_PORCENTUAL_BAR = 64;
 
     public static int POSITION_X_BASE = 0;
     public static int POSITION_Y_BASE = 25;

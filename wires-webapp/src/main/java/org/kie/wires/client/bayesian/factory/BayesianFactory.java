@@ -2,6 +2,7 @@ package org.kie.wires.client.bayesian.factory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.event.Event;
 
@@ -16,13 +17,13 @@ import org.kie.wires.client.events.ReadyEvent;
 import org.kie.wires.client.util.BayesianUtils;
 import org.kie.wires.client.util.LienzoUtils;
 
-import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
+import com.emitrom.lienzo.shared.core.types.Color;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gwt.user.client.Window;
 import com.xstream.bayesian.client.entry.BayesianService;
 import com.xstream.bayesian.client.model.BayesNetwork;
@@ -37,6 +38,7 @@ public class BayesianFactory extends BaseFactory {
     private Event<ProgressEvent> progressEvent;
     private Event<ReadyEvent> readyEvent;
     private List<BayesVariable> nodes;
+    private String[][] colors;
 
     private List<EditableBayesianNode> bayesianNodes = new ArrayList<EditableBayesianNode>();
 
@@ -69,7 +71,7 @@ public class BayesianFactory extends BaseFactory {
             public void callback(final BayesNetwork response) {
                 nodes = Lists.newArrayList();
                 for (BayesVariable bay : response.getNodos()) {
-                    drawNode(bay, layer);
+                    drawBayesianNode(bay, layer);
                 }
                 LienzoUtils.loadingProgressBar = false;
                 layerEvent.fire(new LayerEvent(nodes));
@@ -87,48 +89,88 @@ public class BayesianFactory extends BaseFactory {
         }).buildXml03( BayesianUtils.XML3_RESOURCE_PATH + xml03File);
     }
 
-    private void drawNode(BayesVariable node, Layer layer) {
-        int widthNode = 135;
+    private void drawBayesianNode(BayesVariable node, Layer layer) {
+        colors = BayesianUtils.getNodeColors();
         double position[][] = node.getPosition();
         int positionX = (int) (BayesianUtils.POSITION_X_BASE + Math.round(position[0][0]));
         int positionY = (int) (BayesianUtils.POSITION_Y_BASE + Math.round(position[0][1]));
+        String fillNodeColor = colors[0][0];
 
-        // node
-        int width = widthNode;
-        int height = 83;
+        EditableBayesianNode bayesianNode = new EditableBayesianNode(BayesianUtils.WIDTH_NODE, BayesianUtils.HEIGHT_NODE,
+                positionX, positionY, layer, fillNodeColor);
 
-        EditableBayesianNode bayesianNode = new EditableBayesianNode(width, height);
+        this.setHeader(node, bayesianNode);
+        this.setPorcentualBar(node, bayesianNode);
 
-        // bayesianNode.setStrokeColor(borderColor).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
-        // .setFillColor(colors[0][0]);
-        // Shape<?> drawComponent = super.drawComponent(colors[0][0], positionX,
-        // positionY, width, height, borderColor, layer, true);
+        bayesianNode.buildNode();
 
-        // header
-        // width = widthNode;
-        // height = 25;
-        // positionY = positionY - height;
-
-        // Shape<?> drawComponent1 = super.drawComponent(colors[0][1],
-        // positionX, positionY, width, height, borderColor, layer, true);
-        //
-        // Text drawText = super.drawText(Color.rgbToBrowserHexColor(104, 104,
-        // 104), positionX, positionY, width, height, borderColor,
-        // node.getName(), fontSize, layer);
-        //
-
-        bayesianNode.init(positionX, positionY, layer, node);
-
-        // bayesianNodes.add(drawText);
-        // labels (layers perspective)
         nodes.add(node);
-
-        // draw porcentual bar
-        // drawPorcentualbar(node.getOutcomes(), widthNode, position,
-        // colors[0][1], node.getProbabilities());
-
         bayesianNodes.add(bayesianNode);
 
+    }
+
+    private void setHeader(BayesVariable node, EditableBayesianNode bayesianNode) {
+        bayesianNode.setHeader(new Rectangle(bayesianNode.getRectangle().getWidth(), BayesianUtils.HEIGHT_HEADER));
+        bayesianNode.getHeader().setFillColor(colors[0][1]);
+        bayesianNode.setTextHeader(drawText(node.getName(), BayesianUtils.FONT_SIZE_HEADER_NODE,
+                BayesianUtils.LABEL_POSITION_X_DEFAULT, BayesianUtils.LABEL_POSITION_Y_DEFAULT));
+    }
+
+    private void setPorcentualBar(BayesVariable node, EditableBayesianNode bayesianNode) {
+        String fillColor = colors[0][1];
+        int widthFill;
+        int positionY = 18;
+        positionY = (node.getOutcomes().size() > 3) ? positionY - 10 : positionY;
+        String borderColor = fillColor;
+
+        List<Rectangle> componentsProgressBar = Lists.newArrayList();
+        Text labelPorcentual;
+        Map<Text, List<Rectangle>> porcentualsBar = Maps.newHashMap();
+        for (int i = 0; i < node.getOutcomes().size(); i++) {
+            // Porcentual bar
+            positionY += 14;
+            labelPorcentual = this.drawText(node.getOutcomes().get(i), BayesianUtils.FONT_SIZE_PORCENTUAL_BAR,
+                    BayesianUtils.LABEL_POSITION_X_DEFAULT, positionY + 7);
+            componentsProgressBar.add(this.drawComponent(Color.rgbToBrowserHexColor(255, 255, 255),
+                    BayesianUtils.POSITION_X_PORCENTUAL_BAR, positionY, BayesianUtils.WIDTH_PORCENTUAL_BAR,
+                    BayesianUtils.HEIGHT_PORCENTUAL_BAR, borderColor, 3));
+            // fill bar
+            widthFill = calculatePorcentage(node.getProbabilities(), BayesianUtils.WIDTH_PORCENTUAL_BAR, i);
+            componentsProgressBar.add(drawComponent(fillColor, BayesianUtils.POSITION_X_PORCENTUAL_BAR, positionY, widthFill,
+                    BayesianUtils.HEIGHT_PORCENTUAL_BAR, borderColor, 0));
+            bayesianNode.getPorcentualsBar().put(labelPorcentual, componentsProgressBar);
+
+            porcentualsBar.put(labelPorcentual, componentsProgressBar);
+        }
+        bayesianNode.setPorcentualBars(porcentualsBar);
+    }
+
+    protected Rectangle drawComponent(String color, int positionX, int positionY, int width, int height, String borderColor,
+            double radius) {
+        if (borderColor == null) {
+            borderColor = Color.rgbToBrowserHexColor(0, 0, 0);
+        }
+        Rectangle component = new Rectangle(width, height);
+        setAttributes(component, color, positionX, positionY, borderColor);
+        component.setCornerRadius(radius);
+
+        return component;
+
+    }
+
+    private int calculatePorcentage(double probabilities[][], int maxWidthFill, int position) {
+        double porcentual = 0;
+        if (position == 0) {
+            porcentual = probabilities[0][0];
+        } else if (position == 1) {
+            porcentual = probabilities[0][1];
+        }
+        porcentual *= 100;
+        return (int) ((porcentual * maxWidthFill) / 100);
+    }
+
+    private Text drawText(String description, int fontSize, int positionX, int positionY) {
+        return new Text(description, "Times", fontSize).setX(positionX).setY(positionY);
     }
 
     private void drawLabelFile(String nameFile, Layer layer) {
@@ -140,20 +182,6 @@ public class BayesianFactory extends BaseFactory {
         super.drawText(BayesianUtils.COLOR_TEXT_LABEL, BayesianUtils.POSITION_X_TEXT_LABEL,
                 BayesianUtils.POSITION_Y_TEXT_LABEL, BayesianUtils.WIDTH_TEXT_LABEL, BayesianUtils.HEIGHT_TEXT_LABEL,
                 BayesianUtils.COLOR_TEXT_LABEL, nameFile, BayesianUtils.FONT_SIZE_TEXT_LABEL);
-    }
-
-    protected void addBoundingHandlers(Rectangle boundingBox, Group group) {
-        boundingBox.addNodeMouseDownHandler(getNodeMouseDownEvent(group));
-
-    }
-
-    protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
-        NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
-            public void onNodeMouseDown(NodeMouseDownEvent event) {
-            }
-        };
-
-        return nodeMouseDownHandler;
     }
 
     private void clearScreen(Layer layer) {
