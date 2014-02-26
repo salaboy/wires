@@ -11,7 +11,8 @@
   <modules>
     <module>wires-webapp</module>
     <module>wires-bayesian-xml03</module>
-    <module>wires-bayesian</module>	
+    <module>wires-bayesian</module>
+    <module>wires-distribution-war</module>
   </modules>
 
 <properties>
