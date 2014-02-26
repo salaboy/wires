@@ -3,6 +3,10 @@ package com.bayesian.xstream.service.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -22,31 +26,28 @@ import com.xstream.bayesian.client.services.BayesianBuilder;
 public class BayesianServiceImpl implements BayesianService {
 
     @Override
-    public BayesNetwork buildXml03(String pathXmlExample) {
-        String pathFile = this.getAbsolutePath() + pathXmlExample;
-        return new BayesianBuilder().build(xmlToObject(pathFile));
+    public BayesNetwork buildXml03(String relativePathtoXmlResource) {
+        return new BayesianBuilder().build(xmlToObject(relativePathtoXmlResource));
     }
 
-    /* Xml to Object */
     @Override
-    public Bif xmlToObject(String xmlFileName) {
-        FileReader reader = null;
-        try {
-            reader = new FileReader(xmlFileName);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    public Bif xmlToObject(String relativePathtoXmlResource) {
+        InputStream resourceAsStream = loadResource( relativePathtoXmlResource );
+        return processXML( resourceAsStream );
+    }
+
+    private Bif processXML( InputStream resourceAsStream ) {
         XStream xstream = new XStream();
         xstream.processAnnotations(Bif.class);
         xstream.processAnnotations(Network.class);
         xstream.processAnnotations(Probability.class);
         xstream.processAnnotations(Definition.class);
-        Bif data = (Bif) xstream.fromXML(reader); // parse
-        return data;
+        return (Bif) xstream.fromXML(resourceAsStream);
     }
 
-    private String getAbsolutePath() {
-        return new File("").getAbsolutePath();
+    private InputStream loadResource( String xmlFileName ) {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        return loader.getResourceAsStream(xmlFileName);
     }
 
 }

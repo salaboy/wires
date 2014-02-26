@@ -37,7 +37,7 @@ public class BayesianUtils {
     public static String FONT_FAMILY_PROGRESS_BAR = "Lucida Console";
     public static int FONT_SIZE_PROGRESS_BAR = 12;
 
-    public static String RELATIVE_PATH = "/src/main/java/org/kie/wires/client/bayesian/resources/";
+    public static String XML3_RESOURCE_PATH = "xml03/";
 
     // label
     public static String BG_COLOR_CONTAINER = Color.rgbToBrowserHexColor(236, 236, 236);

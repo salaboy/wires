@@ -55,9 +55,15 @@ public class BayesianFactory extends BaseFactory {
     }
 
     public void init(final String xml03File, final Layer layer) {
-        clearScreen(layer);
-        progressEvent.fire(new ProgressEvent(null));
-        this.drawLabelFile(xml03File, layer);
+        clearScreen( layer );
+        progressEvent.fire( new ProgressEvent( null ) );
+        this.drawLabelFile( xml03File, layer );
+        buildBayesNetworkFromXML( xml03File, layer );
+
+    }
+
+    private void buildBayesNetworkFromXML( final String xml03File,
+                                           final Layer layer ) {
         bayesianService.call(new RemoteCallback<BayesNetwork>() {
             @Override
             public void callback(final BayesNetwork response) {
@@ -74,12 +80,11 @@ public class BayesianFactory extends BaseFactory {
 
             @Override
             public boolean error(Object message, Throwable throwable) {
-                Window.alert("Sorry.. the " + xml03File + " could not be read..");
+                Window.alert( "Sorry.. the " + xml03File + " could not be read.." );
                 LienzoUtils.loadingProgressBar = false;
                 return false;
             }
-        }).buildXml03(BayesianUtils.RELATIVE_PATH + xml03File);
-
+        }).buildXml03( BayesianUtils.XML3_RESOURCE_PATH + xml03File);
     }
 
     private void drawNode(BayesVariable node, Layer layer) {

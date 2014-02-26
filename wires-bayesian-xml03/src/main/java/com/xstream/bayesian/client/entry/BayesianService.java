@@ -9,8 +9,8 @@ import com.xstream.bayesian.client.parser.model.Bif;
 @Remote
 public interface BayesianService {
 
-    BayesNetwork buildXml03(String pathXmlExample);
+    BayesNetwork buildXml03(String relativePathtoXmlResource);
 
-    Bif xmlToObject(String xmlFileName);
+    Bif xmlToObject(String relativePathtoXmlResource);
 
 }
