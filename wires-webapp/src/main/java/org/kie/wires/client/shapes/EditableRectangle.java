@@ -1,5 +1,18 @@
 package org.kie.wires.client.shapes;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.kie.wires.client.shapes.collision.CollidableShape;
+import org.kie.wires.client.shapes.collision.ControlPoint;
+import org.kie.wires.client.shapes.collision.Magnet;
+import org.kie.wires.client.shapes.collision.RectangleControlPointImpl;
+import org.kie.wires.client.shapes.collision.RectangleMagnetImpl;
+import org.kie.wires.client.util.UUID;
+import org.kie.wires.client.util.collision.Projection;
+import org.kie.wires.client.util.collision.Vector;
+
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -11,18 +24,6 @@ import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.kie.wires.client.shapes.collision.CollidableShape;
-import org.kie.wires.client.shapes.collision.ControlPoint;
-import org.kie.wires.client.shapes.collision.Magnet;
-import org.kie.wires.client.shapes.collision.RectangleControlPointImpl;
-import org.kie.wires.client.shapes.collision.RectangleMagnetImpl;
-import org.kie.wires.client.shapes.collision.StickableShape;
-import org.kie.wires.client.util.UUID;
-import org.kie.wires.client.util.collision.Projection;
-import org.kie.wires.client.util.collision.Vector;
 
 public class EditableRectangle extends BaseGroupShape {
 
