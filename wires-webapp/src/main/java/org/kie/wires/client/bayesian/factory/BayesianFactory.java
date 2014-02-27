@@ -187,7 +187,6 @@ public class BayesianFactory extends BaseFactory {
     private void clearScreen(Layer layer) {
         layer.draw();
         progressEvent.fire(new ProgressEvent(LienzoUtils.progressShapes));
-        layerEvent.fire(new LayerEvent(null));
         probabilityEvent.fire(new ProbabilityEvent(null));
     }
 

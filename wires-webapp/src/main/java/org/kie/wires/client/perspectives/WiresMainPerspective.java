@@ -28,6 +28,7 @@ public class WiresMainPerspective {
     private static final String WIRES_PALETTE_SCREEN = "WiresPaletteScreen";
     private static final String WIRES_CANVAS_SCREEN = "WiresCanvasScreen";
     private static final String WIRES_TEMPLATE_SCREEN = "WiresTemplateScreen";
+    private static final String WIRES_ACTIONS_SCREEN = "WiresActionsScreen";
     private static final String BAYESIAN_SOUTH_SCREEN = "bayesianSouthScreen";
     
 
@@ -59,14 +60,20 @@ public class WiresMainPerspective {
     }
     
     private void createPanelWithChild(PerspectiveDefinition p, Position position) {
-        final PanelDefinition childPanel = newPanel(p, position, WIRES_TEMPLATE_SCREEN);
-        childPanel.setHeight(380);
-        childPanel.setMinHeight(250);
+    	final PanelDefinition actionsPanel = newPanel(p, position, WIRES_ACTIONS_SCREEN);
+    	actionsPanel.setHeight(150);
+    	actionsPanel.setMinHeight(80);
+    	
+    	
+        final PanelDefinition templatePanel = newPanel(p, position, WIRES_TEMPLATE_SCREEN);
+        templatePanel.setHeight(380);
+        templatePanel.setMinHeight(250);
         
         final PanelDefinition parentPanel = newPanel(p, position, WIRES_LAYERS_SCREEN);
         parentPanel.setHeight(180);
         parentPanel.setMinHeight(150);
-        parentPanel.appendChild(Position.SOUTH, childPanel);
+        parentPanel.appendChild(Position.SOUTH, templatePanel);
+        parentPanel.appendChild(Position.SOUTH, actionsPanel);
         p.getRoot().insertChild(position, parentPanel);
         
     }

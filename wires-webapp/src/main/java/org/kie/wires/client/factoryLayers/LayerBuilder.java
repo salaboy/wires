@@ -34,9 +34,6 @@ public class LayerBuilder extends Composite {
         } else if (shape instanceof Rectangle) {
             new LayerRectangleFactory(group, accountLayers, layer, template, bayesianEvent);
         } 
-//        else if (shape instanceof EditableCircle) {
-//            new LayerCircleFactory(group, panel, accountLayers, layer);
-//        }
     }
 
 }
