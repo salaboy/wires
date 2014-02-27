@@ -1,6 +1,7 @@
 package org.kie.wires.client.factoryLayers;
 
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
+import org.kie.wires.client.resources.AppImages;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.image.PictureLoadedHandler;
@@ -16,7 +17,7 @@ public abstract class LayerFactory<T extends Shape<T>> {
 
     private static final int LAYERS_BY_ROW = 1;
     
-    private ResourcesLayers resource = GWT.create( ResourcesLayers.class );
+    private AppImages resource = GWT.create( AppImages.class );
 
     protected abstract void drawBoundingBox(Group group, Layer layer, String template);
 
@@ -79,7 +80,7 @@ public abstract class LayerFactory<T extends Shape<T>> {
     }
     
     protected void createOptions(final Layer layer, final int x, final int y){
-        new Picture(resource.delete(), false).onLoad(new PictureLoadedHandler() {
+        /*new Picture(resource.delete(), false).onLoad(new PictureLoadedHandler() {
             @Override  
             public void onPictureLoaded(Picture picture) {
                 picture.setX(x);
@@ -99,7 +100,7 @@ public abstract class LayerFactory<T extends Shape<T>> {
                 layer.draw();
                   
             }  
-        });  
+        });  */
     }
 
 }

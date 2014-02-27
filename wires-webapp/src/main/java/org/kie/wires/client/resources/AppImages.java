@@ -22,11 +22,20 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * GWT managed images for Workbench
  */
-public interface AppImages
-        extends
-        ClientBundle {
+public interface AppImages extends ClientBundle {
 
     @Source("images/uf_user_logo.png")
     ImageResource ufUserLogo();
+    
+    @Source("org/kie/wires/public/images/layerPanel/delete.png")
+    public ImageResource delete();
+    
+    @Source("org/kie/wires/public/images/layerPanel/view.png")
+    public ImageResource view();
+    
+    @Source("org/kie/wires/public/images/layerPanel/clear.png")
+    public ImageResource clear();
+    
+    
 
 }

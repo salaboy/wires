@@ -6,11 +6,14 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.kie.wires.client.events.ClearEvent;
 import org.kie.wires.client.events.LayerEvent;
 import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.factoryLayers.LayerBuilder;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
+import org.kie.wires.client.shapes.EditableLine;
+import org.kie.wires.client.shapes.EditableRectangle;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -28,8 +31,6 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.xstream.bayesian.client.model.BayesVariable;
-import org.kie.wires.client.shapes.EditableLine;
-import org.kie.wires.client.shapes.EditableRectangle;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresLayersScreen")
@@ -101,20 +102,26 @@ public class LayersScreen extends Composite implements RequiresResize {
     }
 
     public void drawNamesNode(@Observes LayerEvent layerEvent) {
-        accountLayers = 0;
-        if(layerEvent.getNodes() == null){
-            group.removeAll();
-        }else{
+//        accountLayers = 0;
+//        if(layerEvent.getNodes() == null){
+//            group.removeAll();
+//        }else{
             for (BayesVariable node : layerEvent.getNodes()) {
                 accountLayers += 1;
                 buildNewLayer(null, node);
             }
-        }
+        //}
         layer.draw();
     }
 
     private void buildNewLayer(Shape shape, BayesVariable node) {
         new LayerBuilder(group, shape, panel, layer, accountLayers, null, null, node, probabilityEvent);
+    }
+    
+    public void clearPanel(@Observes ClearEvent event) {
+        accountLayers = 0;
+        group.removeAll();
+        layer.draw();
     }
 
 }

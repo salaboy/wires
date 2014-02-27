@@ -5,6 +5,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 
 import org.kie.wires.client.bayesian.factory.ProbabilityFactory;
+import org.kie.wires.client.events.ClearEvent;
 import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -84,6 +85,11 @@ public class BayesianSouthScreen extends Composite implements RequiresResize {
     	    new ProbabilityFactory(event.getVariable(), group, layer);
     	}
     	layer.draw();
+    }
+    
+    public void clearPanel(@Observes ClearEvent event) {
+        group.removeAll();
+        layer.draw();
     }
 
 
