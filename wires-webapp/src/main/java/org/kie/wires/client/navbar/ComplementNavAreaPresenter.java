@@ -19,10 +19,10 @@ package org.kie.wires.client.navbar;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.uberfire.client.workbench.Header;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.uberfire.client.mvp.UberView;
-import org.uberfire.client.workbench.Header;
 
 @ApplicationScoped
 public class ComplementNavAreaPresenter implements Header {
@@ -42,6 +42,12 @@ public class ComplementNavAreaPresenter implements Header {
     @Override
     public Widget asWidget() {
         return view.asWidget();
+    }
+
+    @Override
+    public String getId() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
