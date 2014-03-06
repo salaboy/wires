@@ -53,7 +53,7 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
         super(x, y, controlX1, controlY1, controlX2, controlY2, endX, endY);
     }
 
-    public void init(double x, double y, Layer layer) {
+    public void init(double x, double y) {
         initControlPoints(x, y);
 
         addNodeMouseEnterHandler(new NodeMouseEnterHandler() {

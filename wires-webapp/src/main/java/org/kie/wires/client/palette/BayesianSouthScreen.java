@@ -2,17 +2,17 @@ package org.kie.wires.client.palette;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.kie.wires.client.bayesian.factory.ProbabilityFactory;
 import org.kie.wires.client.events.ClearEvent;
 import org.kie.wires.client.events.ProbabilityEvent;
-import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.core.client.GWT;
@@ -39,26 +39,19 @@ public class BayesianSouthScreen extends Composite implements RequiresResize {
 
     private LienzoPanel panel;
 
-    private Group group;
-
     private Layer layer;
 
-    private static final int X = 0;
-
-    private static final int Y = 5;
+    @Inject
+    private Event<ProbabilityEvent> probabilityEvent;
     
     
 
     @PostConstruct
     public void init() {
-        super.initWidget(uiBinder.createAndBindUi(this));
-        panel = new LienzoPanel(1200, ShapeFactoryUtil.HEIGHT_PANEL);
+        panel = new LienzoPanel(1200, 600);
+        initWidget(panel);
         layer = new Layer();
-        panel.add(layer);
-        group = new Group();
-        group.setX(X).setY(Y);
-        layer.add(group);
-        variables.add(panel);
+        panel.getScene().add(layer);
     }
 
     @WorkbenchPartTitle
@@ -80,15 +73,17 @@ public class BayesianSouthScreen extends Composite implements RequiresResize {
     }
     
     public void myResponseObserver(@Observes ProbabilityEvent event) {
-    	group.removeAll();
-    	if(event.getVariable() != null){
-    	    new ProbabilityFactory(event.getVariable(), group, layer);
+        layer.removeAll();
+        if(event.getBayesianProbabilityGrid() != null){
+            layer.add(event.getBayesianProbabilityGrid());
+        }else if(event.getVariable() != null){
+    	    new ProbabilityFactory(event.getVariable(), probabilityEvent);
     	}
     	layer.draw();
     }
     
     public void clearPanel(@Observes ClearEvent event) {
-        group.removeAll();
+        layer.removeAll();
         layer.draw();
     }
 

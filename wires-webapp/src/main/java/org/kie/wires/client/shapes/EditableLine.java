@@ -81,7 +81,7 @@ public class EditableLine extends BaseGroupShape {
     }
 
     @Override
-    public void init(double x, double y, Layer layer) {
+    public void init(double x, double y) {
         super.init();
         setX(x);
         setY(y);

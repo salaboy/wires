@@ -84,7 +84,7 @@ public class EditableRectangle extends BaseGroupShape {
         return id;
     }
 
-    public void init(double x, double y, Layer layer) {
+    public void init(double x, double y) {
         super.init();
         setX(x);
         setY(y);

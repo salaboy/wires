@@ -11,8 +11,6 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseEnterEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseEnterHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseExitEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseExitHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
@@ -45,7 +43,7 @@ public class EditableCircle extends Circle implements EditableShape {
 
     
 
-    public void init(double x, double y, Layer layer) {
+    public void init(double x, double y) {
         setX( x );
         setY( y );
 

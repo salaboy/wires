@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.kie.wires.client.shapes.EditableRectangle;
 
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.google.common.collect.Maps;
@@ -20,10 +19,10 @@ public class EditableBayesianNode extends EditableRectangle {
     private Text textHeader;
     private Map<Text, List<Rectangle>> porcentualBars;
 
-    public EditableBayesianNode(double width, double height, double positionXNode, double positionYNode, Layer layer,
+    public EditableBayesianNode(double width, double height, double positionXNode, double positionYNode,
             String fillColor) {
         super(width, height);
-        super.init(positionXNode, positionYNode, layer);
+        super.init(positionXNode, positionYNode);
         this.porcentualBars = Maps.newHashMap();
         super.getRectangle().setFillColor(fillColor);
     }

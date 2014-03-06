@@ -38,7 +38,7 @@ public class LayerTextFactory extends LayerFactory<Rectangle> {
 
             @Override
             public void onNodeMouseClick(NodeMouseClickEvent event) {
-                probabilityEvent.fire(new ProbabilityEvent(nodeVariable));
+                probabilityEvent.fire(new ProbabilityEvent(nodeVariable, null));
 
             }
         });

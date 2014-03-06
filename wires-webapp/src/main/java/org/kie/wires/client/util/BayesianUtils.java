@@ -8,6 +8,7 @@ import com.emitrom.lienzo.client.core.types.LinearGradient;
 import com.emitrom.lienzo.client.core.types.Shadow;
 import com.emitrom.lienzo.shared.core.types.Color;
 import com.google.common.collect.ImmutableMap;
+import com.xstream.bayesian.client.model.BayesVariable;
 
 public class BayesianUtils {
 
@@ -111,6 +112,28 @@ public class BayesianUtils {
 
     public static Shadow getSubstrateShadow() {
         return new Shadow(BayesianUtils.SUBSTRATE_COLOR, 5, 3, 3);
+    }
+    
+    public static double[][] orderListValues(BayesVariable node, int outcomesSize) {
+        double[][] probabilities = node.getProbabilities();
+        double[][] valuesSorted = new double[probabilities.length][probabilities.length];
+        int middle = probabilities.length / outcomesSize;
+        int sizeFirstIncoming = node.getIncomingNodes().get(0).getOutcomes().size();
+        int secondPart = middle / sizeFirstIncoming;
+        int k = 0;
+        for (int i = 0; i < middle / 2; i++) {
+            for (int j = 0; j < outcomesSize; j++) {
+                orderValues(valuesSorted, secondPart, k, j, sizeFirstIncoming, probabilities);
+            }
+            k += sizeFirstIncoming;
+        }
+        return valuesSorted;
+    }
+    
+    private static void orderValues(double[][] valuesSorted, int secondPart, int k, int j, int sizeFirstIncoming, double[][] probabilities){
+        for(int i=0; i<sizeFirstIncoming; i++ ){
+            valuesSorted[k + i][j] = probabilities[secondPart * i + i][j];
+        }     
     }
 
 }
