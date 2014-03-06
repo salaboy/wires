@@ -32,7 +32,6 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
@@ -136,7 +135,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
         shape.setDraggable(true);
         layer.add(shape);
 
-        ((EditableShape) shape).init(x, y, layer);
+        ((EditableShape) shape).init(x, y);
 
         shapesInCanvas.add((EditableShape) shape);
 
@@ -158,7 +157,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
     public void addNewPanel(@Observes BayesianEvent event) {
 
-        new BayesianFactory(panel, bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent,
+        new BayesianFactory(bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent,
                 progressEvent);
 
     }

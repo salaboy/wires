@@ -56,7 +56,7 @@ public class LayersScreen extends Composite implements RequiresResize {
     private static final int X = 0;
 
     private static final int Y = 5;
-    
+
     @Inject
     private Event<ProbabilityEvent> probabilityEvent;
 
@@ -93,31 +93,26 @@ public class LayersScreen extends Composite implements RequiresResize {
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
         accountLayers += 1;
-        if(shapeAddEvent.getShape() instanceof EditableRectangle){
-            buildNewLayer(((EditableRectangle)shapeAddEvent.getShape()).getRectangle(), null);
-        }else  if(shapeAddEvent.getShape() instanceof EditableLine){
-            buildNewLayer(((EditableLine)shapeAddEvent.getShape()).getLine(), null);
+        if (shapeAddEvent.getShape() instanceof EditableRectangle) {
+            buildNewLayer(((EditableRectangle) shapeAddEvent.getShape()).getRectangle(), null);
+        } else if (shapeAddEvent.getShape() instanceof EditableLine) {
+            buildNewLayer(((EditableLine) shapeAddEvent.getShape()).getLine(), null);
         }
         layer.draw();
     }
 
     public void drawNamesNode(@Observes LayerEvent layerEvent) {
-//        accountLayers = 0;
-//        if(layerEvent.getNodes() == null){
-//            group.removeAll();
-//        }else{
-            for (BayesVariable node : layerEvent.getNodes()) {
-                accountLayers += 1;
-                buildNewLayer(null, node);
-            }
-        //}
+        for (BayesVariable node : layerEvent.getNodes()) {
+            accountLayers += 1;
+            buildNewLayer(null, node);
+        }
         layer.draw();
     }
 
     private void buildNewLayer(Shape shape, BayesVariable node) {
         new LayerBuilder(group, shape, panel, layer, accountLayers, null, null, node, probabilityEvent);
     }
-    
+
     public void clearPanel(@Observes ClearEvent event) {
         accountLayers = 0;
         group.removeAll();

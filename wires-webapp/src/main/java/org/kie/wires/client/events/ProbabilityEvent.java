@@ -1,13 +1,23 @@
 package org.kie.wires.client.events;
 
+import org.kie.wires.client.bayesian.shapes.BayesianProbability;
+
 import com.xstream.bayesian.client.model.BayesVariable;
 
 public class ProbabilityEvent {
     
-    BayesVariable variable;
+    private BayesVariable variable;
     
-    public ProbabilityEvent(BayesVariable var){
+    private BayesianProbability bayesianProbabilityGrid;
+    
+    public ProbabilityEvent(){
+        this.variable = null;
+        this.bayesianProbabilityGrid = null;
+    }
+    
+    public ProbabilityEvent(BayesVariable var, BayesianProbability bayesianProbabilityGrid){
         this.variable = var;
+        this.bayesianProbabilityGrid = bayesianProbabilityGrid;
     }
 
     public BayesVariable getVariable() {
@@ -16,6 +26,14 @@ public class ProbabilityEvent {
 
     public void setVariable(BayesVariable variable) {
         this.variable = variable;
+    }
+
+    public BayesianProbability getBayesianProbabilityGrid() {
+        return bayesianProbabilityGrid;
+    }
+
+    public void setBayesianProbabilityGrid(BayesianProbability bayesianProbabilityGrid) {
+        this.bayesianProbabilityGrid = bayesianProbabilityGrid;
     }
 
 }
