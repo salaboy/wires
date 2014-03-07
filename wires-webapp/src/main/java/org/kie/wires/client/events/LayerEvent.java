@@ -2,7 +2,7 @@ package org.kie.wires.client.events;
 
 import java.util.List;
 
-import com.xstream.bayesian.client.model.BayesVariable;
+import com.bayesian.parser.client.model.BayesVariable;
 
 public class LayerEvent {
     

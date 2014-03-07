@@ -26,6 +26,7 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnOpen;
 
+import com.bayesian.parser.client.service.BayesianService;
 import com.emitrom.lienzo.client.core.shape.GridLayer;
 import com.emitrom.lienzo.client.core.shape.IPrimitive;
 import com.emitrom.lienzo.client.core.shape.Layer;
@@ -37,7 +38,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
-import com.xstream.bayesian.client.entry.BayesianService;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")

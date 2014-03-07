@@ -155,10 +155,16 @@
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- xstream api -->
+		<!-- bayesian -->
 		<dependency>
 			<groupId>org.kie</groupId>
-			<artifactId>wires-bayesian</artifactId>
+			<artifactId>wires-bayesian-parser-backend</artifactId>
+			<version>${bayesian-api.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>wires-bayesian-network-api</artifactId>
 			<version>${bayesian-api.version}</version>
 		</dependency>
 	</dependencies>

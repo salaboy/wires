@@ -5,6 +5,7 @@ import javax.enterprise.event.Event;
 import org.kie.wires.client.events.BayesianEvent;
 import org.kie.wires.client.events.ProbabilityEvent;
 
+import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
@@ -12,7 +13,6 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
-import com.xstream.bayesian.client.model.BayesVariable;
 
 @SuppressWarnings("rawtypes")
 public class LayerBuilder extends Composite {

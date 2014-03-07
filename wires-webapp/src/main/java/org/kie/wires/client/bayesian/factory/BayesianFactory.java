@@ -17,6 +17,9 @@ import org.kie.wires.client.events.ReadyEvent;
 import org.kie.wires.client.util.BayesianUtils;
 import org.kie.wires.client.util.LienzoUtils;
 
+import com.bayesian.parser.client.model.BayesNetwork;
+import com.bayesian.parser.client.model.BayesVariable;
+import com.bayesian.parser.client.service.BayesianService;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
@@ -24,9 +27,6 @@ import com.emitrom.lienzo.shared.core.types.Color;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gwt.user.client.Window;
-import com.xstream.bayesian.client.entry.BayesianService;
-import com.xstream.bayesian.client.model.BayesNetwork;
-import com.xstream.bayesian.client.model.BayesVariable;
 
 public class BayesianFactory extends BaseFactory {
 

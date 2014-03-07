@@ -2,7 +2,7 @@ package org.kie.wires.client.events;
 
 import org.kie.wires.client.bayesian.shapes.BayesianProbability;
 
-import com.xstream.bayesian.client.model.BayesVariable;
+import com.bayesian.parser.client.model.BayesVariable;
 
 public class ProbabilityEvent {
     
