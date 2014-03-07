@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.shapes.EditableLine;
+import org.kie.wires.client.shapes.WiresLine;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -43,7 +43,7 @@ public class LineFactory extends ShapeFactory<Line> {
 
     @Override
     public Shape<Line> drawShape() {
-        EditableLine editableLine = new EditableLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
+        WiresLine editableLine = new WiresLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
         
         editableLine.getLine().setDragBounds(new DragBounds(150, 260, 150, 150));
         editableLine.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE)
@@ -67,7 +67,7 @@ public class LineFactory extends ShapeFactory<Line> {
     protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
-                final EditableLine floatingShape = new EditableLine(getFloatingX1(), getFloatingY1(), getFloatingX2(),
+                final WiresLine floatingShape = new WiresLine(getFloatingX1(), getFloatingY1(), getFloatingX2(),
                         getFloatingY2());
                 floatingShape.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
                         .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE).setDraggable(false);

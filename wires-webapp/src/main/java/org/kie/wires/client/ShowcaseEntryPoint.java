@@ -76,24 +76,7 @@ public class ShowcaseEntryPoint {
     @Inject
     public Identity identity;
 
-    private List<String> menuItemsToRemove = new ArrayList<String>() {
-        {
-            add("IFrameScreen");
-            add("IPInfoGadget");
-            add("MarkdownLiveEditor");
-            add("MarkdownLiveViewer");
-            add("RepositoriesEditor");
-            add("RepositoryEditor");
-            add("SportsNewsGadget");
-            add("StockQuotesGadget");
-            add("TodoListScreen");
-            add("WeatherGadget");
-            add("YouTubeScreen");
-            add("YouTubeVideos");
-            add("chartPopulator");
-            add("welcome");
-        }
-    };
+   
 
     @AfterInitialization
     public void startApp() {
@@ -105,7 +88,7 @@ public class ShowcaseEntryPoint {
     private void setupMenu() {
         final AbstractWorkbenchPerspectiveActivity defaultPerspective = getDefaultPerspectiveActivity();
 
-        final Menus menus = newTopLevelMenu("Home").respondsWith(new Command() {
+        final Menus menus = newTopLevelMenu("Wires").respondsWith(new Command() {
             @Override
             public void execute() {
                 if (defaultPerspective != null) {
@@ -114,7 +97,18 @@ public class ShowcaseEntryPoint {
                     Window.alert("Default perspective not found.");
                 }
             }
-        }).endMenu().newTopLevelMenu("Logout").position(MenuPosition.RIGHT).respondsWith(new Command() {
+        }).endMenu().
+            newTopLevelMenu("Bayesian Networks").respondsWith(new Command() {
+            @Override
+            public void execute() {
+                if (defaultPerspective != null) {
+                    placeManager.goTo(new DefaultPlaceRequest("WiresBayesianPerspective"));
+                } else {
+                    Window.alert("Default perspective not found.");
+                }
+            }
+        }).endMenu().     
+       newTopLevelMenu("Logout").position(MenuPosition.RIGHT).respondsWith(new Command() {
             @Override
             public void execute() {
                 redirect(GWT.getModuleBaseURL() + "uf_logout");
@@ -155,9 +149,7 @@ public class ShowcaseEntryPoint {
                 name = IOC.getBeanManager().lookupBean(_menuItem.getBeanClass()).getName();
             }
 
-            if (!menuItemsToRemove.contains(name)) {
-                names.add(name);
-            }
+           
         }
 
         Collections.sort(names);

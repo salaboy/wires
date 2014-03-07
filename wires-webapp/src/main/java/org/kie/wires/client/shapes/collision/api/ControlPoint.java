@@ -7,10 +7,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kie.wires.client.shapes.collision;
+package org.kie.wires.client.shapes.collision.api;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
-import org.kie.wires.client.shapes.BaseGroupShape;
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
 
 /**
  *
@@ -38,7 +38,7 @@ public interface ControlPoint {
     
     void moveControlPoint();
     
-    BaseGroupShape getShape();
+    WiresBaseGroupShape getShape();
     
     int getControlType();
     

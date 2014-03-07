@@ -3,7 +3,7 @@ package org.kie.wires.client.bayesian.shapes;
 import java.util.List;
 import java.util.Map;
 
-import org.kie.wires.client.shapes.EditableRectangle;
+import org.kie.wires.client.shapes.WiresRectangle;
 
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
  * 
  * @author salaboy
  */
-public class EditableBayesianNode extends EditableRectangle {
+public class EditableBayesianNode extends WiresRectangle {
 
     private Rectangle header;
     private Text textHeader;

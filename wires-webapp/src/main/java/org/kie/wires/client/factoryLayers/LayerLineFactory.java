@@ -1,7 +1,7 @@
 package org.kie.wires.client.factoryLayers;
 
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
-import org.kie.wires.client.shapes.EditableLine;
+import org.kie.wires.client.shapes.WiresLine;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -41,7 +41,7 @@ public class LayerLineFactory extends LayerFactory<Line> {
 
     @Override
     public Shape<Line> drawLayer() {
-        EditableLine editableLine = new EditableLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
+        WiresLine editableLine = new WiresLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
         editableLine.getLine().setDragBounds(new DragBounds(150, 260, 150, 150));
         editableLine.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE)
                 .setDraggable(false);

@@ -1,13 +1,16 @@
-package org.kie.wires.client.shapes.collision;
+package org.kie.wires.client.shapes.collision.util;
 
 
+import org.kie.wires.client.shapes.collision.api.CollidableShape;
+import org.kie.wires.client.shapes.collision.api.Magnet;
+import org.kie.wires.client.shapes.collision.api.StickableShape;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import java.util.List;
 import static org.kie.wires.client.canvas.CanvasScreen.shapesInCanvas;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
-import org.kie.wires.client.shapes.EditableShape;
+import org.kie.wires.client.shapes.api.EditableShape;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

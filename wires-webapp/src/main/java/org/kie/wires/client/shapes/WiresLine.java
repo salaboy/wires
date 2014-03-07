@@ -5,6 +5,8 @@
  */
 package org.kie.wires.client.shapes;
 
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
+import org.kie.wires.client.shapes.util.ShapesUtils;
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -22,20 +24,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
-import org.kie.wires.client.shapes.collision.CollidableShape;
-import org.kie.wires.client.shapes.collision.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.CollidableShape;
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
 import org.kie.wires.client.shapes.collision.LineControlPointImpl;
 import org.kie.wires.client.shapes.collision.LineMagnetImpl;
-import org.kie.wires.client.shapes.collision.Magnet;
+import org.kie.wires.client.shapes.collision.api.Magnet;
 import org.kie.wires.client.util.UUID;
-import org.kie.wires.client.util.collision.Projection;
-import org.kie.wires.client.util.collision.Vector;
+import org.kie.wires.client.shapes.collision.api.Projection;
+import org.kie.wires.client.shapes.collision.api.Vector;
 
 /**
  *
  * @author salaboy
  */
-public class EditableLine extends BaseGroupShape {
+public class WiresLine extends WiresBaseGroupShape {
 
     private String id;
     private ControlPoint startControlPoint;
@@ -56,7 +58,7 @@ public class EditableLine extends BaseGroupShape {
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
 
-    public EditableLine(double x1, double y1, double x2, double y2) {
+    public WiresLine(double x1, double y1, double x2, double y2) {
         line = new Line(x1, y1, x2, y2);
 
         this.id = UUID.uuid();
@@ -91,7 +93,7 @@ public class EditableLine extends BaseGroupShape {
         addNodeMouseClickHandler(new NodeMouseClickHandler() {
             public void onNodeMouseClick(NodeMouseClickEvent nodeMouseClickEvent) {
                 Layer layer = getLayer();
-                ShapesUtils.nodeMouseClickHandler(EditableLine.this);
+                ShapesUtils.nodeMouseClickHandler(WiresLine.this);
                 ShapesUtils.deselectAllOtherShapes();
                 layer.draw();
             }

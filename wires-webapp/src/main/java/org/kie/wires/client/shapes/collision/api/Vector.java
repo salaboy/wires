@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.kie.wires.client.util.collision;
+package org.kie.wires.client.shapes.collision.api;
 
 /**
  *

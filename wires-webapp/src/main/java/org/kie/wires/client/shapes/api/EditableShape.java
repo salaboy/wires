@@ -1,4 +1,4 @@
-package org.kie.wires.client.shapes;
+package org.kie.wires.client.shapes.api;
 
 
 public interface EditableShape {

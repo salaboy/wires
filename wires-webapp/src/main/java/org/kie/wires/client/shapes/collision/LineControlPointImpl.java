@@ -9,6 +9,10 @@
  */
 package org.kie.wires.client.shapes.collision;
 
+import org.kie.wires.client.shapes.collision.util.CollisionDetectionUtil;
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.StickableShape;
+import org.kie.wires.client.shapes.collision.api.Magnet;
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -21,8 +25,8 @@ import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_STROKE_WIDTH_SHAPE;
-import org.kie.wires.client.shapes.BaseGroupShape;
-import org.kie.wires.client.shapes.EditableLine;
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
+import org.kie.wires.client.shapes.WiresLine;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -44,10 +48,10 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
     private double dragEventEndX;
     private double dragEventEndY;
 
-    private EditableLine shape;
+    private WiresLine shape;
     private int controlType = 0;
 
-    public LineControlPointImpl(EditableLine shape, int controlType) {
+    public LineControlPointImpl(WiresLine shape, int controlType) {
         this(12, 12);
         this.shape = shape;
         this.controlType = controlType;
@@ -64,11 +68,11 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         return controlType;
     }
 
-    public BaseGroupShape getShape() {
+    public WiresBaseGroupShape getShape() {
         return shape;
     }
 
-    public void setShape(EditableLine shape) {
+    public void setShape(WiresLine shape) {
         this.shape = shape;
     }
 
@@ -95,7 +99,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
                 addNodeDragMoveHandler(new NodeDragMoveHandler() {
                     public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                        ((EditableLine) shape).setBeingResized(true);
+                        ((WiresLine) shape).setBeingResized(true);
                         double deltaX = nodeDragMoveEvent.getX() - dragEventStartX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventStartY;
 
@@ -104,16 +108,20 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         array.getPoint(0).setY(initialStartPointY + deltaY);
 
                         Magnet selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
-                        CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);    
-                        
+                        if (selectedMagnet != null) {
+                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
+                        } else {
+//                            CollisionDetectionUtil.detachControlPointFromMagnet(selectedMagnet, shape);
+                        }
+
                         layer.draw();
-                        
+
                     }
                 });
 
                 addNodeDragEndHandler(new NodeDragEndHandler() {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                        ((EditableLine) shape).setBeingResized(false);
+                        ((WiresLine) shape).setBeingResized(false);
 
                     }
                 });
@@ -121,7 +129,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                 setDraggable(true).setStrokeWidth(1)
                         .setStrokeColor(ColorName.BLACK);
 
-                
                 break;
             case ControlPoint.CONTROL_END:
 
@@ -138,16 +145,20 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
                 addNodeDragMoveHandler(new NodeDragMoveHandler() {
                     public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                        ((EditableLine) shape).setBeingResized(true);
+                        ((WiresLine) shape).setBeingResized(true);
                         double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
 
                         Point2DArray array = shape.getLine().getPoints();
                         array.getPoint(1).setX(initialEndPointX + deltaX);
                         array.getPoint(1).setY(initialEndPointY + deltaY);
-                        
+
                         Magnet selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
-                        CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
+                        if (selectedMagnet != null) {
+                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
+                        } else {
+                            //CollisionDetectionUtil.detachControlPointFromMagnet(selectedMagnet, shape);
+                        }
 
                         layer.draw();
                     }
@@ -155,14 +166,14 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
                 addNodeDragEndHandler(new NodeDragEndHandler() {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                        ((EditableLine) shape).setBeingResized(false);
+                        ((WiresLine) shape).setBeingResized(false);
 
                     }
                 });
                 setDraggable(true)
                         .setStrokeWidth(1)
                         .setStrokeColor(ColorName.BLACK);
-                
+
                 break;
         }
 
@@ -173,13 +184,13 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
         switch (controlType) {
             case ControlPoint.CONTROL_START:
-                array.getPoint(0).setX(  x - shape.getX() );
-                array.getPoint(0).setY( y - shape.getY() );
+                array.getPoint(0).setX(x - shape.getX());
+                array.getPoint(0).setY(y - shape.getY());
 
                 break;
             case ControlPoint.CONTROL_END:
-                array.getPoint(1).setX( x - (shape.getX() ) );
-                array.getPoint(1).setY( y - (shape.getY() ) );
+                array.getPoint(1).setX(x - (shape.getX()));
+                array.getPoint(1).setY(y - (shape.getY()));
 
                 break;
         }

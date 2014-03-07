@@ -3,28 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kie.wires.client.shapes;
+package org.kie.wires.client.shapes.api;
 
+import org.kie.wires.client.shapes.api.EditableShape;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import java.util.ArrayList;
 import java.util.List;
-import org.kie.wires.client.shapes.collision.CollidableShape;
-import org.kie.wires.client.shapes.collision.ControlPoint;
-import org.kie.wires.client.shapes.collision.Magnet;
-import org.kie.wires.client.shapes.collision.StickableShape;
+import org.kie.wires.client.shapes.collision.api.CollidableShape;
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.Magnet;
+import org.kie.wires.client.shapes.collision.api.StickableShape;
 
 /**
  *
  * @author salaboy
  */
-public abstract class BaseGroupShape extends Group implements EditableShape, CollidableShape, StickableShape {
+public abstract class WiresBaseGroupShape extends Group implements EditableShape, CollidableShape, StickableShape {
 
     private List<ControlPoint> controlPoints = new ArrayList<ControlPoint>();
     private List<Magnet> magnets = new ArrayList<Magnet>();
     
 
-    public BaseGroupShape() {
+    public WiresBaseGroupShape() {
     }
 
     public void addControlPoint(ControlPoint cp) {

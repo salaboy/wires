@@ -1,7 +1,8 @@
-package org.kie.wires.client.shapes;
+package org.kie.wires.client.shapes.util;
 
+import org.kie.wires.client.shapes.api.EditableShape;
 import org.kie.wires.client.canvas.CanvasScreen;
-import org.kie.wires.client.shapes.collision.StickableShape;
+import org.kie.wires.client.shapes.collision.api.StickableShape;
 
 public class ShapesUtils {
 

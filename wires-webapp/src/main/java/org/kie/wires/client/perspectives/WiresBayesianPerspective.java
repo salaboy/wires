@@ -19,15 +19,17 @@ import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
  * A Perspective to show File Explorer
  */
 @ApplicationScoped
-@WorkbenchPerspective(identifier = "WiresMainPerspective", isDefault = true)
-public class WiresMainPerspective {
+@WorkbenchPerspective(identifier = "WiresBayesianPerspective")
+public class WiresBayesianPerspective {
 
     private static final String WIRES = "Wires";
 
     private static final String WIRES_LAYERS_SCREEN = "WiresLayersScreen";
-    private static final String WIRES_PALETTE_SCREEN = "WiresPaletteScreen";
+    //private static final String WIRES_PALETTE_SCREEN = "WiresPaletteScreen";
     private static final String WIRES_CANVAS_SCREEN = "WiresCanvasScreen";
+    private static final String WIRES_TEMPLATE_SCREEN = "WiresTemplateScreen";
     private static final String WIRES_ACTIONS_SCREEN = "WiresActionsScreen";
+    private static final String BAYESIAN_SOUTH_SCREEN = "bayesianSouthScreen";
     
 
     private static final int MIN_WIDTH_PANEL = 200;
@@ -43,8 +45,9 @@ public class WiresMainPerspective {
         perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(WIRES_CANVAS_SCREEN)));
 
         this.createPanelWithChild(perspective, Position.EAST);
-        this.drawPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
-        
+        //this.createPanel1(perspective, Position.EAST, WIRES_TEMPLATE_SCREEN);
+      //  this.drawPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
+        this.drawPanel(perspective, Position.SOUTH, BAYESIAN_SOUTH_SCREEN);
 
         perspective.setTransient(true);
 
@@ -62,10 +65,14 @@ public class WiresMainPerspective {
     	actionsPanel.setMinHeight(80);
     	
     	
+        final PanelDefinition templatePanel = newPanel(p, position, WIRES_TEMPLATE_SCREEN);
+        templatePanel.setHeight(380);
+        templatePanel.setMinHeight(250);
         
         final PanelDefinition parentPanel = newPanel(p, position, WIRES_LAYERS_SCREEN);
         parentPanel.setHeight(180);
         parentPanel.setMinHeight(150);
+        parentPanel.appendChild(Position.SOUTH, templatePanel);
         parentPanel.appendChild(Position.SOUTH, actionsPanel);
         p.getRoot().insertChild(position, parentPanel);
         

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kie.wires.client.shapes.collision;
+package org.kie.wires.client.shapes.collision.api;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
 import java.util.List;

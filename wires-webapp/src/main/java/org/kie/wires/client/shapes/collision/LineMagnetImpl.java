@@ -5,12 +5,14 @@
  */
 package org.kie.wires.client.shapes.collision;
 
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.Magnet;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import java.util.ArrayList;
 import java.util.List;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
-import org.kie.wires.client.shapes.EditableLine;
+import org.kie.wires.client.shapes.WiresLine;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -22,11 +24,11 @@ public class LineMagnetImpl extends Circle implements Magnet {
     private final List<ControlPoint> attachedControlPoints = new ArrayList<ControlPoint>();
 
     private String id;
-    private EditableLine shape;
+    private WiresLine shape;
     
     private int type;
     
-    public LineMagnetImpl(EditableLine shape, int type) {
+    public LineMagnetImpl(WiresLine shape, int type) {
        this(6);
        this.shape = shape;
        this.type = type;

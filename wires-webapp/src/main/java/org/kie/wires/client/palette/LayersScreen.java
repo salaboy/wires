@@ -12,8 +12,8 @@ import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
 import org.kie.wires.client.factoryLayers.LayerBuilder;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
-import org.kie.wires.client.shapes.EditableLine;
-import org.kie.wires.client.shapes.EditableRectangle;
+import org.kie.wires.client.shapes.WiresLine;
+import org.kie.wires.client.shapes.WiresRectangle;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -93,10 +93,10 @@ public class LayersScreen extends Composite implements RequiresResize {
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
         accountLayers += 1;
-        if (shapeAddEvent.getShape() instanceof EditableRectangle) {
-            buildNewLayer(((EditableRectangle) shapeAddEvent.getShape()).getRectangle(), null);
-        } else if (shapeAddEvent.getShape() instanceof EditableLine) {
-            buildNewLayer(((EditableLine) shapeAddEvent.getShape()).getLine(), null);
+        if (shapeAddEvent.getShape() instanceof WiresRectangle) {
+            buildNewLayer(((WiresRectangle) shapeAddEvent.getShape()).getRectangle(), null);
+        } else if (shapeAddEvent.getShape() instanceof WiresLine) {
+            buildNewLayer(((WiresLine) shapeAddEvent.getShape()).getLine(), null);
         }
         layer.draw();
     }

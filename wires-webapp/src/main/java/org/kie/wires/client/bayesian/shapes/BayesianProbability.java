@@ -2,13 +2,13 @@ package org.kie.wires.client.bayesian.shapes;
 
 import java.util.Map;
 
-import org.kie.wires.client.shapes.EditableRectangle;
+import org.kie.wires.client.shapes.WiresRectangle;
 
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.google.common.collect.Maps;
 
-public class BayesianProbability extends EditableRectangle {
+public class BayesianProbability extends WiresRectangle {
 
     private Map<Text, Rectangle> parentNode;
     private Map<Text, Rectangle> porcentualOptions;

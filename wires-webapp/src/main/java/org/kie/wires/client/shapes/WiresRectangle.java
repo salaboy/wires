@@ -1,17 +1,19 @@
 package org.kie.wires.client.shapes;
 
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
+import org.kie.wires.client.shapes.util.ShapesUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.kie.wires.client.shapes.collision.CollidableShape;
-import org.kie.wires.client.shapes.collision.ControlPoint;
-import org.kie.wires.client.shapes.collision.Magnet;
+import org.kie.wires.client.shapes.collision.api.CollidableShape;
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.Magnet;
 import org.kie.wires.client.shapes.collision.RectangleControlPointImpl;
 import org.kie.wires.client.shapes.collision.RectangleMagnetImpl;
 import org.kie.wires.client.util.UUID;
-import org.kie.wires.client.util.collision.Projection;
-import org.kie.wires.client.util.collision.Vector;
+import org.kie.wires.client.shapes.collision.api.Projection;
+import org.kie.wires.client.shapes.collision.api.Vector;
 
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
@@ -25,7 +27,7 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 
-public class EditableRectangle extends BaseGroupShape {
+public class WiresRectangle extends WiresBaseGroupShape {
 
     private final String id;
 
@@ -55,13 +57,13 @@ public class EditableRectangle extends BaseGroupShape {
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
 
-    public EditableRectangle(double width, double height) {
+    public WiresRectangle(double width, double height) {
         this(width, height, 3);
 
         setDraggable(true);
     }
 
-    public EditableRectangle(double width, double height, double cornerRadius) {
+    public WiresRectangle(double width, double height, double cornerRadius) {
 
         rectangle = new Rectangle(width, height, cornerRadius);
         add(rectangle);
@@ -94,7 +96,7 @@ public class EditableRectangle extends BaseGroupShape {
         addNodeMouseClickHandler(new NodeMouseClickHandler() {
             public void onNodeMouseClick(NodeMouseClickEvent nodeMouseClickEvent) {
                 Layer layer = getLayer();
-                ShapesUtils.nodeMouseClickHandler(EditableRectangle.this);
+                ShapesUtils.nodeMouseClickHandler(WiresRectangle.this);
                 ShapesUtils.deselectAllOtherShapes();
                 layer.draw();
             }

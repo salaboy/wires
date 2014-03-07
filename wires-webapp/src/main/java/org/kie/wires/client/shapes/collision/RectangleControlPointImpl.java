@@ -9,6 +9,8 @@
  */
 package org.kie.wires.client.shapes.collision;
 
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.StickableShape;
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -20,8 +22,8 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_STROKE_WIDTH_SHAPE;
-import org.kie.wires.client.shapes.EditableRectangle;
-import static org.kie.wires.client.shapes.collision.ControlPoint.*;
+import org.kie.wires.client.shapes.WiresRectangle;
+import static org.kie.wires.client.shapes.collision.api.ControlPoint.*;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -35,11 +37,11 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
     private String id;
 
-    private EditableRectangle shape;
+    private WiresRectangle shape;
 
     private int controlType;
 
-    public RectangleControlPointImpl(EditableRectangle shape, int controlType) {
+    public RectangleControlPointImpl(WiresRectangle shape, int controlType) {
         this(12, 12);
         this.shape = shape;
         this.controlType = controlType;
@@ -57,7 +59,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         return id;
     }
 
-    public EditableRectangle getShape() {
+    public WiresRectangle getShape() {
         return shape;
     }
 
@@ -72,7 +74,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
                 ((StickableShape) shape).hideMagnetPoints();
-                ((EditableRectangle) shape).setBeingResized(true);
+                ((WiresRectangle) shape).setBeingResized(true);
                 recordStartData(shape, nodeDragStartEvent);
             }
         });
@@ -82,7 +84,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
                 
                 
-                nodeDragMove((EditableRectangle) shape, nodeDragMoveEvent, layer);
+                nodeDragMove((WiresRectangle) shape, nodeDragMoveEvent, layer);
 
                 layer.draw();
 
@@ -92,7 +94,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
         addNodeDragEndHandler(new NodeDragEndHandler() {
             public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                ((EditableRectangle) shape).setBeingResized(false);
+                ((WiresRectangle) shape).setBeingResized(false);
             }
 
         });
@@ -121,17 +123,17 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         }
     }
 
-    public void recordStartData(EditableRectangle destination, NodeDragStartEvent nodeDragStartEvent) {
+    public void recordStartData(WiresRectangle destination, NodeDragStartEvent nodeDragStartEvent) {
         dragEventStartX = nodeDragStartEvent.getX();
         dragEventStartY = nodeDragStartEvent.getY();
-        ((EditableRectangle) destination).setStartX(destination.getX());
-        ((EditableRectangle) destination).setStartY(destination.getY());
-        ((EditableRectangle) destination).setStartHeight(destination.getRectangle().getHeight());
-        ((EditableRectangle) destination).setStartWidth(destination.getRectangle().getWidth());
+        ((WiresRectangle) destination).setStartX(destination.getX());
+        ((WiresRectangle) destination).setStartY(destination.getY());
+        ((WiresRectangle) destination).setStartHeight(destination.getRectangle().getHeight());
+        ((WiresRectangle) destination).setStartWidth(destination.getRectangle().getWidth());
 
     }
 
-    public void nodeDragMove(EditableRectangle rect, double deltaX, double deltaY, Layer layer) {
+    public void nodeDragMove(WiresRectangle rect, double deltaX, double deltaY, Layer layer) {
         switch (controlType) {
             case CONTROL_TOP_LEFT:
                 rect.setX(rect.getStartX() + deltaX);
@@ -188,7 +190,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         }
     }
 
-    public void nodeDragMove(EditableRectangle rect, NodeDragMoveEvent nodeDragMoveEvent, Layer layer) {
+    public void nodeDragMove(WiresRectangle rect, NodeDragMoveEvent nodeDragMoveEvent, Layer layer) {
 
         double deltaX = nodeDragMoveEvent.getX() - getDragEventStartX();
         double deltaY = nodeDragMoveEvent.getY() - getDragEventStartY();
@@ -226,12 +228,12 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
     }
 
     public void udpateShape(Layer layer, double x, double y) {
-        nodeDragMove((EditableRectangle) shape, x, y, layer);
+        nodeDragMove((WiresRectangle) shape, x, y, layer);
 
-        ((EditableRectangle) shape).getTopMagnet().placeMagnetPoints();
-        ((EditableRectangle) shape).getLeftMagnet().placeMagnetPoints();
-        ((EditableRectangle) shape).getRightMagnet().placeMagnetPoints();
-        ((EditableRectangle) shape).getBottomMagnet().placeMagnetPoints();
+        ((WiresRectangle) shape).getTopMagnet().placeMagnetPoints();
+        ((WiresRectangle) shape).getLeftMagnet().placeMagnetPoints();
+        ((WiresRectangle) shape).getRightMagnet().placeMagnetPoints();
+        ((WiresRectangle) shape).getBottomMagnet().placeMagnetPoints();
 
         layer.draw();
     }

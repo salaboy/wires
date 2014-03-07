@@ -18,9 +18,9 @@ import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.events.ProgressEvent;
 import org.kie.wires.client.events.ReadyEvent;
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.shapes.BaseGroupShape;
-import org.kie.wires.client.shapes.EditableRectangle;
-import org.kie.wires.client.shapes.EditableShape;
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
+import org.kie.wires.client.shapes.WiresRectangle;
+import org.kie.wires.client.shapes.api.EditableShape;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -46,17 +46,28 @@ public class CanvasScreen extends Composite implements RequiresResize {
     private LienzoPanel panel;
     private Layer layer;
 
+    /*
+    * Please remove this from here!!!
+    */
     @Inject
     private Caller<BayesianService> bayesianService;
-    @Inject
-    private Event<LayerEvent> layerEvent;
-    @Inject
+     @Inject
     private Event<ProbabilityEvent> probabilityEvent;
+     
+    /*
+    * If these are two are generic enough we can keep them here
+    */
     @Inject
     private Event<ProgressEvent> progressEvent;
 
     @Inject
-    private Event<ReadyEvent> readyEvent;
+    private Event<ReadyEvent> readyEvent; 
+     
+    
+    
+    @Inject
+    private Event<LayerEvent> layerEvent;
+   
 
     public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
 
@@ -112,7 +123,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
-        BaseGroupShape shape = shapeAddEvent.getShape();
+        WiresBaseGroupShape shape = shapeAddEvent.getShape();
         shape.getLayer().remove(shape);
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
@@ -154,7 +165,9 @@ public class CanvasScreen extends Composite implements RequiresResize {
         }
         layer.draw();
     }
-
+   /*
+    * We need to move this from here as soon as possible!!
+    */
     public void addNewPanel(@Observes BayesianEvent event) {
 
         new BayesianFactory(bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent,
@@ -163,7 +176,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     public void addNodes(@Observes ReadyEvent event) {
-        for (EditableRectangle shape : event.getBayesianNodes()) {
+        for (WiresRectangle shape : event.getBayesianNodes()) {
             layer.add(shape);
             shapesInCanvas.add((EditableShape) shape);
         }
@@ -174,18 +187,11 @@ public class CanvasScreen extends Composite implements RequiresResize {
     public void clearPanel(@Observes ClearEvent event) {
         for (EditableShape shape : shapesInCanvas) {
             layer.remove((IPrimitive<?>) shape);
+            
         }
+        shapesInCanvas.clear();
         layer.draw();
     }
 
-    // public void progressBar(@Observes ProgressEvent event){
-    // if(event.getShapes() != null && !event.getShapes().isEmpty()){
-    // for(Shape shape : event.getShapes()){
-    // group.remove(shape);
-    // }
-    // layer.draw();
-    // }else if(LienzoUtils.progressShapes == null){
-    // LienzoUtils.drawProgressBar(group, layer, panel, progressEvent);
-    // }
-    // }
+ 
 }

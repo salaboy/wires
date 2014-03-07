@@ -7,7 +7,7 @@ public enum ShapeType {
     LINE(ShapeCategory.CONNECTORS),
     
     //shapes
-    CIRCLE(ShapeCategory.SHAPES), 
+    //CIRCLE(ShapeCategory.SHAPES), 
     RECTANGLE(ShapeCategory.SHAPES);
     
     

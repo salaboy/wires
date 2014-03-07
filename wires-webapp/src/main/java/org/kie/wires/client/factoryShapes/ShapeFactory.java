@@ -21,7 +21,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.kie.wires.client.shapes.BaseGroupShape;
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
 
 public abstract class ShapeFactory<T extends Shape<T>> {
 
@@ -64,7 +64,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return boundingBox;
     }
 
-    protected void setFloatingPanel(final BaseGroupShape floatingShape, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
+    protected void setFloatingPanel(final WiresBaseGroupShape floatingShape, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
         final Layer floatingLayer = new Layer();
         final LienzoPanel floatingPanel = new LienzoPanel(width, height);
         floatingLayer.add(floatingShape);
@@ -75,7 +75,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         setFloatingHandlers(style, floatingPanel, floatingShape);
     }
     
-    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final BaseGroupShape floatingShape){
+    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final WiresBaseGroupShape floatingShape){
         final HandlerRegistration[] handlerRegs = new HandlerRegistration[2];
         handlerRegs[0] = RootPanel.get().addDomHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent mouseMoveEvent) {

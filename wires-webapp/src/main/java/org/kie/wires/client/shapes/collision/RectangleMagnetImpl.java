@@ -5,12 +5,14 @@
  */
 package org.kie.wires.client.shapes.collision;
 
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.Magnet;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import java.util.ArrayList;
 import java.util.List;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
-import org.kie.wires.client.shapes.EditableRectangle;
-import static org.kie.wires.client.shapes.collision.Magnet.*;
+import org.kie.wires.client.shapes.WiresRectangle;
+import static org.kie.wires.client.shapes.collision.api.Magnet.*;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -23,11 +25,11 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
     
     private String id;
     
-    private EditableRectangle shape;
+    private WiresRectangle shape;
     
     private int type;
     
-    public RectangleMagnetImpl(EditableRectangle shape, int type) {
+    public RectangleMagnetImpl(WiresRectangle shape, int type) {
         this(6);
         this.shape = shape;
         this.type = type;

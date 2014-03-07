@@ -1,9 +1,11 @@
 package org.kie.wires.client.shapes;
 
+import org.kie.wires.client.shapes.util.ShapesUtils;
+import org.kie.wires.client.shapes.api.EditableShape;
 import java.util.List;
 
-import org.kie.wires.client.util.collision.Projection;
-import org.kie.wires.client.util.collision.Vector;
+import org.kie.wires.client.shapes.collision.api.Projection;
+import org.kie.wires.client.shapes.collision.api.Vector;
 
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
@@ -19,7 +21,7 @@ import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
 
 
-public class EditableCircle extends Circle implements EditableShape {
+public class WiresCircle extends Circle implements EditableShape {
     private static final int TOP = 0;
     private static final int BOTTOM = 1;
     private static final int RIGHT = 2;
@@ -37,7 +39,7 @@ public class EditableCircle extends Circle implements EditableShape {
     private double startRadius;
   
 
-    public EditableCircle(double radius) {
+    public WiresCircle(double radius) {
         super(radius);
     }
 
@@ -49,7 +51,7 @@ public class EditableCircle extends Circle implements EditableShape {
 
         addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
             public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
-                ShapesUtils.nodeMouseClickHandler(EditableCircle.this);
+                ShapesUtils.nodeMouseClickHandler(WiresCircle.this);
             }
         });
 
@@ -220,7 +222,7 @@ public class EditableCircle extends Circle implements EditableShape {
 
         rect.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
             public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
-                ShapesUtils.nodeMouseClickHandler(EditableCircle.this);
+                ShapesUtils.nodeMouseClickHandler(WiresCircle.this);
             }
         });
 
@@ -235,14 +237,14 @@ public class EditableCircle extends Circle implements EditableShape {
 
         rect.addNodeDragMoveHandler( new NodeDragMoveHandler() {
             public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
-                nodeDragMove(EditableCircle.this, control, nodeDragMoveEvent, getLayer());
+                nodeDragMove(WiresCircle.this, control, nodeDragMoveEvent, getLayer());
             }
         } );
 //
         layer.add( rect );
     }
 
-    public static void nodeDragMove( EditableCircle circle, int control, NodeDragMoveEvent nodeDragMoveEvent, Layer layer) {
+    public static void nodeDragMove( WiresCircle circle, int control, NodeDragMoveEvent nodeDragMoveEvent, Layer layer) {
         GWT.log("move");
 
         double deltaX = nodeDragMoveEvent.getX() - circle.getDragEventStartX();

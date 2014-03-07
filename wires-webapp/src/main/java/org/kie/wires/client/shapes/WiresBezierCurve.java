@@ -1,5 +1,7 @@
 package org.kie.wires.client.shapes;
 
+import org.kie.wires.client.shapes.util.ShapesUtils;
+import org.kie.wires.client.shapes.api.EditableShape;
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -19,10 +21,10 @@ import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import java.util.List;
-import org.kie.wires.client.util.collision.Projection;
-import org.kie.wires.client.util.collision.Vector;
+import org.kie.wires.client.shapes.collision.api.Projection;
+import org.kie.wires.client.shapes.collision.api.Vector;
 
-public class EditableBezierCurve extends BezierCurve implements EditableShape {
+public class WiresBezierCurve extends BezierCurve implements EditableShape {
 
     private Rectangle groupStart;
     private Rectangle groupC1;
@@ -42,7 +44,7 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
     private double dragEventStartX;
     private double dragEventStartY;
 
-    public EditableBezierCurve(double x,
+    public WiresBezierCurve(double x,
                                double y,
                                double controlX1,
                                double controlY1,
@@ -58,7 +60,7 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
 
         addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
             public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
-                ShapesUtils.nodeMouseClickHandler(EditableBezierCurve.this);
+                ShapesUtils.nodeMouseClickHandler(WiresBezierCurve.this);
             }
         });
 
@@ -182,7 +184,7 @@ public class EditableBezierCurve extends BezierCurve implements EditableShape {
 
         rect.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
             public void onNodeMouseEnter(NodeMouseEnterEvent nodeMouseEnterEvent) {
-                ShapesUtils.nodeMouseClickHandler(EditableBezierCurve.this);
+                ShapesUtils.nodeMouseClickHandler(WiresBezierCurve.this);
             }
         });
 

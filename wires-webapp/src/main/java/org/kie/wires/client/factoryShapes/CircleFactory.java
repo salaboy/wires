@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.shapes.EditableCircle;
+import org.kie.wires.client.shapes.WiresCircle;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -67,7 +67,7 @@ public class CircleFactory extends ShapeFactory<Circle> {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final Layer floatingLayer = new Layer();
                 final LienzoPanel floatingPanel = new LienzoPanel(50, 50);
-                final EditableCircle floatingShape = new EditableCircle(15);
+                final WiresCircle floatingShape = new WiresCircle(15);
                 setAttributes(floatingShape, 17, 17);
                 floatingLayer.add(floatingShape);
                 floatingPanel.add(floatingLayer);
@@ -83,7 +83,8 @@ public class CircleFactory extends ShapeFactory<Circle> {
 
     @Override
     protected ShapeCategory getCategory() {
-        return ShapeType.CIRCLE.getCategory();
+//        return ShapeType.CIRCLE.getCategory();
+        return null;
     }
 
     private void setAttributes(Circle circle, double x, double y) {
