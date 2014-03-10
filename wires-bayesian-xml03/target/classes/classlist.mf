@@ -1,0 +1,11 @@
+com.xstream.bayesian.client.parser.model.Definition
+com.xstream.bayesian.client.parser.model.Bif
+com.xstream.bayesian.client.parser.model.Network
+com.xstream.bayesian.client.services.BayesianBuilder
+com.xstream.bayesian.client.parser.model.Variable
+com.xstream.bayesian.client.parser.model.Probability
+com.xstream.bayesian.client.model.BayesNetwork
+com.xstream.bayesian.client.parser.model.VariableXml
+com.xstream.bayesian.client.model.BayesVariable
+com.xstream.bayesian.client.parser.model.NetworkXml
+com.xstream.bayesian.client.entry.BayesianService

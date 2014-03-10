@@ -4,6 +4,7 @@ import javax.enterprise.event.Event;
 
 import org.kie.wires.client.events.ProbabilityEvent;
 
+import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -12,7 +13,6 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.xstream.bayesian.client.model.BayesVariable;
 
 public class LayerTextFactory extends LayerFactory<Rectangle> {
 

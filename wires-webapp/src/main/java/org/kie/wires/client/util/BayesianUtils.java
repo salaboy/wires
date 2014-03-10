@@ -4,11 +4,11 @@ import java.util.Map;
 
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 
+import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.types.LinearGradient;
 import com.emitrom.lienzo.client.core.types.Shadow;
 import com.emitrom.lienzo.shared.core.types.Color;
 import com.google.common.collect.ImmutableMap;
-import com.xstream.bayesian.client.model.BayesVariable;
 
 public class BayesianUtils {
 

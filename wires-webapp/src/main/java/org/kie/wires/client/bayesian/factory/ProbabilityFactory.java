@@ -8,11 +8,11 @@ import org.kie.wires.client.bayesian.shapes.BayesianProbability;
 import org.kie.wires.client.events.ProbabilityEvent;
 import org.kie.wires.client.util.BayesianUtils;
 
+import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.shared.core.types.Color;
 import com.google.common.collect.Maps;
-import com.xstream.bayesian.client.model.BayesVariable;
 
 public class ProbabilityFactory extends BaseFactory {
 
