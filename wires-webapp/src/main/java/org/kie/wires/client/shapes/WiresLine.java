@@ -23,6 +23,7 @@ import com.emitrom.lienzo.client.core.types.Point2DArray;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.kie.wires.client.events.ShapeSelectedEvent;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
 import org.kie.wires.client.shapes.collision.api.CollidableShape;
 import org.kie.wires.client.shapes.collision.api.ControlPoint;
@@ -93,6 +94,7 @@ public class WiresLine extends WiresBaseGroupShape {
                 Layer layer = getLayer();
                 ShapesUtils.nodeMouseClickHandler(WiresLine.this);
                 ShapesUtils.deselectAllOtherShapes();
+                getSelected().fire(new ShapeSelectedEvent(WiresLine.this));
                 layer.draw();
             }
         });
@@ -316,6 +318,14 @@ public class WiresLine extends WiresBaseGroupShape {
         if (endDistance < startDistance) {
             if (!selectedMagnet.getAttachedControlPoints().contains(getEndControlPoint())) {
                 selectedMagnet.attachControlPoint(getEndControlPoint());
+                // This needs to be encapsulated outside here
+                getEndControlPoint().setControlPointX(selectedMagnet.getX());
+                getEndControlPoint().setControlPointY(selectedMagnet.getY());
+//                Point2DArray array = getLine().getPoints();
+//                array.getPoint(1).setX(selectedMagnet.getX());
+//                array.getPoint(1).setY(selectedMagnet.getY());
+                
+                
                 for (Magnet m : selectedMagnet.getShape().getMagnets()) {
                     if (!m.getId().equals(selectedMagnet.getId())) {
                         if (m.getAttachedControlPoints().contains(getEndControlPoint())) {
@@ -327,6 +337,14 @@ public class WiresLine extends WiresBaseGroupShape {
         } else {
             if (!selectedMagnet.getAttachedControlPoints().contains(getStartControlPoint())) {
                 selectedMagnet.attachControlPoint(getStartControlPoint());
+                // This needs to be encapsulated outside here
+                getStartControlPoint().setControlPointX(selectedMagnet.getX());
+                getStartControlPoint().setControlPointY(selectedMagnet.getY());
+//                Point2DArray array = getLine().getPoints();
+//                array.getPoint(1).setX(selectedMagnet.getX());
+//                array.getPoint(1).setY(selectedMagnet.getY());
+                
+                
                 for (Magnet m : selectedMagnet.getShape().getMagnets()) {
                     if (!m.getId().equals(selectedMagnet.getId())) {
                         if (m.getAttachedControlPoints().contains(getEndControlPoint())) {

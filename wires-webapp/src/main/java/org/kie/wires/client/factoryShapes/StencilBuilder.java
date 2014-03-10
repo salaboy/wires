@@ -11,6 +11,7 @@ import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
+import org.kie.wires.client.events.ShapeSelectedEvent;
 
 public class StencilBuilder extends Composite {
 
@@ -47,7 +48,7 @@ public class StencilBuilder extends Composite {
         this.setShapesByCategory(shapeType);
         switch (shapeType) {
         case LINE:
-            new LineFactory(group, panel, shapeAddEvent, shapesByCategory);
+            new LineFactory(group, panel, shapeAddEvent,  shapesByCategory);
             break;
         case RECTANGLE:
             new RectangleFactory(group, panel, shapeAddEvent, shapesByCategory);

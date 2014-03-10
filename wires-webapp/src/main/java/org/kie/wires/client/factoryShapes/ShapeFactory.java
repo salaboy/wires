@@ -21,19 +21,9 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
 
 public abstract class ShapeFactory<T extends Shape<T>> {
 
-
-    protected ShapeFactory() {
-
-    }
-
-    protected ShapeFactory(LienzoPanel lienzoPanel, Event<ShapeAddEvent> shapeEvent) {
-        panel = lienzoPanel;
-        shapeAddEvent = shapeEvent;
-    }
 
     protected LienzoPanel panel;
 
@@ -53,6 +43,17 @@ public abstract class ShapeFactory<T extends Shape<T>> {
     protected abstract ShapeCategory getCategory();
 
     protected static final int ZINDEX = 100;
+    
+    
+    protected ShapeFactory() {
+
+    }
+
+    protected ShapeFactory(LienzoPanel lienzoPanel, Event<ShapeAddEvent> shapeEvent) {
+        panel = lienzoPanel;
+        shapeAddEvent = shapeEvent;
+        
+    }
 
     
     protected Rectangle createBoundingBox(Group group, int shapes) {
@@ -64,7 +65,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         return boundingBox;
     }
 
-    protected void setFloatingPanel(final WiresBaseGroupShape floatingShape, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
+    protected void setFloatingPanel(final Shape floatingShape, String shapeName, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
         final Layer floatingLayer = new Layer();
         final LienzoPanel floatingPanel = new LienzoPanel(width, height);
         floatingLayer.add(floatingShape);
@@ -72,10 +73,10 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         floatingLayer.draw();
         final Style style = styleFloating != null ? styleFloating : getFloatingStyle(floatingPanel, event);
         RootPanel.get().add(floatingPanel);
-        setFloatingHandlers(style, floatingPanel, floatingShape);
+        setFloatingHandlers(style, floatingPanel, shapeName);
     }
     
-    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final WiresBaseGroupShape floatingShape){
+    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final String shapeName){
         final HandlerRegistration[] handlerRegs = new HandlerRegistration[2];
         handlerRegs[0] = RootPanel.get().addDomHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
@@ -89,7 +90,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
                 handlerRegs[0].removeHandler();
                 handlerRegs[1].removeHandler();
                 RootPanel.get().remove(floatingPanel);
-                shapeAddEvent.fire(new ShapeAddEvent(floatingShape, mouseUpEvent.getX(), mouseUpEvent.getY()));
+                shapeAddEvent.fire(new ShapeAddEvent(shapeName, mouseUpEvent.getX(), mouseUpEvent.getY()));
             }
         }, MouseUpEvent.getType());
     }

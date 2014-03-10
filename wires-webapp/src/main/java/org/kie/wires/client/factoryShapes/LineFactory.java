@@ -25,7 +25,7 @@ public class LineFactory extends ShapeFactory<Line> {
     public LineFactory() {
     }
 
-    public LineFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
+    public LineFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent, 
             Map<ShapeCategory, Integer> shapesByCategory) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
@@ -43,12 +43,12 @@ public class LineFactory extends ShapeFactory<Line> {
 
     @Override
     public Shape<Line> drawShape() {
-        WiresLine editableLine = new WiresLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
+        Line editableLine = new Line(this.getX1(), this.getY1(), this.getX2(), this.getY2());
         
-        editableLine.getLine().setDragBounds(new DragBounds(150, 260, 150, 150));
-        editableLine.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE)
+        editableLine.setDragBounds(new DragBounds(150, 260, 150, 150));
+        editableLine.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE).setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE)
                 .setDraggable(false);
-        return editableLine.getLine();
+        return editableLine;
     }
 
     @Override
@@ -67,11 +67,11 @@ public class LineFactory extends ShapeFactory<Line> {
     protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
-                final WiresLine floatingShape = new WiresLine(getFloatingX1(), getFloatingY1(), getFloatingX2(),
+                final Line floatingShape = new Line(getFloatingX1(), getFloatingY1(), getFloatingX2(),
                         getFloatingY2());
-                floatingShape.getLine().setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
+                floatingShape.setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
                         .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE).setDraggable(false);
-                setFloatingPanel(floatingShape, 30, 30, event, null);
+                setFloatingPanel(floatingShape, "WiresLine", 30, 30, event, null);
                 // layersScreen.initDrawLayer(ShapeType.LINE);
             }
         };

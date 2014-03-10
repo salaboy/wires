@@ -38,6 +38,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
+import org.kie.wires.client.events.ShapeSelectedEvent;
+import org.kie.wires.client.shapes.WiresLine;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")
@@ -63,7 +65,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
     @Inject
     private Event<ReadyEvent> readyEvent; 
      
-    
+    @Inject Event<ShapeSelectedEvent> selected;
     
     @Inject
     private Event<LayerEvent> layerEvent;
@@ -123,8 +125,18 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
-        WiresBaseGroupShape shape = shapeAddEvent.getShape();
-        shape.getLayer().remove(shape);
+        String shape = shapeAddEvent.getShape();
+        
+        /*This is the ugly bit that needs to be refactored to be generic */
+        
+        WiresBaseGroupShape wiresShape = null;
+        if(shape.equals("WiresRectangle")){
+           wiresShape =  new WiresRectangle(70, 40);
+        }else if(shape.equals("WiresLine")){
+            wiresShape = new WiresLine(0,0, 20, 20);
+        }
+        
+        
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
         } else if (shapeAddEvent.getX() > panel.getAbsoluteLeft() + panel.getWidth()
@@ -143,12 +155,14 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
         x = 25 * Math.abs(x / 25);
         y = 25 * Math.abs(y / 25);
-        shape.setDraggable(true);
-        layer.add(shape);
+        wiresShape.setDraggable(true);
+        layer.add(wiresShape);
 
-        ((EditableShape) shape).init(x, y);
-
-        shapesInCanvas.add((EditableShape) shape);
+        ((EditableShape) wiresShape).init(x, y);
+        
+        wiresShape.setSelected(selected);
+        
+        shapesInCanvas.add((EditableShape) wiresShape);
 
         layer.draw();
     }

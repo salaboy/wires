@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.enterprise.event.Event;
 
 import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.shapes.WiresRectangle;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -24,7 +23,7 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
 
     }
 
-    public RectangleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
+    public RectangleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent, 
             Map<ShapeCategory, Integer> shapesByCategory) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
@@ -61,9 +60,9 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
     protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
-                final WiresRectangle floatingShape = new WiresRectangle(70, 40);
-                setAttributes(floatingShape.getRectangle(), getFloatingX(), getFloatingY());
-                setFloatingPanel(floatingShape, 40, 70, event, null);
+                final Rectangle floatingShape = new Rectangle(70, 40);
+                setAttributes(floatingShape, getFloatingX(), getFloatingY());
+                setFloatingPanel(floatingShape,"WiresRectangle", 40, 70, event, null);
             }
         };
 

@@ -1,11 +1,8 @@
 package org.kie.wires.client.events;
 
-import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
-
 
 public class ShapeAddEvent {
-    private WiresBaseGroupShape shape;
+    private String shape;
 
     private int x;
     private int y;
@@ -14,17 +11,17 @@ public class ShapeAddEvent {
 
     }
 
-    public ShapeAddEvent(WiresBaseGroupShape shape, int x, int y) {
+    public ShapeAddEvent(String shape, int x, int y) {
         this.shape = shape;
         this.x = x;
         this.y = y;
     }
 
-    public WiresBaseGroupShape getShape() {
+    public String getShape() {
         return shape;
     }
 
-    public void setShape(WiresBaseGroupShape shape) {
+    public void setShape(String shape) {
         this.shape = shape;
     }
 

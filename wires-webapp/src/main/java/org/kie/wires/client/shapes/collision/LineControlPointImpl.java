@@ -116,6 +116,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         
 
                         layer.draw();
+                      
 
                     }
                 });
@@ -130,6 +131,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                             CollisionDetectionUtil.detachControlPointFromMagnet(shape);
                             attached = false;
                         }
+                        layer.draw(); 
                     }
                 });
 
@@ -177,6 +179,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                             CollisionDetectionUtil.detachControlPointFromMagnet(shape);
                             attached = false;
                         }
+                        layer.draw(); 
                     }
                 });
                 setDraggable(true)

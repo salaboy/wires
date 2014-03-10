@@ -1,30 +1,31 @@
-package org.kie.wires.client.palette;
+package org.kie.wires.client.layers;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.kie.wires.client.events.ClearEvent;
+import org.kie.wires.client.events.LayerEvent;
+import org.kie.wires.client.events.ProbabilityEvent;
+import org.kie.wires.client.events.ShapeAddEvent;
+import org.kie.wires.client.factoryLayers.LayerBuilder;
 import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
-import org.kie.wires.client.resources.AppResource;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
-import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.image.PictureLoadedHandler;
+import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Picture;
+import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -32,17 +33,17 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 @Dependent
-@WorkbenchScreen(identifier = "WiresActionsScreen")
-public class ActionsScreen extends Composite implements RequiresResize {
+@WorkbenchScreen(identifier = "WiresLayersScreen")
+public class LayersScreen extends Composite implements RequiresResize {
 
-    interface ViewBinder extends UiBinder<Widget, ActionsScreen> {
+    interface ViewBinder extends UiBinder<Widget, LayersScreen> {
 
     }
 
     private static ViewBinder uiBinder = GWT.create(ViewBinder.class);
 
     @UiField
-    public SimplePanel actions;
+    public SimplePanel layers;
 
     private LienzoPanel panel;
 
@@ -50,16 +51,14 @@ public class ActionsScreen extends Composite implements RequiresResize {
 
     private Layer layer;
 
+    public static int accountLayers;
+
     private static final int X = 0;
 
     private static final int Y = 5;
 
-    public static int accountLayers;
-
-    private Picture clearAction;
-
     @Inject
-    private Event<ClearEvent> clearEvent;
+    private Event<ProbabilityEvent> probabilityEvent;
 
     @PostConstruct
     public void init() {
@@ -71,14 +70,13 @@ public class ActionsScreen extends Composite implements RequiresResize {
         group = new Group();
         group.setX(X).setY(Y);
         layer.add(group);
-        actions.add(panel);
-        this.drawActions();
+        layers.add(panel);
     }
 
     @WorkbenchPartTitle
     @Override
     public String getTitle() {
-        return "Actions";
+        return "Layers";
     }
 
     @WorkbenchPartView
@@ -93,35 +91,33 @@ public class ActionsScreen extends Composite implements RequiresResize {
         super.setPixelSize(width, height);
     }
 
-    private void drawActions() {
-        PictureLoadedHandler onLoad = new PictureLoadedHandler() {
-            public void onPictureLoaded(Picture picture) {
-                group.add(picture);
-                layer.draw();
-            }
-        };
-        clearOption(onLoad);
-
+    public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
+        accountLayers += 1;
+        /* refactor this to be generic as well */
+        if (shapeAddEvent.getShape().equals("WiresRectangle")) {
+            buildNewLayer(new Rectangle(40, 30), null);
+        } else if (shapeAddEvent.getShape().equals("WiresLine")) {
+            buildNewLayer(new Line(0,0, 30,30), null);
+        }
+        layer.draw();
     }
 
-    private void clearOption(PictureLoadedHandler onLoad) {
-        Rectangle boundingAction = new Rectangle(20, 20).setX(0).setY(0).setStrokeColor(ColorName.WHITE.getValue());
-        group.add(boundingAction);
-        clearAction = new Picture(AppResource.INSTANCE.images().clear(), 16, 16, true, null);
-        clearAction.setDraggable(true).setX(1).setY(1).onLoad(onLoad);
-        clearAction.addNodeMouseClickHandler(clearEvent());
-        boundingAction.addNodeMouseClickHandler(clearEvent());
+    public void drawNamesNode(@Observes LayerEvent layerEvent) {
+        for (BayesVariable node : layerEvent.getNodes()) {
+            accountLayers += 1;
+            buildNewLayer(null, node);
+        }
+        layer.draw();
     }
 
-    private NodeMouseClickHandler clearEvent() {
-        return new NodeMouseClickHandler() {
-            @Override
-            public void onNodeMouseClick(NodeMouseClickEvent event) {
-                if (Window.confirm("Are you sure to clean the canvas?")) {
-                    clearEvent.fire(new ClearEvent());
-                }
-            }
-        };
+    private void buildNewLayer(Shape shape, BayesVariable node) {
+        new LayerBuilder(group, shape, panel, layer, accountLayers, null, null, node, probabilityEvent);
+    }
+
+    public void clearPanel(@Observes ClearEvent event) {
+        accountLayers = 0;
+        group.removeAll();
+        layer.draw();
     }
 
 }

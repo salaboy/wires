@@ -1,20 +1,5 @@
 package org.kie.wires.client.shapes;
 
-import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
-import org.kie.wires.client.shapes.util.ShapesUtils;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.kie.wires.client.shapes.collision.api.CollidableShape;
-import org.kie.wires.client.shapes.collision.api.ControlPoint;
-import org.kie.wires.client.shapes.collision.api.Magnet;
-import org.kie.wires.client.shapes.collision.RectangleControlPointImpl;
-import org.kie.wires.client.shapes.collision.RectangleMagnetImpl;
-import org.kie.wires.client.util.UUID;
-import org.kie.wires.client.shapes.collision.api.Projection;
-import org.kie.wires.client.shapes.collision.api.Vector;
-
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -27,6 +12,20 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.google.gwt.core.client.GWT;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.kie.wires.client.events.ShapeSelectedEvent;
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
+import org.kie.wires.client.shapes.collision.RectangleControlPointImpl;
+import org.kie.wires.client.shapes.collision.RectangleMagnetImpl;
+import org.kie.wires.client.shapes.collision.api.CollidableShape;
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
+import org.kie.wires.client.shapes.collision.api.Magnet;
+import org.kie.wires.client.shapes.collision.api.Projection;
+import org.kie.wires.client.shapes.collision.api.Vector;
+import org.kie.wires.client.shapes.util.ShapesUtils;
+import org.kie.wires.client.util.UUID;
 
 public class WiresRectangle extends WiresBaseGroupShape {
 
@@ -57,7 +56,7 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
-
+    
     public WiresRectangle(double width, double height) {
         this(width, height, 3);
 
@@ -99,6 +98,7 @@ public class WiresRectangle extends WiresBaseGroupShape {
                 Layer layer = getLayer();
                 ShapesUtils.nodeMouseClickHandler(WiresRectangle.this);
                 ShapesUtils.deselectAllOtherShapes();
+                getSelected().fire(new ShapeSelectedEvent(WiresRectangle.this));
                 layer.draw();
             }
         });

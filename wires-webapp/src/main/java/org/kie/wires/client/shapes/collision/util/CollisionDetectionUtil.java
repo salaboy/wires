@@ -78,6 +78,6 @@ public class CollisionDetectionUtil {
     }
     
     public static void detachControlPointFromMagnet(EditableShape shapeActive){
-        GWT.log("Detaching from Shape Active - > "+((StickableShape) shapeActive));
+       
     }
 }

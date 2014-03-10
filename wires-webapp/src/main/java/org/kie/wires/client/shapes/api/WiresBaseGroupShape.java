@@ -5,11 +5,12 @@
  */
 package org.kie.wires.client.shapes.api;
 
-import org.kie.wires.client.shapes.api.EditableShape;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import java.util.ArrayList;
 import java.util.List;
+import javax.enterprise.event.Event;
+import org.kie.wires.client.events.ShapeSelectedEvent;
 import org.kie.wires.client.shapes.collision.api.CollidableShape;
 import org.kie.wires.client.shapes.collision.api.ControlPoint;
 import org.kie.wires.client.shapes.collision.api.Magnet;
@@ -23,7 +24,7 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
 
     private List<ControlPoint> controlPoints = new ArrayList<ControlPoint>();
     private List<Magnet> magnets = new ArrayList<Magnet>();
-    
+    private Event<ShapeSelectedEvent> selected;
 
     public WiresBaseGroupShape() {
     }
@@ -55,6 +56,16 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
         }
         
     }
+
+    public Event<ShapeSelectedEvent> getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Event<ShapeSelectedEvent> selected) {
+        this.selected = selected;
+    }
+    
+    
     
 
 }

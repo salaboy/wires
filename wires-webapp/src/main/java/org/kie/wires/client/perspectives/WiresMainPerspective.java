@@ -28,6 +28,7 @@ public class WiresMainPerspective {
     private static final String WIRES_PALETTE_SCREEN = "WiresPaletteScreen";
     private static final String WIRES_CANVAS_SCREEN = "WiresCanvasScreen";
     private static final String WIRES_ACTIONS_SCREEN = "WiresActionsScreen";
+    private static final String WIRES_PROPERTIES_SCREEN = "WiresPropertiesScreen";
     
 
     private static final int MIN_WIDTH_PANEL = 200;
@@ -43,9 +44,22 @@ public class WiresMainPerspective {
         perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(WIRES_CANVAS_SCREEN)));
 
         this.createPanelWithChild(perspective, Position.EAST);
-        this.drawPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
         
+        final PanelDefinition panel = new PanelDefinitionImpl(PanelType.MULTI_LIST);
+        panel.setMinWidth(MIN_WIDTH_PANEL);
+        panel.setWidth(WIDTH_PANEL);
+        panel.addPart(new PartDefinitionImpl(new DefaultPlaceRequest(WIRES_PALETTE_SCREEN)));
+        PanelDefinition propertiesPanel = new PanelDefinitionImpl(PanelType.MULTI_LIST);
+        propertiesPanel.setMinWidth(MIN_WIDTH_PANEL);
+        propertiesPanel.setWidth(WIDTH_PANEL);
+        propertiesPanel.addPart(new PartDefinitionImpl(new DefaultPlaceRequest(WIRES_PROPERTIES_SCREEN)));
+        panel.appendChild(Position.SOUTH, propertiesPanel);
+//        this.drawPanel(perspective, Position.WEST, WIRES_PALETTE_SCREEN);
+//        this.drawPanel(perspective, Position.SOUTH, WIRES_PROPERTIES_SCREEN);
 
+        
+        perspective.getRoot().insertChild(Position.WEST, panel);
+        
         perspective.setTransient(true);
 
         

@@ -19,11 +19,6 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>com.googlecode.mgwt</groupId>
-			<artifactId>mgwt</artifactId>
-			<version>${mgwt.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.emitrom</groupId>
 			<artifactId>lienzo-core</artifactId>
 			<version>${lienzo.version}</version>

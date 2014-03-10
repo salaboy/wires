@@ -1,4 +1,4 @@
-package org.kie.wires.client.palette;
+package org.kie.wires.client.bayesian.south;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
