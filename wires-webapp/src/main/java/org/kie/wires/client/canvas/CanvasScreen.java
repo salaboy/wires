@@ -192,6 +192,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
     public void addNodes(@Observes ReadyEvent event) {
         for (WiresRectangle shape : event.getBayesianNodes()) {
             layer.add(shape);
+            shape.setSelected(selected);
             shapesInCanvas.add((EditableShape) shape);
         }
         layer.draw();
