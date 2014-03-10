@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
 import org.kie.wires.client.shapes.WiresLine;
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -86,6 +87,10 @@ public class LineMagnetImpl extends Circle implements Magnet {
 
     public void setMagnetVisible(boolean visible) {
         setVisible(visible);
+    }
+
+    public WiresBaseGroupShape getShape() {
+        return shape;
     }
 
 }

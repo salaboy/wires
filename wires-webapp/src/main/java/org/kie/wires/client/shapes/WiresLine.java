@@ -49,7 +49,7 @@ public class WiresLine extends WiresBaseGroupShape {
     private boolean beingDragged;
 
     private boolean beingResized;
-    
+
     private Line line;
 
     private Magnet startMagnet;
@@ -76,8 +76,6 @@ public class WiresLine extends WiresBaseGroupShape {
         return line;
     }
 
-    
-    
     public String getId() {
         return id;
     }
@@ -318,10 +316,24 @@ public class WiresLine extends WiresBaseGroupShape {
         if (endDistance < startDistance) {
             if (!selectedMagnet.getAttachedControlPoints().contains(getEndControlPoint())) {
                 selectedMagnet.attachControlPoint(getEndControlPoint());
+                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
+                    if (!m.getId().equals(selectedMagnet.getId())) {
+                        if (m.getAttachedControlPoints().contains(getEndControlPoint())) {
+                            m.getAttachedControlPoints().remove(getEndControlPoint());
+                        }
+                    }
+                }
             }
         } else {
             if (!selectedMagnet.getAttachedControlPoints().contains(getStartControlPoint())) {
                 selectedMagnet.attachControlPoint(getStartControlPoint());
+                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
+                    if (!m.getId().equals(selectedMagnet.getId())) {
+                        if (m.getAttachedControlPoints().contains(getEndControlPoint())) {
+                            m.getAttachedControlPoints().remove(getEndControlPoint());
+                        }
+                    }
+                }
             }
         }
     }

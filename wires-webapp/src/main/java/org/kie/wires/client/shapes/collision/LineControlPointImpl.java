@@ -39,6 +39,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
     private double initialStartPointX;
     private double initialStartPointY;
+    
     private double initialEndPointX;
     private double initialEndPointY;
 
@@ -50,6 +51,10 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
     private WiresLine shape;
     private int controlType = 0;
+    
+    private Magnet selectedMagnet = null;
+    
+    private boolean attached = false;
 
     public LineControlPointImpl(WiresLine shape, int controlType) {
         this(12, 12);
@@ -107,12 +112,8 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         array.getPoint(0).setX(initialStartPointX + deltaX);
                         array.getPoint(0).setY(initialStartPointY + deltaY);
 
-                        Magnet selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
-                        if (selectedMagnet != null) {
-                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
-                        } else {
-//                            CollisionDetectionUtil.detachControlPointFromMagnet(selectedMagnet, shape);
-                        }
+                        selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
+                        
 
                         layer.draw();
 
@@ -122,7 +123,13 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                 addNodeDragEndHandler(new NodeDragEndHandler() {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
                         ((WiresLine) shape).setBeingResized(false);
-
+                        if (selectedMagnet != null) {
+                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
+                            attached = true;
+                        } else {
+                            CollisionDetectionUtil.detachControlPointFromMagnet(shape);
+                            attached = false;
+                        }
                     }
                 });
 
@@ -139,7 +146,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         dragEventEndY = nodeDragStartEvent.getY();
                         initialEndPointX = shape.getLine().getPoints().getPoint(1).getX();
                         initialEndPointY = shape.getLine().getPoints().getPoint(1).getY();
-
+                        ((StickableShape) shape).hideMagnetPoints();
                     }
                 });
 
@@ -153,12 +160,8 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         array.getPoint(1).setX(initialEndPointX + deltaX);
                         array.getPoint(1).setY(initialEndPointY + deltaY);
 
-                        Magnet selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
-                        if (selectedMagnet != null) {
-                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
-                        } else {
-                            //CollisionDetectionUtil.detachControlPointFromMagnet(selectedMagnet, shape);
-                        }
+                        selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
+                        
 
                         layer.draw();
                     }
@@ -167,7 +170,13 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                 addNodeDragEndHandler(new NodeDragEndHandler() {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
                         ((WiresLine) shape).setBeingResized(false);
-
+                        if (selectedMagnet != null) {
+                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
+                            attached = true;
+                        } else {
+                            CollisionDetectionUtil.detachControlPointFromMagnet(shape);
+                            attached = false;
+                        }
                     }
                 });
                 setDraggable(true)
@@ -208,7 +217,12 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
     @Override
     public String toString() {
-        return "LineControlPointImpl{" + "id=" + id + '}';
+        return "LineControlPointImpl{" + "id=" + id + ", controlType=" + controlType + ", attached=" + attached + '}';
+    }
+    
+    @Override
+    public boolean isAttached() {
+        return attached;
     }
 
     public void setControlPointVisible(boolean visible) {

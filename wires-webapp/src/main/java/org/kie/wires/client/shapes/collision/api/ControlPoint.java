@@ -44,4 +44,6 @@ public interface ControlPoint {
     
     void udpateShape(Layer layer, double x, double y);
     
+    boolean isAttached();
+    
 }

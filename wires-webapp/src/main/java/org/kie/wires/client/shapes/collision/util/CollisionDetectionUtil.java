@@ -7,6 +7,7 @@ import org.kie.wires.client.shapes.collision.api.StickableShape;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.GWT;
 import java.util.List;
 import static org.kie.wires.client.canvas.CanvasScreen.shapesInCanvas;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.MAGNET_RGB_FILL_SHAPE;
@@ -70,10 +71,13 @@ public class CollisionDetectionUtil {
         if (selectedMagnet != null && shapeActive != null) {
 
             ((StickableShape) shapeActive).attachControlPointToMagent(selectedMagnet);
-
             if (!selectedMagnet.getAttachedControlPoints().isEmpty()) {
                 ((Shape) selectedMagnet).setFillColor(ColorName.RED);
             }
         }
+    }
+    
+    public static void detachControlPointFromMagnet(EditableShape shapeActive){
+        GWT.log("Detaching from Shape Active - > "+((StickableShape) shapeActive));
     }
 }

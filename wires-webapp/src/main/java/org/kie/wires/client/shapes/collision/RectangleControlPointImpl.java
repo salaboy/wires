@@ -40,6 +40,8 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
     private WiresRectangle shape;
 
     private int controlType;
+    
+    private boolean attached = false;
 
     public RectangleControlPointImpl(WiresRectangle shape, int controlType) {
         this(12, 12);
@@ -63,6 +65,11 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         return shape;
     }
 
+    @Override
+    public boolean isAttached() {
+        return attached;
+    }
+    
     public void placeControlPoint(final Layer layer) {
 
         moveControlPoint();
@@ -216,8 +223,11 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
     @Override
     public String toString() {
-        return "RectangleControlPointImpl{" + "id=" + id + '}';
+        return "RectangleControlPointImpl{" + "id=" + id + ", controlType=" + controlType + '}';
     }
+
+    
+    
 
     public void setControlPointVisible(boolean visible) {
         setVisible(visible);
