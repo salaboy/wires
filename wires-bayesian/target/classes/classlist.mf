@@ -1,1 +1,0 @@
-com.bayesian.xstream.service.impl.BayesianServiceImpl
