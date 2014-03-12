@@ -2,8 +2,10 @@ package org.kie.wires.client.properties;
 
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.WellForm;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -15,8 +17,10 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Widget;
+
 import javax.enterprise.event.Observes;
-import org.kie.wires.client.events.ShapeSelectedEvent;
+
+import org.kie.wires.core.api.events.ShapeSelectedEvent;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresPropertiesScreen")

@@ -5,13 +5,15 @@ import java.util.Map;
 
 import javax.enterprise.event.Event;
 
-import org.kie.wires.client.events.ShapeAddEvent;
-
+import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.client.events.ShapeSelectedEvent;
+
+import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.api.events.ShapeSelectedEvent;
+import org.kie.wires.core.client.util.ShapeCategory;
 
 public class StencilBuilder extends Composite {
 

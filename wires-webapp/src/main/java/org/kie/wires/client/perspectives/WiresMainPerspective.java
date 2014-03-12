@@ -62,7 +62,6 @@ public class WiresMainPerspective {
         
         perspective.setTransient(true);
 
-        
         return perspective;
     }
 
