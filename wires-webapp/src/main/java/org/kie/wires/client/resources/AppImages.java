@@ -24,8 +24,8 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public interface AppImages extends ClientBundle {
 
-    @Source("images/uf_user_logo.png")
-    ImageResource ufUserLogo();
+    @Source("images/wires-user-logo.png")
+    ImageResource wiresUserLogo();
     
     @Source("org/kie/wires/public/images/layerPanel/delete.png")
     public ImageResource delete();

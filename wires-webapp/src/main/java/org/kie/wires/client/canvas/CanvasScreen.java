@@ -133,7 +133,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
         if(shape.equals("WiresRectangle")){
            wiresShape =  new WiresRectangle(70, 40);
         }else if(shape.equals("WiresLine")){
-            wiresShape = new WiresLine(0,0, 20, 20);
+            wiresShape = new WiresLine(0,0, 30, 30);
         }
         
         

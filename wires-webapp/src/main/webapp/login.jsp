@@ -142,7 +142,7 @@
 
 <div id="login-wrapper" class="png_bg">
   <div id="login-top">
-    <img src="<%=request.getContextPath()%>/org.kie.wires.WiresShowcase/images/uf_logo.png" alt="Wires Logo" title="Powered By Uberfire"/>
+    <img src="<%=request.getContextPath()%>/org.kie.wires.WiresShowcase/images/wires_logo.png" alt="Wires Logo" title="Powered By Uberfire"/>
   </div>
 
   <div id="login-content">

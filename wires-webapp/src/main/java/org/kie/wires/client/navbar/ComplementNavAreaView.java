@@ -57,7 +57,7 @@ public class ComplementNavAreaView
 
     @PostConstruct
     public void init() {
-        logo = new Image( AppResource.INSTANCE.images().ufUserLogo() );
+        logo = new Image( AppResource.INSTANCE.images().wiresUserLogo() );
         initWidget( uiBinder.createAndBindUi( this ) );
         contextMenuArea.add( contextMenu.getView() );
     }
