@@ -181,7 +181,7 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
         switch (controlType) {
             case CONTROL_TOP_LEFT:
-                
+                  
 //                rect.getBottomLeftControlPoint().setControlPointX(rect.getX() - 5);
 //                rect.getTopRightControlPoint().setControlPointY(rect.getY() - 5);
                 break;

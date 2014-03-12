@@ -125,12 +125,11 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
                 addNodeDragEndHandler(new NodeDragEndHandler() {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                        ((WiresLine) shape).setBeingResized(false);
+                        shape.setBeingResized(false);
                         if (selectedMagnet != null) {
                             CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
                             attached = true;
                         } else {
-                            CollisionDetectionUtil.detachControlPointFromMagnet(shape);
                             attached = false;
                         }
                         layer.draw(); 
@@ -156,7 +155,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
                 addNodeDragMoveHandler(new NodeDragMoveHandler() {
                     public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                        ((WiresLine) shape).setBeingResized(true);
+                        shape.setBeingResized(true);
                         double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
 
@@ -178,7 +177,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                             CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
                             attached = true;
                         } else {
-                            CollisionDetectionUtil.detachControlPointFromMagnet(shape);
                             attached = false;
                         }
                         layer.draw(); 

@@ -5,10 +5,7 @@
  */
 package org.kie.wires.core.api.shapes;
 
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Shape;
-import com.google.gwt.core.client.GWT;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,8 +115,6 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
     }
 
     public void attachControlPointToMagent(Magnet selectedMagnet) {
-        GWT.log("attaching on " + this + " ----> " + selectedMagnet);
-        GWT.log("control points " + controlPoints.size());
         double[] distances = new double[controlPoints.size()];
         for (int i = 0; i < controlPoints.size(); i++) {
             double pointX = ((Shape) controlPoints.get(i)).getX();
@@ -161,7 +156,7 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
             }
         }
 
-        return i;
+        return i-1;
     }
 
 }

@@ -11,7 +11,7 @@
 
 	<artifactId>wires-bayesian-network-api</artifactId>
 
-	<name>Wires Bayesian Network API</name>
+	<name>Wires :: Bayesian Network API</name>
 	<description>Wires Bayesian Network API</description>
 
 	<dependencies>
