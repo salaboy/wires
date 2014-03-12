@@ -1,6 +1,5 @@
 package com.bayesian.network.api.shapes;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,7 @@ import com.emitrom.lienzo.client.core.shape.Text;
 import com.google.common.collect.Maps;
 
 
-public class EditableBayesianNode extends WiresRectangle implements Serializable {
+public class EditableBayesianNode extends WiresRectangle {
 
     private static final long serialVersionUID = 1370682604031285242L;
     private Rectangle header;

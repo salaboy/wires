@@ -61,11 +61,11 @@ public class CanvasScreen extends Canvas {
         /* This is the ugly bit that needs to be refactored to be generic */
 
         WiresBaseGroupShape wiresShape = null;
-        if (shape.equals("WiresRectangle")) {
+        if(shape.equals("WiresRectangle")){
             wiresShape = new WiresRectangle(70, 40);
-        } else if (shape.equals("WiresLine")) {
-            wiresShape = new WiresLine(0, 0, 20, 20);
-        }
+         }else if(shape.equals("WiresLine")){
+             wiresShape = new WiresLine(0,0, 30, 30);
+         }
 
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
