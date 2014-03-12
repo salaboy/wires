@@ -2,8 +2,10 @@ package org.kie.wires.client.factoryShapes;
 
 import javax.enterprise.event.Event;
 
-import org.kie.wires.client.events.ShapeAddEvent;
+import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.util.ShapeCategory;
 
+import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;

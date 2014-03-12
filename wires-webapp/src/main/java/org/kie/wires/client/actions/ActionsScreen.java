@@ -5,13 +5,13 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.kie.wires.client.events.ClearEvent;
-import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
-import org.kie.wires.client.resources.AppResource;
+import org.kie.wires.core.api.events.ClearEvent;
+import org.kie.wires.core.client.resources.AppResource;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
+import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.image.PictureLoadedHandler;

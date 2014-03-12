@@ -15,23 +15,11 @@
 	<description>Wires Bayesian Network API</description>
 
 	<dependencies>
-		<!-- Project Dependencies -->
+		
 		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-common</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-bus</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-ioc</artifactId>
-			<version>${errai.version}</version>
+			<groupId>org.kie</groupId>
+			<artifactId>wires-core-client</artifactId>
+			<version>${bayesian-api.version}</version>
 		</dependency>
 
 		<!-- GWT and GWT Extensions -->
@@ -62,6 +50,19 @@
 			<artifactId>guava-collections</artifactId>
 			<version>${guava.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.emitrom</groupId>
+			<artifactId>lienzo-core</artifactId>
+			<version>${lienzo.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>wires-bayesian-parser-backend</artifactId>
+			<version>${bayesian-api.version}</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

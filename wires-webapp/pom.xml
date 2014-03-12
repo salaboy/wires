@@ -15,8 +15,8 @@
 
 	<name>Wires WebApp</name>
 	<description>Wires WebApp</description>
-	
-	
+
+
 	<dependencies>
 		<dependency>
 			<groupId>com.emitrom</groupId>
@@ -150,13 +150,7 @@
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- bayesian -->
-		<dependency>
-			<groupId>org.kie</groupId>
-			<artifactId>wires-bayesian-parser-backend</artifactId>
-			<version>${bayesian-api.version}</version>
-		</dependency>
-		
+
 		<dependency>
 			<groupId>org.kie</groupId>
 			<artifactId>wires-bayesian-network-api</artifactId>
