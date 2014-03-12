@@ -90,8 +90,10 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
 
     @Override
     public String toString() {
-        return "RectangleMagnetImpl{" + "id=" + id + '}';
+        return "RectangleMagnetImpl{" + "id=" + id + ", shape=" + shape + ", type=" + type + '}';
     }
+
+    
 
     public void setMagnetVisible(boolean visible) {
         setVisible(visible);
@@ -99,6 +101,10 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
 
     public WiresBaseGroupShape getShape() {
         return shape;
+    }
+
+    public int getType() {
+        return type;
     }
     
     

@@ -93,4 +93,8 @@ public class LineMagnetImpl extends Circle implements Magnet {
         return shape;
     }
 
+    public int getType() {
+        return type;
+    }
+
 }

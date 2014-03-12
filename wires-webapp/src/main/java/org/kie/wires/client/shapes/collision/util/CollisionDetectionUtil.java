@@ -40,7 +40,7 @@ public class CollisionDetectionUtil {
                     ((StickableShape) shape).showMagnetsPoints();
 
                     List<Magnet> magnets = ((StickableShape) shape).getMagnets();
-                    double finalDistance = 1000;
+                    double finalDistance = Double.MAX_VALUE;
 
                     for (Magnet magnet : magnets) {
                         double deltaX = event.getX() - magnet.getX();

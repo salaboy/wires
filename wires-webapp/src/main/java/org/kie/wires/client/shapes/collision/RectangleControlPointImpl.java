@@ -9,8 +9,6 @@
  */
 package org.kie.wires.client.shapes.collision;
 
-import org.kie.wires.client.shapes.collision.api.ControlPoint;
-import org.kie.wires.client.shapes.collision.api.StickableShape;
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -23,7 +21,10 @@ import com.emitrom.lienzo.shared.core.types.ColorName;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_FILL_COLOR;
 import static org.kie.wires.client.factoryShapes.ShapeFactoryUtil.CP_RGB_STROKE_WIDTH_SHAPE;
 import org.kie.wires.client.shapes.WiresRectangle;
+import org.kie.wires.client.shapes.collision.api.ControlPoint;
 import static org.kie.wires.client.shapes.collision.api.ControlPoint.*;
+import org.kie.wires.client.shapes.collision.api.Magnet;
+import org.kie.wires.client.shapes.collision.api.StickableShape;
 import org.kie.wires.client.util.UUID;
 
 /**
@@ -179,20 +180,21 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
         switch (controlType) {
             case CONTROL_TOP_LEFT:
-                rect.getBottomLeftControlPoint().setControlPointX(rect.getX() - 5);
-                rect.getTopRightControlPoint().setControlPointY(rect.getY() - 5);
+                
+//                rect.getBottomLeftControlPoint().setControlPointX(rect.getX() - 5);
+//                rect.getTopRightControlPoint().setControlPointY(rect.getY() - 5);
                 break;
             case CONTROL_BOTTOM_LEFT:
-                rect.getTopLeftControlPoint().setControlPointX(rect.getX() - 5);
-                rect.getBottomRightControlPoint().setControlPointY(rect.getY() + rect.getRectangle().getHeight() - 5);
+//                rect.getTopLeftControlPoint().setControlPointX(rect.getX() - 5);
+//                rect.getBottomRightControlPoint().setControlPointY(rect.getY() + rect.getRectangle().getHeight() - 5);
                 break;
             case CONTROL_TOP_RIGHT:
-                rect.getTopLeftControlPoint().setControlPointY(rect.getY() - 5);
-                rect.getBottomRightControlPoint().setControlPointX(rect.getX() + rect.getRectangle().getWidth() - 5);
+//                rect.getTopLeftControlPoint().setControlPointY(rect.getY() - 5);
+//                rect.getBottomRightControlPoint().setControlPointX(rect.getX() + rect.getRectangle().getWidth() - 5);
                 break;
             case CONTROL_BOTTOM_RIGHT:
-                rect.getBottomLeftControlPoint().setControlPointY(rect.getY() + rect.getRectangle().getHeight() - 5);
-                rect.getTopRightControlPoint().setControlPointX(rect.getX() + rect.getRectangle().getWidth() - 5);
+//                rect.getBottomLeftControlPoint().setControlPointY(rect.getY() + rect.getRectangle().getHeight() - 5);
+//                rect.getTopRightControlPoint().setControlPointX(rect.getX() + rect.getRectangle().getWidth() - 5);
                 break;
         }
     }
@@ -239,12 +241,9 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
     public void udpateShape(Layer layer, double x, double y) {
         nodeDragMove((WiresRectangle) shape, x, y, layer);
-
-        ((WiresRectangle) shape).getTopMagnet().placeMagnetPoints();
-        ((WiresRectangle) shape).getLeftMagnet().placeMagnetPoints();
-        ((WiresRectangle) shape).getRightMagnet().placeMagnetPoints();
-        ((WiresRectangle) shape).getBottomMagnet().placeMagnetPoints();
-
+        for(Magnet m : shape.getMagnets()){
+            m.placeMagnetPoints();
+        }
         layer.draw();
     }
 

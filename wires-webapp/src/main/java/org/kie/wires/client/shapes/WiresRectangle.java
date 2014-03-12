@@ -10,7 +10,6 @@ import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.google.gwt.core.client.GWT;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,18 +30,8 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
     private final String id;
 
-    private ControlPoint topLeftControlPoint;
-    private ControlPoint topRightControlPoint;
-    private ControlPoint bottomLeftControlPoint;
-    private ControlPoint bottomRightControlPoint;
-
-    private Magnet topMagnet;
-    private Magnet rightMagnet;
-    private Magnet bottomMagnet;
-    private Magnet leftMagnet;
-
     private Rectangle rectangle;
-    
+
     private double currentDragX;
     private double currentDragY;
 
@@ -54,9 +43,6 @@ public class WiresRectangle extends WiresBaseGroupShape {
     private boolean beingDragged = false;
     private boolean beingResized = false;
 
-    private boolean showingMagnets = false;
-    private boolean showingControlPoints = false;
-    
     public WiresRectangle(double width, double height) {
         this(width, height, 3);
 
@@ -67,18 +53,18 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
         rectangle = new Rectangle(width, height, cornerRadius);
         add(rectangle);
-        
+
         this.id = UUID.uuid();
-
-        topMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_TOP);
-        rightMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_RIGHT);
-        bottomMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_BOTTOM);
-        leftMagnet = new RectangleMagnetImpl(this, Magnet.MAGNET_LEFT);
-
-        topLeftControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_LEFT);
-        topRightControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_RIGHT);
-        bottomLeftControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_LEFT);
-        bottomRightControlPoint = new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_RIGHT);
+        magnets.clear();
+        addMagnet(new RectangleMagnetImpl(this, Magnet.MAGNET_TOP));
+        addMagnet(new RectangleMagnetImpl(this, Magnet.MAGNET_RIGHT));
+        addMagnet(new RectangleMagnetImpl(this, Magnet.MAGNET_BOTTOM));
+        addMagnet(new RectangleMagnetImpl(this, Magnet.MAGNET_LEFT));
+        controlPoints.clear();
+        addControlPoint(new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_LEFT));
+        addControlPoint(new RectangleControlPointImpl(this, ControlPoint.CONTROL_TOP_RIGHT));
+        addControlPoint(new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_LEFT));
+        addControlPoint(new RectangleControlPointImpl(this, ControlPoint.CONTROL_BOTTOM_RIGHT));
 
     }
 
@@ -106,12 +92,9 @@ public class WiresRectangle extends WiresBaseGroupShape {
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
 
-                if (topLeftControlPoint != null) {
-                    hideControlPoints();
-                }
-                if (topMagnet != null) {
-                    hideMagnetPoints();
-                }
+                hideControlPoints();
+                hideMagnetPoints();
+
             }
         });
 
@@ -121,84 +104,53 @@ public class WiresRectangle extends WiresBaseGroupShape {
                 currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
                 Layer layer = getLayer();
-                
-                if (topMagnet != null && !topMagnet.getAttachedControlPoints().isEmpty()) {
-                    //GWT.log("there are attached control points to topMagnet " + topMagnet.getAttachedControlPoints().size());
-                    List<ControlPoint> removeCp = new ArrayList<ControlPoint>();
-                    for (ControlPoint cp : topMagnet.getAttachedControlPoints()) {
-                        if(cp.isAttached()){
-                            cp.setControlPointVisible(true);
-                            cp.setControlPointX(currentDragX + (rectangle.getWidth() / 2) - 5);
-                            cp.setControlPointY(currentDragY - 5);
-                            cp.udpateShape(layer, currentDragX + (rectangle.getWidth() / 2), currentDragY);
-                        }else{
-                            GWT.log("Removing non attached control point : "+cp + " from topMagnet" + topMagnet);
-                            removeCp.add(cp);
-                            
-                        }
+                for (Magnet m : magnets) {
+                    if (!m.getAttachedControlPoints().isEmpty()) {
+                        //GWT.log("there are attached control points to topMagnet " + topMagnet.getAttachedControlPoints().size());
+                        List<ControlPoint> removeCp = new ArrayList<ControlPoint>();
+                        for (ControlPoint cp : m.getAttachedControlPoints()) {
+                            GWT.log("Is Attached?? Control Point : "+cp);
+                            if (cp.isAttached()) {
+                                cp.setControlPointVisible(true);
+                                // All the coordinate for the control points should be relative and autocalculated
+                                // TODO: refactor this
+                                switch (m.getType()) {
+                                    case Magnet.MAGNET_TOP:
+                                        cp.setControlPointX(currentDragX + (rectangle.getWidth() / 2) - 5);
+                                        cp.setControlPointY(currentDragY - 5);
+                                        cp.udpateShape(layer, currentDragX + (rectangle.getWidth() / 2), currentDragY);
+                                        break;
 
-                    }
-                    for(ControlPoint cp : removeCp){
-                        topMagnet.getAttachedControlPoints().remove(cp);
-                    }
-                }
-                if (leftMagnet != null && !leftMagnet.getAttachedControlPoints().isEmpty()) {
-                    List<ControlPoint> removeCp = new ArrayList<ControlPoint>();
-                    for (ControlPoint cp : leftMagnet.getAttachedControlPoints()) {
-                        //  GWT.log("there are attached control points to leftMagnet " + leftMagnet.getAttachedControlPoints().size());
-                        
-                        if(cp.isAttached()){
-                            cp.setControlPointVisible(true);
-                            cp.setControlPointX(currentDragX - 5);
-                            cp.setControlPointY(currentDragY + (rectangle.getHeight() / 2) - 5);
-                            cp.udpateShape(layer, currentDragX, currentDragY + (rectangle.getHeight() / 2));
-                        }else{
-                            GWT.log("Removing non attached control point : "+cp + " from leftMagnet" + leftMagnet);
-                            removeCp.add(cp);
-                        }
+                                    case Magnet.MAGNET_LEFT:
+                                        cp.setControlPointX(currentDragX - 5);
+                                        cp.setControlPointY(currentDragY + (rectangle.getHeight() / 2) - 5);
+                                        cp.udpateShape(layer, currentDragX, currentDragY + (rectangle.getHeight() / 2));
+                                        break;
 
-                    }
-                    for(ControlPoint cp : removeCp){
-                        topMagnet.getAttachedControlPoints().remove(cp);
-                    }
-                }
-                if (rightMagnet != null && !rightMagnet.getAttachedControlPoints().isEmpty()) {
-                    List<ControlPoint> removeCp = new ArrayList<ControlPoint>();
-                    for (ControlPoint cp : rightMagnet.getAttachedControlPoints()) {
-                        // GWT.log("there are attached control points to rightMagnet " + rightMagnet.getAttachedControlPoints().size());
-                        if(cp.isAttached()){
-                            cp.setControlPointVisible(true);
-                            cp.setControlPointX(currentDragX + rectangle.getWidth() - 5);
-                            cp.setControlPointY(currentDragY + (rectangle.getHeight() / 2) - 5);
-                            cp.udpateShape(layer, currentDragX + rectangle.getWidth(), currentDragY + (rectangle.getHeight() / 2));
-                        }else{
-                            GWT.log("Removing non attached control point : "+cp + " from rightMagnet" + rightMagnet);
-                            removeCp.add(cp);
-                        }
+                                    case Magnet.MAGNET_RIGHT:
+                                        cp.setControlPointX(currentDragX + rectangle.getWidth() - 5);
+                                        cp.setControlPointY(currentDragY + (rectangle.getHeight() / 2) - 5);
+                                        cp.udpateShape(layer, currentDragX + rectangle.getWidth(), currentDragY + (rectangle.getHeight() / 2));
 
-                    }
-                    for(ControlPoint cp : removeCp){
-                        topMagnet.getAttachedControlPoints().remove(cp);
-                    }
-                }
-                if (bottomMagnet != null && !bottomMagnet.getAttachedControlPoints().isEmpty()) {
-                    List<ControlPoint> removeCp = new ArrayList<ControlPoint>();
-                    for (ControlPoint cp : bottomMagnet.getAttachedControlPoints()) {
-                        //  GWT.log("there are attached control points to bottomMagnet " + bottomMagnet.getAttachedControlPoints().size());
-                        if(cp.isAttached()){
-                            cp.setControlPointVisible(true);
-                            cp.setControlPointX(currentDragX + (rectangle.getWidth() / 2) - 5);
-                            cp.setControlPointY(currentDragY + rectangle.getHeight() - 5);
-                            cp.udpateShape(layer, currentDragX + (rectangle.getWidth() / 2), currentDragY + rectangle.getHeight());
-                        }else{
-                            GWT.log("Removing non attached control point : "+cp + " from bottomMagnet" + bottomMagnet);
-                            removeCp.add(cp);
-                        }
+                                    case Magnet.MAGNET_BOTTOM:
+                                        cp.setControlPointX(currentDragX + (rectangle.getWidth() / 2) - 5);
+                                        cp.setControlPointY(currentDragY + rectangle.getHeight() - 5);
+                                        cp.udpateShape(layer, currentDragX + (rectangle.getWidth() / 2), currentDragY + rectangle.getHeight());
+                                        break;
+                                }
 
+                            } else {
+                                GWT.log("Removing non attached control point : " + cp + " from magnet" + m);
+                                removeCp.add(cp);
+
+                            }
+
+                        }
+                        for (ControlPoint cp : removeCp) {
+                            m.getAttachedControlPoints().remove(cp);
+                        }
                     }
-                    for(ControlPoint cp : removeCp){
-                        topMagnet.getAttachedControlPoints().remove(cp);
-                    }
+
                 }
                 layer.draw();
             }
@@ -212,90 +164,10 @@ public class WiresRectangle extends WiresBaseGroupShape {
         });
     }
 
-    public void showControlPoints() {
-        final Layer layer = getLayer();
-        if (topLeftControlPoint != null && !showingControlPoints) {
-            layer.add((Shape) topLeftControlPoint);
-            layer.add((Shape) topRightControlPoint);
-            layer.add((Shape) bottomLeftControlPoint);
-            layer.add((Shape) bottomRightControlPoint);
-
-            topLeftControlPoint.placeControlPoint(layer);
-            bottomLeftControlPoint.placeControlPoint(layer);
-            topRightControlPoint.placeControlPoint(layer);
-            bottomRightControlPoint.placeControlPoint(layer);
-            showingControlPoints = true;
-        }
-
-    }
-
-    public void hideControlPoints() {
-
-        // can be null, afer the main Shape is dragged, and control points are forcibly removed
-        Layer layer = getLayer();
-        if (topLeftControlPoint != null && showingControlPoints) {
-            layer.remove((Shape) topLeftControlPoint);
-            layer.remove((Shape) bottomLeftControlPoint);
-            layer.remove((Shape) topRightControlPoint);
-            layer.remove((Shape) bottomRightControlPoint);
-            showingControlPoints = false;
-        }
-
-    }
-
-    @Override
-    public void hideMagnetPoints() {
-        Layer layer = getLayer();
-        if (topMagnet != null && showingMagnets) {
-            layer.remove((Shape) topMagnet);
-            layer.remove((Shape) leftMagnet);
-            layer.remove((Shape) rightMagnet);
-            layer.remove((Shape) bottomMagnet);
-            showingMagnets = false;
-        }
-
-    }
-
-    public void showMagnetsPoints() {
-        final Layer layer = getLayer();
-        if (topMagnet != null && !showingMagnets) {
-            layer.add((Shape) topMagnet);
-            layer.add((Shape) leftMagnet);
-            layer.add((Shape) rightMagnet);
-            layer.add((Shape) bottomMagnet);
-
-            topMagnet.placeMagnetPoints();
-
-            bottomMagnet.placeMagnetPoints();
-
-            leftMagnet.placeMagnetPoints();
-
-            rightMagnet.placeMagnetPoints();
-            showingMagnets = true;
-        }
-
-    }
-
-    public Magnet getTopMagnet() {
-        return topMagnet;
-    }
-
-    public Magnet getRightMagnet() {
-        return rightMagnet;
-    }
-
-    public Magnet getBottomMagnet() {
-        return bottomMagnet;
-    }
-
-    public Magnet getLeftMagnet() {
-        return leftMagnet;
-    }
-
     public double getStartX() {
         return startX;
     }
-    
+
     public void setStartX(double startX) {
         this.startX = startX;
     }
@@ -303,7 +175,7 @@ public class WiresRectangle extends WiresBaseGroupShape {
     public double getStartY() {
         return startY;
     }
-   
+
     public void setStartY(double startY) {
         this.startY = startY;
     }
@@ -436,22 +308,6 @@ public class WiresRectangle extends WiresBaseGroupShape {
         return false;
     }
 
-    public ControlPoint getTopLeftControlPoint() {
-        return topLeftControlPoint;
-    }
-
-    public ControlPoint getTopRightControlPoint() {
-        return topRightControlPoint;
-    }
-
-    public ControlPoint getBottomLeftControlPoint() {
-        return bottomLeftControlPoint;
-    }
-
-    public ControlPoint getBottomRightControlPoint() {
-        return bottomRightControlPoint;
-    }
-
     public boolean isBeingDragged() {
         return beingDragged;
     }
@@ -472,109 +328,7 @@ public class WiresRectangle extends WiresBaseGroupShape {
         this.currentDragY = currentDragY;
     }
 
-    public List<Magnet> getMagnets() {
-        ArrayList<Magnet> magnets = new ArrayList<Magnet>();
-        magnets.add(topMagnet);
-        magnets.add(rightMagnet);
-        magnets.add(leftMagnet);
-        magnets.add(bottomMagnet);
-        return magnets;
-    }
-
-    
-
-    @Override
-    public String toString() {
-        return "EditableRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
-    }
-
-    public void attachControlPointToMagent(Magnet selectedMagnet) {
-        double topLeftX = ((Shape) getTopLeftControlPoint()).getX();
-        double topLeftY = ((Shape) getTopLeftControlPoint()).getY();
-        double bottomLeftX = ((Shape) getBottomLeftControlPoint()).getX();
-        double bottomLeftY = ((Shape) getBottomLeftControlPoint()).getY();
-        double topRightX = ((Shape) getTopRightControlPoint()).getX();
-        double topRightY = ((Shape) getTopRightControlPoint()).getY();
-
-        double bottomRightX = ((Shape) getBottomRightControlPoint()).getX();
-        double bottomRightY = ((Shape) getBottomRightControlPoint()).getY();
-
-        double deltaTopLeftX = selectedMagnet.getX() - topLeftX;
-        double deltaTopLeftY = selectedMagnet.getY() - topLeftY;
-
-        double topLeftDistance = Math.sqrt(Math.pow(deltaTopLeftX, 2)
-                + Math.pow(deltaTopLeftY, 2));
-
-        double deltaBottomLeftX = selectedMagnet.getX() - bottomLeftX;
-        double deltaBottomLeftY = selectedMagnet.getY() - bottomLeftY;
-
-        double bottomLeftDistance = Math.sqrt(Math.pow(deltaBottomLeftX, 2)
-                + Math.pow(deltaBottomLeftY, 2));
-
-        double deltaTopRightX = selectedMagnet.getX() - topRightX;
-        double deltaTopRightY = selectedMagnet.getY() - topRightY;
-
-        double topRightDistance = Math.sqrt(Math.pow(deltaTopRightX, 2)
-                + Math.pow(deltaTopRightY, 2));
-
-        double deltaBottomRightX = selectedMagnet.getX() - bottomRightX;
-        double deltaBottomRightY = selectedMagnet.getY() - bottomRightY;
-
-        double bottomRightDistance = Math.sqrt(Math.pow(deltaBottomRightX, 2)
-                + Math.pow(deltaBottomRightY, 2));
-
-        
-        
-        if (topLeftDistance < bottomLeftDistance && topLeftDistance < topRightDistance && topLeftDistance < topLeftDistance) {
-            if (!selectedMagnet.getAttachedControlPoints().contains(getTopLeftControlPoint())) {
-                selectedMagnet.attachControlPoint(getTopLeftControlPoint());
-                // I need to clean up all the other magnets of the shape to make sure that 
-                // no other magnet has the same shape attached
-                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
-                    if (!m.getId().equals(selectedMagnet.getId())) {
-                        if (m.getAttachedControlPoints().contains(getTopLeftControlPoint())) {
-                            m.getAttachedControlPoints().remove(getTopLeftControlPoint());
-                        }
-                    }
-                }
-            }
-        } else if(bottomLeftDistance < topLeftDistance && bottomLeftDistance < topRightDistance && bottomLeftDistance < bottomRightDistance ){
-            if (!selectedMagnet.getAttachedControlPoints().contains(getBottomLeftControlPoint())) {
-                selectedMagnet.attachControlPoint(getBottomLeftControlPoint());
-                 // I need to clean up all the other magnets of the shape to make sure that 
-                // no other magnet has the same shape attached
-                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
-                    if (!m.getId().equals(selectedMagnet.getId())) {
-                        if (m.getAttachedControlPoints().contains(getBottomLeftControlPoint())) {
-                            m.getAttachedControlPoints().remove(getBottomLeftControlPoint());
-                        }
-                    }
-                }
-            }
-        } else if(topRightDistance < topLeftDistance && topRightDistance < bottomLeftDistance && topRightDistance < bottomRightDistance ){
-            if (!selectedMagnet.getAttachedControlPoints().contains(getTopRightControlPoint())) {
-                selectedMagnet.attachControlPoint(getTopRightControlPoint());
-                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
-                    if (!m.getId().equals(selectedMagnet.getId())) {
-                        if (m.getAttachedControlPoints().contains(getTopRightControlPoint())) {
-                            m.getAttachedControlPoints().remove(getTopRightControlPoint());
-                        }
-                    }
-                }
-            }
-        } else if(bottomRightDistance < topLeftDistance && bottomRightDistance < bottomLeftDistance && bottomRightDistance < topRightDistance ){
-            if (!selectedMagnet.getAttachedControlPoints().contains(getBottomRightControlPoint())) {
-                selectedMagnet.attachControlPoint(getBottomRightControlPoint());
-                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
-                    if (!m.getId().equals(selectedMagnet.getId())) {
-                        if (m.getAttachedControlPoints().contains(getBottomRightControlPoint())) {
-                            m.getAttachedControlPoints().remove(getBottomRightControlPoint());
-                        }
-                    }
-                }
-            }
-        }
-    }
+   
 
     public boolean isBeingResized() {
         return beingResized;
@@ -587,7 +341,10 @@ public class WiresRectangle extends WiresBaseGroupShape {
     public Rectangle getRectangle() {
         return rectangle;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
+    }
 
 }

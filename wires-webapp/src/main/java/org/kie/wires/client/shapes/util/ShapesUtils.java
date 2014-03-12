@@ -2,7 +2,7 @@ package org.kie.wires.client.shapes.util;
 
 import org.kie.wires.client.shapes.api.EditableShape;
 import org.kie.wires.client.canvas.CanvasScreen;
-import org.kie.wires.client.shapes.collision.api.StickableShape;
+import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
 
 public class ShapesUtils {
 
@@ -11,10 +11,10 @@ public class ShapesUtils {
     public static int selectedShape;
     
     public static void deselectAllOtherShapes(){
-        for (EditableShape shape: CanvasScreen.shapesInCanvas) {
+        for (WiresBaseGroupShape shape: CanvasScreen.shapesInCanvas) {
                 if(shape.hashCode()  != selectedShape){
                    shape.hideControlPoints();
-                   ((StickableShape)shape).hideMagnetPoints();
+                   shape.hideMagnetPoints();
                 }
         }
       

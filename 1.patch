@@ -1,0 +1,2664 @@
+From e58bbaedd18306dbc0020f1f0c73379502f7e195 Mon Sep 17 00:00:00 2001
+From: hernsys <horacioantar@gmail.com>
+Date: Fri, 7 Mar 2014 16:50:22 -0300
+Subject: [PATCH 1/2] improving all modules and adding a new module
+
+---
+ pom.xml                                            |   4 +-
+ wires-bayesian-network/.gitignore                  |  24 +++++
+ wires-bayesian-network/pom.xml                     |  20 ++++
+ wires-bayesian-network/pom.xml~                    |  19 ++++
+ .../wires-bayesian-network-api/.gitignore          |  25 +++++
+ .../wires-bayesian-network-api/pom.xml             |  94 ++++++++++++++++++
+ .../src/main/resources/ErraiApp.properties         |  17 ++++
+ .../src/main/resources/ErraiService.properties     |   4 +
+ .../com/bayesian/network/bayesianNetwork.gwt.xml   |  10 ++
+ wires-bayesian-parser-api/.gitignore               |   1 +
+ wires-bayesian-parser/.gitignore                   |  24 +++++
+ wires-bayesian-parser/pom.xml                      |  20 ++++
+ .../wires-bayesian-parser-api/.gitignore           |  25 +++++
+ .../wires-bayesian-parser-api/pom.xml              | 100 +++++++++++++++++++
+ .../parser/client/builder/BayesianBuilder.java     | 106 ++++++++++++++++++++
+ .../bayesian/parser/client/model/BayesNetwork.java |  43 ++++++++
+ .../parser/client/model/BayesVariable.java         | 109 +++++++++++++++++++++
+ .../com/bayesian/parser/client/parser/Bif.java     |  26 +++++
+ .../bayesian/parser/client/parser/Definition.java  |  50 ++++++++++
+ .../com/bayesian/parser/client/parser/Network.java |  50 ++++++++++
+ .../bayesian/parser/client/parser/NetworkXml.java  |  26 +++++
+ .../bayesian/parser/client/parser/Probability.java |  50 ++++++++++
+ .../bayesian/parser/client/parser/Variable.java    |  50 ++++++++++
+ .../bayesian/parser/client/parser/VariableXml.java |  38 +++++++
+ .../parser/client/service/BayesianService.java     |  16 +++
+ .../src/main/resources/ErraiApp.properties         |  17 ++++
+ .../src/main/resources/ErraiService.properties     |   4 +
+ .../resources/com/bayesian/parser/bayesian.gwt.xml |  10 ++
+ .../wires-bayesian-parser-backend/.gitignore       |  25 +++++
+ .../wires-bayesian-parser-backend/pom.xml          |  67 +++++++++++++
+ .../parser/service/impl/BayesianServiceImpl.java   |  47 +++++++++
+ .../src/main/resources/META-INF/beans.xml          |   0
+ wires-bayesian-xml03/.gitignore                    |  25 -----
+ wires-bayesian-xml03/pom.xml                       | 100 -------------------
+ .../bayesian/client/entry/BayesianService.java     |  16 ---
+ .../bayesian/client/model/BayesNetwork.java        |  43 --------
+ .../bayesian/client/model/BayesVariable.java       | 109 ---------------------
+ .../xstream/bayesian/client/parser/model/Bif.java  |  26 -----
+ .../bayesian/client/parser/model/Definition.java   |  50 ----------
+ .../bayesian/client/parser/model/Network.java      |  50 ----------
+ .../bayesian/client/parser/model/NetworkXml.java   |  26 -----
+ .../bayesian/client/parser/model/Probability.java  |  50 ----------
+ .../bayesian/client/parser/model/Variable.java     |  50 ----------
+ .../bayesian/client/parser/model/VariableXml.java  |  38 -------
+ .../bayesian/client/services/BayesianBuilder.java  | 106 --------------------
+ .../src/main/resources/ErraiApp.properties         |  17 ----
+ .../src/main/resources/ErraiService.properties     |   4 -
+ .../com/xstream/bayesian/bayesian.gwt.xml          |  10 --
+ wires-bayesian/.gitignore                          |  25 -----
+ wires-bayesian/pom.xml                             |  67 -------------
+ .../xstream/service/impl/BayesianServiceImpl.java  |  53 ----------
+ .../src/main/resources/META-INF/beans.xml          |   0
+ wires-webapp/pom.xml                               |  10 +-
+ .../client/bayesian/factory/BayesianFactory.java   |   6 +-
+ .../bayesian/factory/ProbabilityFactory.java       |   2 +-
+ .../org/kie/wires/client/canvas/CanvasScreen.java  |   2 +-
+ .../org/kie/wires/client/events/LayerEvent.java    |   2 +-
+ .../kie/wires/client/events/ProbabilityEvent.java  |   2 +-
+ .../wires/client/factoryLayers/LayerBuilder.java   |   2 +-
+ .../client/factoryLayers/LayerTextFactory.java     |   2 +-
+ .../org/kie/wires/client/palette/LayersScreen.java |   2 +-
+ .../org/kie/wires/client/util/BayesianUtils.java   |   2 +-
+ .../resources/org/kie/wires/WiresShowcase.gwt.xml  |   4 +-
+ 63 files changed, 1141 insertions(+), 881 deletions(-)
+ create mode 100644 wires-bayesian-network/.gitignore
+ create mode 100644 wires-bayesian-network/pom.xml
+ create mode 100644 wires-bayesian-network/pom.xml~
+ create mode 100644 wires-bayesian-network/wires-bayesian-network-api/.gitignore
+ create mode 100644 wires-bayesian-network/wires-bayesian-network-api/pom.xml
+ create mode 100644 wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiApp.properties
+ create mode 100644 wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiService.properties
+ create mode 100644 wires-bayesian-network/wires-bayesian-network-api/src/main/resources/com/bayesian/network/bayesianNetwork.gwt.xml
+ create mode 100644 wires-bayesian-parser-api/.gitignore
+ create mode 100644 wires-bayesian-parser/.gitignore
+ create mode 100644 wires-bayesian-parser/pom.xml
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/.gitignore
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/pom.xml
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/builder/BayesianBuilder.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesNetwork.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesVariable.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Bif.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Definition.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Network.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/NetworkXml.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Probability.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Variable.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/VariableXml.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/service/BayesianService.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiApp.properties
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiService.properties
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/com/bayesian/parser/bayesian.gwt.xml
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-backend/.gitignore
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-backend/pom.xml
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-backend/src/main/java/com/bayesian/parser/service/impl/BayesianServiceImpl.java
+ create mode 100644 wires-bayesian-parser/wires-bayesian-parser-backend/src/main/resources/META-INF/beans.xml
+ delete mode 100644 wires-bayesian-xml03/.gitignore
+ delete mode 100644 wires-bayesian-xml03/pom.xml
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/entry/BayesianService.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesNetwork.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesVariable.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Bif.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Definition.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Network.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/NetworkXml.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Probability.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Variable.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/VariableXml.java
+ delete mode 100644 wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/services/BayesianBuilder.java
+ delete mode 100644 wires-bayesian-xml03/src/main/resources/ErraiApp.properties
+ delete mode 100644 wires-bayesian-xml03/src/main/resources/ErraiService.properties
+ delete mode 100644 wires-bayesian-xml03/src/main/resources/com/xstream/bayesian/bayesian.gwt.xml
+ delete mode 100644 wires-bayesian/.gitignore
+ delete mode 100644 wires-bayesian/pom.xml
+ delete mode 100644 wires-bayesian/src/main/java/com/bayesian/xstream/service/impl/BayesianServiceImpl.java
+ delete mode 100644 wires-bayesian/src/main/resources/META-INF/beans.xml
+
+diff --git a/pom.xml b/pom.xml
+index 6894968..5347634 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -10,8 +10,8 @@
+ 
+   <modules>
+     <module>wires-webapp</module>
+-    <module>wires-bayesian-xml03</module>
+-    <module>wires-bayesian</module>
++    <module>wires-bayesian-parser</module>
++    <module>wires-bayesian-network</module>
+     <module>wires-distribution-war</module>
+   </modules>
+ 
+diff --git a/wires-bayesian-network/.gitignore b/wires-bayesian-network/.gitignore
+new file mode 100644
+index 0000000..43df6bc
+--- /dev/null
++++ b/wires-bayesian-network/.gitignore
+@@ -0,0 +1,24 @@
++/target
++/local
++/src/main/gwt-unitCache/
++/src/main/webapp/WEB-INF/classes/
++/src/main/webapp/WEB-INF/deploy/
++/src/main/webapp/WEB-INF/lib/
++/src/main/webapp/org.drools.guvnor.jBPMShowcase/
++
++# Eclipse, Netbeans and IntelliJ files
++/.*
++/**/.*
++!.gitignore
++/nbproject
++/*.ipr
++/*.iws
++/*.iml
++
++# GwtTest
++gwt-unitCache
++www-test
++
++# Repository wide ignore mac DS_Store files
++.DS_Store
++
+diff --git a/wires-bayesian-network/pom.xml b/wires-bayesian-network/pom.xml
+new file mode 100644
+index 0000000..f537b29
+--- /dev/null
++++ b/wires-bayesian-network/pom.xml
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
++  <modelVersion>4.0.0</modelVersion>
++  <parent>
++    <groupId>org.kie</groupId>
++    <artifactId>wires</artifactId>
++    <version>1.0-SNAPSHOT</version>
++  </parent>
++
++  <artifactId>wires-bayesian-network</artifactId>
++  <packaging>pom</packaging>
++
++  <name>Wires Bayesian Network</name>
++
++  <modules>
++	<module>wires-bayesian-network-api</module>
++  </modules>
++
++</project>
+diff --git a/wires-bayesian-network/pom.xml~ b/wires-bayesian-network/pom.xml~
+new file mode 100644
+index 0000000..ae78aeb
+--- /dev/null
++++ b/wires-bayesian-network/pom.xml~
+@@ -0,0 +1,19 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
++  <modelVersion>4.0.0</modelVersion>
++  <parent>
++    <groupId>org.kie</groupId>
++    <artifactId>wires</artifactId>
++    <version>1.0-SNAPSHOT</version>
++  </parent>
++
++  <artifactId>wires-bayesian-network</artifactId>
++  <packaging>pom</packaging>
++
++  <name>Wires Bayesian Network</name>
++
++  <modules>
++  </modules>
++
++</project>
+diff --git a/wires-bayesian-network/wires-bayesian-network-api/.gitignore b/wires-bayesian-network/wires-bayesian-network-api/.gitignore
+new file mode 100644
+index 0000000..2cecff6
+--- /dev/null
++++ b/wires-bayesian-network/wires-bayesian-network-api/.gitignore
+@@ -0,0 +1,25 @@
++*.class
++
++# Package Files #
++*.jar
++*.war
++*.ear
++/.metadata
++/target
++/local
++/bin
++
++# Eclipse, Netbeans and IntelliJ files
++/.*
++/**/.*
++!.gitignore
++/nbproject
++*.ipr
++*.iws
++*.iml
++
++# Repository wide ignore mac DS_Store files
++.DS_Store
++
++# Bitronix transactin logs
++*.tlog
+diff --git a/wires-bayesian-network/wires-bayesian-network-api/pom.xml b/wires-bayesian-network/wires-bayesian-network-api/pom.xml
+new file mode 100644
+index 0000000..0210b9e
+--- /dev/null
++++ b/wires-bayesian-network/wires-bayesian-network-api/pom.xml
+@@ -0,0 +1,94 @@
++<?xml version="1.0"?>
++<project
++	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
++	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
++	<modelVersion>4.0.0</modelVersion>
++	<parent>
++		<groupId>org.kie</groupId>
++		<artifactId>wires-bayesian-network</artifactId>
++		<version>1.0-SNAPSHOT</version>
++	</parent>
++
++	<artifactId>wires-bayesian-network-api</artifactId>
++
++	<name>Wires Bayesian Network API</name>
++	<description>Wires Bayesian Network API</description>
++
++	<dependencies>
++		<!-- Project Dependencies -->
++		<dependency>
++			<groupId>org.jboss.errai</groupId>
++			<artifactId>errai-common</artifactId>
++			<version>${errai.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>org.jboss.errai</groupId>
++			<artifactId>errai-bus</artifactId>
++			<version>${errai.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>org.jboss.errai</groupId>
++			<artifactId>errai-ioc</artifactId>
++			<version>${errai.version}</version>
++		</dependency>
++
++		<!-- GWT and GWT Extensions -->
++		<dependency>
++			<groupId>com.google.gwt</groupId>
++			<artifactId>gwt-servlet</artifactId>
++			<scope>provided</scope>
++			<version>${gwt.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>com.google.gwt</groupId>
++			<artifactId>gwt-user</artifactId>
++			<scope>provided</scope>
++			<version>${gwt.version}</version>
++		</dependency>
++
++		<!--URI Util -->
++		<dependency>
++			<groupId>javax.enterprise</groupId>
++			<artifactId>cdi-api</artifactId>
++			<version>${cdi-api.version}</version>
++			<!-- <scope>provided</scope> -->
++		</dependency>
++
++		<dependency>
++			<groupId>com.google.guava</groupId>
++			<artifactId>guava-collections</artifactId>
++			<version>${guava.version}</version>
++		</dependency>
++	</dependencies>
++
++	<build>
++		<resources>
++			<!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
++			<resource>
++				<directory>src/main/java</directory>
++			</resource>
++			<!-- Include module descriptors from src/main/resources in order not to 
++				break the Intellij GWT plug-in -->
++			<resource>
++				<directory>src/main/resources</directory>
++			</resource>
++		</resources>
++		<plugins>
++			<plugin>
++				<groupId>org.apache.maven.plugins</groupId>
++				<artifactId>maven-source-plugin</artifactId>
++				<executions>
++					<execution>
++						<id>attach-sources</id>
++						<goals>
++							<goal>jar</goal>
++						</goals>
++					</execution>
++				</executions>
++			</plugin>
++		</plugins>
++	</build>
++</project>
+diff --git a/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiApp.properties b/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiApp.properties
+new file mode 100644
+index 0000000..7765a67
+--- /dev/null
++++ b/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiApp.properties
+@@ -0,0 +1,17 @@
++#
++# ErraiApp.properties
++#
++# Do not remove, even if empty!
++#
++
++# This is a marker file. When it is detected inside a JAR or at the
++# top of any classpath, the subdirectories are scanned for deployable
++# components. As such, all Errai application modules in a project
++# should contain an ErraiApp.properties at the root of all classpaths
++# that you wish to be scanned.
++#
++# There are also some configuration options that can be set in this
++# file, although it is rarely necessary. See the documentation at
++# https://docs.jboss.org/author/display/ERRAI/ErraiApp.properties
++# for details.
++
+diff --git a/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiService.properties b/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiService.properties
+new file mode 100644
+index 0000000..f216364
+--- /dev/null
++++ b/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/ErraiService.properties
+@@ -0,0 +1,4 @@
++errai.require_authentication_for_all=false
++errai.application_context=/App/
++errai.login_motd=UNAUTHORIZED ACCESS IS PROHIBITED!
++
+diff --git a/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/com/bayesian/network/bayesianNetwork.gwt.xml b/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/com/bayesian/network/bayesianNetwork.gwt.xml
+new file mode 100644
+index 0000000..d944e2b
+--- /dev/null
++++ b/wires-bayesian-network/wires-bayesian-network-api/src/main/resources/com/bayesian/network/bayesianNetwork.gwt.xml
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
++
++<module>
++    <inherits name='com.google.gwt.user.User'/>
++    <inherits name="org.jboss.errai.bus.ErraiBus"/>
++    <inherits name="org.jboss.errai.ioc.Container"/>
++	
++	<source path="client"></source>
++</module>
+\ No newline at end of file
+diff --git a/wires-bayesian-parser-api/.gitignore b/wires-bayesian-parser-api/.gitignore
+new file mode 100644
+index 0000000..5e56e04
+--- /dev/null
++++ b/wires-bayesian-parser-api/.gitignore
+@@ -0,0 +1 @@
++/bin
+diff --git a/wires-bayesian-parser/.gitignore b/wires-bayesian-parser/.gitignore
+new file mode 100644
+index 0000000..43df6bc
+--- /dev/null
++++ b/wires-bayesian-parser/.gitignore
+@@ -0,0 +1,24 @@
++/target
++/local
++/src/main/gwt-unitCache/
++/src/main/webapp/WEB-INF/classes/
++/src/main/webapp/WEB-INF/deploy/
++/src/main/webapp/WEB-INF/lib/
++/src/main/webapp/org.drools.guvnor.jBPMShowcase/
++
++# Eclipse, Netbeans and IntelliJ files
++/.*
++/**/.*
++!.gitignore
++/nbproject
++/*.ipr
++/*.iws
++/*.iml
++
++# GwtTest
++gwt-unitCache
++www-test
++
++# Repository wide ignore mac DS_Store files
++.DS_Store
++
+diff --git a/wires-bayesian-parser/pom.xml b/wires-bayesian-parser/pom.xml
+new file mode 100644
+index 0000000..072b95d
+--- /dev/null
++++ b/wires-bayesian-parser/pom.xml
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
++  <modelVersion>4.0.0</modelVersion>
++  <parent>
++    <groupId>org.kie</groupId>
++    <artifactId>wires</artifactId>
++    <version>1.0-SNAPSHOT</version>
++  </parent>
++
++  <artifactId>wires-bayesian-parser</artifactId>
++  <packaging>pom</packaging>
++
++  <name>Wires Bayesian Parser</name>
++
++  <modules>
++    <module>wires-bayesian-parser-api</module>
++    <module>wires-bayesian-parser-backend</module>
++  </modules>
++</project>
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/.gitignore b/wires-bayesian-parser/wires-bayesian-parser-api/.gitignore
+new file mode 100644
+index 0000000..2cecff6
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/.gitignore
+@@ -0,0 +1,25 @@
++*.class
++
++# Package Files #
++*.jar
++*.war
++*.ear
++/.metadata
++/target
++/local
++/bin
++
++# Eclipse, Netbeans and IntelliJ files
++/.*
++/**/.*
++!.gitignore
++/nbproject
++*.ipr
++*.iws
++*.iml
++
++# Repository wide ignore mac DS_Store files
++.DS_Store
++
++# Bitronix transactin logs
++*.tlog
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/pom.xml b/wires-bayesian-parser/wires-bayesian-parser-api/pom.xml
+new file mode 100644
+index 0000000..acee9bf
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/pom.xml
+@@ -0,0 +1,100 @@
++<?xml version="1.0"?>
++<project
++	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
++	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
++	<modelVersion>4.0.0</modelVersion>
++	<parent>
++		<groupId>org.kie</groupId>
++		<artifactId>wires-bayesian-parser</artifactId>
++		<version>1.0-SNAPSHOT</version>
++	</parent>
++
++	<artifactId>wires-bayesian-parser-api</artifactId>
++
++	<name>Wires Bayesian Parser API</name>
++	<description>Wires Bayesian Parser API</description>
++
++	<dependencies>
++		<!-- Project Dependencies -->
++		<dependency>
++			<groupId>org.jboss.errai</groupId>
++			<artifactId>errai-common</artifactId>
++			<version>${errai.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>org.jboss.errai</groupId>
++			<artifactId>errai-bus</artifactId>
++			<version>${errai.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>org.jboss.errai</groupId>
++			<artifactId>errai-ioc</artifactId>
++			<version>${errai.version}</version>
++		</dependency>
++
++		<!-- GWT and GWT Extensions -->
++		<dependency>
++			<groupId>com.google.gwt</groupId>
++			<artifactId>gwt-servlet</artifactId>
++			<scope>provided</scope>
++			<version>${gwt.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>com.google.gwt</groupId>
++			<artifactId>gwt-user</artifactId>
++			<scope>provided</scope>
++			<version>${gwt.version}</version>
++		</dependency>
++
++		<!--URI Util -->
++		<dependency>
++			<groupId>javax.enterprise</groupId>
++			<artifactId>cdi-api</artifactId>
++			<version>${cdi-api.version}</version>
++			<!-- <scope>provided</scope> -->
++		</dependency>
++
++		<dependency>
++			<groupId>com.thoughtworks.xstream</groupId>
++			<artifactId>xstream</artifactId>
++			<version>${xstream.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>com.google.guava</groupId>
++			<artifactId>guava-collections</artifactId>
++			<version>${guava.version}</version>
++		</dependency>
++	</dependencies>
++
++	<build>
++		<resources>
++			<!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
++			<resource>
++				<directory>src/main/java</directory>
++			</resource>
++			<!-- Include module descriptors from src/main/resources in order not to 
++				break the Intellij GWT plug-in -->
++			<resource>
++				<directory>src/main/resources</directory>
++			</resource>
++		</resources>
++		<plugins>
++			<plugin>
++				<groupId>org.apache.maven.plugins</groupId>
++				<artifactId>maven-source-plugin</artifactId>
++				<executions>
++					<execution>
++						<id>attach-sources</id>
++						<goals>
++							<goal>jar</goal>
++						</goals>
++					</execution>
++				</executions>
++			</plugin>
++		</plugins>
++	</build>
++</project>
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/builder/BayesianBuilder.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/builder/BayesianBuilder.java
+new file mode 100644
+index 0000000..c645b97
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/builder/BayesianBuilder.java
+@@ -0,0 +1,106 @@
++package com.bayesian.parser.client.builder;
++
++import java.util.List;
++
++import com.bayesian.parser.client.model.BayesNetwork;
++import com.bayesian.parser.client.model.BayesVariable;
++import com.bayesian.parser.client.parser.Bif;
++import com.bayesian.parser.client.parser.Definition;
++import com.bayesian.parser.client.parser.Network;
++import com.bayesian.parser.client.parser.Variable;
++import com.google.common.collect.Lists;
++
++public class BayesianBuilder {
++
++    public BayesNetwork build(Bif bif) {
++        BayesNetwork bayesNetwork = new BayesNetwork(bif.getNetwork().getName());
++        int id = 1;
++        for (Definition def : bif.getNetwork().getDefinitions()) {
++            BayesVariable nodo = buildVariable(def, bif.getNetwork(), id);
++            bayesNetwork.getNodos().add(nodo);
++            id += 1;
++        }
++        this.setIncomingNodes(bayesNetwork);
++        
++        return bayesNetwork;
++    }
++
++    private BayesVariable buildVariable(Definition def, Network network, int id) {
++        List<String> outcomes = Lists.newArrayList();
++        double[][] position = new double[2][2];
++        this.getOutcomesByVariable(network, def.getName(), outcomes, position);
++        return new BayesVariable(def.getName(), id, outcomes, this.getProbabilities(def.getProbabilities(), outcomes), def.getGiven(),
++                position);
++    }
++
++    private void getOutcomesByVariable(Network network, String nameDefinition, List<String> outcomes, double[][] position) {
++        for (Variable var : network.getVariables()) {
++            if (var.getName().equals(nameDefinition)) {
++                for (String outcome : var.getOutComes()) {
++                    outcomes.add(outcome);
++                }
++                // get position
++                position = getPosition(var.getPosition(), position);
++            }
++        }
++    }
++
++    private double[][] getProbabilities(String table, List<String> outcomes) {
++      double probabilities[][] = new double[table.split(" ").length][table.split(" ").length];
++      String[] values = table.split(" ");
++      int k = 0;
++      for(int i = 0; i < values.length / outcomes.size() ; i++){
++    	  for(int j = 0; j < outcomes.size(); j++){
++    		  probabilities[i][j] = Double.valueOf(values[k]); 
++    		  k += 1;
++    	  }
++      }
++      return probabilities;
++    }
++
++    private double[][] getPosition(String stringPosition, double[][] position) {
++        if (stringPosition != null) {
++            stringPosition = this.clearStringPosticion(stringPosition);
++            int i = 0;
++            int j = 0;
++            for (String pos : stringPosition.split(",")) {
++                position[i][j] = Double.parseDouble(pos);
++                if (i < j) {
++                    i += 1;
++                }
++                j += 1;
++            }
++        }
++        return null;
++    }
++    
++    private String clearStringPosticion(String stringPosition){
++    	stringPosition = stringPosition.replace("position", "");
++        stringPosition = stringPosition.replace("=", "");
++        stringPosition = stringPosition.replace("(", "");
++        stringPosition = stringPosition.replace(")", "");
++        stringPosition = stringPosition.trim();
++        return stringPosition;
++    }
++    
++    private void setIncomingNodes(BayesNetwork bayesNetwork){
++        for(BayesVariable node : bayesNetwork.getNodos()){
++            if(node.getGiven()!=null && !node.getGiven().isEmpty()){
++                node.setIncomingNodes(this.getNodesByGiven(node.getGiven(), bayesNetwork.getNodos()));
++            }
++        }
++    }
++    
++    private List<BayesVariable> getNodesByGiven(List<String> given, List<BayesVariable> nodes){
++        List<BayesVariable> listIncoming = Lists.newArrayList();
++        for(String giv : given){
++            for(BayesVariable node : nodes){
++                if(node.getName().equals(giv)){
++                    listIncoming.add(node);
++                    break;
++                }
++            }
++        }
++        return listIncoming;
++    }
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesNetwork.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesNetwork.java
+new file mode 100644
+index 0000000..fdf9975
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesNetwork.java
+@@ -0,0 +1,43 @@
++package com.bayesian.parser.client.model;
++
++import java.io.Serializable;
++import java.util.ArrayList;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++@Portable
++public class BayesNetwork implements Serializable {
++
++    private static final long serialVersionUID = 6231201134802600033L;
++
++    private String name;
++    private List<BayesVariable> nodos;
++
++    public BayesNetwork() {
++
++    }
++
++    public BayesNetwork(String name) {
++        // TODO implement Guava
++        this.nodos = new ArrayList<BayesVariable>();
++        this.name = name;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public List<BayesVariable> getNodos() {
++        return nodos;
++    }
++
++    public void setNodos(List<BayesVariable> nodos) {
++        this.nodos = nodos;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesVariable.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesVariable.java
+new file mode 100644
+index 0000000..e9cda04
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/model/BayesVariable.java
+@@ -0,0 +1,109 @@
++package com.bayesian.parser.client.model;
++
++import java.io.Serializable;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++@Portable
++public class BayesVariable implements Serializable {
++    private static final long serialVersionUID = -6018017577352463589L;
++    private String name;
++    private int id;
++    double[][] probabilities;
++    private List<String> outcomes;
++
++    private String type;
++    double[][] position;
++
++    private List<String> given;
++    
++    private List<BayesVariable> incomingNodes;
++
++    public BayesVariable() {
++
++    }
++
++    public BayesVariable(String name, int id, List<String> outcomes, double[][] probabilities) {
++        this.name = name;
++        this.id = id;
++        this.probabilities = probabilities;
++        this.outcomes = outcomes;
++    }
++
++    public BayesVariable(String name, int id, List<String> outcomes, double[][] probabilities, List<String> given,
++            double[][] position) {
++        this.name = name;
++        this.id = id;
++        this.probabilities = probabilities;
++        this.outcomes = outcomes;
++        this.given = given;
++        this.position = position;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public int getId() {
++        return id;
++    }
++
++    public double[][] getProbabilities() {
++        return probabilities;
++    }
++
++    public String getType() {
++        return type;
++    }
++
++    public void setType(String type) {
++        this.type = type;
++    }
++
++    public double[][] getPosition() {
++        return position;
++    }
++
++    public void setPosition(double[][] position) {
++        this.position = position;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public void setProbabilities(double[][] probabilities) {
++        this.probabilities = probabilities;
++    }
++
++    public List<String> getOutcomes() {
++        return outcomes;
++    }
++
++    public void setOutcomes(List<String> outcomes) {
++        this.outcomes = outcomes;
++    }
++
++    public List<String> getGiven() {
++        return given;
++    }
++
++    public void setGiven(List<String> given) {
++        this.given = given;
++    }
++
++    public List<BayesVariable> getIncomingNodes() {
++        return incomingNodes;
++    }
++
++    public void setIncomingNodes(List<BayesVariable> incomingNodes) {
++        this.incomingNodes = incomingNodes;
++    }
++
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Bif.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Bif.java
+new file mode 100644
+index 0000000..94af1c2
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Bif.java
+@@ -0,0 +1,26 @@
++package com.bayesian.parser.client.parser;
++
++import java.io.Serializable;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++import com.thoughtworks.xstream.annotations.XStreamAlias;
++
++@XStreamAlias("BIF")
++@Portable
++public class Bif implements Serializable {
++
++    private static final long serialVersionUID = -4817544750207015779L;
++
++    @XStreamAlias("NETWORK")
++    private Network network;
++
++    public Network getNetwork() {
++        return network;
++    }
++
++    public void setNetwork(Network network) {
++        this.network = network;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Definition.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Definition.java
+new file mode 100644
+index 0000000..8c2ae66
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Definition.java
+@@ -0,0 +1,50 @@
++package com.bayesian.parser.client.parser;
++
++import java.io.Serializable;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++import com.thoughtworks.xstream.annotations.XStreamAlias;
++import com.thoughtworks.xstream.annotations.XStreamImplicit;
++
++@XStreamAlias("DEFINITION")
++@Portable
++public class Definition implements Serializable {
++
++    private static final long serialVersionUID = -4549156706417732124L;
++
++    @XStreamAlias("FOR")
++    private String name;
++
++    @XStreamImplicit(itemFieldName = "GIVEN")
++    private List<String> given;
++
++    @XStreamAlias("TABLE")
++    private String probabilities;
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public List<String> getGiven() {
++        return given;
++    }
++
++    public void setGiven(List<String> given) {
++        this.given = given;
++    }
++
++    public String getProbabilities() {
++        return probabilities;
++    }
++
++    public void setProbabilities(String probabilities) {
++        this.probabilities = probabilities;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Network.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Network.java
+new file mode 100644
+index 0000000..6242497
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Network.java
+@@ -0,0 +1,50 @@
++package com.bayesian.parser.client.parser;
++
++import java.io.Serializable;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++import com.thoughtworks.xstream.annotations.XStreamAlias;
++import com.thoughtworks.xstream.annotations.XStreamImplicit;
++
++@XStreamAlias("NETWORK")
++@Portable
++public class Network extends NetworkXml implements Serializable {
++
++    private static final long serialVersionUID = 8613096385540596843L;
++
++    @XStreamAlias("NAME")
++    private String name;
++
++    @XStreamImplicit(itemFieldName = "VARIABLE")
++    private List<Variable> variables;
++
++    @XStreamImplicit(itemFieldName = "DEFINITION")
++    private List<Definition> definitions;
++
++    public List<Variable> getVariables() {
++        return variables;
++    }
++
++    public void setVariables(List<Variable> variables) {
++        this.variables = variables;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public List<Definition> getDefinitions() {
++        return definitions;
++    }
++
++    public void setDefinitions(List<Definition> definitions) {
++        this.definitions = definitions;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/NetworkXml.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/NetworkXml.java
+new file mode 100644
+index 0000000..0854e26
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/NetworkXml.java
+@@ -0,0 +1,26 @@
++package com.bayesian.parser.client.parser;
++
++import java.io.Serializable;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++import com.thoughtworks.xstream.annotations.XStreamImplicit;
++
++@Portable
++public class NetworkXml implements Serializable {
++
++    private static final long serialVersionUID = -3348355473054506395L;
++
++    @XStreamImplicit(itemFieldName = "PROBABILITY")
++    private List<Probability> probabilities;
++
++    public List<Probability> getProbabilities() {
++        return probabilities;
++    }
++
++    public void setProbabilities(List<Probability> probabilities) {
++        this.probabilities = probabilities;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Probability.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Probability.java
+new file mode 100644
+index 0000000..650e836
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Probability.java
+@@ -0,0 +1,50 @@
++package com.bayesian.parser.client.parser;
++
++import java.io.Serializable;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++import com.thoughtworks.xstream.annotations.XStreamAlias;
++import com.thoughtworks.xstream.annotations.XStreamImplicit;
++
++@XStreamAlias("PROBABILITY")
++@Portable
++public class Probability implements Serializable {
++
++    private static final long serialVersionUID = 329348179543890266L;
++
++    @XStreamAlias("FOR")
++    private String for_;
++
++    @XStreamImplicit(itemFieldName = "GIVEN")
++    private List<String> given;
++
++    @XStreamAlias("TABLE")
++    private String table;
++
++    public String getFor_() {
++        return for_;
++    }
++
++    public void setFor_(String for_) {
++        this.for_ = for_;
++    }
++
++    public List<String> getGiven() {
++        return given;
++    }
++
++    public void setGiven(List<String> given) {
++        this.given = given;
++    }
++
++    public String getTable() {
++        return table;
++    }
++
++    public void setTable(String table) {
++        this.table = table;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Variable.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Variable.java
+new file mode 100644
+index 0000000..205dfe5
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/Variable.java
+@@ -0,0 +1,50 @@
++package com.bayesian.parser.client.parser;
++
++import java.io.Serializable;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++import com.thoughtworks.xstream.annotations.XStreamAlias;
++import com.thoughtworks.xstream.annotations.XStreamImplicit;
++
++@XStreamAlias("VARIABLE")
++@Portable
++public class Variable extends VariableXml implements Serializable {
++
++    private static final long serialVersionUID = -4272919361549757485L;
++
++    @XStreamAlias("NAME")
++    private String name;
++
++    @XStreamImplicit(itemFieldName = "OUTCOME")
++    private List<String> outComes;
++
++    @XStreamAlias("PROPERTY")
++    private String position;
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public List<String> getOutComes() {
++        return outComes;
++    }
++
++    public void setOutComes(List<String> outComes) {
++        this.outComes = outComes;
++    }
++
++    public String getPosition() {
++        return position;
++    }
++
++    public void setPosition(String position) {
++        this.position = position;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/VariableXml.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/VariableXml.java
+new file mode 100644
+index 0000000..402650e
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/parser/VariableXml.java
+@@ -0,0 +1,38 @@
++package com.bayesian.parser.client.parser;
++
++import java.io.Serializable;
++import java.util.List;
++
++import org.jboss.errai.common.client.api.annotations.Portable;
++
++import com.thoughtworks.xstream.annotations.XStreamAlias;
++import com.thoughtworks.xstream.annotations.XStreamImplicit;
++
++@Portable
++public class VariableXml implements Serializable {
++
++    private static final long serialVersionUID = 6209765372130565034L;
++
++    @XStreamImplicit(itemFieldName = "VALUE")
++    private List<String> value;
++
++    @XStreamAlias("TYPE")
++    private String type;
++
++    public List<String> getValue() {
++        return value;
++    }
++
++    public void setValue(List<String> value) {
++        this.value = value;
++    }
++
++    public String getType() {
++        return type;
++    }
++
++    public void setType(String type) {
++        this.type = type;
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/service/BayesianService.java b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/service/BayesianService.java
+new file mode 100644
+index 0000000..ee555d4
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/java/com/bayesian/parser/client/service/BayesianService.java
+@@ -0,0 +1,16 @@
++package com.bayesian.parser.client.service;
++
++import org.jboss.errai.bus.server.annotations.Remote;
++
++import com.bayesian.parser.client.model.BayesNetwork;
++import com.bayesian.parser.client.parser.Bif;
++
++
++@Remote
++public interface BayesianService {
++
++    BayesNetwork buildXml03(String relativePathtoXmlResource);
++
++    Bif xmlToObject(String relativePathtoXmlResource);
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiApp.properties b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiApp.properties
+new file mode 100644
+index 0000000..7765a67
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiApp.properties
+@@ -0,0 +1,17 @@
++#
++# ErraiApp.properties
++#
++# Do not remove, even if empty!
++#
++
++# This is a marker file. When it is detected inside a JAR or at the
++# top of any classpath, the subdirectories are scanned for deployable
++# components. As such, all Errai application modules in a project
++# should contain an ErraiApp.properties at the root of all classpaths
++# that you wish to be scanned.
++#
++# There are also some configuration options that can be set in this
++# file, although it is rarely necessary. See the documentation at
++# https://docs.jboss.org/author/display/ERRAI/ErraiApp.properties
++# for details.
++
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiService.properties b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiService.properties
+new file mode 100644
+index 0000000..f216364
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/ErraiService.properties
+@@ -0,0 +1,4 @@
++errai.require_authentication_for_all=false
++errai.application_context=/App/
++errai.login_motd=UNAUTHORIZED ACCESS IS PROHIBITED!
++
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/com/bayesian/parser/bayesian.gwt.xml b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/com/bayesian/parser/bayesian.gwt.xml
+new file mode 100644
+index 0000000..d944e2b
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-api/src/main/resources/com/bayesian/parser/bayesian.gwt.xml
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
++
++<module>
++    <inherits name='com.google.gwt.user.User'/>
++    <inherits name="org.jboss.errai.bus.ErraiBus"/>
++    <inherits name="org.jboss.errai.ioc.Container"/>
++	
++	<source path="client"></source>
++</module>
+\ No newline at end of file
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-backend/.gitignore b/wires-bayesian-parser/wires-bayesian-parser-backend/.gitignore
+new file mode 100644
+index 0000000..2cecff6
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-backend/.gitignore
+@@ -0,0 +1,25 @@
++*.class
++
++# Package Files #
++*.jar
++*.war
++*.ear
++/.metadata
++/target
++/local
++/bin
++
++# Eclipse, Netbeans and IntelliJ files
++/.*
++/**/.*
++!.gitignore
++/nbproject
++*.ipr
++*.iws
++*.iml
++
++# Repository wide ignore mac DS_Store files
++.DS_Store
++
++# Bitronix transactin logs
++*.tlog
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-backend/pom.xml b/wires-bayesian-parser/wires-bayesian-parser-backend/pom.xml
+new file mode 100644
+index 0000000..b32956e
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-backend/pom.xml
+@@ -0,0 +1,67 @@
++<?xml version="1.0"?>
++<project
++	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
++	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
++	<modelVersion>4.0.0</modelVersion>
++	<parent>
++		<groupId>org.kie</groupId>
++		<artifactId>wires-bayesian-parser</artifactId>
++		<version>1.0-SNAPSHOT</version>
++	</parent>
++
++	<artifactId>wires-bayesian-parser-backend</artifactId>
++	<packaging>jar</packaging>
++
++	<name>Wires Bayesian Parser Backend</name>
++	<description>Wires Bayesian Parser Backend</description>
++
++	<dependencies>
++		<dependency>
++			<groupId>org.kie</groupId>
++			<artifactId>wires-bayesian-parser-api</artifactId>
++			<version>${bayesian-api.version}</version>
++		</dependency>
++
++		<dependency>
++			<groupId>javax.enterprise</groupId>
++			<artifactId>cdi-api</artifactId>
++			<version>${cdi-api.version}</version>
++			<scope>provided</scope>
++		</dependency>
++
++		<!-- Errai Core -->
++		<dependency>
++			<groupId>org.jboss.errai</groupId>
++			<artifactId>errai-bus</artifactId>
++			<version>${errai.version}</version>
++		</dependency>
++	</dependencies>
++
++	<build>
++		<resources>
++			<!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
++			<resource>
++				<directory>src/main/java</directory>
++			</resource>
++			<!-- Include module descriptors from src/main/resources in order not to 
++				break the Intellij GWT plug-in -->
++			<resource>
++				<directory>src/main/resources</directory>
++			</resource>
++		</resources>
++		<plugins>
++			<plugin>
++				<groupId>org.apache.maven.plugins</groupId>
++				<artifactId>maven-source-plugin</artifactId>
++				<executions>
++					<execution>
++						<id>attach-sources</id>
++						<goals>
++							<goal>jar</goal>
++						</goals>
++					</execution>
++				</executions>
++			</plugin>
++		</plugins>
++	</build>
++</project>
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-backend/src/main/java/com/bayesian/parser/service/impl/BayesianServiceImpl.java b/wires-bayesian-parser/wires-bayesian-parser-backend/src/main/java/com/bayesian/parser/service/impl/BayesianServiceImpl.java
+new file mode 100644
+index 0000000..42e72b2
+--- /dev/null
++++ b/wires-bayesian-parser/wires-bayesian-parser-backend/src/main/java/com/bayesian/parser/service/impl/BayesianServiceImpl.java
+@@ -0,0 +1,47 @@
++package com.bayesian.parser.service.impl;
++
++import java.io.InputStream;
++
++import javax.enterprise.context.ApplicationScoped;
++
++import org.jboss.errai.bus.server.annotations.Service;
++
++import com.bayesian.parser.client.builder.BayesianBuilder;
++import com.bayesian.parser.client.model.BayesNetwork;
++import com.bayesian.parser.client.parser.Bif;
++import com.bayesian.parser.client.parser.Definition;
++import com.bayesian.parser.client.parser.Network;
++import com.bayesian.parser.client.parser.Probability;
++import com.bayesian.parser.client.service.BayesianService;
++import com.thoughtworks.xstream.XStream;
++
++@Service
++@ApplicationScoped
++public class BayesianServiceImpl implements BayesianService {
++
++    @Override
++    public BayesNetwork buildXml03(String relativePathtoXmlResource) {
++        return new BayesianBuilder().build(xmlToObject(relativePathtoXmlResource));
++    }
++
++    @Override
++    public Bif xmlToObject(String relativePathtoXmlResource) {
++        InputStream resourceAsStream = loadResource( relativePathtoXmlResource );
++        return processXML( resourceAsStream );
++    }
++
++    private Bif processXML( InputStream resourceAsStream ) {
++        XStream xstream = new XStream();
++        xstream.processAnnotations(Bif.class);
++        xstream.processAnnotations(Network.class);
++        xstream.processAnnotations(Probability.class);
++        xstream.processAnnotations(Definition.class);
++        return (Bif) xstream.fromXML(resourceAsStream);
++    }
++
++    private InputStream loadResource( String xmlFileName ) {
++        ClassLoader loader = Thread.currentThread().getContextClassLoader();
++        return loader.getResourceAsStream(xmlFileName);
++    }
++
++}
+diff --git a/wires-bayesian-parser/wires-bayesian-parser-backend/src/main/resources/META-INF/beans.xml b/wires-bayesian-parser/wires-bayesian-parser-backend/src/main/resources/META-INF/beans.xml
+new file mode 100644
+index 0000000..e69de29
+diff --git a/wires-bayesian-xml03/.gitignore b/wires-bayesian-xml03/.gitignore
+deleted file mode 100644
+index 2cecff6..0000000
+--- a/wires-bayesian-xml03/.gitignore
++++ /dev/null
+@@ -1,25 +0,0 @@
+-*.class
+-
+-# Package Files #
+-*.jar
+-*.war
+-*.ear
+-/.metadata
+-/target
+-/local
+-/bin
+-
+-# Eclipse, Netbeans and IntelliJ files
+-/.*
+-/**/.*
+-!.gitignore
+-/nbproject
+-*.ipr
+-*.iws
+-*.iml
+-
+-# Repository wide ignore mac DS_Store files
+-.DS_Store
+-
+-# Bitronix transactin logs
+-*.tlog
+diff --git a/wires-bayesian-xml03/pom.xml b/wires-bayesian-xml03/pom.xml
+deleted file mode 100644
+index 0b3012c..0000000
+--- a/wires-bayesian-xml03/pom.xml
++++ /dev/null
+@@ -1,100 +0,0 @@
+-<?xml version="1.0"?>
+-<project
+-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+-	<modelVersion>4.0.0</modelVersion>
+-	<parent>
+-		<groupId>org.kie</groupId>
+-		<artifactId>wires</artifactId>
+-		<version>1.0-SNAPSHOT</version>
+-	</parent>
+-
+-	<artifactId>wires-bayesian-xml03</artifactId>
+-
+-	<name>Wires Bayesian xml03</name>
+-	<description>Wires Bayesian xml03</description>
+-
+-	<dependencies>
+-		<!-- Project Dependencies -->
+-		<dependency>
+-			<groupId>org.jboss.errai</groupId>
+-			<artifactId>errai-common</artifactId>
+-			<version>${errai.version}</version>
+-		</dependency>
+-
+-		<dependency>
+-			<groupId>org.jboss.errai</groupId>
+-			<artifactId>errai-bus</artifactId>
+-			<version>${errai.version}</version>
+-		</dependency>
+-
+-		<dependency>
+-			<groupId>org.jboss.errai</groupId>
+-			<artifactId>errai-ioc</artifactId>
+-			<version>${errai.version}</version>
+-		</dependency>
+-
+-		<!-- GWT and GWT Extensions -->
+-		<dependency>
+-			<groupId>com.google.gwt</groupId>
+-			<artifactId>gwt-servlet</artifactId>
+-			<scope>provided</scope>
+-			<version>${gwt.version}</version>
+-		</dependency>
+-
+-		<dependency>
+-			<groupId>com.google.gwt</groupId>
+-			<artifactId>gwt-user</artifactId>
+-			<scope>provided</scope>
+-			<version>${gwt.version}</version>
+-		</dependency>
+-
+-		<!--URI Util -->
+-		<dependency>
+-			<groupId>javax.enterprise</groupId>
+-			<artifactId>cdi-api</artifactId>
+-			<version>${cdi-api.version}</version>
+-			<!-- <scope>provided</scope> -->
+-		</dependency>
+-
+-		<dependency>
+-			<groupId>com.thoughtworks.xstream</groupId>
+-			<artifactId>xstream</artifactId>
+-			<version>${xstream.version}</version>
+-		</dependency>
+-
+-		<dependency>
+-			<groupId>com.google.guava</groupId>
+-			<artifactId>guava-collections</artifactId>
+-			<version>${guava.version}</version>
+-		</dependency>
+-	</dependencies>
+-
+-	<build>
+-		<resources>
+-			<!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
+-			<resource>
+-				<directory>src/main/java</directory>
+-			</resource>
+-			<!-- Include module descriptors from src/main/resources in order not to 
+-				break the Intellij GWT plug-in -->
+-			<resource>
+-				<directory>src/main/resources</directory>
+-			</resource>
+-		</resources>
+-		<plugins>
+-			<plugin>
+-				<groupId>org.apache.maven.plugins</groupId>
+-				<artifactId>maven-source-plugin</artifactId>
+-				<executions>
+-					<execution>
+-						<id>attach-sources</id>
+-						<goals>
+-							<goal>jar</goal>
+-						</goals>
+-					</execution>
+-				</executions>
+-			</plugin>
+-		</plugins>
+-	</build>
+-</project>
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/entry/BayesianService.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/entry/BayesianService.java
+deleted file mode 100644
+index 5feb8f4..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/entry/BayesianService.java
++++ /dev/null
+@@ -1,16 +0,0 @@
+-package com.xstream.bayesian.client.entry;
+-
+-import org.jboss.errai.bus.server.annotations.Remote;
+-
+-import com.xstream.bayesian.client.model.BayesNetwork;
+-import com.xstream.bayesian.client.parser.model.Bif;
+-
+-
+-@Remote
+-public interface BayesianService {
+-
+-    BayesNetwork buildXml03(String relativePathtoXmlResource);
+-
+-    Bif xmlToObject(String relativePathtoXmlResource);
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesNetwork.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesNetwork.java
+deleted file mode 100644
+index 252063d..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesNetwork.java
++++ /dev/null
+@@ -1,43 +0,0 @@
+-package com.xstream.bayesian.client.model;
+-
+-import java.io.Serializable;
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-@Portable
+-public class BayesNetwork implements Serializable {
+-
+-    private static final long serialVersionUID = 6231201134802600033L;
+-
+-    private String name;
+-    private List<BayesVariable> nodos;
+-
+-    public BayesNetwork() {
+-
+-    }
+-
+-    public BayesNetwork(String name) {
+-        // TODO implement Guava
+-        this.nodos = new ArrayList<BayesVariable>();
+-        this.name = name;
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public void setName(String name) {
+-        this.name = name;
+-    }
+-
+-    public List<BayesVariable> getNodos() {
+-        return nodos;
+-    }
+-
+-    public void setNodos(List<BayesVariable> nodos) {
+-        this.nodos = nodos;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesVariable.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesVariable.java
+deleted file mode 100644
+index 2363811..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/model/BayesVariable.java
++++ /dev/null
+@@ -1,109 +0,0 @@
+-package com.xstream.bayesian.client.model;
+-
+-import java.io.Serializable;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-@Portable
+-public class BayesVariable implements Serializable {
+-    private static final long serialVersionUID = -6018017577352463589L;
+-    private String name;
+-    private int id;
+-    double[][] probabilities;
+-    private List<String> outcomes;
+-
+-    private String type;
+-    double[][] position;
+-
+-    private List<String> given;
+-    
+-    private List<BayesVariable> incomingNodes;
+-
+-    public BayesVariable() {
+-
+-    }
+-
+-    public BayesVariable(String name, int id, List<String> outcomes, double[][] probabilities) {
+-        this.name = name;
+-        this.id = id;
+-        this.probabilities = probabilities;
+-        this.outcomes = outcomes;
+-    }
+-
+-    public BayesVariable(String name, int id, List<String> outcomes, double[][] probabilities, List<String> given,
+-            double[][] position) {
+-        this.name = name;
+-        this.id = id;
+-        this.probabilities = probabilities;
+-        this.outcomes = outcomes;
+-        this.given = given;
+-        this.position = position;
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public int getId() {
+-        return id;
+-    }
+-
+-    public double[][] getProbabilities() {
+-        return probabilities;
+-    }
+-
+-    public String getType() {
+-        return type;
+-    }
+-
+-    public void setType(String type) {
+-        this.type = type;
+-    }
+-
+-    public double[][] getPosition() {
+-        return position;
+-    }
+-
+-    public void setPosition(double[][] position) {
+-        this.position = position;
+-    }
+-
+-    public void setName(String name) {
+-        this.name = name;
+-    }
+-
+-    public void setId(int id) {
+-        this.id = id;
+-    }
+-
+-    public void setProbabilities(double[][] probabilities) {
+-        this.probabilities = probabilities;
+-    }
+-
+-    public List<String> getOutcomes() {
+-        return outcomes;
+-    }
+-
+-    public void setOutcomes(List<String> outcomes) {
+-        this.outcomes = outcomes;
+-    }
+-
+-    public List<String> getGiven() {
+-        return given;
+-    }
+-
+-    public void setGiven(List<String> given) {
+-        this.given = given;
+-    }
+-
+-    public List<BayesVariable> getIncomingNodes() {
+-        return incomingNodes;
+-    }
+-
+-    public void setIncomingNodes(List<BayesVariable> incomingNodes) {
+-        this.incomingNodes = incomingNodes;
+-    }
+-
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Bif.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Bif.java
+deleted file mode 100644
+index 0e25343..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Bif.java
++++ /dev/null
+@@ -1,26 +0,0 @@
+-package com.xstream.bayesian.client.parser.model;
+-
+-import java.io.Serializable;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-import com.thoughtworks.xstream.annotations.XStreamAlias;
+-
+-@XStreamAlias("BIF")
+-@Portable
+-public class Bif implements Serializable {
+-
+-    private static final long serialVersionUID = -4817544750207015779L;
+-
+-    @XStreamAlias("NETWORK")
+-    private Network network;
+-
+-    public Network getNetwork() {
+-        return network;
+-    }
+-
+-    public void setNetwork(Network network) {
+-        this.network = network;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Definition.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Definition.java
+deleted file mode 100644
+index 887f086..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Definition.java
++++ /dev/null
+@@ -1,50 +0,0 @@
+-package com.xstream.bayesian.client.parser.model;
+-
+-import java.io.Serializable;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-import com.thoughtworks.xstream.annotations.XStreamAlias;
+-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+-
+-@XStreamAlias("DEFINITION")
+-@Portable
+-public class Definition implements Serializable {
+-
+-    private static final long serialVersionUID = -4549156706417732124L;
+-
+-    @XStreamAlias("FOR")
+-    private String name;
+-
+-    @XStreamImplicit(itemFieldName = "GIVEN")
+-    private List<String> given;
+-
+-    @XStreamAlias("TABLE")
+-    private String probabilities;
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public void setName(String name) {
+-        this.name = name;
+-    }
+-
+-    public List<String> getGiven() {
+-        return given;
+-    }
+-
+-    public void setGiven(List<String> given) {
+-        this.given = given;
+-    }
+-
+-    public String getProbabilities() {
+-        return probabilities;
+-    }
+-
+-    public void setProbabilities(String probabilities) {
+-        this.probabilities = probabilities;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Network.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Network.java
+deleted file mode 100644
+index 957d946..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Network.java
++++ /dev/null
+@@ -1,50 +0,0 @@
+-package com.xstream.bayesian.client.parser.model;
+-
+-import java.io.Serializable;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-import com.thoughtworks.xstream.annotations.XStreamAlias;
+-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+-
+-@XStreamAlias("NETWORK")
+-@Portable
+-public class Network extends NetworkXml implements Serializable {
+-
+-    private static final long serialVersionUID = 8613096385540596843L;
+-
+-    @XStreamAlias("NAME")
+-    private String name;
+-
+-    @XStreamImplicit(itemFieldName = "VARIABLE")
+-    private List<Variable> variables;
+-
+-    @XStreamImplicit(itemFieldName = "DEFINITION")
+-    private List<Definition> definitions;
+-
+-    public List<Variable> getVariables() {
+-        return variables;
+-    }
+-
+-    public void setVariables(List<Variable> variables) {
+-        this.variables = variables;
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public void setName(String name) {
+-        this.name = name;
+-    }
+-
+-    public List<Definition> getDefinitions() {
+-        return definitions;
+-    }
+-
+-    public void setDefinitions(List<Definition> definitions) {
+-        this.definitions = definitions;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/NetworkXml.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/NetworkXml.java
+deleted file mode 100644
+index 9d387de..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/NetworkXml.java
++++ /dev/null
+@@ -1,26 +0,0 @@
+-package com.xstream.bayesian.client.parser.model;
+-
+-import java.io.Serializable;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+-
+-@Portable
+-public class NetworkXml implements Serializable {
+-
+-    private static final long serialVersionUID = -3348355473054506395L;
+-
+-    @XStreamImplicit(itemFieldName = "PROBABILITY")
+-    private List<Probability> probabilities;
+-
+-    public List<Probability> getProbabilities() {
+-        return probabilities;
+-    }
+-
+-    public void setProbabilities(List<Probability> probabilities) {
+-        this.probabilities = probabilities;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Probability.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Probability.java
+deleted file mode 100644
+index 55ccc7f..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Probability.java
++++ /dev/null
+@@ -1,50 +0,0 @@
+-package com.xstream.bayesian.client.parser.model;
+-
+-import java.io.Serializable;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-import com.thoughtworks.xstream.annotations.XStreamAlias;
+-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+-
+-@XStreamAlias("PROBABILITY")
+-@Portable
+-public class Probability implements Serializable {
+-
+-    private static final long serialVersionUID = 329348179543890266L;
+-
+-    @XStreamAlias("FOR")
+-    private String for_;
+-
+-    @XStreamImplicit(itemFieldName = "GIVEN")
+-    private List<String> given;
+-
+-    @XStreamAlias("TABLE")
+-    private String table;
+-
+-    public String getFor_() {
+-        return for_;
+-    }
+-
+-    public void setFor_(String for_) {
+-        this.for_ = for_;
+-    }
+-
+-    public List<String> getGiven() {
+-        return given;
+-    }
+-
+-    public void setGiven(List<String> given) {
+-        this.given = given;
+-    }
+-
+-    public String getTable() {
+-        return table;
+-    }
+-
+-    public void setTable(String table) {
+-        this.table = table;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Variable.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Variable.java
+deleted file mode 100644
+index ec6bbc6..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/Variable.java
++++ /dev/null
+@@ -1,50 +0,0 @@
+-package com.xstream.bayesian.client.parser.model;
+-
+-import java.io.Serializable;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-import com.thoughtworks.xstream.annotations.XStreamAlias;
+-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+-
+-@XStreamAlias("VARIABLE")
+-@Portable
+-public class Variable extends VariableXml implements Serializable {
+-
+-    private static final long serialVersionUID = -4272919361549757485L;
+-
+-    @XStreamAlias("NAME")
+-    private String name;
+-
+-    @XStreamImplicit(itemFieldName = "OUTCOME")
+-    private List<String> outComes;
+-
+-    @XStreamAlias("PROPERTY")
+-    private String position;
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public void setName(String name) {
+-        this.name = name;
+-    }
+-
+-    public List<String> getOutComes() {
+-        return outComes;
+-    }
+-
+-    public void setOutComes(List<String> outComes) {
+-        this.outComes = outComes;
+-    }
+-
+-    public String getPosition() {
+-        return position;
+-    }
+-
+-    public void setPosition(String position) {
+-        this.position = position;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/VariableXml.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/VariableXml.java
+deleted file mode 100644
+index c99da8b..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/parser/model/VariableXml.java
++++ /dev/null
+@@ -1,38 +0,0 @@
+-package com.xstream.bayesian.client.parser.model;
+-
+-import java.io.Serializable;
+-import java.util.List;
+-
+-import org.jboss.errai.common.client.api.annotations.Portable;
+-
+-import com.thoughtworks.xstream.annotations.XStreamAlias;
+-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+-
+-@Portable
+-public class VariableXml implements Serializable {
+-
+-    private static final long serialVersionUID = 6209765372130565034L;
+-
+-    @XStreamImplicit(itemFieldName = "VALUE")
+-    private List<String> value;
+-
+-    @XStreamAlias("TYPE")
+-    private String type;
+-
+-    public List<String> getValue() {
+-        return value;
+-    }
+-
+-    public void setValue(List<String> value) {
+-        this.value = value;
+-    }
+-
+-    public String getType() {
+-        return type;
+-    }
+-
+-    public void setType(String type) {
+-        this.type = type;
+-    }
+-
+-}
+diff --git a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/services/BayesianBuilder.java b/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/services/BayesianBuilder.java
+deleted file mode 100644
+index 2762099..0000000
+--- a/wires-bayesian-xml03/src/main/java/com/xstream/bayesian/client/services/BayesianBuilder.java
++++ /dev/null
+@@ -1,106 +0,0 @@
+-package com.xstream.bayesian.client.services;
+-
+-import java.util.List;
+-
+-import com.google.common.collect.Lists;
+-import com.xstream.bayesian.client.model.BayesNetwork;
+-import com.xstream.bayesian.client.model.BayesVariable;
+-import com.xstream.bayesian.client.parser.model.Bif;
+-import com.xstream.bayesian.client.parser.model.Definition;
+-import com.xstream.bayesian.client.parser.model.Network;
+-import com.xstream.bayesian.client.parser.model.Variable;
+-
+-public class BayesianBuilder {
+-
+-    public BayesNetwork build(Bif bif) {
+-        BayesNetwork bayesNetwork = new BayesNetwork(bif.getNetwork().getName());
+-        int id = 1;
+-        for (Definition def : bif.getNetwork().getDefinitions()) {
+-            BayesVariable nodo = buildVariable(def, bif.getNetwork(), id);
+-            bayesNetwork.getNodos().add(nodo);
+-            id += 1;
+-        }
+-        this.setIncomingNodes(bayesNetwork);
+-        
+-        return bayesNetwork;
+-    }
+-
+-    private BayesVariable buildVariable(Definition def, Network network, int id) {
+-        List<String> outcomes = Lists.newArrayList();
+-        double[][] position = new double[2][2];
+-        this.getOutcomesByVariable(network, def.getName(), outcomes, position);
+-        return new BayesVariable(def.getName(), id, outcomes, this.getProbabilities(def.getProbabilities(), outcomes), def.getGiven(),
+-                position);
+-    }
+-
+-    private void getOutcomesByVariable(Network network, String nameDefinition, List<String> outcomes, double[][] position) {
+-        for (Variable var : network.getVariables()) {
+-            if (var.getName().equals(nameDefinition)) {
+-                for (String outcome : var.getOutComes()) {
+-                    outcomes.add(outcome);
+-                }
+-                // get position
+-                position = getPosition(var.getPosition(), position);
+-            }
+-        }
+-    }
+-
+-    private double[][] getProbabilities(String table, List<String> outcomes) {
+-      double probabilities[][] = new double[table.split(" ").length][table.split(" ").length];
+-      String[] values = table.split(" ");
+-      int k = 0;
+-      for(int i = 0; i < values.length / outcomes.size() ; i++){
+-    	  for(int j = 0; j < outcomes.size(); j++){
+-    		  probabilities[i][j] = Double.valueOf(values[k]); 
+-    		  k += 1;
+-    	  }
+-      }
+-      return probabilities;
+-    }
+-
+-    private double[][] getPosition(String stringPosition, double[][] position) {
+-        if (stringPosition != null) {
+-            stringPosition = this.clearStringPosticion(stringPosition);
+-            int i = 0;
+-            int j = 0;
+-            for (String pos : stringPosition.split(",")) {
+-                position[i][j] = Double.parseDouble(pos);
+-                if (i < j) {
+-                    i += 1;
+-                }
+-                j += 1;
+-            }
+-        }
+-        return null;
+-    }
+-    
+-    private String clearStringPosticion(String stringPosition){
+-    	stringPosition = stringPosition.replace("position", "");
+-        stringPosition = stringPosition.replace("=", "");
+-        stringPosition = stringPosition.replace("(", "");
+-        stringPosition = stringPosition.replace(")", "");
+-        stringPosition = stringPosition.trim();
+-        return stringPosition;
+-    }
+-    
+-    private void setIncomingNodes(BayesNetwork bayesNetwork){
+-        for(BayesVariable node : bayesNetwork.getNodos()){
+-            if(node.getGiven()!=null && !node.getGiven().isEmpty()){
+-                node.setIncomingNodes(this.getNodesByGiven(node.getGiven(), bayesNetwork.getNodos()));
+-            }
+-        }
+-    }
+-    
+-    private List<BayesVariable> getNodesByGiven(List<String> given, List<BayesVariable> nodes){
+-        List<BayesVariable> listIncoming = Lists.newArrayList();
+-        for(String giv : given){
+-            for(BayesVariable node : nodes){
+-                if(node.getName().equals(giv)){
+-                    listIncoming.add(node);
+-                    break;
+-                }
+-            }
+-        }
+-        return listIncoming;
+-    }
+-}
+diff --git a/wires-bayesian-xml03/src/main/resources/ErraiApp.properties b/wires-bayesian-xml03/src/main/resources/ErraiApp.properties
+deleted file mode 100644
+index 7765a67..0000000
+--- a/wires-bayesian-xml03/src/main/resources/ErraiApp.properties
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#
+-# ErraiApp.properties
+-#
+-# Do not remove, even if empty!
+-#
+-
+-# This is a marker file. When it is detected inside a JAR or at the
+-# top of any classpath, the subdirectories are scanned for deployable
+-# components. As such, all Errai application modules in a project
+-# should contain an ErraiApp.properties at the root of all classpaths
+-# that you wish to be scanned.
+-#
+-# There are also some configuration options that can be set in this
+-# file, although it is rarely necessary. See the documentation at
+-# https://docs.jboss.org/author/display/ERRAI/ErraiApp.properties
+-# for details.
+-
+diff --git a/wires-bayesian-xml03/src/main/resources/ErraiService.properties b/wires-bayesian-xml03/src/main/resources/ErraiService.properties
+deleted file mode 100644
+index f216364..0000000
+--- a/wires-bayesian-xml03/src/main/resources/ErraiService.properties
++++ /dev/null
+@@ -1,4 +0,0 @@
+-errai.require_authentication_for_all=false
+-errai.application_context=/App/
+-errai.login_motd=UNAUTHORIZED ACCESS IS PROHIBITED!
+-
+diff --git a/wires-bayesian-xml03/src/main/resources/com/xstream/bayesian/bayesian.gwt.xml b/wires-bayesian-xml03/src/main/resources/com/xstream/bayesian/bayesian.gwt.xml
+deleted file mode 100644
+index d944e2b..0000000
+--- a/wires-bayesian-xml03/src/main/resources/com/xstream/bayesian/bayesian.gwt.xml
++++ /dev/null
+@@ -1,10 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
+-
+-<module>
+-    <inherits name='com.google.gwt.user.User'/>
+-    <inherits name="org.jboss.errai.bus.ErraiBus"/>
+-    <inherits name="org.jboss.errai.ioc.Container"/>
+-	
+-	<source path="client"></source>
+-</module>
+\ No newline at end of file
+diff --git a/wires-bayesian/.gitignore b/wires-bayesian/.gitignore
+deleted file mode 100644
+index 2cecff6..0000000
+--- a/wires-bayesian/.gitignore
++++ /dev/null
+@@ -1,25 +0,0 @@
+-*.class
+-
+-# Package Files #
+-*.jar
+-*.war
+-*.ear
+-/.metadata
+-/target
+-/local
+-/bin
+-
+-# Eclipse, Netbeans and IntelliJ files
+-/.*
+-/**/.*
+-!.gitignore
+-/nbproject
+-*.ipr
+-*.iws
+-*.iml
+-
+-# Repository wide ignore mac DS_Store files
+-.DS_Store
+-
+-# Bitronix transactin logs
+-*.tlog
+diff --git a/wires-bayesian/pom.xml b/wires-bayesian/pom.xml
+deleted file mode 100644
+index 6e2ecf8..0000000
+--- a/wires-bayesian/pom.xml
++++ /dev/null
+@@ -1,67 +0,0 @@
+-<?xml version="1.0"?>
+-<project
+-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+-	<modelVersion>4.0.0</modelVersion>
+-	<parent>
+-		<groupId>org.kie</groupId>
+-		<artifactId>wires</artifactId>
+-		<version>1.0-SNAPSHOT</version>
+-	</parent>
+-
+-	<artifactId>wires-bayesian</artifactId>
+-	<packaging>jar</packaging>
+-
+-	<name>Wires Bayesian</name>
+-	<description>Wires Bayesian</description>
+-
+-	<dependencies>
+-		<dependency>
+-			<groupId>org.kie</groupId>
+-			<artifactId>wires-bayesian-xml03</artifactId>
+-			<version>${bayesian-api.version}</version>
+-		</dependency>
+-
+-		<dependency>
+-			<groupId>javax.enterprise</groupId>
+-			<artifactId>cdi-api</artifactId>
+-			<version>${cdi-api.version}</version>
+-			<scope>provided</scope>
+-		</dependency>
+-
+-		<!-- Errai Core -->
+-		<dependency>
+-			<groupId>org.jboss.errai</groupId>
+-			<artifactId>errai-bus</artifactId>
+-			<version>${errai.version}</version>
+-		</dependency>
+-	</dependencies>
+-
+-	<build>
+-		<resources>
+-			<!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
+-			<resource>
+-				<directory>src/main/java</directory>
+-			</resource>
+-			<!-- Include module descriptors from src/main/resources in order not to 
+-				break the Intellij GWT plug-in -->
+-			<resource>
+-				<directory>src/main/resources</directory>
+-			</resource>
+-		</resources>
+-		<plugins>
+-			<plugin>
+-				<groupId>org.apache.maven.plugins</groupId>
+-				<artifactId>maven-source-plugin</artifactId>
+-				<executions>
+-					<execution>
+-						<id>attach-sources</id>
+-						<goals>
+-							<goal>jar</goal>
+-						</goals>
+-					</execution>
+-				</executions>
+-			</plugin>
+-		</plugins>
+-	</build>
+-</project>
+diff --git a/wires-bayesian/src/main/java/com/bayesian/xstream/service/impl/BayesianServiceImpl.java b/wires-bayesian/src/main/java/com/bayesian/xstream/service/impl/BayesianServiceImpl.java
+deleted file mode 100644
+index 68e742b..0000000
+--- a/wires-bayesian/src/main/java/com/bayesian/xstream/service/impl/BayesianServiceImpl.java
++++ /dev/null
+@@ -1,53 +0,0 @@
+-package com.bayesian.xstream.service.impl;
+-
+-import java.io.File;
+-import java.io.FileNotFoundException;
+-import java.io.FileReader;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.net.URL;
+-import java.util.Properties;
+-
+-import javax.enterprise.context.ApplicationScoped;
+-
+-import org.jboss.errai.bus.server.annotations.Service;
+-
+-import com.thoughtworks.xstream.XStream;
+-import com.xstream.bayesian.client.entry.BayesianService;
+-import com.xstream.bayesian.client.model.BayesNetwork;
+-import com.xstream.bayesian.client.parser.model.Bif;
+-import com.xstream.bayesian.client.parser.model.Definition;
+-import com.xstream.bayesian.client.parser.model.Network;
+-import com.xstream.bayesian.client.parser.model.Probability;
+-import com.xstream.bayesian.client.services.BayesianBuilder;
+-
+-@Service
+-@ApplicationScoped
+-public class BayesianServiceImpl implements BayesianService {
+-
+-    @Override
+-    public BayesNetwork buildXml03(String relativePathtoXmlResource) {
+-        return new BayesianBuilder().build(xmlToObject(relativePathtoXmlResource));
+-    }
+-
+-    @Override
+-    public Bif xmlToObject(String relativePathtoXmlResource) {
+-        InputStream resourceAsStream = loadResource( relativePathtoXmlResource );
+-        return processXML( resourceAsStream );
+-    }
+-
+-    private Bif processXML( InputStream resourceAsStream ) {
+-        XStream xstream = new XStream();
+-        xstream.processAnnotations(Bif.class);
+-        xstream.processAnnotations(Network.class);
+-        xstream.processAnnotations(Probability.class);
+-        xstream.processAnnotations(Definition.class);
+-        return (Bif) xstream.fromXML(resourceAsStream);
+-    }
+-
+-    private InputStream loadResource( String xmlFileName ) {
+-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+-        return loader.getResourceAsStream(xmlFileName);
+-    }
+-
+-}
+diff --git a/wires-bayesian/src/main/resources/META-INF/beans.xml b/wires-bayesian/src/main/resources/META-INF/beans.xml
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/wires-webapp/pom.xml b/wires-webapp/pom.xml
+index d8663c5..76bbdb8 100644
+--- a/wires-webapp/pom.xml
++++ b/wires-webapp/pom.xml
+@@ -155,10 +155,16 @@
+ 			<version>${gwt.version}</version>
+ 			<scope>provided</scope>
+ 		</dependency>
+-		<!-- xstream api -->
++		<!-- bayesian -->
+ 		<dependency>
+ 			<groupId>org.kie</groupId>
+-			<artifactId>wires-bayesian</artifactId>
++			<artifactId>wires-bayesian-parser-backend</artifactId>
++			<version>${bayesian-api.version}</version>
++		</dependency>
++		
++		<dependency>
++			<groupId>org.kie</groupId>
++			<artifactId>wires-bayesian-network-api</artifactId>
+ 			<version>${bayesian-api.version}</version>
+ 		</dependency>
+ 	</dependencies>
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/BayesianFactory.java b/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/BayesianFactory.java
+index 24a8b2a..f5f6cdf 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/BayesianFactory.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/BayesianFactory.java
+@@ -17,6 +17,9 @@
+ import org.kie.wires.client.util.BayesianUtils;
+ import org.kie.wires.client.util.LienzoUtils;
+ 
++import com.bayesian.parser.client.model.BayesNetwork;
++import com.bayesian.parser.client.model.BayesVariable;
++import com.bayesian.parser.client.service.BayesianService;
+ import com.emitrom.lienzo.client.core.shape.Layer;
+ import com.emitrom.lienzo.client.core.shape.Rectangle;
+ import com.emitrom.lienzo.client.core.shape.Text;
+@@ -24,9 +27,6 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.gwt.user.client.Window;
+-import com.xstream.bayesian.client.entry.BayesianService;
+-import com.xstream.bayesian.client.model.BayesNetwork;
+-import com.xstream.bayesian.client.model.BayesVariable;
+ 
+ public class BayesianFactory extends BaseFactory {
+ 
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/ProbabilityFactory.java b/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/ProbabilityFactory.java
+index 2b15637..c65eeac 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/ProbabilityFactory.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/bayesian/factory/ProbabilityFactory.java
+@@ -8,11 +8,11 @@
+ import org.kie.wires.client.events.ProbabilityEvent;
+ import org.kie.wires.client.util.BayesianUtils;
+ 
++import com.bayesian.parser.client.model.BayesVariable;
+ import com.emitrom.lienzo.client.core.shape.Rectangle;
+ import com.emitrom.lienzo.client.core.shape.Text;
+ import com.emitrom.lienzo.shared.core.types.Color;
+ import com.google.common.collect.Maps;
+-import com.xstream.bayesian.client.model.BayesVariable;
+ 
+ public class ProbabilityFactory extends BaseFactory {
+ 
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/canvas/CanvasScreen.java b/wires-webapp/src/main/java/org/kie/wires/client/canvas/CanvasScreen.java
+index 0d4ea61..fd5d329 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/canvas/CanvasScreen.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/canvas/CanvasScreen.java
+@@ -26,6 +26,7 @@
+ import org.uberfire.client.annotations.WorkbenchScreen;
+ import org.uberfire.lifecycle.OnOpen;
+ 
++import com.bayesian.parser.client.service.BayesianService;
+ import com.emitrom.lienzo.client.core.shape.GridLayer;
+ import com.emitrom.lienzo.client.core.shape.IPrimitive;
+ import com.emitrom.lienzo.client.core.shape.Layer;
+@@ -37,7 +38,6 @@
+ import com.google.gwt.user.client.ui.Composite;
+ import com.google.gwt.user.client.ui.IsWidget;
+ import com.google.gwt.user.client.ui.RequiresResize;
+-import com.xstream.bayesian.client.entry.BayesianService;
+ 
+ @Dependent
+ @WorkbenchScreen(identifier = "WiresCanvasScreen")
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/events/LayerEvent.java b/wires-webapp/src/main/java/org/kie/wires/client/events/LayerEvent.java
+index edb042f..3f2cdac 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/events/LayerEvent.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/events/LayerEvent.java
+@@ -2,7 +2,7 @@
+ 
+ import java.util.List;
+ 
+-import com.xstream.bayesian.client.model.BayesVariable;
++import com.bayesian.parser.client.model.BayesVariable;
+ 
+ public class LayerEvent {
+     
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/events/ProbabilityEvent.java b/wires-webapp/src/main/java/org/kie/wires/client/events/ProbabilityEvent.java
+index d200099..6233bec 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/events/ProbabilityEvent.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/events/ProbabilityEvent.java
+@@ -2,7 +2,7 @@
+ 
+ import org.kie.wires.client.bayesian.shapes.BayesianProbability;
+ 
+-import com.xstream.bayesian.client.model.BayesVariable;
++import com.bayesian.parser.client.model.BayesVariable;
+ 
+ public class ProbabilityEvent {
+     
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerBuilder.java b/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerBuilder.java
+index 43ff159..f10047a 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerBuilder.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerBuilder.java
+@@ -5,6 +5,7 @@
+ import org.kie.wires.client.events.BayesianEvent;
+ import org.kie.wires.client.events.ProbabilityEvent;
+ 
++import com.bayesian.parser.client.model.BayesVariable;
+ import com.emitrom.lienzo.client.core.shape.Group;
+ import com.emitrom.lienzo.client.core.shape.Layer;
+ import com.emitrom.lienzo.client.core.shape.Line;
+@@ -12,7 +13,6 @@
+ import com.emitrom.lienzo.client.core.shape.Shape;
+ import com.emitrom.lienzo.client.widget.LienzoPanel;
+ import com.google.gwt.user.client.ui.Composite;
+-import com.xstream.bayesian.client.model.BayesVariable;
+ 
+ @SuppressWarnings("rawtypes")
+ public class LayerBuilder extends Composite {
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerTextFactory.java b/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerTextFactory.java
+index 0d92a9f..abd48a7 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerTextFactory.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/factoryLayers/LayerTextFactory.java
+@@ -4,6 +4,7 @@
+ 
+ import org.kie.wires.client.events.ProbabilityEvent;
+ 
++import com.bayesian.parser.client.model.BayesVariable;
+ import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
+ import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
+ import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
+@@ -12,7 +13,6 @@
+ import com.emitrom.lienzo.client.core.shape.Rectangle;
+ import com.emitrom.lienzo.client.core.shape.Shape;
+ import com.emitrom.lienzo.client.widget.LienzoPanel;
+-import com.xstream.bayesian.client.model.BayesVariable;
+ 
+ public class LayerTextFactory extends LayerFactory<Rectangle> {
+ 
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/palette/LayersScreen.java b/wires-webapp/src/main/java/org/kie/wires/client/palette/LayersScreen.java
+index ced6f9d..8724f5c 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/palette/LayersScreen.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/palette/LayersScreen.java
+@@ -18,6 +18,7 @@
+ import org.uberfire.client.annotations.WorkbenchPartView;
+ import org.uberfire.client.annotations.WorkbenchScreen;
+ 
++import com.bayesian.parser.client.model.BayesVariable;
+ import com.emitrom.lienzo.client.core.shape.Group;
+ import com.emitrom.lienzo.client.core.shape.Layer;
+ import com.emitrom.lienzo.client.core.shape.Shape;
+@@ -30,7 +31,6 @@
+ import com.google.gwt.user.client.ui.RequiresResize;
+ import com.google.gwt.user.client.ui.SimplePanel;
+ import com.google.gwt.user.client.ui.Widget;
+-import com.xstream.bayesian.client.model.BayesVariable;
+ 
+ @Dependent
+ @WorkbenchScreen(identifier = "WiresLayersScreen")
+diff --git a/wires-webapp/src/main/java/org/kie/wires/client/util/BayesianUtils.java b/wires-webapp/src/main/java/org/kie/wires/client/util/BayesianUtils.java
+index 44ac930..daa256e 100644
+--- a/wires-webapp/src/main/java/org/kie/wires/client/util/BayesianUtils.java
++++ b/wires-webapp/src/main/java/org/kie/wires/client/util/BayesianUtils.java
+@@ -4,11 +4,11 @@
+ 
+ import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
+ 
++import com.bayesian.parser.client.model.BayesVariable;
+ import com.emitrom.lienzo.client.core.types.LinearGradient;
+ import com.emitrom.lienzo.client.core.types.Shadow;
+ import com.emitrom.lienzo.shared.core.types.Color;
+ import com.google.common.collect.ImmutableMap;
+-import com.xstream.bayesian.client.model.BayesVariable;
+ 
+ public class BayesianUtils {
+ 
+diff --git a/wires-webapp/src/main/resources/org/kie/wires/WiresShowcase.gwt.xml b/wires-webapp/src/main/resources/org/kie/wires/WiresShowcase.gwt.xml
+index 5d29bd6..17d25d3 100644
+--- a/wires-webapp/src/main/resources/org/kie/wires/WiresShowcase.gwt.xml
++++ b/wires-webapp/src/main/resources/org/kie/wires/WiresShowcase.gwt.xml
+@@ -13,5 +13,7 @@
+     <!-- Specify the paths for translatable code -->
+     <source path='client'/>
+     <source path='shared'/>
+-    <inherits name="com.xstream.bayesian.bayesian"/>
++    <inherits name="com.bayesian.parser.bayesian"/>
++    <inherits name="com.bayesian.network.bayesianNetwork"/>
++    
+ </module>
+-- 
+1.8.5.5
+
+
+From 68c7e87d84db81f9e422090f69f05969919fd1bf Mon Sep 17 00:00:00 2001
+From: hernsys <horacioantar@gmail.com>
+Date: Fri, 7 Mar 2014 16:54:52 -0300
+Subject: [PATCH 2/2] removing unnecesary pom
+
+---
+ wires-bayesian-network/pom.xml~ | 19 -------------------
+ 1 file changed, 19 deletions(-)
+ delete mode 100644 wires-bayesian-network/pom.xml~
+
+diff --git a/wires-bayesian-network/pom.xml~ b/wires-bayesian-network/pom.xml~
+deleted file mode 100644
+index ae78aeb..0000000
+--- a/wires-bayesian-network/pom.xml~
++++ /dev/null
+@@ -1,19 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-  <modelVersion>4.0.0</modelVersion>
+-  <parent>
+-    <groupId>org.kie</groupId>
+-    <artifactId>wires</artifactId>
+-    <version>1.0-SNAPSHOT</version>
+-  </parent>
+-
+-  <artifactId>wires-bayesian-network</artifactId>
+-  <packaging>pom</packaging>
+-
+-  <name>Wires Bayesian Network</name>
+-
+-  <modules>
+-  </modules>
+-
+-</project>
+-- 
+1.8.5.5
+

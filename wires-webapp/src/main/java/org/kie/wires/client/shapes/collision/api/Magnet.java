@@ -5,7 +5,6 @@
  */
 package org.kie.wires.client.shapes.collision.api;
 
-import com.emitrom.lienzo.client.core.shape.Layer;
 import java.util.List;
 import org.kie.wires.client.shapes.api.WiresBaseGroupShape;
 
@@ -40,5 +39,7 @@ public interface Magnet {
     void setMagnetVisible(boolean visible);
     
     WiresBaseGroupShape getShape();
+    
+    int getType();
     
 }

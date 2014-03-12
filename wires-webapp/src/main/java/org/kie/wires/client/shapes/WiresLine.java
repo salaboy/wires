@@ -20,6 +20,7 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
+import com.google.gwt.core.client.GWT;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +42,7 @@ import org.kie.wires.client.shapes.collision.api.Vector;
 public class WiresLine extends WiresBaseGroupShape {
 
     private String id;
-    private ControlPoint startControlPoint;
-    private ControlPoint endControlPoint;
+    
 
     private double currentDragX;
     private double currentDragY;
@@ -53,8 +53,7 @@ public class WiresLine extends WiresBaseGroupShape {
 
     private Line line;
 
-    private Magnet startMagnet;
-    private Magnet endMagnet;
+
 
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
@@ -64,12 +63,13 @@ public class WiresLine extends WiresBaseGroupShape {
 
         this.id = UUID.uuid();
         line.setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_LINE);
+        magnets.clear();
+        addMagnet(new LineMagnetImpl(this, Magnet.MAGNET_START));
+        addMagnet(new LineMagnetImpl(this, Magnet.MAGNET_END));
 
-        startMagnet = new LineMagnetImpl(this, Magnet.MAGNET_START);
-        endMagnet = new LineMagnetImpl(this, Magnet.MAGNET_END);
-
-        startControlPoint = new LineControlPointImpl(this, ControlPoint.CONTROL_START);
-        endControlPoint = new LineControlPointImpl(this, ControlPoint.CONTROL_END);
+        controlPoints.clear();
+        addControlPoint(new LineControlPointImpl(this, ControlPoint.CONTROL_START));
+        addControlPoint(new LineControlPointImpl(this, ControlPoint.CONTROL_END));
 
     }
 
@@ -136,65 +136,6 @@ public class WiresLine extends WiresBaseGroupShape {
 
     }
 
-    public ControlPoint getStartControlPoint() {
-        return startControlPoint;
-    }
-
-    public ControlPoint getEndControlPoint() {
-        return endControlPoint;
-    }
-
-    @Override
-    public void showControlPoints() {
-        final Layer layer = getLayer();
-
-        if (startControlPoint != null && !showingControlPoints) {
-            startControlPoint.placeControlPoint(getLayer());
-            endControlPoint.placeControlPoint(getLayer());
-
-            layer.add((Shape) startControlPoint);
-            layer.add((Shape) endControlPoint);
-            showingControlPoints = true;
-        }
-
-    }
-
-    @Override
-    public void hideControlPoints() {
-        Layer layer = getLayer();
-
-        // can be null, afer the main Shape is dragged, and control points are forcibly removed
-        if (startControlPoint != null && showingControlPoints) {
-            layer.remove((Shape) startControlPoint);
-            layer.remove((Shape) endControlPoint);
-            showingControlPoints = false;
-
-        }
-
-    }
-
-    public void showMagnetsPoints() {
-        final Layer layer = getLayer();
-
-        if (startMagnet != null && !showingMagnets) {
-            layer.add((Shape) startMagnet);
-            layer.add((Shape) endMagnet);
-            startMagnet.placeMagnetPoints();
-            endMagnet.placeMagnetPoints();
-            showingMagnets = true;
-        }
-
-    }
-
-    public void hideMagnetPoints() {
-        Layer layer = getLayer();
-        if (startMagnet != null && showingMagnets) {
-            layer.remove((Shape) startMagnet);
-            layer.remove((Shape) endMagnet);
-            showingMagnets = false;
-        }
-
-    }
 
     public boolean collidesWith(CollidableShape shape) {
         List<Vector> axes = getAxes();
@@ -285,75 +226,9 @@ public class WiresLine extends WiresBaseGroupShape {
         return currentDragY;
     }
 
-    public List<Magnet> getMagnets() {
-        ArrayList<Magnet> magnets = new ArrayList<Magnet>(2);
-        magnets.add(startMagnet);
-        magnets.add(endMagnet);
-        return magnets;
-    }
 
     @Override
     public String toString() {
-        return "EditableLine{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
+        return "WiresLine{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
     }
-
-    public void attachControlPointToMagent(Magnet selectedMagnet) {
-        double startX = ((Shape) getStartControlPoint()).getX();
-        double startY = ((Shape) getStartControlPoint()).getY();
-        double endX = ((Shape) getEndControlPoint()).getX();
-        double endY = ((Shape) getEndControlPoint()).getY();
-
-        double deltaStartX = selectedMagnet.getX() - startX;
-        double deltaStartY = selectedMagnet.getY() - startY;
-
-        double startDistance = Math.sqrt(Math.pow(deltaStartX, 2)
-                + Math.pow(deltaStartY, 2));
-
-        double deltaEndX = selectedMagnet.getX() - endX;
-        double deltaEndY = selectedMagnet.getY() - endY;
-
-        double endDistance = Math.sqrt(Math.pow(deltaEndX, 2)
-                + Math.pow(deltaEndY, 2));
-
-        if (endDistance < startDistance) {
-            if (!selectedMagnet.getAttachedControlPoints().contains(getEndControlPoint())) {
-                selectedMagnet.attachControlPoint(getEndControlPoint());
-                // This needs to be encapsulated outside here
-                getEndControlPoint().setControlPointX(selectedMagnet.getX());
-                getEndControlPoint().setControlPointY(selectedMagnet.getY());
-//                Point2DArray array = getLine().getPoints();
-//                array.getPoint(1).setX(selectedMagnet.getX());
-//                array.getPoint(1).setY(selectedMagnet.getY());
-                
-                
-                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
-                    if (!m.getId().equals(selectedMagnet.getId())) {
-                        if (m.getAttachedControlPoints().contains(getEndControlPoint())) {
-                            m.getAttachedControlPoints().remove(getEndControlPoint());
-                        }
-                    }
-                }
-            }
-        } else {
-            if (!selectedMagnet.getAttachedControlPoints().contains(getStartControlPoint())) {
-                selectedMagnet.attachControlPoint(getStartControlPoint());
-                // This needs to be encapsulated outside here
-                getStartControlPoint().setControlPointX(selectedMagnet.getX());
-                getStartControlPoint().setControlPointY(selectedMagnet.getY());
-//                Point2DArray array = getLine().getPoints();
-//                array.getPoint(1).setX(selectedMagnet.getX());
-//                array.getPoint(1).setY(selectedMagnet.getY());
-                
-                
-                for (Magnet m : selectedMagnet.getShape().getMagnets()) {
-                    if (!m.getId().equals(selectedMagnet.getId())) {
-                        if (m.getAttachedControlPoints().contains(getEndControlPoint())) {
-                            m.getAttachedControlPoints().remove(getEndControlPoint());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 }

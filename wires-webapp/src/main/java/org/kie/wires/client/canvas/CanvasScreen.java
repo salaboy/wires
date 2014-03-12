@@ -49,29 +49,29 @@ public class CanvasScreen extends Composite implements RequiresResize {
     private Layer layer;
 
     /*
-    * Please remove this from here!!!
-    */
+     * Please remove this from here!!!
+     */
     @Inject
     private Caller<BayesianService> bayesianService;
-     @Inject
+    @Inject
     private Event<ProbabilityEvent> probabilityEvent;
-     
+
     /*
-    * If these are two are generic enough we can keep them here
-    */
+     * If these are two are generic enough we can keep them here
+     */
     @Inject
     private Event<ProgressEvent> progressEvent;
 
     @Inject
-    private Event<ReadyEvent> readyEvent; 
-     
-    @Inject Event<ShapeSelectedEvent> selected;
-    
+    private Event<ReadyEvent> readyEvent;
+
+    @Inject
+    Event<ShapeSelectedEvent> selected;
+
     @Inject
     private Event<LayerEvent> layerEvent;
-   
 
-    public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
+    public static final List<WiresBaseGroupShape> shapesInCanvas = new ArrayList<WiresBaseGroupShape>();
 
     public CanvasScreen() {
     }
@@ -115,6 +115,7 @@ public class CanvasScreen extends Composite implements RequiresResize {
     }
 
     @WorkbenchPartTitle
+    @Override
     public String getTitle() {
         return "Canvas";
     }
@@ -126,17 +127,15 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
         String shape = shapeAddEvent.getShape();
-        
+
         /*This is the ugly bit that needs to be refactored to be generic */
-        
         WiresBaseGroupShape wiresShape = null;
-        if(shape.equals("WiresRectangle")){
-           wiresShape =  new WiresRectangle(70, 40);
-        }else if(shape.equals("WiresLine")){
-            wiresShape = new WiresLine(0,0, 30, 30);
+        if (shape.equals("WiresRectangle")) {
+            wiresShape = new WiresRectangle(70, 40);
+        } else if (shape.equals("WiresLine")) {
+            wiresShape = new WiresLine(0, 0, 30, 30);
         }
-        
-        
+
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
         } else if (shapeAddEvent.getX() > panel.getAbsoluteLeft() + panel.getWidth()
@@ -155,14 +154,15 @@ public class CanvasScreen extends Composite implements RequiresResize {
 
         x = 25 * Math.abs(x / 25);
         y = 25 * Math.abs(y / 25);
+
         wiresShape.setDraggable(true);
         layer.add(wiresShape);
 
-        ((EditableShape) wiresShape).init(x, y);
-        
+        wiresShape.init(x, y);
+
         wiresShape.setSelected(selected);
-        
-        shapesInCanvas.add((EditableShape) wiresShape);
+
+        shapesInCanvas.add(wiresShape);
 
         layer.draw();
     }
@@ -179,9 +179,10 @@ public class CanvasScreen extends Composite implements RequiresResize {
         }
         layer.draw();
     }
-   /*
-    * We need to move this from here as soon as possible!!
-    */
+    /*
+     * We need to move this from here as soon as possible!!
+     */
+
     public void addNewPanel(@Observes BayesianEvent event) {
 
         new BayesianFactory(bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent,
@@ -193,20 +194,19 @@ public class CanvasScreen extends Composite implements RequiresResize {
         for (WiresRectangle shape : event.getBayesianNodes()) {
             layer.add(shape);
             shape.setSelected(selected);
-            shapesInCanvas.add((EditableShape) shape);
+            shapesInCanvas.add(shape);
         }
         layer.draw();
 
     }
 
     public void clearPanel(@Observes ClearEvent event) {
-        for (EditableShape shape : shapesInCanvas) {
+        for (WiresBaseGroupShape shape : shapesInCanvas) {
             layer.remove((IPrimitive<?>) shape);
-            
+
         }
         shapesInCanvas.clear();
         layer.draw();
     }
 
- 
 }
