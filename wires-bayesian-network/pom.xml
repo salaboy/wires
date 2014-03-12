@@ -11,7 +11,7 @@
   <artifactId>wires-bayesian-network</artifactId>
   <packaging>pom</packaging>
 
-  <name>Wires Bayesian Network</name>
+  <name>Wires :: Bayesian Network</name>
 
   <modules>
 	<module>wires-bayesian-network-api</module>

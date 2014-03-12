@@ -4,8 +4,9 @@ import java.util.List;
 
 import javax.enterprise.event.Event;
 
-import org.kie.wires.client.events.ProgressEvent;
+import org.kie.wires.core.api.events.ProgressEvent;
 
+import com.bayesian.network.api.utils.BayesianUtils;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;

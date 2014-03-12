@@ -9,6 +9,9 @@
     
     <inherits name="com.bayesian.parser.bayesian"/>
     <inherits name="com.bayesian.network.bayesianNetwork"/>
+    <inherits name="org.kie.wires.core.WiresCoreClient"/>
+    
+    
     
     <!-- Specify the application specific style sheet. -->
     <set-property name="user.agent" value="safari" />

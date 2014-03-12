@@ -6,16 +6,16 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.kie.wires.client.events.ClearEvent;
-import org.kie.wires.client.events.LayerEvent;
-import org.kie.wires.client.events.ProbabilityEvent;
-import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.factoryLayers.LayerBuilder;
-import org.kie.wires.client.factoryShapes.ShapeFactoryUtil;
+import org.kie.wires.core.api.events.ClearEvent;
+import org.kie.wires.core.api.events.ShapeAddEvent;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
+import com.bayesian.network.api.builder.LayerBuilder;
+import com.bayesian.network.api.events.LayerEvent;
+import com.bayesian.network.api.events.ProbabilityEvent;
+import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
@@ -111,7 +111,7 @@ public class LayersScreen extends Composite implements RequiresResize {
     }
 
     private void buildNewLayer(Shape shape, BayesVariable node) {
-        new LayerBuilder(group, shape, panel, layer, accountLayers, null, null, node, probabilityEvent);
+        new LayerBuilder(group, shape, panel, accountLayers, null, null, node, probabilityEvent);
     }
 
     public void clearPanel(@Observes ClearEvent event) {

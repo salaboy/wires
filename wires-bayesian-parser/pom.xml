@@ -11,7 +11,7 @@
   <artifactId>wires-bayesian-parser</artifactId>
   <packaging>pom</packaging>
 
-  <name>Wires Bayesian Parser</name>
+  <name>Wires :: Bayesian Parser</name>
 
   <modules>
     <module>wires-bayesian-parser-api</module>

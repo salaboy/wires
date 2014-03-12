@@ -1,4 +1,7 @@
 package org.kie.wires.client.factoryShapes;
+
+import org.kie.wires.core.client.util.ShapeCategory;
+
 /**
  * At this moment this enum defines all the shapes with its categories for the stencil
  */

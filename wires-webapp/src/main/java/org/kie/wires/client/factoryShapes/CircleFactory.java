@@ -4,8 +4,10 @@ import java.util.Map;
 
 import javax.enterprise.event.Event;
 
-import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.shapes.WiresCircle;
+import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.shapes.WiresCircle;
+import org.kie.wires.core.client.util.ShapeCategory;
+import org.kie.wires.core.client.util.ShapesUtils;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
@@ -88,8 +90,8 @@ public class CircleFactory extends ShapeFactory<Circle> {
     }
 
     private void setAttributes(Circle circle, double x, double y) {
-        circle.setX(x).setY(y).setStrokeColor(ShapeFactoryUtil.RGB_STROKE_SHAPE)
-                .setStrokeWidth(ShapeFactoryUtil.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapeFactoryUtil.RGB_FILL_SHAPE)
+        circle.setX(x).setY(y).setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE)
+                .setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapesUtils.RGB_FILL_SHAPE)
                 .setDraggable(false);
     }
 

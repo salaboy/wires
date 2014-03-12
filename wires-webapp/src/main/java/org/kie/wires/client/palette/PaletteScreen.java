@@ -5,9 +5,9 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.kie.wires.client.events.ShapeAddEvent;
-import org.kie.wires.client.factoryShapes.ShapeCategory;
 import org.kie.wires.client.factoryShapes.StencilBuilder;
+import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.util.ShapeCategory;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
