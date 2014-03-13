@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 
 public class EditableBayesianNode extends WiresRectangle {
 
-    private static final long serialVersionUID = 1370682604031285242L;
     private Rectangle header;
     private Text textHeader;
     private Map<Text, List<Rectangle>> porcentualBars;
@@ -50,7 +49,6 @@ public class EditableBayesianNode extends WiresRectangle {
 
     public void setHeader(Rectangle header) {
         this.header = header;
-        // add(header);
     }
 
     public Text getTextHeader() {
@@ -59,7 +57,6 @@ public class EditableBayesianNode extends WiresRectangle {
 
     public void setTextHeader(Text textHeader) {
         this.textHeader = textHeader;
-        // add(textHeader);
     }
 
     public Map<Text, List<Rectangle>> getPorcentualsBar() {
@@ -68,13 +65,6 @@ public class EditableBayesianNode extends WiresRectangle {
 
     public void setPorcentualBars(Map<Text, List<Rectangle>> porcentualBars) {
         this.porcentualBars = porcentualBars;
-        // for (Map.Entry<Text, List<Rectangle>> porcenualBar :
-        // porcentualBars.entrySet()) {
-        // for (Rectangle rec : porcenualBar.getValue()) {
-        // add(rec);
-        // }
-        // add(porcenualBar.getKey());
-        // }
     }
 
 }

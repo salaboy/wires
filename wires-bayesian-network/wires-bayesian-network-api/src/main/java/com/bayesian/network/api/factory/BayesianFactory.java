@@ -49,20 +49,19 @@ public class BayesianFactory extends BaseFactory {
     public void init(final String xml03File, final Layer layer) {
         clearScreen(layer);
         this.drawLabelFile(xml03File);
-        buildBayesNetworkFromXML(xml03File, layer);
+        buildBayesNetworkFromXML(xml03File);
     }
 
-    private void buildBayesNetworkFromXML(final String xml03File, final Layer layer) {
+    private void buildBayesNetworkFromXML(final String xml03File) {
         bayesianService.call(new RemoteCallback<BayesNetwork>() {
             @Override
             public void callback(final BayesNetwork response) {
                 nodes = Lists.newArrayList();
                 for (BayesVariable bay : response.getNodos()) {
-                    drawBayesianNode(bay, layer);
+                    drawBayesianNode(bay);
                 }
                 layerEvent.fire(new LayerEvent(nodes));
                 readyEvent.fire(new ReadyEvent(bayesianNodes));
-                layer.draw();
             }
         }, new ErrorCallback<Object>() {
 
@@ -74,7 +73,7 @@ public class BayesianFactory extends BaseFactory {
         }).buildXml03(BayesianUtils.XML3_RESOURCE_PATH + xml03File);
     }
 
-    private void drawBayesianNode(BayesVariable node, Layer layer) {
+    private void drawBayesianNode(BayesVariable node) {
         colors = BayesianUtils.getNodeColors();
         double position[][] = node.getPosition();
         int positionX = (int) (BayesianUtils.POSITION_X_BASE + Math.round(position[0][0]));

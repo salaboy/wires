@@ -1,6 +1,11 @@
 package org.kie.wires.core.client.canvas;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
+
+import org.kie.wires.core.api.shapes.EditableShape;
 
 import com.emitrom.lienzo.client.core.shape.GridLayer;
 import com.emitrom.lienzo.client.core.shape.Layer;
@@ -17,6 +22,7 @@ public class Canvas extends Composite implements RequiresResize {
     
     protected LienzoPanel panel;
     protected Layer layer;
+    public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
     
     
     @PostConstruct
@@ -37,9 +43,7 @@ public class Canvas extends Composite implements RequiresResize {
         });
         
         Line line1 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLUE).setAlpha(0.5); // primary
-        // line
         Line line2 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.GREEN).setAlpha(0.5); // secondary
-        // line
         line2.setDashArray(2, 2); // the secondary lines are dashed lines
 
         GridLayer gridLayer = new GridLayer(100, line1, 25, line2);

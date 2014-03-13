@@ -87,7 +87,7 @@ public class CanvasScreen extends Canvas {
 
         wiresShape.setSelected(selected);
 
-        ShapesUtils.shapesInCanvas.add((EditableShape) wiresShape);
+        shapesInCanvas.add((EditableShape) wiresShape);
 
         layer.draw();
     }
@@ -96,18 +96,18 @@ public class CanvasScreen extends Canvas {
         for (WiresRectangle shape : event.getBayesianNodes()) {
             layer.add(shape);
             shape.setSelected(selected);
-            ShapesUtils.shapesInCanvas.add((EditableShape) shape);
+            shapesInCanvas.add((EditableShape) shape);
         }
         layer.draw();
 
     }
 
     public void clearPanel(@Observes ClearEvent event) {
-        for (EditableShape shape : ShapesUtils.shapesInCanvas) {
+        for (EditableShape shape : shapesInCanvas) {
             layer.remove((IPrimitive<?>) shape);
 
         }
-        ShapesUtils.shapesInCanvas.clear();
+        shapesInCanvas.clear();
         layer.draw();
     }
 
