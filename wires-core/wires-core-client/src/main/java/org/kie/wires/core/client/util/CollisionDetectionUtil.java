@@ -7,6 +7,7 @@ import org.kie.wires.core.api.collision.CollidableShape;
 import org.kie.wires.core.api.collision.Magnet;
 import org.kie.wires.core.api.collision.StickableShape;
 import org.kie.wires.core.api.shapes.EditableShape;
+import org.kie.wires.core.client.canvas.Canvas;
 
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.shape.Shape;
@@ -26,15 +27,9 @@ public class CollisionDetectionUtil {
 	private final static String MAGNET_RGB_FILL_SHAPE = "#f2f2f2";
 
     public static Magnet detectCollisions(EditableShape shapeActive, NodeDragMoveEvent event) {
-        //GWT.log(" # of shapes in canvas: "+shapesInCanvas.size());
-//        for (EditableShape shape : shapesInCanvas) {
-//            if (shape.isBeingDragged() || shape.isBeingResized()) {
-//                shapeActive = shape;
-//            }
-//        }
         Magnet selectedMagnet = null;
         if (shapeActive != null) {
-            for (EditableShape shape : ShapesUtils.shapesInCanvas) {
+            for (EditableShape shape : Canvas.shapesInCanvas) {
                 if (!shape.getId().equals(shapeActive.getId())
                         && ((CollidableShape) shapeActive).collidesWith(((CollidableShape) shape))) {
 

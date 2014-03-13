@@ -12,8 +12,6 @@ public class ShapesUtils {
 
     public static int selectedShape;
     
-    public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
-
     // Control Points
     public static final String CP_RGB_FILL_COLOR = "#0000FF";
     public static final int CP_RGB_STROKE_WIDTH_SHAPE = 1;

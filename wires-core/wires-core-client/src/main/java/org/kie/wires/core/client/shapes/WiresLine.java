@@ -6,6 +6,10 @@
 package org.kie.wires.core.client.shapes;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.kie.wires.core.api.collision.CollidableShape;
 import org.kie.wires.core.api.collision.ControlPoint;
 import org.kie.wires.core.api.collision.Magnet;
@@ -13,6 +17,7 @@ import org.kie.wires.core.api.collision.Projection;
 import org.kie.wires.core.api.collision.Vector;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.client.canvas.Canvas;
 import org.kie.wires.core.client.collision.LineControlPointImpl;
 import org.kie.wires.core.client.collision.LineMagnetImpl;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -30,9 +35,6 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
@@ -93,7 +95,7 @@ public class WiresLine extends WiresBaseGroupShape {
             public void onNodeMouseClick(NodeMouseClickEvent nodeMouseClickEvent) {
                 Layer layer = getLayer();
                 ShapesUtils.nodeMouseClickHandler(WiresLine.this);
-                ShapesUtils.deselectAllOtherShapes(ShapesUtils.shapesInCanvas);
+                ShapesUtils.deselectAllOtherShapes(Canvas.shapesInCanvas);
                 getSelected().fire(new ShapeSelectedEvent(WiresLine.this));
                 layer.draw();
             }

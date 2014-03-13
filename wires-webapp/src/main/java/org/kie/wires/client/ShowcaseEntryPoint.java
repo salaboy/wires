@@ -87,7 +87,6 @@ public class ShowcaseEntryPoint {
 
     private void setupMenu() {
         final AbstractWorkbenchPerspectiveActivity defaultPerspective = getDefaultPerspectiveActivity();
-        GWT.log("defaultPerspective " + defaultPerspective);
         final Menus menus = newTopLevelMenu("Wires").respondsWith(new Command() {
             @Override
             public void execute() {

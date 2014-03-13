@@ -11,6 +11,7 @@ import org.kie.wires.core.api.collision.Projection;
 import org.kie.wires.core.api.collision.Vector;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.client.canvas.Canvas;
 import org.kie.wires.core.client.collision.RectangleControlPointImpl;
 import org.kie.wires.core.client.collision.RectangleMagnetImpl;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -85,7 +86,7 @@ public class WiresRectangle extends WiresBaseGroupShape {
             public void onNodeMouseClick(NodeMouseClickEvent nodeMouseClickEvent) {
                 Layer layer = getLayer();
                 ShapesUtils.nodeMouseClickHandler(WiresRectangle.this);
-                ShapesUtils.deselectAllOtherShapes(ShapesUtils.shapesInCanvas);
+                ShapesUtils.deselectAllOtherShapes(Canvas.shapesInCanvas);
                 getSelected().fire(new ShapeSelectedEvent(WiresRectangle.this));
                 layer.draw();
             }

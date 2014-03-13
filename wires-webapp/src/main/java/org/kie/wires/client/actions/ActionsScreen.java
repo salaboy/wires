@@ -3,28 +3,23 @@ package org.kie.wires.client.actions;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.kie.wires.client.events.ImageReadyEvent;
+import org.kie.wires.client.factoryShapes.ActionFactory;
 import org.kie.wires.core.api.events.ClearEvent;
-import org.kie.wires.core.client.resources.AppResource;
+import org.kie.wires.core.client.shapes.ActionShape;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
 import com.bayesian.network.api.utils.ShapeFactoryUtil;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.image.PictureLoadedHandler;
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Picture;
-import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -46,32 +41,23 @@ public class ActionsScreen extends Composite implements RequiresResize {
 
     private LienzoPanel panel;
 
-    private Group group;
-
     private Layer layer;
 
-    private static final int X = 0;
-
-    private static final int Y = 5;
-
     public static int accountLayers;
-
-    private Picture clearAction;
 
     @Inject
     private Event<ClearEvent> clearEvent;
 
+    @Inject
+    private Event<ImageReadyEvent> imageReadyEvent;
+
     @PostConstruct
     public void init() {
-        accountLayers = 0;
-        super.initWidget(uiBinder.createAndBindUi(this));
         panel = new LienzoPanel(ShapeFactoryUtil.WIDTH_PANEL, ShapeFactoryUtil.HEIGHT_PANEL);
+        initWidget(panel);
         layer = new Layer();
-        panel.add(layer);
-        group = new Group();
-        group.setX(X).setY(Y);
-        layer.add(group);
-        actions.add(panel);
+        panel.getScene().add(layer);
+
         this.drawActions();
     }
 
@@ -94,34 +80,13 @@ public class ActionsScreen extends Composite implements RequiresResize {
     }
 
     private void drawActions() {
-        PictureLoadedHandler onLoad = new PictureLoadedHandler() {
-            public void onPictureLoaded(Picture picture) {
-                group.add(picture);
-                layer.draw();
-            }
-        };
-        clearOption(onLoad);
-
+        new ActionFactory(clearEvent, imageReadyEvent);
     }
 
-    private void clearOption(PictureLoadedHandler onLoad) {
-        Rectangle boundingAction = new Rectangle(20, 20).setX(0).setY(0).setStrokeColor(ColorName.WHITE.getValue());
-        group.add(boundingAction);
-        clearAction = new Picture(AppResource.INSTANCE.images().clear(), 16, 16, true, null);
-        clearAction.setDraggable(true).setX(1).setY(1).onLoad(onLoad);
-        clearAction.addNodeMouseClickHandler(clearEvent());
-        boundingAction.addNodeMouseClickHandler(clearEvent());
+    public void readyEvent(@Observes ImageReadyEvent event) {
+        for (ActionShape action : event.getActionsShape()) {
+            layer.add(action);
+        }
+        layer.draw();
     }
-
-    private NodeMouseClickHandler clearEvent() {
-        return new NodeMouseClickHandler() {
-            @Override
-            public void onNodeMouseClick(NodeMouseClickEvent event) {
-                if (Window.confirm("Are you sure to clean the canvas?")) {
-                    clearEvent.fire(new ClearEvent());
-                }
-            }
-        };
-    }
-
 }
