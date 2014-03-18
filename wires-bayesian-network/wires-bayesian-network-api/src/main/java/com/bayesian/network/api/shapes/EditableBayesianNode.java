@@ -1,5 +1,6 @@
 package com.bayesian.network.api.shapes;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -9,19 +10,18 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.google.common.collect.Maps;
 
+public class EditableBayesianNode extends WiresRectangle implements Serializable {
 
-public class EditableBayesianNode extends WiresRectangle {
-
+    private static final long serialVersionUID = -5490131652690005490L;
     private Rectangle header;
     private Text textHeader;
     private Map<Text, List<Rectangle>> porcentualBars;
 
-    public EditableBayesianNode(){
+    public EditableBayesianNode() {
         super(0, 0);
     }
-    
-    public EditableBayesianNode(double width, double height, double positionXNode, double positionYNode,
-            String fillColor) {
+
+    public EditableBayesianNode(double width, double height, double positionXNode, double positionYNode, String fillColor) {
         super(width, height);
         super.init(positionXNode, positionYNode);
         this.porcentualBars = Maps.newHashMap();
