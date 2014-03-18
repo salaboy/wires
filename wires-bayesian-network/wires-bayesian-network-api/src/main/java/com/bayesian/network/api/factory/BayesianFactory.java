@@ -9,6 +9,9 @@ import javax.enterprise.event.Event;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.kie.wires.core.api.events.ProgressEvent;
+import org.kie.wires.core.client.canvas.Canvas;
+import org.kie.wires.core.client.shapes.ProgressBar;
 
 import com.bayesian.network.api.events.LayerEvent;
 import com.bayesian.network.api.events.ProbabilityEvent;
@@ -18,7 +21,6 @@ import com.bayesian.network.api.utils.BayesianUtils;
 import com.bayesian.parser.client.model.BayesNetwork;
 import com.bayesian.parser.client.model.BayesVariable;
 import com.bayesian.parser.client.service.BayesianService;
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.shared.core.types.Color;
@@ -32,27 +34,29 @@ public class BayesianFactory extends BaseFactory {
     private Event<LayerEvent> layerEvent;
     private Event<ProbabilityEvent> probabilityEvent;
     private Event<ReadyEvent> readyEvent;
+    private Event<ProgressEvent> progressEvent;
     private List<BayesVariable> nodes;
     private String[][] colors;
 
     private List<EditableBayesianNode> bayesianNodes = new ArrayList<EditableBayesianNode>();
 
-    public BayesianFactory(Caller<BayesianService> bayesianService, String xml03File, Layer layer,
-            Event<LayerEvent> layerEvent, Event<ProbabilityEvent> probabilityEvent, Event<ReadyEvent> readyEvent) {
+    public BayesianFactory(Caller<BayesianService> bayesianService, String xml03File, Event<LayerEvent> layerEvent,
+            Event<ProbabilityEvent> probabilityEvent, Event<ReadyEvent> readyEvent, Event<ProgressEvent> progressEvent) {
         this.bayesianService = bayesianService;
         this.layerEvent = layerEvent;
         this.probabilityEvent = probabilityEvent;
         this.readyEvent = readyEvent;
-        init(xml03File, layer);
+        this.progressEvent = progressEvent;
+        init(xml03File);
     }
 
-    public void init(final String xml03File, final Layer layer) {
-        clearScreen(layer);
-        this.drawLabelFile(xml03File);
+    public void init(final String xml03File) {
+        clearScreen();
         buildBayesNetworkFromXML(xml03File);
     }
 
     private void buildBayesNetworkFromXML(final String xml03File) {
+        progressBar();
         bayesianService.call(new RemoteCallback<BayesNetwork>() {
             @Override
             public void callback(final BayesNetwork response) {
@@ -60,14 +64,17 @@ public class BayesianFactory extends BaseFactory {
                 for (BayesVariable bay : response.getNodos()) {
                     drawBayesianNode(bay);
                 }
+                Canvas.progressBar.hide();
                 layerEvent.fire(new LayerEvent(nodes));
                 readyEvent.fire(new ReadyEvent(bayesianNodes));
+
             }
         }, new ErrorCallback<Object>() {
 
             @Override
             public boolean error(Object message, Throwable throwable) {
                 Window.alert("Sorry.. the " + xml03File + " could not be read..");
+                ProgressBar.setInfinite(false);
                 return false;
             }
         }).buildXml03(BayesianUtils.XML3_RESOURCE_PATH + xml03File);
@@ -129,8 +136,6 @@ public class BayesianFactory extends BaseFactory {
         bayesianNode.setPorcentualBars(porcentualsBar);
     }
 
-    
-
     private int calculatePorcentage(double probabilities[][], int maxWidthFill, int position) {
         double porcentual = 0;
         if (position == 0) {
@@ -142,22 +147,16 @@ public class BayesianFactory extends BaseFactory {
         return (int) ((porcentual * maxWidthFill) / 100);
     }
 
-    
-
-    private void drawLabelFile(String nameFile) {
-
-        /*super.drawComponent(BayesianUtils.BG_COLOR_CONTAINER, BayesianUtils.POSITION_X_CONTAINER,
-                BayesianUtils.POSITION_Y_CONTAINER, BayesianUtils.WIDTH_CONTAINER, BayesianUtils.HEIGHT_CONTAINER,
-                BayesianUtils.BORDER_CONTAINER, true);
-
-        super.drawText(BayesianUtils.COLOR_TEXT_LABEL, BayesianUtils.POSITION_X_TEXT_LABEL,
-                BayesianUtils.POSITION_Y_TEXT_LABEL, BayesianUtils.WIDTH_TEXT_LABEL, BayesianUtils.HEIGHT_TEXT_LABEL,
-                BayesianUtils.COLOR_TEXT_LABEL, nameFile, BayesianUtils.FONT_SIZE_TEXT_LABEL);*/
+    private void clearScreen() {
+        probabilityEvent.fire(new ProbabilityEvent());
     }
 
-    private void clearScreen(Layer layer) {
-        layer.draw();
-        probabilityEvent.fire(new ProbabilityEvent());
+    private void progressBar() {
+        if (Canvas.progressBar != null) {
+            Canvas.progressBar.show();
+        } else {
+            progressEvent.fire(new ProgressEvent());
+        }
     }
 
 }

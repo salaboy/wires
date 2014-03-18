@@ -6,6 +6,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
+import org.kie.wires.core.api.events.ProgressEvent;
 import org.kie.wires.core.client.canvas.Canvas;
 
 import com.bayesian.network.api.events.BayesianEvent;
@@ -29,9 +30,12 @@ public class BayesianScreen extends Canvas {
 
     @Inject
     private Event<LayerEvent> layerEvent;
+    
+    @Inject
+    private Event<ProgressEvent> progressEvent;
 
     public void addNewPanel(@Observes BayesianEvent event) {
-        new BayesianFactory(bayesianService, event.getTemplate(), layer, layerEvent, probabilityEvent, readyEvent);
+        new BayesianFactory(bayesianService, event.getTemplate(), layerEvent, probabilityEvent, readyEvent, progressEvent);
     }
 
 }

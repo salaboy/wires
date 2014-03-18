@@ -27,13 +27,13 @@ public class LayerBuilder extends Composite {
 
     public void newLayer(Group group, final Shape shape, LienzoPanel panel, int accountLayers, String template,
             Event<BayesianEvent> bayesianEvent, BayesVariable node, Event<ProbabilityEvent> probabilityEvent) {
-        if(shape == null){
+        if (shape == null) {
             new LayerTextFactory(group, panel, accountLayers, node, probabilityEvent);
-        }else if (shape instanceof Line) {
+        } else if (shape instanceof Line) {
             new LayerLineFactory(group, panel, accountLayers);
         } else if (shape instanceof Rectangle) {
             new LayerRectangleFactory(group, accountLayers, template, bayesianEvent);
-        } 
+        }
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.kie.wires.core.api.shapes.EditableShape;
+import org.kie.wires.core.client.shapes.ProgressBar;
 
 import com.emitrom.lienzo.client.core.shape.GridLayer;
 import com.emitrom.lienzo.client.core.shape.Layer;
@@ -17,21 +18,19 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RequiresResize;
 
-
 public class Canvas extends Composite implements RequiresResize {
-    
+
     protected LienzoPanel panel;
     protected Layer layer;
     public static final List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
-    
-    
+    public static ProgressBar progressBar;
+
     @PostConstruct
     public void init() {
         panel = new LienzoPanel(800, 600);
 
         initWidget(panel);
 
-        
         layer = new Layer();
         panel.getScene().add(layer);
 
@@ -41,7 +40,7 @@ public class Canvas extends Composite implements RequiresResize {
                 // ShapesUtils.deselectAllShapes(CanvasScreen.shapesInCanvas);
             }
         });
-        
+
         Line line1 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.BLUE).setAlpha(0.5); // primary
         Line line2 = new Line(0, 0, 0, 0).setStrokeColor(ColorName.GREEN).setAlpha(0.5); // secondary
         line2.setDashArray(2, 2); // the secondary lines are dashed lines
@@ -53,7 +52,7 @@ public class Canvas extends Composite implements RequiresResize {
         gridLayer.moveToBottom();
         gridLayer.setListening(false);
         gridLayer.draw();
-        
+
         layer.draw();
 
     }

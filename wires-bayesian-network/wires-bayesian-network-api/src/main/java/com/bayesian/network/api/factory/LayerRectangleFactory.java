@@ -20,7 +20,7 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
     private static int layers;
 
     private Event<BayesianEvent> bayesianEvent;
-    
+
     public LayerRectangleFactory() {
 
     }
@@ -52,12 +52,12 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
             @Override
             public void onNodeMouseClick(NodeMouseClickEvent event) {
-            	bayesianEvent.fire(new BayesianEvent(xml03File));
+                bayesianEvent.fire(new BayesianEvent(xml03File));
             }
         });
         group.add(shape);
     }
-    
+
     @Override
     public Shape<Rectangle> drawLayer() {
         final Rectangle rectangle = new Rectangle(15, 15);

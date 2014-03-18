@@ -54,7 +54,7 @@ public class TemplateScreen extends Composite implements RequiresResize {
 
     @Inject
     private Event<BayesianEvent> bayesianEvent;
-    
+
     @PostConstruct
     public void init() {
         accountLayers = 0;

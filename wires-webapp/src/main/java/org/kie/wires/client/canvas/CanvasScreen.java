@@ -6,24 +6,23 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.kie.wires.core.api.events.ClearEvent;
+import org.kie.wires.core.api.events.ProgressEvent;
 import org.kie.wires.core.api.events.ShapeAddEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.shapes.EditableShape;
 import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
 import org.kie.wires.core.client.canvas.Canvas;
+import org.kie.wires.core.client.shapes.ProgressBar;
 import org.kie.wires.core.client.shapes.WiresLine;
 import org.kie.wires.core.client.shapes.WiresRectangle;
-import org.kie.wires.core.client.util.ShapesUtils;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnOpen;
 
-import com.bayesian.network.api.events.BayesianEvent;
 import com.bayesian.network.api.events.ReadyEvent;
 import com.bayesian.network.api.screen.BayesianScreen;
 import com.emitrom.lienzo.client.core.shape.IPrimitive;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 
 @SuppressWarnings("unused")
@@ -62,11 +61,11 @@ public class CanvasScreen extends Canvas {
         /* This is the ugly bit that needs to be refactored to be generic */
 
         WiresBaseGroupShape wiresShape = null;
-        if(shape.equals("WiresRectangle")){
+        if (shape.equals("WiresRectangle")) {
             wiresShape = new WiresRectangle(70, 40);
-         }else if(shape.equals("WiresLine")){
-             wiresShape = new WiresLine(0,0, 30, 30);
-         }
+        } else if (shape.equals("WiresLine")) {
+            wiresShape = new WiresLine(0, 0, 30, 30);
+        }
 
         if (shapeAddEvent.getX() < panel.getAbsoluteLeft() || shapeAddEvent.getY() < panel.getAbsoluteTop()) {
             return;
@@ -109,6 +108,15 @@ public class CanvasScreen extends Canvas {
         }
         shapesInCanvas.clear();
         layer.draw();
+    }
+
+    public void progress(@Observes ProgressEvent event) {
+        if (progressBar == null) {
+            progressBar = new ProgressBar(300, 34, layer);
+            progressBar.setX(20).setY(10);
+            layer.add(progressBar);
+            layer.draw();
+        }
     }
 
 }
