@@ -1,10 +1,11 @@
 package com.bayesian.parser.client.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import com.google.common.collect.Lists;
 
 @Portable
 public class BayesNetwork implements Serializable {
@@ -19,8 +20,7 @@ public class BayesNetwork implements Serializable {
     }
 
     public BayesNetwork(String name) {
-        // TODO implement Guava
-        this.nodos = new ArrayList<BayesVariable>();
+        this.nodos = Lists.newArrayList();
         this.name = name;
     }
 

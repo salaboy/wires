@@ -6,7 +6,6 @@ import com.bayesian.network.api.events.ProbabilityEvent;
 import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
@@ -30,8 +29,6 @@ public class LayerTextFactory extends LayerFactory<Rectangle> {
 
     public void drawLayer(Group group, String template, final BayesVariable node) {
         final Rectangle boundingBox = super.createBoundingBox(group, layers);
-        this.addShapeHandlers(boundingBox, group);
-
         boundingBox.addNodeMouseClickHandler(new NodeMouseClickHandler() {
 
             @Override
@@ -53,22 +50,6 @@ public class LayerTextFactory extends LayerFactory<Rectangle> {
     @Override
     public Shape<Rectangle> drawLayer() {
         return null;
-    }
-
-    @Override
-    public void addShapeHandlers(Shape<Rectangle> shape, Group group) {
-
-    }
-
-    @Override
-    protected void addBoundingHandlers(Rectangle boundingBox, Group group) {
-
-    }
-
-    @Override
-    protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
-        return null;
-
     }
 
 }
