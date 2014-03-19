@@ -7,17 +7,16 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class BayesVariable implements Serializable {
+
     private static final long serialVersionUID = -6018017577352463589L;
+
     private String name;
     private int id;
     double[][] probabilities;
     private List<String> outcomes;
-
     private String type;
     double[][] position;
-
     private List<String> given;
-    
     private List<BayesVariable> incomingNodes;
 
     public BayesVariable() {
@@ -104,6 +103,5 @@ public class BayesVariable implements Serializable {
     public void setIncomingNodes(List<BayesVariable> incomingNodes) {
         this.incomingNodes = incomingNodes;
     }
-
 
 }

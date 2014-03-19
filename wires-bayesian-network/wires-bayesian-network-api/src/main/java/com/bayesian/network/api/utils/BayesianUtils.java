@@ -92,27 +92,6 @@ public class BayesianUtils {
         return colors;
 
     }
-
-    public static LinearGradient getSubstrateGradient() {
-        LinearGradient substrateGradient = new LinearGradient(0, SUBSTRATE_HEIGHT, 0, 0);
-        substrateGradient.addColorStop(0.4, "rgba(255,255,255, 0.1)");
-        substrateGradient.addColorStop(0.6, "rgba(255,255,255, 0.7)");
-        substrateGradient.addColorStop(0.9, "rgba(255,255,255,0.4)");
-        substrateGradient.addColorStop(1, "rgba(189,189,189,1)");
-        return substrateGradient;
-    }
-
-    public static LinearGradient getProgressGradient() {
-        LinearGradient progressGradient = new LinearGradient(0, -50, 0, 50);
-        progressGradient.addColorStop(0.5, "#4DA4F3");
-        progressGradient.addColorStop(0.8, "#ADD9FF");
-        progressGradient.addColorStop(1, "#9ED1FF");
-        return progressGradient;
-    }
-
-    public static Shadow getSubstrateShadow() {
-        return new Shadow(BayesianUtils.SUBSTRATE_COLOR, 5, 3, 3);
-    }
     
     public static double[][] orderListValues(BayesVariable node, int outcomesSize) {
         double[][] probabilities = node.getProbabilities();

@@ -21,12 +21,6 @@ public abstract class LayerFactory<T extends Shape<T>> {
 
     protected abstract Shape<T> drawLayer();
 
-    protected abstract void addShapeHandlers(Shape<T> shape, Group group);
-
-    protected abstract NodeMouseDownHandler getNodeMouseDownEvent(final Group group);
-
-    protected abstract void addBoundingHandlers(Rectangle boundingBox, Group group);
-
     protected Rectangle createBoundingBox(Group group, int layers) {
         final Rectangle boundingBox = new Rectangle(ShapeFactoryUtil.WIDTH_BOUNDING_LAYER,
                 ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER);
