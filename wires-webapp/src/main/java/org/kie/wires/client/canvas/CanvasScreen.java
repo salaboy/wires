@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.api.events.ProgressEvent;
+import org.kie.wires.core.api.events.ReadyShape;
 import org.kie.wires.core.api.events.ShapeAddEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.shapes.EditableShape;
@@ -32,6 +33,9 @@ public class CanvasScreen extends Canvas {
 
     @Inject
     private Event<ShapeSelectedEvent> selected;
+
+    @Inject
+    private Event<ReadyShape> readyShape;
 
     @Inject
     private BayesianScreen bayesianScreen;
@@ -73,22 +77,28 @@ public class CanvasScreen extends Canvas {
                 || shapeAddEvent.getY() > panel.getAbsoluteTop() + panel.getHeight()) {
             return;
         }
-        int x = ((shapeAddEvent.getX() - panel.getAbsoluteLeft()) < 1) ? 1 : shapeAddEvent.getX() - panel.getAbsoluteLeft();
-        int y = ((shapeAddEvent.getY() - panel.getAbsoluteTop() < 1)) ? 1 : shapeAddEvent.getY() - panel.getAbsoluteTop();
-
-        x = 25 * Math.abs(x / 25);
-        y = 25 * Math.abs(y / 25);
 
         wiresShape.setDraggable(true);
         layer.add(wiresShape);
 
-        ((EditableShape) wiresShape).init(x, y);
+        ((EditableShape) wiresShape).init(this.getX(shapeAddEvent.getX()), this.getY(shapeAddEvent.getY()));
 
         wiresShape.setSelected(selected);
 
         shapesInCanvas.add((EditableShape) wiresShape);
 
         layer.draw();
+        readyShape.fire(new ReadyShape(shape));
+    }
+
+    private int getX(int xShapeEvent) {
+        int x = ((xShapeEvent - panel.getAbsoluteLeft()) < 1) ? 1 : xShapeEvent - panel.getAbsoluteLeft();
+        return 25 * Math.abs(x / 25);
+    }
+
+    private int getY(int yShapeEvent) {
+        int y = ((yShapeEvent - panel.getAbsoluteTop() < 1)) ? 1 : yShapeEvent - panel.getAbsoluteTop();
+        return 25 * Math.abs(y / 25);
     }
 
     public void addNodes(@Observes ReadyEvent event) {
