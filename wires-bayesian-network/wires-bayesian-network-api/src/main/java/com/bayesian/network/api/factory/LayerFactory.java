@@ -4,7 +4,6 @@ package com.bayesian.network.api.factory;
 import org.kie.wires.core.client.resources.AppImages;
 
 import com.bayesian.network.api.utils.ShapeFactoryUtil;
-import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;

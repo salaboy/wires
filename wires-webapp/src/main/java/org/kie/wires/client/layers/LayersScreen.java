@@ -7,7 +7,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.kie.wires.core.api.events.ClearEvent;
-import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.api.events.ReadyShape;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -91,12 +91,12 @@ public class LayersScreen extends Composite implements RequiresResize {
         super.setPixelSize(width, height);
     }
 
-    public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
+    public void myResponseObserver(@Observes ReadyShape readyShape) {
         accountLayers += 1;
         /* refactor this to be generic as well */
-        if (shapeAddEvent.getShape().equals("WiresRectangle")) {
+        if (readyShape.getShape().equals("WiresRectangle")) {
             buildNewLayer(new Rectangle(40, 30), null);
-        } else if (shapeAddEvent.getShape().equals("WiresLine")) {
+        } else if (readyShape.getShape().equals("WiresLine")) {
             buildNewLayer(new Line(0,0, 30,30), null);
         }
         layer.draw();
