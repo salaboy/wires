@@ -6,6 +6,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.wires.core.client.util.ShapeCategory;
+import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -13,7 +14,6 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 
 import com.bayesian.network.api.builder.LayerBuilder;
 import com.bayesian.network.api.events.BayesianEvent;
-import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
@@ -88,10 +88,10 @@ public class TemplateScreen extends Composite implements RequiresResize {
     }
 
     private void drawStencil() {
-        newAccordion(templates, ShapeCategory.BAYESIAN);
+        newAccordion(ShapeCategory.BAYESIAN);
     }
 
-    private void newAccordion(SimplePanel simplePanel, ShapeCategory category) {
+    private void newAccordion(ShapeCategory category) {
         final Rectangle rectangle = new Rectangle(10, 10);
         rectangle.setX(X).setY(Y).setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE)
                 .setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapesUtils.RGB_FILL_SHAPE)

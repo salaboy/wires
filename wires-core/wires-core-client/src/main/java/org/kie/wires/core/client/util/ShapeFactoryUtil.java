@@ -1,4 +1,4 @@
-package com.bayesian.network.api.utils;
+package org.kie.wires.core.client.util;
 
 import com.emitrom.lienzo.shared.core.types.Color;
 
@@ -29,7 +29,5 @@ public class ShapeFactoryUtil {
     public static final String FONT_FAMILY_DESCRIPTION = "oblique normal";
     public static final double FONT_SIZE_DESCRIPTION = 10;
     public static final double FONT_SIZE_WIDTH = 6;
-
-    
 
 }

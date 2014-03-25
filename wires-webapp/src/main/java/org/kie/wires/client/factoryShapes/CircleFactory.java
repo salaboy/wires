@@ -1,10 +1,12 @@
 package org.kie.wires.client.factoryShapes;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.event.Event;
 
 import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.shapes.PaletteShape;
 import org.kie.wires.core.client.shapes.WiresCircle;
 import org.kie.wires.core.client.util.ShapeCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -29,42 +31,44 @@ public class CircleFactory extends ShapeFactory<Circle> {
     }
 
     public CircleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
-            Map<ShapeCategory, Integer> shapesByCategory) {
+            Map<ShapeCategory, Integer> shapesByCategory, List<PaletteShape> listShapes) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
-        this.drawBoundingBox(group);
+        this.drawBoundingBox(listShapes);
+
     }
 
     @Override
-    protected void drawBoundingBox(Group group) {
-        this.addBoundingHandlers(super.createBoundingBox(group, shapes), group);
-        this.addShapeHandlers(drawShape(), group);
-        group.add(super.createDescription(DESCRIPTION, shapes));
-
+    protected void drawBoundingBox(List<PaletteShape> listShapes) {
+        this.addBoundingHandlers(super.createBoundingBox(shapes));
+        this.addShapeHandlers(drawShape());
+        super.createDescription(DESCRIPTION, shapes);
+        shape.build();
+        listShapes.add(shape);
     }
 
     @Override
     protected Shape<Circle> drawShape() {
         final Circle circle = new Circle(15);
         setAttributes(circle, this.getX(), this.getY());
+        shape.setShape(circle);
         return circle;
     }
 
     @Override
-    protected void addShapeHandlers(Shape<Circle> shape, Group group) {
-        shape.addNodeMouseDownHandler(getNodeMouseDownEvent(group));
-        group.add(shape);
+    protected void addShapeHandlers(Shape<Circle> shape) {
+        shape.addNodeMouseDownHandler(getNodeMouseDownEvent());
 
     }
 
     @Override
-    protected void addBoundingHandlers(Rectangle boundingBox, Group group) {
-        boundingBox.addNodeMouseDownHandler(getNodeMouseDownEvent(group));
+    protected void addBoundingHandlers(Rectangle boundingBox) {
+        boundingBox.addNodeMouseDownHandler(getNodeMouseDownEvent());
 
     }
 
     @Override
-    protected NodeMouseDownHandler getNodeMouseDownEvent(Group group) {
+    protected NodeMouseDownHandler getNodeMouseDownEvent() {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final Layer floatingLayer = new Layer();
@@ -75,7 +79,8 @@ public class CircleFactory extends ShapeFactory<Circle> {
                 floatingPanel.add(floatingLayer);
                 floatingLayer.draw();
                 RootPanel.get().add(floatingPanel);
-//                setFloatingHandlers(getFloatingStyle(floatingPanel, event), floatingPanel, floatingShape);
+                // setFloatingHandlers(getFloatingStyle(floatingPanel, event),
+                // floatingPanel, floatingShape);
             }
 
         };
@@ -85,14 +90,13 @@ public class CircleFactory extends ShapeFactory<Circle> {
 
     @Override
     protected ShapeCategory getCategory() {
-//        return ShapeType.CIRCLE.getCategory();
+        // return ShapeType.CIRCLE.getCategory();
         return null;
     }
 
     private void setAttributes(Circle circle, double x, double y) {
-        circle.setX(x).setY(y).setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE)
-                .setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapesUtils.RGB_FILL_SHAPE)
-                .setDraggable(false);
+        circle.setX(x).setY(y).setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE).setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_SHAPE)
+                .setFillColor(ShapesUtils.RGB_FILL_SHAPE).setDraggable(false);
     }
 
     private double getX() {

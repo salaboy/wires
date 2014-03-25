@@ -10,11 +10,11 @@ import org.kie.wires.client.events.ImageReadyEvent;
 import org.kie.wires.client.factoryShapes.ActionFactory;
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.client.shapes.ActionShape;
+import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
-import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.core.client.GWT;
