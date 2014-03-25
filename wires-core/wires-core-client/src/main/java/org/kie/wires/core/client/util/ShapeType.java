@@ -1,20 +1,16 @@
-package org.kie.wires.client.factoryShapes;
-
-import org.kie.wires.core.client.util.ShapeCategory;
+package org.kie.wires.core.client.util;
 
 /**
- * At this moment this enum defines all the shapes with its categories for the stencil
+ * At this moment this enum defines all the shapes with its categories for the
+ * stencil
  */
 public enum ShapeType {
-    //connectors
+    // connectors
     LINE(ShapeCategory.CONNECTORS),
-    
-    //shapes
-    //CIRCLE(ShapeCategory.SHAPES), 
+
+    // shapes
+    // CIRCLE(ShapeCategory.SHAPES),
     RECTANGLE(ShapeCategory.SHAPES);
-    
-    
-    
 
     private ShapeType(ShapeCategory category) {
         this.category = category;

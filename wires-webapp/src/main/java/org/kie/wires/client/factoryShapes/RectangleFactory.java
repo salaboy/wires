@@ -1,16 +1,18 @@
 package org.kie.wires.client.factoryShapes;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.event.Event;
 
 import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.shapes.PaletteShape;
 import org.kie.wires.core.client.util.ShapeCategory;
+import org.kie.wires.core.client.util.ShapeType;
 import org.kie.wires.core.client.util.ShapesUtils;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
@@ -25,41 +27,44 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
 
     }
 
-    public RectangleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent, 
-            Map<ShapeCategory, Integer> shapesByCategory) {
+    public RectangleFactory(LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
+            Map<ShapeCategory, Integer> shapesByCategory, List<PaletteShape> listShapes) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
-        this.drawBoundingBox(group);
+        this.drawBoundingBox(listShapes);
+
     }
 
     @Override
-    protected void drawBoundingBox(Group group) {
-        this.addBoundingHandlers(createBoundingBox(group, shapes), group);
-        this.addShapeHandlers(drawShape(), group);
-        group.add(super.createDescription(DESCRIPTION, shapes));
+    protected void drawBoundingBox(List<PaletteShape> listShapes) {
+        this.addBoundingHandlers(createBoundingBox(shapes));
+        this.addShapeHandlers(drawShape());
+        super.createDescription(DESCRIPTION, shapes);
+        shape.build();
+        listShapes.add(shape);
     }
 
     @Override
     protected Shape<Rectangle> drawShape() {
         final Rectangle rectangle = new Rectangle(30, 30);
         setAttributes(rectangle, getX(), getY());
+        shape.setShape(rectangle);
         return rectangle;
     }
 
     @Override
-    protected void addShapeHandlers(Shape<Rectangle> shape, Group group) {
-        shape.addNodeMouseDownHandler(getNodeMouseDownEvent(group));
-        group.add(shape);
+    protected void addShapeHandlers(Shape<Rectangle> shape) {
+        shape.addNodeMouseDownHandler(getNodeMouseDownEvent());
     }
 
     @Override
-    protected void addBoundingHandlers(Rectangle boundingBox, Group group) {
-        boundingBox.addNodeMouseDownHandler(getNodeMouseDownEvent(group));
+    protected void addBoundingHandlers(Rectangle boundingBox) {
+        boundingBox.addNodeMouseDownHandler(getNodeMouseDownEvent());
 
     }
 
     @Override
-    protected NodeMouseDownHandler getNodeMouseDownEvent(final Group group) {
+    protected NodeMouseDownHandler getNodeMouseDownEvent() {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
             public void onNodeMouseDown(NodeMouseDownEvent event) {
                 final Rectangle floatingShape = new Rectangle(70, 40);

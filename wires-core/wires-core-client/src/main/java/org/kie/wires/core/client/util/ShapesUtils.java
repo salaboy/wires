@@ -1,6 +1,5 @@
 package org.kie.wires.core.client.util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kie.wires.core.api.collision.StickableShape;
@@ -11,7 +10,7 @@ public class ShapesUtils {
     public static final String LIGHT_BLUE = "#A8C6FA";
 
     public static int selectedShape;
-    
+
     // Control Points
     public static final String CP_RGB_FILL_COLOR = "#0000FF";
     public static final int CP_RGB_STROKE_WIDTH_SHAPE = 1;
@@ -43,6 +42,27 @@ public class ShapesUtils {
     public static void nodeMouseClickHandler(final EditableShape shape) {
         selectedShape = shape.hashCode();
         shape.showControlPoints();
+    }
+
+    public static int getAccountShapesByCategory(ShapeCategory shapeCategory) {
+        int account = 0;
+        for (ShapeType shapeType : ShapeType.values()) {
+            if (shapeType.getCategory().equals(shapeCategory)) {
+                account++;
+            }
+        }
+        return account;
+    }
+
+    public static int calculateHeight(int shapes) {
+        int y = shapes > 1 ? getRow(shapes) : 0;
+        y = y > 0 ? (y * ShapeFactoryUtil.HEIGHT_BOUNDING) + ShapeFactoryUtil.SPACE_BETWEEN_BOUNDING * y : y
+                * ShapeFactoryUtil.HEIGHT_BOUNDING;
+        return y + ShapeFactoryUtil.HEIGHT_BOUNDING + 15;
+    }
+
+    public static int getRow(int shapes) {
+        return Math.round((shapes * ShapeFactoryUtil.WIDTH_BOUNDING) / ShapeFactoryUtil.WIDTH_STENCIL);
     }
 
 }

@@ -1,14 +1,16 @@
 package org.kie.wires.client.factoryShapes;
 
+import java.util.List;
+
 import javax.enterprise.event.Event;
 
 import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.shapes.PaletteShape;
 import org.kie.wires.core.client.util.ShapeCategory;
+import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
-import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
@@ -26,27 +28,26 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public abstract class ShapeFactory<T extends Shape<T>> {
 
-
     protected LienzoPanel panel;
 
     protected Event<ShapeAddEvent> shapeAddEvent;
-    
-    
-    protected abstract void drawBoundingBox(Group group);
+
+    protected abstract void drawBoundingBox(List<PaletteShape> listShapes);
 
     protected abstract Shape<T> drawShape();
 
-    protected abstract void addShapeHandlers(Shape<T> shape, Group group);
+    protected abstract void addShapeHandlers(Shape<T> shape);
 
-    protected abstract void addBoundingHandlers(Rectangle boundingBox, Group group);
+    protected abstract void addBoundingHandlers(Rectangle boundingBox);
 
-    protected abstract NodeMouseDownHandler getNodeMouseDownEvent(Group group);
+    protected abstract NodeMouseDownHandler getNodeMouseDownEvent();
 
     protected abstract ShapeCategory getCategory();
 
     protected static final int ZINDEX = 100;
-    
-    
+
+    protected PaletteShape shape;
+
     protected ShapeFactory() {
 
     }
@@ -54,20 +55,21 @@ public abstract class ShapeFactory<T extends Shape<T>> {
     protected ShapeFactory(LienzoPanel lienzoPanel, Event<ShapeAddEvent> shapeEvent) {
         panel = lienzoPanel;
         shapeAddEvent = shapeEvent;
-        
+        shape = new PaletteShape();
+
     }
 
-    
-    protected Rectangle createBoundingBox(Group group, int shapes) {
+    protected Rectangle createBoundingBox(int shapes) {
         final Rectangle boundingBox = new Rectangle(ShapeFactoryUtil.WIDTH_BOUNDING, ShapeFactoryUtil.HEIGHT_BOUNDING);
         boundingBox.setX(this.getXBoundingBox(shapes)).setY(this.getYBoundingBox(shapes))
                 .setStrokeColor(ShapeFactoryUtil.RGB_STROKE_BOUNDING).setStrokeWidth(1)
                 .setFillColor(ShapeFactoryUtil.RGB_FILL_BOUNDING).setDraggable(false);
-        group.add(boundingBox);
+        shape.setBounding(boundingBox);
         return boundingBox;
     }
 
-    protected void setFloatingPanel(final Shape floatingShape, String shapeName, int height, int width, NodeMouseDownEvent event, Style styleFloating) {
+    protected void setFloatingPanel(final Shape floatingShape, String shapeName, int height, int width,
+            NodeMouseDownEvent event, Style styleFloating) {
         final Layer floatingLayer = new Layer();
         final LienzoPanel floatingPanel = new LienzoPanel(width, height);
         floatingLayer.add(floatingShape);
@@ -77,8 +79,8 @@ public abstract class ShapeFactory<T extends Shape<T>> {
         RootPanel.get().add(floatingPanel);
         setFloatingHandlers(style, floatingPanel, shapeName);
     }
-    
-    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final String shapeName){
+
+    protected void setFloatingHandlers(final Style style, final LienzoPanel floatingPanel, final String shapeName) {
         final HandlerRegistration[] handlerRegs = new HandlerRegistration[2];
         handlerRegs[0] = RootPanel.get().addDomHandler(new MouseMoveHandler() {
             public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
@@ -107,7 +109,7 @@ public abstract class ShapeFactory<T extends Shape<T>> {
 
     protected double getXText(int shapes, String text) {
         double xText = (text.length() * ShapeFactoryUtil.FONT_SIZE_WIDTH) / 2;
-        double position = (ShapeFactoryUtil.WIDTH_BOUNDING / 2 - xText);  
+        double position = (ShapeFactoryUtil.WIDTH_BOUNDING / 2 - xText);
         return position + this.calculateX(shapes);
     }
 
@@ -126,7 +128,9 @@ public abstract class ShapeFactory<T extends Shape<T>> {
 
     protected Text createDescription(String description, int shapes) {
         Text text = new Text(description, ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION, ShapeFactoryUtil.FONT_SIZE_DESCRIPTION);
-        text.setX(this.getXText(shapes, description)).setY(this.getYText(shapes)).setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
+        text.setX(this.getXText(shapes, description)).setY(this.getYText(shapes))
+                .setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
+        shape.setDescription(text);
         return text;
     }
 

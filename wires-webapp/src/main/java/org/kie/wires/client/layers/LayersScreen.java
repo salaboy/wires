@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.api.events.ReadyShape;
+import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -15,7 +16,6 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 import com.bayesian.network.api.builder.LayerBuilder;
 import com.bayesian.network.api.events.LayerEvent;
 import com.bayesian.network.api.events.ProbabilityEvent;
-import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
@@ -97,7 +97,7 @@ public class LayersScreen extends Composite implements RequiresResize {
         if (readyShape.getShape().equals("WiresRectangle")) {
             buildNewLayer(new Rectangle(40, 30), null);
         } else if (readyShape.getShape().equals("WiresLine")) {
-            buildNewLayer(new Line(0,0, 30,30), null);
+            buildNewLayer(new Line(0, 0, 30, 30), null);
         }
         layer.draw();
     }

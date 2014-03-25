@@ -1,9 +1,8 @@
 package com.bayesian.network.api.factory;
 
-
 import org.kie.wires.core.client.resources.AppImages;
+import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
-import com.bayesian.network.api.utils.ShapeFactoryUtil;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
@@ -13,8 +12,8 @@ import com.google.gwt.core.client.GWT;
 public abstract class LayerFactory<T extends Shape<T>> {
 
     private static final int LAYERS_BY_ROW = 1;
-    
-    private AppImages resource = GWT.create( AppImages.class );
+
+    private AppImages resource = GWT.create(AppImages.class);
 
     protected abstract void drawBoundingBox(Group group, String template);
 
@@ -69,29 +68,26 @@ public abstract class LayerFactory<T extends Shape<T>> {
         text.setX(45).setY(this.getYText(shapes)).setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
         return text;
     }
-    
-    protected void createOptions(final int x, final int y){
-        /*new Picture(resource.delete(), false).onLoad(new PictureLoadedHandler() {
-            @Override  
-            public void onPictureLoaded(Picture picture) {
-                picture.setX(x);
-                picture.setY(y);
-                layer.add(picture);
-                layer.draw();
-                  
-            }  
-        });  
-        
-        new Picture(resource.view(), false).onLoad(new PictureLoadedHandler() {
-            @Override  
-            public void onPictureLoaded(Picture picture) {
-                picture.setX(x - 19);
-                picture.setY(y);
-                layer.add(picture);
-                layer.draw();
-                  
-            }  
-        });  */
+
+    protected void createOptions(final int x, final int y) {
+        /*
+         * new Picture(resource.delete(), false).onLoad(new
+         * PictureLoadedHandler() {
+         * 
+         * @Override public void onPictureLoaded(Picture picture) {
+         * picture.setX(x); picture.setY(y); layer.add(picture); layer.draw();
+         * 
+         * } });
+         * 
+         * new Picture(resource.view(), false).onLoad(new PictureLoadedHandler()
+         * {
+         * 
+         * @Override public void onPictureLoaded(Picture picture) {
+         * picture.setX(x - 19); picture.setY(y); layer.add(picture);
+         * layer.draw();
+         * 
+         * } });
+         */
     }
 
 }
