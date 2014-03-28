@@ -28,11 +28,20 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public abstract class ShapeFactory<T extends Shape<T>> {
 
+    protected ShapeFactory() {
+
+    }
+
+    protected ShapeFactory(LienzoPanel lienzoPanel, Event<ShapeAddEvent> shapeEvent) {
+        panel = lienzoPanel;
+        shapeAddEvent = shapeEvent;
+        shape = new PaletteShape();
+
+    }
+
     protected LienzoPanel panel;
 
     protected Event<ShapeAddEvent> shapeAddEvent;
-
-    protected abstract void drawBoundingBox(List<PaletteShape> listShapes);
 
     protected abstract Shape<T> drawShape();
 
@@ -48,15 +57,12 @@ public abstract class ShapeFactory<T extends Shape<T>> {
 
     protected PaletteShape shape;
 
-    protected ShapeFactory() {
-
-    }
-
-    protected ShapeFactory(LienzoPanel lienzoPanel, Event<ShapeAddEvent> shapeEvent) {
-        panel = lienzoPanel;
-        shapeAddEvent = shapeEvent;
-        shape = new PaletteShape();
-
+    protected void drawBoundingBox(List<PaletteShape> listShapes, int shapes, String description) {
+        this.addBoundingHandlers(createBoundingBox(shapes));
+        this.addShapeHandlers(drawShape());
+        createDescription(description, shapes);
+        shape.build();
+        listShapes.add(shape);
     }
 
     protected Rectangle createBoundingBox(int shapes) {

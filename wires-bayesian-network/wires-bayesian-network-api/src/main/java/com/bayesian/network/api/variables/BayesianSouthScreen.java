@@ -43,8 +43,6 @@ public class BayesianSouthScreen extends Composite implements RequiresResize {
 
     @Inject
     private Event<ProbabilityEvent> probabilityEvent;
-    
-    
 
     @PostConstruct
     public void init() {
@@ -71,21 +69,20 @@ public class BayesianSouthScreen extends Composite implements RequiresResize {
         int width = getParent().getOffsetWidth();
         super.setPixelSize(width, height);
     }
-    
+
     public void myResponseObserver(@Observes ProbabilityEvent event) {
         layer.removeAll();
-        if(event.getBayesianProbabilityGrid() != null){
+        if (event.getBayesianProbabilityGrid() != null) {
             layer.add(event.getBayesianProbabilityGrid());
-        }else if(event.getVariable() != null){
-    	    new ProbabilityFactory(event.getVariable(), probabilityEvent);
-    	}
-    	layer.draw();
+        } else if (event.getVariable() != null) {
+            new ProbabilityFactory(event.getVariable(), probabilityEvent);
+        }
+        layer.draw();
     }
-    
+
     public void clearPanel(@Observes ClearEvent event) {
         layer.removeAll();
         layer.draw();
     }
-
 
 }

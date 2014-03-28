@@ -1,32 +1,34 @@
 package com.bayesian.network.api.factory;
 
-import org.kie.wires.core.client.resources.AppImages;
+import org.kie.wires.core.client.shapes.TemplateShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
+import org.kie.wires.core.client.util.ShapesUtils;
 
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
-import com.google.gwt.core.client.GWT;
 
 public abstract class LayerFactory<T extends Shape<T>> {
 
+    public LayerFactory() {
+        this.templateShape = new TemplateShape();
+    }
+
     private static final int LAYERS_BY_ROW = 1;
 
-    private AppImages resource = GWT.create(AppImages.class);
+    protected TemplateShape templateShape;
 
-    protected abstract void drawBoundingBox(Group group, String template);
+    protected abstract void drawBoundingBox(String template);
 
-    protected abstract Shape<T> drawLayer();
+    protected abstract void drawLayer();
 
-    protected Rectangle createBoundingBox(Group group, int layers) {
+    protected void createBoundingBox(int layers) {
         final Rectangle boundingBox = new Rectangle(ShapeFactoryUtil.WIDTH_BOUNDING_LAYER,
                 ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER);
         boundingBox.setX(getXBoundingBox()).setY(this.getYBoundingBox(layers))
                 .setStrokeColor(ShapeFactoryUtil.RGB_STROKE_BOUNDING).setStrokeWidth(1)
                 .setFillColor(ShapeFactoryUtil.RGB_FILL_BOUNDING).setDraggable(false);
-        group.add(boundingBox);
-        return boundingBox;
+        templateShape.setBounding(boundingBox);
     }
 
     private double getXBoundingBox() {
@@ -63,31 +65,20 @@ public abstract class LayerFactory<T extends Shape<T>> {
         return LAYERS_BY_ROW;
     }
 
-    protected Text createDescription(String description, int shapes) {
+    protected void createDescription(String description, int shapes) {
         Text text = new Text(description, ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION, ShapeFactoryUtil.FONT_SIZE_DESCRIPTION);
         text.setX(45).setY(this.getYText(shapes)).setFillColor(ShapeFactoryUtil.RGB_TEXT_DESCRIPTION);
-        return text;
+        templateShape.setDescription(text);
     }
 
-    protected void createOptions(final int x, final int y) {
-        /*
-         * new Picture(resource.delete(), false).onLoad(new
-         * PictureLoadedHandler() {
-         * 
-         * @Override public void onPictureLoaded(Picture picture) {
-         * picture.setX(x); picture.setY(y); layer.add(picture); layer.draw();
-         * 
-         * } });
-         * 
-         * new Picture(resource.view(), false).onLoad(new PictureLoadedHandler()
-         * {
-         * 
-         * @Override public void onPictureLoaded(Picture picture) {
-         * picture.setX(x - 19); picture.setY(y); layer.add(picture);
-         * layer.draw();
-         * 
-         * } });
-         */
+    protected void setAttributes(Shape<?> floatingShape, double x, double y) {
+        floatingShape.setX(x).setY(y).setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE)
+                .setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapesUtils.RGB_FILL_SHAPE)
+                .setDraggable(false);
+    }
+
+    public TemplateShape getLayer() {
+        return templateShape;
     }
 
 }

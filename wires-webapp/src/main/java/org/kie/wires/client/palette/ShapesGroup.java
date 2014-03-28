@@ -41,6 +41,10 @@ public class ShapesGroup extends Composite {
         super.initWidget(panel);
         layer = new Layer();
         panel.getScene().add(layer);
+        drawShapes();
+    }
+
+    private void drawShapes() {
         new StencilBuilder(shapeAddEvent, ShapeCategory.SHAPES, panel, listShapes);
         for (PaletteShape sha : listShapes) {
             layer.add(sha);

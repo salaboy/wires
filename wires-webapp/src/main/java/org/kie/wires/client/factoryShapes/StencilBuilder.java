@@ -45,7 +45,8 @@ public class StencilBuilder extends Composite {
             new RectangleFactory(panel, shapeAddEvent, shapesByCategory, listShapes);
             break;
         // case CIRCLE:
-        // new CircleFactory(panel, shapeAddEvent, shapesByCategory);
+        // new CircleFactory(panel, shapeAddEvent, shapesByCategory,
+        // listShapes);
         // break;
         default:
             throw new IllegalStateException("Unrecognized shape type '" + shapeType + "'!");

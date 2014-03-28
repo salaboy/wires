@@ -14,7 +14,6 @@ import org.kie.wires.core.client.util.ShapesUtils;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
@@ -30,21 +29,12 @@ public class CircleFactory extends ShapeFactory<Circle> {
     public CircleFactory() {
     }
 
-    public CircleFactory(Group group, LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
-            Map<ShapeCategory, Integer> shapesByCategory, List<PaletteShape> listShapes) {
+    public CircleFactory(LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent, Map<ShapeCategory, Integer> shapesByCategory,
+            List<PaletteShape> listShapes) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
-        this.drawBoundingBox(listShapes);
+        super.drawBoundingBox(listShapes, shapes, DESCRIPTION);
 
-    }
-
-    @Override
-    protected void drawBoundingBox(List<PaletteShape> listShapes) {
-        this.addBoundingHandlers(super.createBoundingBox(shapes));
-        this.addShapeHandlers(drawShape());
-        super.createDescription(DESCRIPTION, shapes);
-        shape.build();
-        listShapes.add(shape);
     }
 
     @Override

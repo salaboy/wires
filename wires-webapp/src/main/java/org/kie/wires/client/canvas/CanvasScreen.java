@@ -5,6 +5,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.kie.wires.client.layers.LayersGroup;
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.api.events.ProgressEvent;
 import org.kie.wires.core.api.events.ReadyShape;
@@ -39,6 +40,9 @@ public class CanvasScreen extends Canvas {
 
     @Inject
     private BayesianScreen bayesianScreen;
+
+    @Inject
+    private LayersGroup layerGroup;
 
     public CanvasScreen() {
     }
@@ -88,6 +92,7 @@ public class CanvasScreen extends Canvas {
         shapesInCanvas.add((EditableShape) wiresShape);
 
         layer.draw();
+
         readyShape.fire(new ReadyShape(shape));
     }
 
