@@ -32,17 +32,8 @@ public class LineFactory extends ShapeFactory<Line> {
             List<PaletteShape> listShapes) {
         super(panel, shapeAddEvent);
         shapes = shapesByCategory.get(this.getCategory());
-        this.drawBoundingBox(listShapes);
+        super.drawBoundingBox(listShapes, shapes, DESCRIPTION);
 
-    }
-
-    @Override
-    public void drawBoundingBox(List<PaletteShape> listShapes) {
-        this.addBoundingHandlers(super.createBoundingBox(shapes));
-        this.addShapeHandlers(drawShape());
-        super.createDescription(DESCRIPTION, shapes);
-        shape.build();
-        listShapes.add(shape);
     }
 
     @Override

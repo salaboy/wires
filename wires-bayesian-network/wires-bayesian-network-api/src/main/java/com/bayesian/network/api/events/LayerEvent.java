@@ -8,16 +8,16 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import com.bayesian.parser.client.model.BayesVariable;
 
 @Portable
-public class LayerEvent implements Serializable  {
-    
+public class LayerEvent implements Serializable {
+
     private static final long serialVersionUID = 7091879717026728559L;
     private List<BayesVariable> nodes;
-    
-    public LayerEvent(){
-        
+
+    public LayerEvent() {
+
     }
-    
-    public LayerEvent(List<BayesVariable> nodes){
+
+    public LayerEvent(List<BayesVariable> nodes) {
         this.nodes = nodes;
     }
 
@@ -28,7 +28,5 @@ public class LayerEvent implements Serializable  {
     public void setNodes(List<BayesVariable> nodes) {
         this.nodes = nodes;
     }
-    
-   
 
 }

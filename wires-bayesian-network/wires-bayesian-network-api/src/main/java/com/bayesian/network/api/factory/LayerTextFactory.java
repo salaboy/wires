@@ -6,9 +6,7 @@ import com.bayesian.network.api.events.ProbabilityEvent;
 import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 
 public class LayerTextFactory extends LayerFactory<Rectangle> {
@@ -20,36 +18,30 @@ public class LayerTextFactory extends LayerFactory<Rectangle> {
 
     }
 
-    public LayerTextFactory(Group group, LienzoPanel panel, Integer lay, BayesVariable node,
-            Event<ProbabilityEvent> probabilityEvent) {
+    public LayerTextFactory(LienzoPanel panel, Integer lay, BayesVariable node, Event<ProbabilityEvent> probabilityEvent) {
         layers = lay;
         this.probabilityEvent = probabilityEvent;
-        this.drawLayer(group, null, node);
+        super.createBoundingBox(layers);
+        this.drawLayer(null, node);
     }
 
-    public void drawLayer(Group group, String template, final BayesVariable node) {
-        final Rectangle boundingBox = super.createBoundingBox(group, layers);
-        boundingBox.addNodeMouseClickHandler(new NodeMouseClickHandler() {
-
+    public void drawLayer(String template, final BayesVariable node) {
+        templateShape.getBounding().addNodeMouseClickHandler(new NodeMouseClickHandler() {
             @Override
             public void onNodeMouseClick(NodeMouseClickEvent event) {
                 probabilityEvent.fire(new ProbabilityEvent(node, null));
-
             }
         });
-        group.add(boundingBox);
-
-        group.add(super.createDescription(node.getName(), layers));
+        super.createDescription(node.getName(), layers);
     }
 
     @Override
-    public void drawBoundingBox(Group group, String template) {
+    public void drawBoundingBox(String template) {
 
     }
 
     @Override
-    public Shape<Rectangle> drawLayer() {
-        return null;
+    public void drawLayer() {
     }
 
 }

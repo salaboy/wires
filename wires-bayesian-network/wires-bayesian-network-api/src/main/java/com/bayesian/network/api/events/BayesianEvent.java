@@ -9,9 +9,9 @@ public class BayesianEvent implements Serializable {
 
     private static final long serialVersionUID = -695192650020463533L;
     private String template;
-    
-    public BayesianEvent(){
-        
+
+    public BayesianEvent() {
+
     }
 
     public BayesianEvent(String template) {
