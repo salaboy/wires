@@ -33,6 +33,19 @@
             <artifactId>lienzo-core</artifactId>
             <version>${lienzo.version}</version>
         </dependency>
+        
+        <!-- Property Editor - Uberfire -->
+        <dependency>
+			<groupId>org.uberfire</groupId>
+			<artifactId>uberfire-widgets-properties-editor-client</artifactId>
+			<version>${uberfire.version}</version>
+		</dependency>
+		
+		<dependency>
+      		<groupId>org.uberfire</groupId>
+      		<artifactId>uberfire-widgets-properties-editor-backend</artifactId>
+      		<version>${uberfire.version}</version>
+    	</dependency>
 		
 		
 		
