@@ -6,6 +6,7 @@
     <inherits name="com.github.gwtbootstrap.Bootstrap"/>
     <inherits name="org.jboss.errai.ui.UI" />
     <inherits name="org.uberfire.UberfireClientAll"/>
+    <inherits name="org.uberfire.UberfireNSWEManager" />
     
     
     <inherits name="com.bayesian.parser.bayesian"/>

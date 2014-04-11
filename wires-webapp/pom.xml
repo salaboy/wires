@@ -34,10 +34,22 @@
 
 		<dependency>
 			<groupId>org.uberfire</groupId>
-			<artifactId>uberfire-all</artifactId>
+			 <artifactId>uberfire-workbench-processors</artifactId>
 			<version>${uberfire.version}</version>
 		</dependency>
 
+                <dependency>
+			<groupId>org.uberfire</groupId>
+			<artifactId>uberfire-all</artifactId>
+			<version>${uberfire.version}</version>
+		</dependency>
+                
+                
+                <dependency>
+			<groupId>org.uberfire</groupId>
+			<artifactId>uberfire-panel-manager-nswe</artifactId>
+			<version>${uberfire.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
