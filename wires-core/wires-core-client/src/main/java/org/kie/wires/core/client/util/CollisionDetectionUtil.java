@@ -12,6 +12,7 @@ import org.kie.wires.core.client.canvas.Canvas;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.GWT;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -65,7 +66,6 @@ public class CollisionDetectionUtil {
 
     public static void attachControlPointToMagnet(Magnet selectedMagnet, EditableShape shapeActive) {
         if (selectedMagnet != null && shapeActive != null) {
-
             ((StickableShape) shapeActive).attachControlPointToMagent(selectedMagnet);
             if (!selectedMagnet.getAttachedControlPoints().isEmpty()) {
                 ((Shape) selectedMagnet).setFillColor(ColorName.RED);

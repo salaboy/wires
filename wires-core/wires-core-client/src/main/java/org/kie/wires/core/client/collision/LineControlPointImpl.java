@@ -115,7 +115,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         array.getPoint(0).setY(initialStartPointY + deltaY);
 
                         selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
-                        
 
                         layer.draw();
                       
@@ -218,6 +217,14 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         setY(y);
     }
 
+    public double getControlPointX(){
+        return getX();
+    }
+    
+    public double getControlPointY(){
+        return getY();
+    }
+    
     @Override
     public String toString() {
         return "LineControlPointImpl{" + "id=" + id + ", controlType=" + controlType + ", attached=" + attached + '}';

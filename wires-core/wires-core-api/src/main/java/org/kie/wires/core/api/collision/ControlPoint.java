@@ -48,4 +48,8 @@ public interface ControlPoint {
     
     boolean isAttached();
     
+    double getControlPointX();
+    
+    double getControlPointY();
+    
 }

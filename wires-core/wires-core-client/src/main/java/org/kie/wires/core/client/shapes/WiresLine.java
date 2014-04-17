@@ -5,7 +5,6 @@
  */
 package org.kie.wires.core.client.shapes;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +42,6 @@ import com.emitrom.lienzo.client.core.types.Point2DArray;
 public class WiresLine extends WiresBaseGroupShape {
 
     private String id;
-    
 
     private double currentDragX;
     private double currentDragY;
@@ -54,8 +52,6 @@ public class WiresLine extends WiresBaseGroupShape {
 
     private Line line;
 
-
-
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
 
@@ -64,7 +60,7 @@ public class WiresLine extends WiresBaseGroupShape {
 
         this.id = UUID.uuid();
         line.setStrokeWidth(3);
-        
+
         magnets.clear();
         addMagnet(new LineMagnetImpl(this, Magnet.MAGNET_START));
         addMagnet(new LineMagnetImpl(this, Magnet.MAGNET_END));
@@ -137,7 +133,6 @@ public class WiresLine extends WiresBaseGroupShape {
         Point2D endPoint = points.getPoint(1);
 
     }
-
 
     public boolean collidesWith(CollidableShape shape) {
         List<Vector> axes = getAxes();
@@ -227,7 +222,6 @@ public class WiresLine extends WiresBaseGroupShape {
     public double getCurrentDragY() {
         return currentDragY;
     }
-
 
     @Override
     public String toString() {

@@ -48,20 +48,20 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
     public void placeMagnetPoints() {
         switch (type) {
             case MAGNET_TOP:
-                setX(shape.getX() + (shape.getRectangle().getWidth() / 2));
+                setX(shape.getX() + (shape.getBounding().getWidth() / 2));
                 setY(shape.getY());
                 break;
             case MAGNET_BOTTOM:
-                setX(shape.getX() + (shape.getRectangle().getWidth() / 2));
-                setY(shape.getY() + shape.getRectangle().getHeight());
+                setX(shape.getX() + (shape.getBounding().getWidth() / 2));
+                setY(shape.getY() + shape.getBounding().getHeight());
                 break;
             case MAGNET_RIGHT:
-                setX(shape.getX() + shape.getRectangle().getWidth());
-                setY(shape.getY() + (shape.getRectangle().getHeight() / 2));
+                setX(shape.getX() + shape.getBounding().getWidth());
+                setY(shape.getY() + (shape.getBounding().getHeight() / 2));
                 break;
             case MAGNET_LEFT:
                 setX(shape.getX());
-                setY(shape.getY() + (shape.getRectangle().getHeight() / 2));
+                setY(shape.getY() + (shape.getBounding().getHeight() / 2));
                 break;
         }
         
