@@ -92,7 +92,10 @@ public class WiresLine extends WiresBaseGroupShape {
                 Layer layer = getLayer();
                 ShapesUtils.nodeMouseClickHandler(WiresLine.this);
                 ShapesUtils.deselectAllOtherShapes(Canvas.shapesInCanvas);
+                //I don't like this.. event here... 
                 getSelected().fire(new ShapeSelectedEvent(WiresLine.this));
+                
+                
                 layer.draw();
             }
         });
@@ -145,7 +148,7 @@ public class WiresLine extends WiresBaseGroupShape {
             Vector axis = axes.get(i);
             Projection projection1 = shape.project(axis);
             Projection projection2 = this.project(axis);
-
+            
             if (!projection1.overlaps(projection2)) {
                 return true; // there is no need to continue testing
             }

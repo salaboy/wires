@@ -55,6 +55,7 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
 
     }
 
+    // TODO: These methods should be removed from here... 
     public Event<ShapeSelectedEvent> getSelected() {
         return selected;
     }
@@ -62,6 +63,8 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
     public void setSelected(Event<ShapeSelectedEvent> selected) {
         this.selected = selected;
     }
+    
+    // END These methods should be removed from here... 
 
     public void showControlPoints() {
         final Layer layer = getLayer();
@@ -158,5 +161,13 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
 
         return i-1;
     }
-
+    
+    @Override
+    public void destroy() {
+        Layer layer = getLayer();
+        hideControlPoints();
+        hideMagnetPoints();
+        layer.remove(this);
+        layer.draw();
+    }
 }

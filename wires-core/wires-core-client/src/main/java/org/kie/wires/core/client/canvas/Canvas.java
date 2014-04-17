@@ -1,22 +1,24 @@
 package org.kie.wires.core.client.canvas;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.kie.wires.core.api.shapes.EditableShape;
-import org.kie.wires.core.client.shapes.ProgressBar;
-
 import com.emitrom.lienzo.client.core.shape.GridLayer;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.RootPanel;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import org.kie.wires.core.api.shapes.EditableShape;
+import org.kie.wires.core.client.shapes.ProgressBar;
+import org.kie.wires.core.client.util.ShapesUtils;
 
 public class Canvas extends Composite implements RequiresResize {
 
@@ -28,9 +30,8 @@ public class Canvas extends Composite implements RequiresResize {
     @PostConstruct
     public void init() {
         panel = new LienzoPanel(800, 600);
-
+        
         initWidget(panel);
-
         layer = new Layer();
         panel.getScene().add(layer);
 
@@ -54,6 +55,34 @@ public class Canvas extends Composite implements RequiresResize {
         gridLayer.draw();
 
         layer.draw();
+        panel.setFocus(true);
+        
+       KeyPressHandler myHandler = new KeyPressHandler(){
+
+            public void onKeyPress(KeyPressEvent event) {
+                
+                if(event.getCharCode() == 'a' ){
+                    EditableShape shapeToRemove =  null;
+                    for(EditableShape shape : shapesInCanvas){
+                        if(shape.getId().equals(ShapesUtils.selectedShapeId)){
+                            shapeToRemove = shape;
+                            shape.destroy();
+                        }
+                    }
+                    if(shapeToRemove != null){
+                        shapesInCanvas.remove(shapeToRemove);
+                    }
+                    
+                }
+                if(event.getCharCode() == 's' ){
+                    ShapesUtils.deselectAllShapes(shapesInCanvas);
+                    layer.draw();
+                }
+            }
+        };
+        
+        RootPanel.get().addDomHandler(myHandler, KeyPressEvent.getType());
+        
 
     }
 

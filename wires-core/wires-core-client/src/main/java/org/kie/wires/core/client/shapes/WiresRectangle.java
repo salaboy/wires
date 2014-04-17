@@ -97,6 +97,8 @@ public class WiresRectangle extends WiresBaseGroupShape {
                 layer.draw();
             }
         });
+        
+        
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
@@ -114,49 +116,35 @@ public class WiresRectangle extends WiresBaseGroupShape {
                 Layer layer = getLayer();
                 for (Magnet m : magnets) {
                     if (!m.getAttachedControlPoints().isEmpty()) {
-                        //GWT.log("there are attached control points to topMagnet " + topMagnet.getAttachedControlPoints().size());
                         List<ControlPoint> removeCp = new ArrayList<ControlPoint>();
                         for (ControlPoint cp : m.getAttachedControlPoints()) {
-                            if (cp.isAttached()) {
+                            if (cp.isAttached() && cp.getShape() != null) {
                                 cp.setControlPointVisible(true);
                                 // All the coordinate for the control points should be relative and autocalculated
                                 // TODO: refactor this
                                 switch (m.getType()) {
                                     case Magnet.MAGNET_TOP:
-                                        
-                                        cp.setControlPointX(currentDragX + (bounding.getWidth() / 2) - 5);
-                                        cp.setControlPointY(currentDragY - 5);
-                                        
-                                        GWT.log("Control Point X" + cp.getControlPointX());
-                                        GWT.log("Control Point Y" + cp.getControlPointY());
-                                        
-                                        cp.udpateShape(layer, currentDragX + (bounding.getWidth() / 2), currentDragY);
+                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2) );
+                                        cp.setControlPointY(getY() );
+                                        cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY());
                                         break;
 
                                     case Magnet.MAGNET_LEFT:
                                        
-                                        cp.setControlPointX(currentDragX - 5);
-                                        cp.setControlPointY(currentDragY + (bounding.getHeight() / 2) - 5);
-                                        GWT.log("Control Point X" + cp.getControlPointX());
-                                        GWT.log("Control Point Y" + cp.getControlPointY());
-                                        cp.udpateShape(layer, currentDragX, currentDragY + (bounding.getHeight() / 2));
+                                        cp.setControlPointX(getX() );
+                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) );
+                                        cp.udpateShape(layer, getX(), getY() + (bounding.getHeight() / 2));
                                         break;
 
                                     case Magnet.MAGNET_RIGHT:
-                                        
-                                        cp.setControlPointX(currentDragX + bounding.getWidth() - 5);
-                                        cp.setControlPointY(currentDragY + (bounding.getHeight() / 2) - 5);
-                                        GWT.log("Control Point X" + cp.getControlPointX());
-                                        GWT.log("Control Point Y" + cp.getControlPointY());
-                                        cp.udpateShape(layer, currentDragX + bounding.getWidth(), currentDragY + (bounding.getHeight() / 2));
+                                        cp.setControlPointX(getX() + bounding.getWidth() );
+                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) );
+                                        cp.udpateShape(layer, getX() + bounding.getWidth(), getY() + (bounding.getHeight() / 2));
 
                                     case Magnet.MAGNET_BOTTOM:
-                                        
-                                        cp.setControlPointX(currentDragX + (bounding.getWidth() / 2) - 5);
-                                        cp.setControlPointY(currentDragY + bounding.getHeight() - 5);
-                                        GWT.log("Control Point X" + cp.getControlPointX());
-                                        GWT.log("Control Point Y" + cp.getControlPointY());
-                                        cp.udpateShape(layer, currentDragX + (bounding.getWidth() / 2), currentDragY + bounding.getHeight());
+                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2));
+                                        cp.setControlPointY(getY() + bounding.getHeight() );
+                                        cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY() + bounding.getHeight());
                                         break;
                                 }
 
@@ -224,48 +212,48 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
         // THIS IS HARDCODED HERE BUT IT CAN BE A LOOP FOR POLYGONS
         // top - left
-        v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY());
+        v1.setX(getX());
+        v1.setY(getY());
 
         // top - right
-        v2.setX(getCurrentDragX() + bounding.getWidth());
-        v2.setY(getCurrentDragY());
+        v2.setX(getX() + bounding.getWidth());
+        v2.setY(getY());
 
         axes.add(v1.edge(v2).normal());
 
         v1 = new Vector();
         v2 = new Vector();
         // top - right 
-        v1.setX(getCurrentDragX() + bounding.getWidth());
-        v1.setY(getCurrentDragY());
+        v1.setX(getX() + bounding.getWidth());
+        v1.setY(getY());
 
         // bottom - right
-        v2.setX(getCurrentDragX() + bounding.getWidth());
-        v2.setY(getCurrentDragY() + bounding.getHeight());
+        v2.setX(getX() + bounding.getWidth());
+        v2.setY(getY() + bounding.getHeight());
 
         axes.add(v1.edge(v2).normal());
 
         v1 = new Vector();
         v2 = new Vector();
         // bottom - right
-        v1.setX(getCurrentDragX() + bounding.getWidth());
-        v1.setY(getCurrentDragY() + bounding.getHeight());
+        v1.setX(getX() + bounding.getWidth());
+        v1.setY(getY() + bounding.getHeight());
 
         // bottom - left
-        v2.setX(getCurrentDragX());
-        v2.setY(getCurrentDragY() + bounding.getHeight());
+        v2.setX(getX());
+        v2.setY(getY() + bounding.getHeight());
 
         axes.add(v1.edge(v2).normal());
 
         v1 = new Vector();
         v2 = new Vector();
         // bottom - left
-        v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY() + bounding.getHeight());
+        v1.setX(getX());
+        v1.setY(getY() + bounding.getHeight());
 
         // top - left
-        v2.setX(getCurrentDragX());
-        v2.setY(getCurrentDragY());
+        v2.setX(getX());
+        v2.setY(getY());
 
         axes.add(v1.edge(v2).normal());
 
@@ -277,29 +265,29 @@ public class WiresRectangle extends WiresBaseGroupShape {
         Vector v1 = new Vector();
 
         // top - left
-        v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY());
+        v1.setX(getX());
+        v1.setY(getY());
 
         scalars.add(v1.dotProduct(axis));
 
         v1 = new Vector();
         // top - right
-        v1.setX(getCurrentDragX() + bounding.getWidth());
-        v1.setY(getCurrentDragY());
+        v1.setX(getX() + bounding.getWidth());
+        v1.setY(getY());
 
         scalars.add(v1.dotProduct(axis));
 
         v1 = new Vector();
         // bottom - right
-        v1.setX(getCurrentDragX() + bounding.getWidth());
-        v1.setY(getCurrentDragY() + bounding.getHeight());
+        v1.setX(getX() + bounding.getWidth());
+        v1.setY(getY() + bounding.getHeight());
 
         scalars.add(v1.dotProduct(axis));
 
         v1 = new Vector();
         // bottom - left
-        v1.setX(getCurrentDragX());
-        v1.setY(getCurrentDragY() + bounding.getHeight());
+        v1.setX(getX());
+        v1.setY(getY() + bounding.getHeight());
 
         scalars.add(v1.dotProduct(axis));
 

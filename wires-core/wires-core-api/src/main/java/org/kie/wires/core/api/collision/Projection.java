@@ -6,6 +6,8 @@
 
 package org.kie.wires.core.api.collision;
 
+import com.google.gwt.core.shared.GWT;
+
 /**
  *
  * @author salaboy
@@ -41,4 +43,11 @@ public class Projection {
     public boolean overlaps(Projection projection){
         return this.max > projection.min && projection.max > this.min;
     }
+
+    @Override
+    public String toString() {
+        return "Projection{" + "min=" + min + ", max=" + max + '}';
+    }
+    
+    
 }

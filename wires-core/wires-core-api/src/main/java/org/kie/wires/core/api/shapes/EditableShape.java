@@ -6,6 +6,8 @@ public interface EditableShape {
     String getId();
 
     void init(double x, double y);
+    
+    void destroy();
 
     void showControlPoints();
 

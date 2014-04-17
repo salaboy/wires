@@ -1,5 +1,6 @@
 package org.kie.wires.core.client.util;
 
+import com.google.gwt.core.client.GWT;
 import java.util.List;
 
 import org.kie.wires.core.api.collision.StickableShape;
@@ -9,7 +10,7 @@ public class ShapesUtils {
 
     public static final String LIGHT_BLUE = "#A8C6FA";
 
-    public static int selectedShape;
+    public static String selectedShapeId;
 
     // Control Points
     public static final String CP_RGB_FILL_COLOR = "#0000FF";
@@ -26,7 +27,7 @@ public class ShapesUtils {
 
     public static void deselectAllOtherShapes(List<EditableShape> shapesInCanvas) {
         for (EditableShape shape : shapesInCanvas) {
-            if (shape.hashCode() != selectedShape) {
+            if (!selectedShapeId.equals(shape.getId())) {
                 shape.hideControlPoints();
                 ((StickableShape) shape).hideMagnetPoints();
             }
@@ -35,12 +36,12 @@ public class ShapesUtils {
     }
 
     public static void deselectAllShapes(List<EditableShape> shapesInCanvas) {
-        selectedShape = 0;
+        selectedShapeId = "";
         deselectAllOtherShapes(shapesInCanvas);
     }
 
     public static void nodeMouseClickHandler(final EditableShape shape) {
-        selectedShape = shape.hashCode();
+        selectedShapeId = shape.getId();
         shape.showControlPoints();
     }
 

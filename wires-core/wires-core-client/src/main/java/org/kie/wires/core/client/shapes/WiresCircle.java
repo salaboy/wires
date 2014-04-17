@@ -356,6 +356,10 @@ public class WiresCircle extends Circle implements EditableShape {
     public List<Shape> getMagnets() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public void destroy() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }

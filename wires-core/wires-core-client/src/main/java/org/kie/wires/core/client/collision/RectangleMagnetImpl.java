@@ -91,7 +91,7 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
 
     @Override
     public String toString() {
-        return "RectangleMagnetImpl{" + "id=" + id + ", shape=" + shape + ", type=" + type + '}';
+        return "RectangleMagnetImpl{" + "id=" + id + ", shape=" + shape + ", type=" + type + " x = "+getX() +" , y = "+getY()+ "}";
     }
 
     

@@ -100,9 +100,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         addNodeDragEndHandler(new NodeDragEndHandler() {
             public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
                 shape.setBeingResized(false);
-
-                GWT.log("Shape: " + shape);
-                GWT.log("CP: " + RectangleControlPointImpl.this.toString());
             }
 
         });
@@ -110,7 +107,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
     }
 
     public void moveControlPoint() {
-        GWT.log("Moving Control Points");
         switch (controlType) {
             case CONTROL_TOP_LEFT:
                 setControlPointX(shape.getX());
@@ -156,7 +152,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
                 rect.getBounding().setWidth(rect.getRectangle().getWidth() + 12);
                 rect.getBounding().setHeight(rect.getRectangle().getHeight() + 12);
 
-                GWT.log("Control Point - > " + this);
                 break;
             case CONTROL_BOTTOM_LEFT:
                 rect.setX(rect.getStartX() + deltaX);

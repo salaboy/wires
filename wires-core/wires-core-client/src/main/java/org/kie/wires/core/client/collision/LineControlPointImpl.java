@@ -9,17 +9,6 @@
  */
 package org.kie.wires.core.client.collision;
 
-import static org.kie.wires.core.client.util.ShapesUtils.CP_RGB_FILL_COLOR;
-import static org.kie.wires.core.client.util.ShapesUtils.CP_RGB_STROKE_WIDTH_SHAPE;
-
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
-import org.kie.wires.core.api.collision.StickableShape;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.WiresLine;
-import org.kie.wires.core.client.util.CollisionDetectionUtil;
-import org.kie.wires.core.client.util.UUID;
-
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -28,8 +17,19 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.GWT;
+import org.kie.wires.core.api.collision.ControlPoint;
+import org.kie.wires.core.api.collision.Magnet;
+import org.kie.wires.core.api.collision.StickableShape;
+import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.client.shapes.WiresLine;
+import org.kie.wires.core.client.util.CollisionDetectionUtil;
+import static org.kie.wires.core.client.util.ShapesUtils.CP_RGB_FILL_COLOR;
+import static org.kie.wires.core.client.util.ShapesUtils.CP_RGB_STROKE_WIDTH_SHAPE;
+import org.kie.wires.core.client.util.UUID;
 
 /**
  *
@@ -41,7 +41,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
     private double initialStartPointX;
     private double initialStartPointY;
-    
+
     private double initialEndPointX;
     private double initialEndPointY;
 
@@ -53,9 +53,9 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
     private WiresLine shape;
     private int controlType = 0;
-    
+
     private Magnet selectedMagnet = null;
-    
+
     private boolean attached = false;
 
     public LineControlPointImpl(WiresLine shape, int controlType) {
@@ -114,10 +114,9 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         array.getPoint(0).setX(initialStartPointX + deltaX);
                         array.getPoint(0).setY(initialStartPointY + deltaY);
 
-                        selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
+                        selectedMagnet = CollisionDetectionUtil.detectCollisions(LineControlPointImpl.this, shape, nodeDragMoveEvent);
 
                         layer.draw();
-                      
 
                     }
                 });
@@ -125,13 +124,20 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                 addNodeDragEndHandler(new NodeDragEndHandler() {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
                         shape.setBeingResized(false);
+
                         if (selectedMagnet != null) {
-                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
-                            attached = true;
-                        } else {
-                            attached = false;
+                            double deltaX = getControlPointX() - selectedMagnet.getX();
+                            double deltaY = getControlPointY() - selectedMagnet.getY();
+                            double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                            if (distance < 30) {
+                                CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
+                                attached = true;
+                            } else {
+                                attached = false;
+                            }
                         }
-                        layer.draw(); 
+
+                        layer.draw();
                     }
                 });
 
@@ -162,8 +168,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         array.getPoint(1).setX(initialEndPointX + deltaX);
                         array.getPoint(1).setY(initialEndPointY + deltaY);
 
-                        selectedMagnet = CollisionDetectionUtil.detectCollisions(shape, nodeDragMoveEvent);
-                        
+                        selectedMagnet = CollisionDetectionUtil.detectCollisions(LineControlPointImpl.this, shape, nodeDragMoveEvent);
 
                         layer.draw();
                     }
@@ -173,12 +178,16 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
                         ((WiresLine) shape).setBeingResized(false);
                         if (selectedMagnet != null) {
-                            CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
-                            attached = true;
-                        } else {
-                            attached = false;
+                            double deltaX = getControlPointX() - selectedMagnet.getX();
+                            double deltaY = getControlPointY() - selectedMagnet.getY();
+                            double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                            if (distance < 30) {
+                                CollisionDetectionUtil.attachControlPointToMagnet(selectedMagnet, shape);
+                                attached = true;
+                            } else {
+                                attached = false;
+                            }
                         }
-                        layer.draw(); 
                     }
                 });
                 setDraggable(true)
@@ -192,7 +201,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
     public void udpateShape(Layer layer, double x, double y) {
         Point2DArray array = shape.getLine().getPoints();
-
         switch (controlType) {
             case ControlPoint.CONTROL_START:
                 array.getPoint(0).setX(x - shape.getX());
@@ -217,19 +225,19 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         setY(y);
     }
 
-    public double getControlPointX(){
+    public double getControlPointX() {
         return getX();
     }
-    
-    public double getControlPointY(){
+
+    public double getControlPointY() {
         return getY();
     }
-    
+
     @Override
     public String toString() {
         return "LineControlPointImpl{" + "id=" + id + ", controlType=" + controlType + ", attached=" + attached + '}';
     }
-    
+
     @Override
     public boolean isAttached() {
         return attached;
@@ -244,13 +252,13 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         switch (controlType) {
             case ControlPoint.CONTROL_START:
 
-                setX(shape.getX() + array.getPoint(0).getX() - 5);
-                setY(shape.getY() + array.getPoint(0).getY() - 5);
+                setX(shape.getX() + array.getPoint(0).getX());
+                setY(shape.getY() + array.getPoint(0).getY());
                 break;
             case ControlPoint.CONTROL_END:
 
-                setX(shape.getX() + array.getPoint(1).getX() - 5);
-                setY(shape.getY() + array.getPoint(1).getY() - 5);
+                setX(shape.getX() + array.getPoint(1).getX());
+                setY(shape.getY() + array.getPoint(1).getY());
                 break;
         }
 

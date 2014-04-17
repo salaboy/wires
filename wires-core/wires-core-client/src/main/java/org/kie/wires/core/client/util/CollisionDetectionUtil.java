@@ -1,18 +1,17 @@
 package org.kie.wires.core.client.util;
 
 
-import java.util.List;
-
-import org.kie.wires.core.api.collision.CollidableShape;
-import org.kie.wires.core.api.collision.Magnet;
-import org.kie.wires.core.api.collision.StickableShape;
-import org.kie.wires.core.api.shapes.EditableShape;
-import org.kie.wires.core.client.canvas.Canvas;
-
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.GWT;
+import java.util.List;
+import org.kie.wires.core.api.collision.CollidableShape;
+import org.kie.wires.core.api.collision.ControlPoint;
+import org.kie.wires.core.api.collision.Magnet;
+import org.kie.wires.core.api.collision.StickableShape;
+import org.kie.wires.core.api.shapes.EditableShape;
+import org.kie.wires.core.client.canvas.Canvas;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -24,10 +23,9 @@ import com.google.gwt.core.client.GWT;
  * @author salaboy
  */
 public class CollisionDetectionUtil {
-	
-	private final static String MAGNET_RGB_FILL_SHAPE = "#f2f2f2";
+    private final static String MAGNET_RGB_FILL_SHAPE = "#f2f2f2";
 
-    public static Magnet detectCollisions(EditableShape shapeActive, NodeDragMoveEvent event) {
+    public static Magnet detectCollisions(ControlPoint cp, EditableShape shapeActive, NodeDragMoveEvent event) {
         Magnet selectedMagnet = null;
         if (shapeActive != null) {
             for (EditableShape shape : Canvas.shapesInCanvas) {
@@ -45,18 +43,17 @@ public class CollisionDetectionUtil {
                         double distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 
                         if (finalDistance > distance) {
-
                             finalDistance = distance;
                             selectedMagnet = magnet;
                         }
                         magnet.setMagnetActive(false);
                         ((Shape) magnet).setFillColor(MAGNET_RGB_FILL_SHAPE);
                     }
-                    if (selectedMagnet != null) {
-                        ((Shape) selectedMagnet).setFillColor(ColorName.GREEN);
+                    
+                   
 
-                    }
-
+                }else{
+                    ((StickableShape) shape).hideMagnetPoints();
                 }
 
             }
