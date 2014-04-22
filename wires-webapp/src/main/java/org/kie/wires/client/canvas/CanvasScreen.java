@@ -83,7 +83,7 @@ public class CanvasScreen extends Canvas {
         }
 
         wiresShape.setDraggable(true);
-        layer.add(wiresShape);
+        canvasLayer.add(wiresShape);
 
         ((EditableShape) wiresShape).init(this.getX(shapeAddEvent.getX()), this.getY(shapeAddEvent.getY()));
 
@@ -91,7 +91,7 @@ public class CanvasScreen extends Canvas {
 
         shapesInCanvas.add((EditableShape) wiresShape);
 
-        layer.draw();
+        canvasLayer.draw();
 
         readyShape.fire(new ReadyShape(shape));
     }
@@ -108,29 +108,29 @@ public class CanvasScreen extends Canvas {
 
     public void addNodes(@Observes ReadyEvent event) {
         for (WiresRectangle shape : event.getBayesianNodes()) {
-            layer.add(shape);
+            canvasLayer.add(shape);
             shape.setSelected(selected);
             shapesInCanvas.add((EditableShape) shape);
         }
-        layer.draw();
+        canvasLayer.draw();
 
     }
 
     public void clearPanel(@Observes ClearEvent event) {
         for (EditableShape shape : shapesInCanvas) {
-            layer.remove((IPrimitive<?>) shape);
+            canvasLayer.remove((IPrimitive<?>) shape);
 
         }
         shapesInCanvas.clear();
-        layer.draw();
+        canvasLayer.draw();
     }
 
     public void progress(@Observes ProgressEvent event) {
         if (progressBar == null) {
-            progressBar = new ProgressBar(300, 34, layer);
+            progressBar = new ProgressBar(300, 34, canvasLayer);
             progressBar.setX(20).setY(10);
-            layer.add(progressBar);
-            layer.draw();
+            canvasLayer.add(progressBar);
+            canvasLayer.draw();
         }
     }
 

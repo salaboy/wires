@@ -34,6 +34,7 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
+import com.emitrom.lienzo.shared.core.types.LineCap;
 
 /**
  *
@@ -58,12 +59,13 @@ public class WiresLine extends WiresBaseGroupShape {
         this.id = UUID.uuid();
         
         line = new Line(x1, y1, x2, y2);
+        line.setLineCap(LineCap.ROUND);
         line.setStrokeWidth(3);
 
         bounding = new Line(x1 , y1 , x2, y2);
         bounding.setStrokeWidth(10);
         bounding.setAlpha(0.1);
-        
+        bounding.setLineCap(LineCap.ROUND);
         add(line);
         add(bounding);
         

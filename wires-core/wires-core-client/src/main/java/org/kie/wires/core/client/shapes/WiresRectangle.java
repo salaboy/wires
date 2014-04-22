@@ -36,7 +36,7 @@ public class WiresRectangle extends WiresBaseGroupShape {
     private Rectangle rectangle;
 
     private Rectangle bounding;
-    
+
     private double currentDragX;
     private double currentDragY;
 
@@ -57,11 +57,11 @@ public class WiresRectangle extends WiresBaseGroupShape {
     public WiresRectangle(double width, double height, double cornerRadius) {
 
         rectangle = new Rectangle(width, height, cornerRadius);
-        bounding = new Rectangle(width+12, height+12, cornerRadius);
+        bounding = new Rectangle(width + 12, height + 12, cornerRadius);
         bounding.setAlpha(0.1);
         add(rectangle);
         add(bounding);
-        
+
         this.id = UUID.uuid();
         magnets.clear();
         addMagnet(new RectangleMagnetImpl(this, Magnet.MAGNET_TOP));
@@ -97,14 +97,12 @@ public class WiresRectangle extends WiresBaseGroupShape {
                 layer.draw();
             }
         });
-        
-        
 
         addNodeDragStartHandler(new NodeDragStartHandler() {
             public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
                 hideControlPoints();
                 hideMagnetPoints();
-                
+
             }
         });
 
@@ -124,27 +122,17 @@ public class WiresRectangle extends WiresBaseGroupShape {
                                 // TODO: refactor this
                                 switch (m.getType()) {
                                     case Magnet.MAGNET_TOP:
-                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2) - 6 );
-                                        cp.setControlPointY(getY() - 6 );
-                                        cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY() );
+                                        cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY());
                                         break;
-
                                     case Magnet.MAGNET_LEFT:
-                                       
-                                        cp.setControlPointX(getX() - 6);
-                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) - 6 );
-                                        cp.udpateShape(layer, getX(), getY() + (bounding.getHeight() / 2) );
+                                        cp.udpateShape(layer, getX(), getY() + (bounding.getHeight() / 2));
                                         break;
 
                                     case Magnet.MAGNET_RIGHT:
-                                        cp.setControlPointX(getX() + bounding.getWidth() - 6);
-                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) - 6 );
                                         cp.udpateShape(layer, getX() + bounding.getWidth(), getY() + (bounding.getHeight() / 2));
                                         break;
-                                        
+
                                     case Magnet.MAGNET_BOTTOM:
-                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2) - 6 );
-                                        cp.setControlPointY(getY() + bounding.getHeight() - 6 );
                                         cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY() + bounding.getHeight());
                                         break;
                                 }
@@ -353,10 +341,10 @@ public class WiresRectangle extends WiresBaseGroupShape {
     public Rectangle getBounding() {
         return bounding;
     }
-    
+
     @Override
     public String toString() {
-        return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", bounding width = "+ getBounding().getWidth()+", bounding height = "+getBounding().getHeight()+" beingDragged= " + beingDragged + "}";
+        return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", bounding width = " + getBounding().getWidth() + ", bounding height = " + getBounding().getHeight() + " beingDragged= " + beingDragged + "}";
     }
 
 }

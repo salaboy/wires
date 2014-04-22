@@ -228,6 +228,8 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
     public void udpateShape(Layer layer, double x, double y) {
         Point2DArray array = shape.getBounding().getPoints();
         Point2DArray arrayLine = shape.getLine().getPoints();
+        setControlPointX(x - 6);
+        setControlPointY(y - 6);
         switch (controlType) {
             case ControlPoint.CONTROL_START:
                 
