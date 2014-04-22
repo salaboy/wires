@@ -98,21 +98,25 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                     public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
                         dragEventStartX = nodeDragStartEvent.getX();
                         dragEventStartY = nodeDragStartEvent.getY();
-                        initialStartPointX = shape.getLine().getPoints().getPoint(0).getX();
-                        initialStartPointY = shape.getLine().getPoints().getPoint(0).getY();
-                        ((StickableShape) shape).hideMagnetPoints();
+                        initialStartPointX = shape.getBounding().getPoints().getPoint(0).getX();
+                        initialStartPointY = shape.getBounding().getPoints().getPoint(0).getY();
+                        shape.hideMagnetPoints();
                     }
                 });
 
                 addNodeDragMoveHandler(new NodeDragMoveHandler() {
                     public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                        ((WiresLine) shape).setBeingResized(true);
+                        shape.setBeingResized(true);
                         double deltaX = nodeDragMoveEvent.getX() - dragEventStartX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventStartY;
 
-                        Point2DArray array = shape.getLine().getPoints();
+                        Point2DArray array = shape.getBounding().getPoints();
                         array.getPoint(0).setX(initialStartPointX + deltaX);
                         array.getPoint(0).setY(initialStartPointY + deltaY);
+                        
+                        Point2DArray arrayLine = shape.getLine().getPoints();
+                        arrayLine.getPoint(0).setX(initialStartPointX + deltaX);
+                        arrayLine.getPoint(0).setY(initialStartPointY + deltaY);
 
                         selectedMagnet = CollisionDetectionUtil.detectCollisions(LineControlPointImpl.this, shape, nodeDragMoveEvent);
 
@@ -149,11 +153,11 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
                 addNodeDragStartHandler(new NodeDragStartHandler() {
                     public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
-                        ((StickableShape) shape).hideMagnetPoints();
+                        shape.hideMagnetPoints();
                         dragEventEndX = nodeDragStartEvent.getX();
                         dragEventEndY = nodeDragStartEvent.getY();
-                        initialEndPointX = shape.getLine().getPoints().getPoint(1).getX();
-                        initialEndPointY = shape.getLine().getPoints().getPoint(1).getY();
+                        initialEndPointX = shape.getBounding().getPoints().getPoint(1).getX();
+                        initialEndPointY = shape.getBounding().getPoints().getPoint(1).getY();
                         ((StickableShape) shape).hideMagnetPoints();
                     }
                 });
@@ -164,9 +168,13 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
                         double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
 
-                        Point2DArray array = shape.getLine().getPoints();
+                        Point2DArray array = shape.getBounding().getPoints();
                         array.getPoint(1).setX(initialEndPointX + deltaX);
                         array.getPoint(1).setY(initialEndPointY + deltaY);
+                        
+                        Point2DArray arrayLine = shape.getLine().getPoints();
+                        arrayLine.getPoint(1).setX(initialEndPointX + deltaX);
+                        arrayLine.getPoint(1).setY(initialEndPointY + deltaY);
 
                         selectedMagnet = CollisionDetectionUtil.detectCollisions(LineControlPointImpl.this, shape, nodeDragMoveEvent);
 
@@ -176,7 +184,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
 
                 addNodeDragEndHandler(new NodeDragEndHandler() {
                     public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                        ((WiresLine) shape).setBeingResized(false);
+                        shape.setBeingResized(false);
                         if (selectedMagnet != null) {
                             double deltaX = getControlPointX() - selectedMagnet.getX();
                             double deltaY = getControlPointY() - selectedMagnet.getY();
@@ -198,18 +206,45 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         }
 
     }
-
-    public void udpateShape(Layer layer, double x, double y) {
-        Point2DArray array = shape.getLine().getPoints();
+    
+    public void moveControlPoint() {
+        Point2DArray array = shape.getBounding().getPoints();
         switch (controlType) {
             case ControlPoint.CONTROL_START:
-                array.getPoint(0).setX(x - shape.getX());
-                array.getPoint(0).setY(y - shape.getY());
 
+                setControlPointX(shape.getX() + array.getPoint(0).getX() - 6);
+                setControlPointY(shape.getY() + array.getPoint(0).getY() - 6);
+                
                 break;
             case ControlPoint.CONTROL_END:
-                array.getPoint(1).setX(x - (shape.getX()));
-                array.getPoint(1).setY(y - (shape.getY()));
+
+                setControlPointX(shape.getX() + array.getPoint(1).getX() - 6 );
+                setControlPointY(shape.getY() + array.getPoint(1).getY() - 6 );
+                break;
+        }
+
+    }
+
+    public void udpateShape(Layer layer, double x, double y) {
+        Point2DArray array = shape.getBounding().getPoints();
+        Point2DArray arrayLine = shape.getLine().getPoints();
+        switch (controlType) {
+            case ControlPoint.CONTROL_START:
+                
+                array.getPoint(0).setX(x - shape.getX() );
+                array.getPoint(0).setY(y - shape.getY()  );
+
+                arrayLine.getPoint(0).setX(x - shape.getX() );
+                arrayLine.getPoint(0).setY(y - shape.getY() );
+                
+                break;
+            case ControlPoint.CONTROL_END:
+                
+                array.getPoint(1).setX(x - (shape.getX())   );
+                array.getPoint(1).setY(y - (shape.getY())  );
+                
+                arrayLine.getPoint(1).setX(x - (shape.getX())  );
+                arrayLine.getPoint(1).setY(y - (shape.getY())  );
 
                 break;
         }
@@ -247,22 +282,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint {
         setVisible(visible);
     }
 
-    public void moveControlPoint() {
-        Point2DArray array = shape.getLine().getPoints();
-        switch (controlType) {
-            case ControlPoint.CONTROL_START:
-
-                setX(shape.getX() + array.getPoint(0).getX());
-                setY(shape.getY() + array.getPoint(0).getY());
-                break;
-            case ControlPoint.CONTROL_END:
-
-                setX(shape.getX() + array.getPoint(1).getX());
-                setY(shape.getY() + array.getPoint(1).getY());
-                break;
-        }
-
-    }
 
     @Override
     public int hashCode() {

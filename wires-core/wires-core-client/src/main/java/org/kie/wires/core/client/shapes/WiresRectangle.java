@@ -124,26 +124,27 @@ public class WiresRectangle extends WiresBaseGroupShape {
                                 // TODO: refactor this
                                 switch (m.getType()) {
                                     case Magnet.MAGNET_TOP:
-                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2) );
-                                        cp.setControlPointY(getY() );
-                                        cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY());
+                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2) - 6 );
+                                        cp.setControlPointY(getY() - 6 );
+                                        cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY() );
                                         break;
 
                                     case Magnet.MAGNET_LEFT:
                                        
-                                        cp.setControlPointX(getX() );
-                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) );
-                                        cp.udpateShape(layer, getX(), getY() + (bounding.getHeight() / 2));
+                                        cp.setControlPointX(getX() - 6);
+                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) - 6 );
+                                        cp.udpateShape(layer, getX(), getY() + (bounding.getHeight() / 2) );
                                         break;
 
                                     case Magnet.MAGNET_RIGHT:
-                                        cp.setControlPointX(getX() + bounding.getWidth() );
-                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) );
+                                        cp.setControlPointX(getX() + bounding.getWidth() - 6);
+                                        cp.setControlPointY(getY() + (bounding.getHeight() / 2) - 6 );
                                         cp.udpateShape(layer, getX() + bounding.getWidth(), getY() + (bounding.getHeight() / 2));
-
+                                        break;
+                                        
                                     case Magnet.MAGNET_BOTTOM:
-                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2));
-                                        cp.setControlPointY(getY() + bounding.getHeight() );
+                                        cp.setControlPointX(getX() + (bounding.getWidth() / 2) - 6 );
+                                        cp.setControlPointY(getY() + bounding.getHeight() - 6 );
                                         cp.udpateShape(layer, getX() + (bounding.getWidth() / 2), getY() + bounding.getHeight());
                                         break;
                                 }

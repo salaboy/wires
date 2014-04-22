@@ -52,15 +52,21 @@ public class WiresLine extends WiresBaseGroupShape {
 
     private Line line;
 
-    private boolean showingMagnets = false;
-    private boolean showingControlPoints = false;
+    private Line bounding;
 
     public WiresLine(double x1, double y1, double x2, double y2) {
-        line = new Line(x1, y1, x2, y2);
-
         this.id = UUID.uuid();
+        
+        line = new Line(x1, y1, x2, y2);
         line.setStrokeWidth(3);
 
+        bounding = new Line(x1 , y1 , x2, y2);
+        bounding.setStrokeWidth(10);
+        bounding.setAlpha(0.1);
+        
+        add(line);
+        add(bounding);
+        
         magnets.clear();
         addMagnet(new LineMagnetImpl(this, Magnet.MAGNET_START));
         addMagnet(new LineMagnetImpl(this, Magnet.MAGNET_END));
@@ -79,11 +85,16 @@ public class WiresLine extends WiresBaseGroupShape {
         return id;
     }
 
+    public Line getBounding() {
+        return bounding;
+    }
+
     @Override
     public void init(double x, double y) {
         super.init();
         setX(x);
         setY(y);
+        
         currentDragX = x;
         currentDragY = y;
 
@@ -126,7 +137,7 @@ public class WiresLine extends WiresBaseGroupShape {
 
             }
         });
-        add(line);
+        
     }
 
     public void recordStartData(NodeDragStartEvent nodeDragStartEvent) {
@@ -163,7 +174,7 @@ public class WiresLine extends WiresBaseGroupShape {
 
         // THIS IS HARDCODED HERE BUT IT CAN BE A LOOP FOR POLYGONS
         // start
-        Point2DArray points = line.getPoints();
+        Point2DArray points = bounding.getPoints();
         Point2D startPoint = points.getPoint(0);
         v1.setX(getCurrentDragX() + startPoint.getX());
         v1.setY(getCurrentDragY() + startPoint.getY());
@@ -183,7 +194,7 @@ public class WiresLine extends WiresBaseGroupShape {
         List<Double> scalars = new ArrayList<Double>();
         Vector v1 = new Vector();
 
-        Point2DArray points = line.getPoints();
+        Point2DArray points = bounding.getPoints();
         Point2D startPoint = points.getPoint(0);
         // start
         v1.setX(getCurrentDragX() + startPoint.getX());
