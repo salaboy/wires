@@ -103,8 +103,9 @@ public class BayesianFactory extends BaseFactory {
     private void setHeader(BayesVariable node, EditableBayesianNode bayesianNode) {
         bayesianNode.setHeader(new Rectangle(bayesianNode.getRectangle().getWidth(), BayesianUtils.HEIGHT_HEADER));
         bayesianNode.getHeader().setFillColor(colors[0][1]);
+        bayesianNode.getHeader().setX(bayesianNode.getHeader().getX()+6);
         bayesianNode.setTextHeader(drawText(node.getName(), BayesianUtils.FONT_SIZE_HEADER_NODE,
-                BayesianUtils.LABEL_POSITION_X_DEFAULT, BayesianUtils.LABEL_POSITION_Y_DEFAULT));
+                BayesianUtils.LABEL_POSITION_X_DEFAULT + 6, BayesianUtils.LABEL_POSITION_Y_DEFAULT));
     }
 
     private void setPorcentualBar(BayesVariable node, EditableBayesianNode bayesianNode) {
