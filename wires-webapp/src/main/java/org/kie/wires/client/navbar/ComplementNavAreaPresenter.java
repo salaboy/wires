@@ -46,8 +46,7 @@ public class ComplementNavAreaPresenter implements Header {
 
     @Override
     public String getId() {
-        // TODO Auto-generated method stub
-        return null;
+        return getClass().getName();
     }
 
 }

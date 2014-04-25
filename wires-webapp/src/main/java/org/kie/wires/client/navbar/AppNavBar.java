@@ -29,8 +29,7 @@ public class AppNavBar extends Composite implements Header {
 
     @Override
     public String getId() {
-        // TODO Auto-generated method stub
-        return null;
+        return getClass().getName();
     }
 
     
