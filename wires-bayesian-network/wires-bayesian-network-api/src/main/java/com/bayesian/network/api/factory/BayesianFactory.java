@@ -67,6 +67,7 @@ public class BayesianFactory extends BaseFactory {
                 Canvas.progressBar.hide();
                 layerEvent.fire(new LayerEvent(nodes));
                 readyEvent.fire(new ReadyEvent(bayesianNodes));
+                
 
             }
         }, new ErrorCallback<Object>() {
@@ -97,6 +98,7 @@ public class BayesianFactory extends BaseFactory {
 
         nodes.add(node);
         bayesianNodes.add(bayesianNode);
+        
 
     }
 
