@@ -56,7 +56,7 @@ public class BayesianFactory extends BaseFactory {
     }
 
     private void buildBayesNetworkFromXML(final String xml03File) {
-        progressBar();
+        //progressBar();
         bayesianService.call(new RemoteCallback<BayesNetwork>() {
             @Override
             public void callback(final BayesNetwork response) {
@@ -64,9 +64,9 @@ public class BayesianFactory extends BaseFactory {
                 for (BayesVariable bay : response.getNodos()) {
                     drawBayesianNode(bay);
                 }
-                Canvas.progressBar.hide();
+                //Canvas.progressBar.hide();
                 layerEvent.fire(new LayerEvent(nodes));
-                readyEvent.fire(new ReadyEvent(bayesianNodes));
+                //readyEvent.fire(new ReadyEvent(bayesianNodes));
                 
 
             }
@@ -97,7 +97,11 @@ public class BayesianFactory extends BaseFactory {
         bayesianNode.buildNode();
 
         nodes.add(node);
+        
+        //TODO adding one by one to the canvas. We must see the performance
+        bayesianNodes.clear();
         bayesianNodes.add(bayesianNode);
+        readyEvent.fire(new ReadyEvent(bayesianNodes));
         
 
     }
