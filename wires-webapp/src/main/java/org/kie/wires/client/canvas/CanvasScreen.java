@@ -66,9 +66,7 @@ public class CanvasScreen extends Canvas {
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
         String shape = shapeAddEvent.getShape();
-
         /* This is the ugly bit that needs to be refactored to be generic */
-
         WiresBaseGroupShape wiresShape = null;
         if (shape.equals("WiresRectangle")) {
             wiresShape = new WiresRectangle(70, 40);
@@ -82,19 +80,9 @@ public class CanvasScreen extends Canvas {
                 || shapeAddEvent.getY() > panel.getAbsoluteTop() + panel.getHeight()) {
             return;
         }
-
         wiresShape.setDraggable(true);
-        //canvasLayer.add(wiresShape);
         ((EditableShape) wiresShape).init(this.getX(shapeAddEvent.getX()), this.getY(shapeAddEvent.getY()));
         this.addShapeToCanvas(wiresShape);
-
-
-        //wiresShape.setSelected(selected);
-
-        //shapesInCanvas.add((EditableShape) wiresShape);
-
-        //canvasLayer.draw();
-
         readyShape.fire(new ReadyShape(shape));
     }
 
