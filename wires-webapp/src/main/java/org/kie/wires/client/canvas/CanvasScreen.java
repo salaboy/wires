@@ -25,6 +25,7 @@ import org.uberfire.lifecycle.OnOpen;
 import com.bayesian.network.api.events.ReadyEvent;
 import com.bayesian.network.api.screen.BayesianScreen;
 import com.emitrom.lienzo.client.core.shape.IPrimitive;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 
 @SuppressWarnings("unused")
@@ -65,9 +66,7 @@ public class CanvasScreen extends Canvas {
 
     public void myResponseObserver(@Observes ShapeAddEvent shapeAddEvent) {
         String shape = shapeAddEvent.getShape();
-
         /* This is the ugly bit that needs to be refactored to be generic */
-
         WiresBaseGroupShape wiresShape = null;
         if (shape.equals("WiresRectangle")) {
             wiresShape = new WiresRectangle(70, 40);
@@ -81,18 +80,9 @@ public class CanvasScreen extends Canvas {
                 || shapeAddEvent.getY() > panel.getAbsoluteTop() + panel.getHeight()) {
             return;
         }
-
         wiresShape.setDraggable(true);
-        canvasLayer.add(wiresShape);
-
         ((EditableShape) wiresShape).init(this.getX(shapeAddEvent.getX()), this.getY(shapeAddEvent.getY()));
-
-        wiresShape.setSelected(selected);
-
-        shapesInCanvas.add((EditableShape) wiresShape);
-
-        canvasLayer.draw();
-
+        this.addShapeToCanvas(wiresShape);
         readyShape.fire(new ReadyShape(shape));
     }
 
@@ -107,14 +97,17 @@ public class CanvasScreen extends Canvas {
     }
 
     public void addNodes(@Observes ReadyEvent event) {
-        for (WiresRectangle shape : event.getBayesianNodes()) {
-            canvasLayer.add(shape);
-            shape.setSelected(selected);
-            shapesInCanvas.add((EditableShape) shape);
-        }
-        canvasLayer.draw();
-
+        GWT.log("---event.getBayesianNodes() " + event.getBayesianNodes().size());
+        addShapeToCanvas(event.getBayesianNodes().get(0));
     }
+    
+    private void addShapeToCanvas(WiresBaseGroupShape shape){
+        canvasLayer.add(shape);
+        shape.setSelected(selected);
+        shapesInCanvas.add((EditableShape) shape);
+        canvasLayer.draw();
+    }
+    
 
     public void clearPanel(@Observes ClearEvent event) {
         for (EditableShape shape : shapesInCanvas) {
