@@ -109,6 +109,7 @@ public class CanvasScreen extends Canvas {
 
     public void clearPanel( @Observes ClearEvent event ) {
         for ( EditableShape shape : shapesInCanvas ) {
+            shape.destroy();
             canvasLayer.remove( (IPrimitive<?>) shape );
 
         }

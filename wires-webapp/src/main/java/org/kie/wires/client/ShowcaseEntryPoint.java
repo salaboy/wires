@@ -15,13 +15,8 @@
  */
 package org.kie.wires.client;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import javax.inject.Inject;
 
 import com.google.gwt.animation.client.Animation;
@@ -32,21 +27,15 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.client.mvp.AbstractWorkbenchPerspectiveActivity;
 import org.uberfire.client.mvp.ActivityManager;
-import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.mvp.WorkbenchScreenActivity;
-import org.uberfire.client.screen.JSWorkbenchScreenActivity;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBarPresenter;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.security.Identity;
-import org.uberfire.workbench.model.menu.MenuFactory;
-import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.MenuPosition;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -128,81 +117,6 @@ public class ShowcaseEntryPoint {
             }
         }
         return defaultPerspective;
-    }
-
-    private List<MenuItem> getScreens() {
-        final List<MenuItem> screens = new ArrayList<MenuItem>();
-        final List<String> names = new ArrayList<String>();
-
-        for ( final IOCBeanDef<WorkbenchScreenActivity> _menuItem : IOC.getBeanManager().lookupBeans(
-                WorkbenchScreenActivity.class ) ) {
-            final String name;
-            if ( _menuItem.getBeanClass().equals( JSWorkbenchScreenActivity.class ) ) {
-                name = _menuItem.getName();
-            } else {
-                name = IOC.getBeanManager().lookupBean( _menuItem.getBeanClass() ).getName();
-            }
-
-        }
-
-        Collections.sort( names );
-
-        for ( final String name : names ) {
-            final MenuItem item = MenuFactory.newSimpleItem( name ).respondsWith( new Command() {
-                @Override
-                public void execute() {
-                    placeManager.goTo( new DefaultPlaceRequest( name ) );
-                }
-            } ).endMenu().build().getItems().get( 0 );
-            screens.add( item );
-        }
-
-        return screens;
-    }
-
-    private List<MenuItem> getPerspectives() {
-        final List<MenuItem> perspectives = new ArrayList<MenuItem>();
-        for ( final PerspectiveActivity perspective : getPerspectiveActivities() ) {
-            final String name = perspective.getPerspective().getName();
-            final Command cmd = new Command() {
-
-                @Override
-                public void execute() {
-                    placeManager.goTo( new DefaultPlaceRequest( perspective.getIdentifier() ) );
-                }
-
-            };
-            final MenuItem item = MenuFactory.newSimpleItem( name ).respondsWith( cmd ).endMenu().build().getItems().get( 0 );
-            perspectives.add( item );
-        }
-
-        return perspectives;
-    }
-
-    private List<AbstractWorkbenchPerspectiveActivity> getPerspectiveActivities() {
-
-        // Get Perspective Providers
-        final Set<AbstractWorkbenchPerspectiveActivity> activities = activityManager
-                .getActivities( AbstractWorkbenchPerspectiveActivity.class );
-
-        // Sort Perspective Providers so they're always in the same sequence!
-        List<AbstractWorkbenchPerspectiveActivity> sortedActivities = new ArrayList<AbstractWorkbenchPerspectiveActivity>(
-                activities );
-        Collections.sort( sortedActivities, new Comparator<AbstractWorkbenchPerspectiveActivity>() {
-            @Override
-            public int compare( AbstractWorkbenchPerspectiveActivity o1,
-                                AbstractWorkbenchPerspectiveActivity o2 ) {
-                return o1.getPerspective().getName().compareTo( o2.getPerspective().getName() );
-            }
-        } );
-
-        return sortedActivities;
-    }
-
-    private Collection<WorkbenchScreenActivity> getScreenActivities() {
-
-        // Get Perspective Providers
-        return activityManager.getActivities( WorkbenchScreenActivity.class );
     }
 
     // Fade out the "Loading application" pop-up
