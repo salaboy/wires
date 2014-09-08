@@ -1,345 +1,317 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.kie</groupId>
-		<artifactId>wires</artifactId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>org.kie</groupId>
+    <artifactId>wires</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>wires-webapp</artifactId>
-	<packaging>war</packaging>
+  <artifactId>wires-webapp</artifactId>
+  <packaging>war</packaging>
 
-	<name>Wires :: WebApp</name>
-	<description>Wires WebApp</description>
+  <name>Wires :: WebApp</name>
+  <description>Wires WebApp</description>
 
+  <dependencies>
+    <!--Logs-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.emitrom</groupId>
-			<artifactId>lienzo-core</artifactId>
-			<version>${lienzo.version}</version>
-		</dependency>
+    <!--Wires-->
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>wires-core-api</artifactId>
+      <version>${wires-core.version}</version>
+    </dependency>
 
-		<!-- UberFire -->
-		<dependency>
-			<groupId>org.uberfire</groupId>
-			<artifactId>uberfire-security-client</artifactId>
-			<version>${uberfire.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>wires-core-client</artifactId>
+      <version>${wires-core.version}</version>
+    </dependency>
 
+    <dependency>
+      <groupId>com.emitrom</groupId>
+      <artifactId>lienzo-core</artifactId>
+      <version>${lienzo.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.uberfire</groupId>
-			 <artifactId>uberfire-workbench-processors</artifactId>
-			<version>${uberfire.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>wires-bayesian-parser-backend</artifactId>
+      <version>${wires-core.version}</version>
+    </dependency>
 
-                <dependency>
-			<groupId>org.uberfire</groupId>
-			<artifactId>uberfire-all</artifactId>
-			<version>${uberfire.version}</version>
-		</dependency>
-                
-                
-                <dependency>
-			<groupId>org.uberfire</groupId>
-			<artifactId>uberfire-panel-manager-nswe</artifactId>
-			<version>${uberfire.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>wires-bayesian-network-client</artifactId>
+      <version>${wires-core.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+    <!-- Guvnor -->
+    <dependency>
+      <groupId>org.guvnor</groupId>
+      <artifactId>guvnor-structure-backend</artifactId>
+      <version>${kie.workbench.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-ext</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.guvnor</groupId>
+      <artifactId>guvnor-structure-client</artifactId>
+      <version>${kie.workbench.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-		</dependency>
+    <!-- UberFire -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-all</artifactId>
+      <version>${uberfire.version}</version>
+    </dependency>
 
-		<!-- Errai AS -->
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-jboss-as-support</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-workbench-processors</artifactId>
+      <version>${uberfire.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- Errai Core -->
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-ui</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-panel-manager-nswe</artifactId>
+      <version>${uberfire.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-data-binding</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
+    <!-- Errai AS -->
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-jboss-as-support</artifactId>
+      <version>${errai.version}</version>
+    </dependency>
 
-		<!-- CDI Integration Modules -->
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-cdi-client</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
+    <!-- CDI Integration Modules -->
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-cdi-client</artifactId>
+      <version>${errai.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-javax-enterprise</artifactId>
-			<version>${errai.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-javax-enterprise</artifactId>
+      <version>${errai.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-weld-integration</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-weld-integration</artifactId>
+      <version>${errai.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.jboss.errai</groupId>
-			<artifactId>errai-cdi-jetty</artifactId>
-			<version>${errai.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-cdi-jetty</artifactId>
+      <version>${errai.version}</version>
+    </dependency>
 
-		<!-- CDI Development Utils -->
-		<!-- This must be placed above com.google.gwt:gwt-dev to override the Jetty 
-			that is present there -->
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
+    <!-- Weld Modules -->
+    <dependency>
+      <groupId>org.jboss.weld.se</groupId>
+      <artifactId>weld-se-core</artifactId>
+      <version>${weld.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-plus</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.jboss.weld.servlet</groupId>
+      <artifactId>weld-servlet-core</artifactId>
+      <version>${weld.version}</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-naming</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
+    <!-- GWT and GWT Extensions -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- Weld Modules -->
-		<dependency>
-			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>weld-se-core</artifactId>
-			<version>${weld.version}</version>
-		</dependency>
+  </dependencies>
 
-		<dependency>
-			<groupId>org.jboss.weld.servlet</groupId>
-			<artifactId>weld-servlet-core</artifactId>
-			<version>${weld.version}</version>
-		</dependency>
+  <build>
+    <resources>
+      <!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+      <!-- Include module descriptors from src/main/resources in order not to
+        break the Intellij GWT plug-in -->
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <version>2.5.0</version>
+        <configuration>
+          <module>org.kie.wires.FastCompiledWiresShowcase</module>
+          <logLevel>INFO</logLevel>
+          <runTarget>org.kie.wires.WiresShowcase/Wires.html</runTarget>
+          <extraJvmArgs>-Xmx1024m -XX:MaxPermSize=256m</extraJvmArgs>
+          <soyc>false</soyc>
+          <server>org.jboss.errai.cdi.server.gwt.JettyLauncher</server>
+          <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+          <compileSourcesArtifacts>
+            <!-- UberFire -->
+            <compileSourcesArtifact>org.uberfire:uberfire-commons</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-nio2-model</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-js</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-security-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-security-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-client-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-workbench-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-workbench-client-backend</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-backend-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.guvnor:guvnor-structure-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie:wires-core-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie:wires-core-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie:wires-bayesian-parser-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie:wires-bayesian-network-client</compileSourcesArtifact>
+          </compileSourcesArtifacts>
+        </configuration>
+        <executions>
+          <execution>
+            <id>gwt-clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>gwt-compile</id>
+            <goals>
+              <goal>resources</goal>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <warName>${project.artifactId}</warName>
+          <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
+          <packagingExcludes>**/javax/**/*.*,**/client/**/*.class</packagingExcludes>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+      <!-- Tests are skipped by default because they require additional GWT
+        dependencies. Run mvn with -Pintegration-test to enable testing. -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.15</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.4.1</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>.errai/**</include>
+                <include>.niogit/**</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <versionRange>[2.3.0,)</versionRange>
+                    <goals>
+                      <goal>resources</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.jboss.errai</groupId>
+                    <artifactId>jacoco-gwt-maven-plugin</artifactId>
+                    <versionRange>[0.0,)</versionRange>
+                    <goals>
+                      <goal>prepare-agent</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <profiles>
+    <profile>
+      <id>fullProfile</id>
+      <activation>
+        <property>
+          <name>full</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin><!-- Keep in sync with soa profile -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>gwt-maven-plugin</artifactId>
+            <configuration>
+              <!-- Build all GWT permutations and optimize them -->
+              <module>org.kie.wires.WiresShowcase</module>
+              <draftCompile>false</draftCompile>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
-		<!-- GWT and GWT Extensions -->
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.kie</groupId>
-			<artifactId>wires-bayesian-network-api</artifactId>
-			<version>${bayesian-api.version}</version>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<resources>
-			<!-- Include src/main/java in order not to break the Eclipse GWT plug-in -->
-			<resource>
-				<directory>src/main/java</directory>
-			</resource>
-			<!-- Include module descriptors from src/main/resources in order not to 
-				break the Intellij GWT plug-in -->
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.5.0</version>
-				<configuration>
-					<module>org.kie.wires.FastCompiledWiresShowcase</module>
-					<logLevel>INFO</logLevel>
-					<runTarget>org.kie.wires.WiresShowcase/Wires.html</runTarget>
-					<extraJvmArgs>-Xmx1024m -XX:MaxPermSize=256m</extraJvmArgs>
-					<soyc>false</soyc>
-					<server>org.jboss.errai.cdi.server.gwt.JettyLauncher</server>
-					<gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
-					<compileSourcesArtifacts>
-						<!-- UberFire -->
-						<compileSourcesArtifact>org.uberfire:uberfire-commons</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-nio2-model</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-api</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-js</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-security-api</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-security-client</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-client-api</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-widgets-core-client</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-widgets-commons</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-workbench-client</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-workbench-client-backend</compileSourcesArtifact>
-						<compileSourcesArtifact>org.uberfire:uberfire-backend-api</compileSourcesArtifact>
-					</compileSourcesArtifacts>
-				</configuration>
-				<executions>
-					<execution>
-						<id>gwt-clean</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>gwt-compile</id>
-						<goals>
-							<goal>resources</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<warName>${project.artifactId}</warName>
-					<outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
-					<packagingExcludes>**/javax/**/*.*,**/client/**/*.class</packagingExcludes>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-					</archive>
-				</configuration>
-			</plugin>
-			<!-- Tests are skipped by default because they require additional GWT 
-				dependencies. Run mvn with -Pintegration-test to enable testing. -->
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jboss.errai</groupId>
-				<artifactId>jacoco-gwt-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>jacoco-gwt-prepare-agent</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>jacoco-gwt-report</id>
-						<phase>site</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>${basedir}</directory>
-							<includes>
-								<include>.errai/**</include>
-								<include>.niogit/**</include>
-							</includes>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.mojo</groupId>
-										<artifactId>gwt-maven-plugin</artifactId>
-										<versionRange>[2.3.0,)</versionRange>
-										<goals>
-											<goal>resources</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.jboss.errai</groupId>
-										<artifactId>jacoco-gwt-maven-plugin</artifactId>
-										<versionRange>[0.0,)</versionRange>
-										<goals>
-											<goal>prepare-agent</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-	<profiles>
-		<profile>
-			<id>fullProfile</id>
-			<activation>
-				<property>
-					<name>full</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin><!-- Keep in sync with soa profile -->
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>gwt-maven-plugin</artifactId>
-						<configuration>
-							<!-- Build all GWT permutations and optimize them -->
-							<module>org.kie.wires.WiresShowcase</module>
-							<draftCompile>false</draftCompile>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-	
 </project>

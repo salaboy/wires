@@ -4,9 +4,9 @@ import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.uberfire.backend.repositories.Repository;
-import org.uberfire.backend.repositories.RepositoryService;
 
+import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.commons.services.cdi.StartupType;
 
@@ -28,15 +28,15 @@ public class AppSetup {
 
     @PostConstruct
     public void assertPlayground() {
-        final Repository repository = repositoryService.getRepository(PLAYGROUND_ALIAS);
-        if (repository == null) {
-            repositoryService.createRepository(PLAYGROUND_SCHEME, PLAYGROUND_ALIAS, new HashMap<String, Object>() {
+        final Repository repository = repositoryService.getRepository( PLAYGROUND_ALIAS );
+        if ( repository == null ) {
+            repositoryService.createRepository( PLAYGROUND_SCHEME, PLAYGROUND_ALIAS, new HashMap<String, Object>() {
                 {
-                    put("origin", PLAYGROUND_ORIGIN);
-                    put("username", PLAYGROUND_UID);
-                    put("crypt:password", PLAYGROUND_PWD);
+                    put( "origin", PLAYGROUND_ORIGIN );
+                    put( "username", PLAYGROUND_UID );
+                    put( "crypt:password", PLAYGROUND_PWD );
                 }
-            });
+            } );
         }
     }
 

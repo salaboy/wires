@@ -12,7 +12,7 @@
   <artifactId>wires-distribution-war</artifactId>
   <packaging>pom</packaging>
 
-  <name>Wires Distribution War</name>
+  <name>Wires :: Distribution War</name>
   <description>
     This module builds the download war for jboss as 7.
   </description>

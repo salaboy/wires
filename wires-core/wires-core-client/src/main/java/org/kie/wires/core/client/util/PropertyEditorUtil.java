@@ -3,9 +3,9 @@ package org.kie.wires.core.client.util;
 import java.util.List;
 
 import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.uberfire.properties.editor.model.PropertyEditorCategory;
-import org.uberfire.properties.editor.model.PropertyEditorFieldInfo;
-import org.uberfire.properties.editor.model.PropertyEditorType;
+import org.kie.uberfire.properties.editor.model.PropertyEditorCategory;
+import org.kie.uberfire.properties.editor.model.PropertyEditorFieldInfo;
+import org.kie.uberfire.properties.editor.model.PropertyEditorType;
 
 import com.google.common.collect.Lists;
 

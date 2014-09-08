@@ -11,8 +11,8 @@ import org.kie.wires.core.client.util.PropertyEditorUtil;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
-import org.uberfire.properties.editor.client.PropertyEditorWidget;
-import org.uberfire.properties.editor.model.PropertyEditorEvent;
+import org.kie.uberfire.properties.editor.client.PropertyEditorWidget;
+import org.kie.uberfire.properties.editor.model.PropertyEditorEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
