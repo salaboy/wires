@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.kie.wires.core.client.shapes;
 
@@ -33,9 +43,6 @@ import org.kie.wires.core.client.collision.LineControlPointImpl;
 import org.kie.wires.core.client.collision.LineMagnetImpl;
 import org.kie.wires.core.client.util.UUID;
 
-/**
- * @author salaboy
- */
 public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionManager {
 
     private Line line;
@@ -62,9 +69,7 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
                              y1,
                              x2,
                              y2 );
-        bounding.setStrokeWidth( 10 );
         bounding.setAlpha( 0.1 );
-        bounding.setLineCap( LineCap.ROUND );
         add( line );
         add( bounding );
 

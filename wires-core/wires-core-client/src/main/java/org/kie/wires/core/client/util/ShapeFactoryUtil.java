@@ -15,10 +15,10 @@ public class ShapeFactoryUtil {
 
     // bounding Shape
     public static final int WIDTH_BOUNDING = 50;
-    public static final int HEIGHT_BOUNDING = 50;
+    public static final int HEIGHT_BOUNDING = 75;
     public static final String RGB_FILL_BOUNDING = Color.rgbToBrowserHexColor(255, 255, 255);
     public static final String RGB_STROKE_BOUNDING = Color.rgbToBrowserHexColor(219, 217, 217);
-    public static final int SPACE_BETWEEN_BOUNDING = 2;
+    public static final int SPACE_BETWEEN_BOUNDING = 5;
 
     // bounding Layer
     public static final int WIDTH_BOUNDING_LAYER = 250;

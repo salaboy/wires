@@ -1,8 +1,22 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.wires.client.factoryShapes;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.enterprise.event.Event;
 
 import com.emitrom.lienzo.client.widget.LienzoPanel;
@@ -14,67 +28,46 @@ import org.kie.wires.core.client.util.ShapeType;
 
 public class StencilBuilder extends Composite {
 
-    public static Map<ShapeCategory, Integer> shapesByCategory;
-
-    public StencilBuilder() {
-
-    }
+    private List<PaletteShape> shapes = new ArrayList<PaletteShape>();
 
     public StencilBuilder( final Event<ShapeAddEvent> shapeAddEvent,
                            final ShapeCategory shapeCategory,
-                           final LienzoPanel panel,
-                           final List<PaletteShape> listShapes ) {
-        shapesByCategory = new HashMap<ShapeCategory, Integer>();
+                           final LienzoPanel panel ) {
         for ( ShapeType shapeType : ShapeType.values() ) {
             if ( shapeType.getCategory().equals( shapeCategory ) ) {
-                this.newShape( shapeType, panel, shapeAddEvent, listShapes );
+                shapes.add( newShape( shapeType,
+                                      panel,
+                                      shapeAddEvent ) );
             }
         }
     }
 
-    public void newShape( final ShapeType shapeType,
-                          final LienzoPanel panel,
-                          final Event<ShapeAddEvent> shapeAddEvent,
-                          final List<PaletteShape> listShapes ) {
-        this.setShapesByCategory( shapeType );
+    public List<PaletteShape> getShapes() {
+        return shapes;
+    }
+
+    private PaletteShape newShape( final ShapeType shapeType,
+                                   final LienzoPanel panel,
+                                   final Event<ShapeAddEvent> shapeAddEvent ) {
+        PaletteShape shape = null;
 
         switch ( shapeType ) {
             case LINE:
-                new LineFactory( panel,
-                                 shapeAddEvent,
-                                 shapesByCategory,
-                                 listShapes );
+                shape = new LineFactory( panel,
+                                         shapeAddEvent ).build();
                 break;
             case RECTANGLE:
-                new RectangleFactory( panel,
-                                      shapeAddEvent,
-                                      shapesByCategory,
-                                      listShapes );
+                shape = new RectangleFactory( panel,
+                                              shapeAddEvent ).build();
                 break;
             case CIRCLE:
-                new CircleFactory( panel,
-                                   shapeAddEvent,
-                                   shapesByCategory,
-                                   listShapes );
+                shape = new CircleFactory( panel,
+                                           shapeAddEvent ).build();
                 break;
             default:
                 throw new IllegalStateException( "Unrecognized shape type '" + shapeType + "'!" );
         }
-
-    }
-
-    public void setShapesByCategory( final ShapeType shapeType ) {
-        boolean exist = false;
-        for ( Map.Entry<ShapeCategory, Integer> entry : shapesByCategory.entrySet() ) {
-            if ( entry.getKey().equals( shapeType.getCategory() ) ) {
-                exist = true;
-                shapesByCategory.put( entry.getKey(), shapesByCategory.get( entry.getKey() ) + 1 );
-                break;
-            }
-        }
-        if ( !exist ) {
-            shapesByCategory.put( shapeType.getCategory(), 1 );
-        }
+        return shape;
     }
 
 }

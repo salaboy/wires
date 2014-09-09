@@ -116,6 +116,13 @@ public class CanvasScreen extends Canvas {
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
     }
 
+    @Override
+    public void deselectShape( final WiresBaseGroupShape shape ) {
+        super.deselectShape( shape );
+        menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
+    }
+
     public void myResponseObserver( @Observes ShapeAddEvent shapeAddEvent ) {
         String shape = shapeAddEvent.getShape();
 
@@ -127,7 +134,7 @@ public class CanvasScreen extends Canvas {
         } else if ( shape.equals( "WiresCircle" ) ) {
             wiresShape = new WiresCircle( 0,
                                           0,
-                                          30 );
+                                          20 );
         } else if ( shape.equals( "WiresLine" ) ) {
             wiresShape = new WiresLine( 0,
                                         0,
@@ -173,6 +180,9 @@ public class CanvasScreen extends Canvas {
     public void clear() {
         if ( Window.confirm( "Are you sure to clean the canvas?" ) ) {
             super.clear();
+            menus.getItems().get( 0 ).setEnabled( false );
+            menus.getItems().get( 1 ).setEnabled( false );
+            menus.getItems().get( 2 ).setEnabled( false );
         }
     }
 

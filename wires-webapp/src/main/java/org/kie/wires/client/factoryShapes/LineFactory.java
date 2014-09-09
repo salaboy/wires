@@ -1,72 +1,82 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.wires.client.factoryShapes;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.enterprise.event.Event;
-
-import org.kie.wires.core.api.events.ShapeAddEvent;
-import org.kie.wires.core.client.shapes.PaletteShape;
-import org.kie.wires.core.client.util.ShapeCategory;
-import org.kie.wires.core.client.util.ShapeType;
-import org.kie.wires.core.client.util.ShapesUtils;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import com.emitrom.lienzo.client.core.types.DragBounds;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
+import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.util.ShapeCategory;
+import org.kie.wires.core.client.util.ShapeType;
+import org.kie.wires.core.client.util.ShapesUtils;
 
 public class LineFactory extends ShapeFactory<Line> {
 
     private static String DESCRIPTION = "Line";
 
-    private static int shapes;
-
-    public LineFactory() {
-    }
-
-    public LineFactory(LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent, Map<ShapeCategory, Integer> shapesByCategory,
-            List<PaletteShape> listShapes) {
-        super(panel, shapeAddEvent);
-        shapes = shapesByCategory.get(this.getCategory());
-        super.drawBoundingBox(listShapes, shapes, DESCRIPTION);
-
+    public LineFactory( final LienzoPanel panel,
+                        final Event<ShapeAddEvent> shapeAddEvent ) {
+        super( panel,
+               shapeAddEvent );
     }
 
     @Override
     public Shape<Line> drawShape() {
-        Line editableLine = new Line(this.getX1(), this.getY1(), this.getX2(), this.getY2());
-
-        editableLine.setDragBounds(new DragBounds(150, 260, 150, 150));
-        editableLine.setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE).setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_LINE)
-                .setDraggable(false);
-        shape.setShape(editableLine);
-        return editableLine;
+        Line line = new Line( 5,
+                              5,
+                              45,
+                              45 );
+        setAttributes( line );
+        return line;
     }
 
     @Override
-    public void addShapeHandlers(Shape<Line> shape) {
-        shape.addNodeMouseDownHandler(getNodeMouseDownEvent());
-
+    protected String getDescription() {
+        return DESCRIPTION;
     }
 
     @Override
-    protected void addBoundingHandlers(Rectangle boundingBox) {
-        boundingBox.addNodeMouseDownHandler(getNodeMouseDownEvent());
+    public void addShapeHandlers( final Shape<Line> shape ) {
+        shape.addNodeMouseDownHandler( getNodeMouseDownEvent() );
+    }
+
+    @Override
+    protected void addBoundingHandlers( final Rectangle boundingBox ) {
+        boundingBox.addNodeMouseDownHandler( getNodeMouseDownEvent() );
     }
 
     @Override
     protected NodeMouseDownHandler getNodeMouseDownEvent() {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
-            public void onNodeMouseDown(NodeMouseDownEvent event) {
-                final Line floatingShape = new Line(getFloatingX1(), getFloatingY1(), getFloatingX2(), getFloatingY2());
-                floatingShape.setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE).setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_LINE)
-                        .setDraggable(false);
-                setFloatingPanel(floatingShape, "WiresLine", 30, 30, event, null);
-                // layersScreen.initDrawLayer(ShapeType.LINE);
+            public void onNodeMouseDown( NodeMouseDownEvent event ) {
+                final Line floatingShape = new Line( 0,
+                                                     0,
+                                                     30,
+                                                     30 );
+                setAttributes( floatingShape );
+                setFloatingPanel( floatingShape,
+                                  "WiresLine",
+                                  30,
+                                  30,
+                                  event );
             }
         };
 
@@ -74,39 +84,11 @@ public class LineFactory extends ShapeFactory<Line> {
 
     }
 
-    private double getX1() {
-        return 12 + super.calculateX(shapes);
-    }
-
-    private double getY1() {
-        return 8 + super.calculateY(shapes);
-    }
-
-    private double getX2() {
-        return 42 + super.calculateX(shapes);
-    }
-
-    private double getY2() {
-        return 30 + super.calculateY(shapes);
-    }
-
-    private double getFloatingX1() {
-        return 0;
-    }
-
-    // this value must be calculated
-    private double getFloatingY1() {
-        return 0;
-    }
-
-    // this value must be calculated
-    private double getFloatingX2() {
-        return 30;
-    }
-
-    // this value must be calculated
-    private double getFloatingY2() {
-        return 30;
+    private void setAttributes( final Line line ) {
+        line.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
+                .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
+                .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
+                .setDraggable( false );
     }
 
     @Override

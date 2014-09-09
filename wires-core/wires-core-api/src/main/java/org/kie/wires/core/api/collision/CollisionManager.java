@@ -15,7 +15,6 @@
  */
 package org.kie.wires.core.api.collision;
 
-import org.kie.wires.core.api.collision.Magnet;
 import org.kie.wires.core.api.shapes.EditableShape;
 
 /**
