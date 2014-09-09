@@ -42,7 +42,6 @@ public class LayersGroup extends Composite {
                                final BayesVariable node,
                                final int account ) {
         layer.add( new LayerBuilder( shape,
-                                     panel,
                                      account,
                                      null,
                                      null,

@@ -50,7 +50,6 @@ public class TemplatesGroup extends Composite {
         for ( String name : filesNames ) {
             accountLayers += 1;
             layer.add( new LayerBuilder( rectangle,
-                                         panel,
                                          accountLayers,
                                          name,
                                          bayesianEvent,

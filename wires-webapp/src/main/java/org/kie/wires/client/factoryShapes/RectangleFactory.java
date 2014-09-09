@@ -2,20 +2,18 @@ package org.kie.wires.client.factoryShapes;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.enterprise.event.Event;
-
-import org.kie.wires.core.api.events.ShapeAddEvent;
-import org.kie.wires.core.client.shapes.PaletteShape;
-import org.kie.wires.core.client.util.ShapeCategory;
-import org.kie.wires.core.client.util.ShapeType;
-import org.kie.wires.core.client.util.ShapesUtils;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
+import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.client.shapes.PaletteShape;
+import org.kie.wires.core.client.util.ShapeCategory;
+import org.kie.wires.core.client.util.ShapeType;
+import org.kie.wires.core.client.util.ShapesUtils;
 
 public class RectangleFactory extends ShapeFactory<Rectangle> {
 
@@ -27,58 +25,78 @@ public class RectangleFactory extends ShapeFactory<Rectangle> {
 
     }
 
-    public RectangleFactory(LienzoPanel panel, Event<ShapeAddEvent> shapeAddEvent,
-            Map<ShapeCategory, Integer> shapesByCategory, List<PaletteShape> listShapes) {
-        super(panel, shapeAddEvent);
-        shapes = shapesByCategory.get(this.getCategory());
-        super.drawBoundingBox(listShapes, shapes, DESCRIPTION);
-
+    public RectangleFactory( final LienzoPanel panel,
+                             final Event<ShapeAddEvent> shapeAddEvent,
+                             final Map<ShapeCategory, Integer> shapesByCategory,
+                             final List<PaletteShape> listShapes ) {
+        super( panel,
+               shapeAddEvent );
+        shapes = shapesByCategory.get( this.getCategory() );
+        super.drawBoundingBox( listShapes,
+                               shapes,
+                               DESCRIPTION );
     }
 
     @Override
     protected Shape<Rectangle> drawShape() {
-        final Rectangle rectangle = new Rectangle(30, 30);
-        setAttributes(rectangle, getX(), getY());
-        shape.setShape(rectangle);
+        final Rectangle rectangle = new Rectangle( 30,
+                                                   30 );
+        setAttributes( rectangle,
+                       getX(),
+                       getY() );
+        shape.setShape( rectangle );
         return rectangle;
     }
 
     @Override
-    protected void addShapeHandlers(Shape<Rectangle> shape) {
-        shape.addNodeMouseDownHandler(getNodeMouseDownEvent());
+    protected void addShapeHandlers( final Shape<Rectangle> shape ) {
+        shape.addNodeMouseDownHandler( getNodeMouseDownEvent() );
     }
 
     @Override
-    protected void addBoundingHandlers(Rectangle boundingBox) {
-        boundingBox.addNodeMouseDownHandler(getNodeMouseDownEvent());
+    protected void addBoundingHandlers( final Rectangle boundingBox ) {
+        boundingBox.addNodeMouseDownHandler( getNodeMouseDownEvent() );
 
     }
 
     @Override
     protected NodeMouseDownHandler getNodeMouseDownEvent() {
         NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
-            public void onNodeMouseDown(NodeMouseDownEvent event) {
-                final Rectangle floatingShape = new Rectangle(70, 40);
-                setAttributes(floatingShape, getFloatingX(), getFloatingY());
-                setFloatingPanel(floatingShape, "WiresRectangle", 40, 70, event, null);
+            public void onNodeMouseDown( NodeMouseDownEvent event ) {
+                final Rectangle floatingShape = new Rectangle( 70,
+                                                               40 );
+                setAttributes( floatingShape,
+                               getFloatingX(),
+                               getFloatingY() );
+                setFloatingPanel( floatingShape,
+                                  "WiresRectangle",
+                                  40,
+                                  70,
+                                  event,
+                                  null );
             }
         };
 
         return nodeMouseDownHandler;
     }
 
-    private void setAttributes(Rectangle floatingShape, double x, double y) {
-        floatingShape.setX(x).setY(y).setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE)
-                .setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_SHAPE).setFillColor(ShapesUtils.RGB_FILL_SHAPE)
-                .setDraggable(false);
+    private void setAttributes( final Rectangle floatingShape,
+                                final double x,
+                                final double y ) {
+        floatingShape.setX( x )
+                .setY( y )
+                .setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
+                .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
+                .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
+                .setDraggable( false );
     }
 
     private double getX() {
-        return 11 + super.calculateX(shapes);
+        return 11 + super.calculateX( shapes );
     }
 
     private double getY() {
-        return 5 + super.calculateY(shapes);
+        return 5 + super.calculateY( shapes );
     }
 
     private double getFloatingX() {

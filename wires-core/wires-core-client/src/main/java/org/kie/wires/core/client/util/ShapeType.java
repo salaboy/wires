@@ -6,13 +6,13 @@ package org.kie.wires.core.client.util;
  */
 public enum ShapeType {
     // connectors
-    LINE(ShapeCategory.CONNECTORS),
+    LINE( ShapeCategory.CONNECTORS ),
 
     // shapes
-    // CIRCLE(ShapeCategory.SHAPES),
-    RECTANGLE(ShapeCategory.SHAPES);
+    CIRCLE( ShapeCategory.SHAPES ),
+    RECTANGLE( ShapeCategory.SHAPES );
 
-    private ShapeType(ShapeCategory category) {
+    private ShapeType( ShapeCategory category ) {
         this.category = category;
     }
 

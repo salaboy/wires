@@ -43,7 +43,8 @@ public class PorcentualsGroup extends Composite {
         if ( event.getBayesianProbabilityGrid() != null ) {
             layer.add( event.getBayesianProbabilityGrid() );
         } else if ( event.getVariable() != null ) {
-            new ProbabilityFactory( event.getVariable(), probabilityEvent );
+            new ProbabilityFactory( event.getVariable(),
+                                    probabilityEvent );
         }
         layer.draw();
     }

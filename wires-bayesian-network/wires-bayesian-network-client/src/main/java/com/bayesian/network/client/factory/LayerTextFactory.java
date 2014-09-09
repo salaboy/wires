@@ -7,7 +7,6 @@ import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
 
 public class LayerTextFactory extends LayerFactory<Rectangle> {
 
@@ -18,8 +17,7 @@ public class LayerTextFactory extends LayerFactory<Rectangle> {
 
     }
 
-    public LayerTextFactory( final LienzoPanel panel,
-                             final Integer lay,
+    public LayerTextFactory( final Integer lay,
                              final BayesVariable node,
                              final Event<ProbabilityEvent> probabilityEvent ) {
         layers = lay;

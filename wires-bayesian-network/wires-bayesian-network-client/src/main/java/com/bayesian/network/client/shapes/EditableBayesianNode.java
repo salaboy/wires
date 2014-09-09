@@ -17,7 +17,8 @@ public class EditableBayesianNode extends WiresRectangle implements Serializable
     private Map<Text, List<Rectangle>> porcentualBars;
 
     public EditableBayesianNode() {
-        super( 0, 0 );
+        super( 0,
+               0 );
     }
 
     public EditableBayesianNode( final double width,

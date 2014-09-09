@@ -1,11 +1,8 @@
 package com.bayesian.network.client.factory;
 
-import org.kie.wires.core.client.shapes.WiresLine;
-import org.kie.wires.core.client.util.ShapesUtils;
-
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.types.DragBounds;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
+import org.kie.wires.core.client.util.ShapesUtils;
 
 public class LayerLineFactory extends LayerFactory<Line> {
 
@@ -17,24 +14,30 @@ public class LayerLineFactory extends LayerFactory<Line> {
 
     }
 
-    public LayerLineFactory(LienzoPanel panel, Integer lay) {
+    public LayerLineFactory( final Integer lay ) {
         layers = lay;
-        this.drawBoundingBox(null);
+        this.drawBoundingBox( null );
     }
 
     @Override
-    public void drawBoundingBox(String template) {
-        super.createBoundingBox(layers);
+    public void drawBoundingBox( final String template ) {
+        super.createBoundingBox( layers );
         this.drawLayer();
-        super.createDescription(DESCRIPTION, layers);
+        super.createDescription( DESCRIPTION, layers );
     }
 
     @Override
     public void drawLayer() {
-        WiresLine editableLine = new WiresLine(this.getX1(), this.getY1(), this.getX2(), this.getY2());
-        editableLine.getLine().setDragBounds(new DragBounds(150, 260, 150, 150));
-        editableLine.getLine().setStrokeColor(ShapesUtils.RGB_STROKE_SHAPE).setStrokeWidth(ShapesUtils.RGB_STROKE_WIDTH_SHAPE);
-        templateShape.setShape(editableLine.getLine());
+        Line editableLine = new Line( this.getX1(),
+                                      this.getY1(),
+                                      this.getX2(),
+                                      this.getY2() );
+        editableLine.setDragBounds( new DragBounds( 150,
+                                                    260,
+                                                    150,
+                                                    150 ) );
+        editableLine.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE ).setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE );
+        templateShape.setShape( editableLine );
     }
 
     private double getX1() {
@@ -42,7 +45,7 @@ public class LayerLineFactory extends LayerFactory<Line> {
     }
 
     private double getY1() {
-        return 8 + super.calculateY(layers);
+        return 8 + super.calculateY( layers );
     }
 
     private double getX2() {
@@ -50,7 +53,7 @@ public class LayerLineFactory extends LayerFactory<Line> {
     }
 
     private double getY2() {
-        return 20 + super.calculateY(layers);
+        return 20 + super.calculateY( layers );
     }
 
 }

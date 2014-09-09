@@ -18,7 +18,8 @@ public class EditableBayesianProbability extends WiresRectangle implements Seria
     private Map<Map<Text, Rectangle>, Map<Text, Rectangle>> incomingNodes;
 
     public EditableBayesianProbability() {
-        super( 0, 0 );
+        super( 0,
+               0 );
     }
 
     public EditableBayesianProbability( final double width,

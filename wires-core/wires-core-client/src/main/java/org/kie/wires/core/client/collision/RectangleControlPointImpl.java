@@ -9,14 +9,6 @@
  */
 package org.kie.wires.core.client.collision;
 
-import static org.kie.wires.core.client.util.ShapesUtils.CP_RGB_FILL_COLOR;
-import static org.kie.wires.core.client.util.ShapesUtils.CP_RGB_STROKE_WIDTH_SHAPE;
-
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.StickableShape;
-import org.kie.wires.core.client.shapes.WiresRectangle;
-import org.kie.wires.core.client.util.UUID;
-
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -26,11 +18,14 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
-import com.google.gwt.core.client.GWT;
+import org.kie.wires.core.api.collision.ControlPoint;
 import org.kie.wires.core.api.collision.Magnet;
+import org.kie.wires.core.client.shapes.WiresRectangle;
+import org.kie.wires.core.client.util.UUID;
+
+import static org.kie.wires.core.client.util.ShapesUtils.*;
 
 /**
- *
  * @author salaboy
  */
 public class RectangleControlPointImpl extends Rectangle implements ControlPoint {
@@ -46,24 +41,22 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
     private boolean attached = false;
 
-    public RectangleControlPointImpl(WiresRectangle shape, int controlType) {
-        this(12, 12);
+    public RectangleControlPointImpl( final WiresRectangle shape,
+                                      final int controlType ) {
+        super( 12,
+               12 );
+        id = UUID.uuid();
         this.shape = shape;
         this.controlType = controlType;
-
+        setFillColor( CP_RGB_FILL_COLOR );
     }
 
-    public RectangleControlPointImpl(double width, double height) {
-        super(width, height);
-        id = UUID.uuid();
-        setFillColor(CP_RGB_FILL_COLOR);
-
-    }
-
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public WiresRectangle getShape() {
         return shape;
     }
@@ -73,132 +66,144 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         return attached;
     }
 
-    public void placeControlPoint(final Layer layer) {
+    @Override
+    public void placeControlPoint( final Layer layer ) {
 
         moveControlPoint();
 
-        setDraggable(true)
-                .setStrokeWidth(CP_RGB_STROKE_WIDTH_SHAPE)
-                .setStrokeColor(ColorName.BLACK);
+        setDraggable( true )
+                .setStrokeWidth( CP_RGB_STROKE_WIDTH_SHAPE )
+                .setStrokeColor( ColorName.BLACK );
 
-        addNodeDragStartHandler(new NodeDragStartHandler() {
-            public void onNodeDragStart(NodeDragStartEvent nodeDragStartEvent) {
-                ((StickableShape) shape).hideMagnetPoints();
-                ((WiresRectangle) shape).setBeingResized(true);
-                recordStartData(shape, nodeDragStartEvent);
+        addNodeDragStartHandler( new NodeDragStartHandler() {
+            @Override
+            public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
+                shape.hideMagnetPoints();
+                shape.setBeingResized( true );
+                recordStartData( shape,
+                                 nodeDragStartEvent );
             }
-        });
+        } );
 
-        addNodeDragMoveHandler(new NodeDragMoveHandler() {
-            public void onNodeDragMove(NodeDragMoveEvent nodeDragMoveEvent) {
-                nodeDragMove((WiresRectangle) shape, nodeDragMoveEvent, layer);
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+            @Override
+            public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
+                nodeDragMove( shape,
+                              nodeDragMoveEvent );
                 layer.draw();
             }
 
-        });
+        } );
 
-        addNodeDragEndHandler(new NodeDragEndHandler() {
-            public void onNodeDragEnd(NodeDragEndEvent nodeDragEndEvent) {
-                shape.setBeingResized(false);
+        addNodeDragEndHandler( new NodeDragEndHandler() {
+            @Override
+            public void onNodeDragEnd( NodeDragEndEvent nodeDragEndEvent ) {
+                shape.setBeingResized( false );
             }
 
-        });
+        } );
 
     }
 
+    @Override
     public void moveControlPoint() {
-        switch (controlType) {
+        switch ( controlType ) {
             case CONTROL_TOP_LEFT:
-                setControlPointX(shape.getX());
-                setControlPointY(shape.getY());
+                setControlPointX( shape.getX() );
+                setControlPointY( shape.getY() );
                 break;
             case CONTROL_BOTTOM_LEFT:
-                setControlPointX(shape.getX());
-                setControlPointY(shape.getY() + shape.getBounding().getHeight() - 12);
+                setControlPointX( shape.getX() );
+                setControlPointY( shape.getY() + shape.getBounding().getHeight() - 12 );
                 break;
             case CONTROL_TOP_RIGHT:
-                setControlPointX(shape.getX() + shape.getBounding().getWidth() - 12);
-                setControlPointY(shape.getY());
+                setControlPointX( shape.getX() + shape.getBounding().getWidth() - 12 );
+                setControlPointY( shape.getY() );
                 break;
             case CONTROL_BOTTOM_RIGHT:
-                setControlPointX(shape.getX() + shape.getBounding().getWidth() - 12);
-                setControlPointY(shape.getY() + shape.getBounding().getHeight() - 12);
+                setControlPointX( shape.getX() + shape.getBounding().getWidth() - 12 );
+                setControlPointY( shape.getY() + shape.getBounding().getHeight() - 12 );
                 break;
         }
     }
 
-    public void recordStartData(WiresRectangle destination, NodeDragStartEvent nodeDragStartEvent) {
+    public void recordStartData( final WiresRectangle destination,
+                                 final NodeDragStartEvent nodeDragStartEvent ) {
         dragEventStartX = nodeDragStartEvent.getX();
         dragEventStartY = nodeDragStartEvent.getY();
-        ((WiresRectangle) destination).setStartX(destination.getX());
-        ((WiresRectangle) destination).setStartY(destination.getY());
-        ((WiresRectangle) destination).setStartHeight(destination.getRectangle().getHeight());
-        ((WiresRectangle) destination).setStartWidth(destination.getRectangle().getWidth());
-
+        destination.setStartX( destination.getX() );
+        destination.setStartY( destination.getY() );
+        destination.setStartHeight( destination.getRectangle().getHeight() );
+        destination.setStartWidth( destination.getRectangle().getWidth() );
     }
 
-    public void nodeDragMove(WiresRectangle rect, double deltaX, double deltaY, Layer layer) {
-        switch (controlType) {
+    public void nodeDragMove( final WiresRectangle rect,
+                              final double deltaX,
+                              final double deltaY ) {
+        switch ( controlType ) {
             case CONTROL_TOP_LEFT:
-                rect.setX(rect.getStartX() + deltaX);
-                rect.setY(rect.getStartY() + deltaY);
+                rect.setX( rect.getStartX() + deltaX );
+                rect.setY( rect.getStartY() + deltaY );
 
-                rect.getRectangle().setWidth(rect.getStartWidth() - deltaX);
-                rect.getRectangle().setHeight(rect.getStartHeight() - deltaY);
+                rect.getRectangle().setWidth( rect.getStartWidth() - deltaX );
+                rect.getRectangle().setHeight( rect.getStartHeight() - deltaY );
 
-                rect.setCurrentDragX(rect.getStartX() + deltaX);
-                rect.setCurrentDragY(rect.getStartY() + deltaY);
+                rect.setCurrentDragX( rect.getStartX() + deltaX );
+                rect.setCurrentDragY( rect.getStartY() + deltaY );
 
-                rect.getBounding().setWidth(rect.getRectangle().getWidth() + 12);
-                rect.getBounding().setHeight(rect.getRectangle().getHeight() + 12);
+                rect.getBounding().setWidth( rect.getRectangle().getWidth() + 12 );
+                rect.getBounding().setHeight( rect.getRectangle().getHeight() + 12 );
 
                 break;
             case CONTROL_BOTTOM_LEFT:
-                rect.setX(rect.getStartX() + deltaX);
+                rect.setX( rect.getStartX() + deltaX );
 
-                rect.getRectangle().setWidth(rect.getStartWidth() - deltaX);
-                rect.getRectangle().setHeight(rect.getStartHeight() + deltaY);
+                rect.getRectangle().setWidth( rect.getStartWidth() - deltaX );
+                rect.getRectangle().setHeight( rect.getStartHeight() + deltaY );
 
-                rect.setCurrentDragX(rect.getStartX() + deltaX);
+                rect.setCurrentDragX( rect.getStartX() + deltaX );
 
-                rect.getBounding().setWidth(rect.getRectangle().getWidth() + 12);
-                rect.getBounding().setHeight(rect.getRectangle().getHeight() + 12);
+                rect.getBounding().setWidth( rect.getRectangle().getWidth() + 12 );
+                rect.getBounding().setHeight( rect.getRectangle().getHeight() + 12 );
 
                 break;
             case CONTROL_TOP_RIGHT:
-                rect.setY(rect.getStartY() + deltaY);
+                rect.setY( rect.getStartY() + deltaY );
 
-                rect.getRectangle().setWidth(rect.getStartWidth() + deltaX);
-                rect.getRectangle().setHeight(rect.getStartHeight() - deltaY);
+                rect.getRectangle().setWidth( rect.getStartWidth() + deltaX );
+                rect.getRectangle().setHeight( rect.getStartHeight() - deltaY );
 
-                rect.setCurrentDragY(rect.getStartY() + deltaY);
+                rect.setCurrentDragY( rect.getStartY() + deltaY );
 
-                rect.getBounding().setWidth(rect.getRectangle().getWidth() + 12);
-                rect.getBounding().setHeight(rect.getRectangle().getHeight() + 12);
+                rect.getBounding().setWidth( rect.getRectangle().getWidth() + 12 );
+                rect.getBounding().setHeight( rect.getRectangle().getHeight() + 12 );
 
                 break;
             case CONTROL_BOTTOM_RIGHT:
-                rect.getRectangle().setWidth(rect.getStartWidth() + deltaX);
-                rect.getRectangle().setHeight(rect.getStartHeight() + deltaY);
+                rect.getRectangle().setWidth( rect.getStartWidth() + deltaX );
+                rect.getRectangle().setHeight( rect.getStartHeight() + deltaY );
 
-                rect.getBounding().setWidth(rect.getRectangle().getWidth() + 12);
-                rect.getBounding().setHeight(rect.getRectangle().getHeight() + 12);
+                rect.getBounding().setWidth( rect.getRectangle().getWidth() + 12 );
+                rect.getBounding().setHeight( rect.getRectangle().getHeight() + 12 );
                 break;
         }
 
-        for (ControlPoint cp : shape.getControlPoints()) {
-            if (!cp.getId().equals(this.getID())) {
+        for ( ControlPoint cp : shape.getControlPoints() ) {
+            if ( !cp.getId().equals( this.getID() ) ) {
                 cp.moveControlPoint();
             }
         }
 
     }
 
-    public void nodeDragMove(WiresRectangle rect, NodeDragMoveEvent nodeDragMoveEvent, Layer layer) {
+    public void nodeDragMove( final WiresRectangle rect,
+                              final NodeDragMoveEvent nodeDragMoveEvent ) {
 
         double deltaX = nodeDragMoveEvent.getX() - getDragEventStartX();
         double deltaY = nodeDragMoveEvent.getY() - getDragEventStartY();
-        nodeDragMove(rect, deltaX, deltaY, layer);
+        nodeDragMove( rect,
+                      deltaX,
+                      deltaY );
 
     }
 
@@ -210,12 +215,14 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         return dragEventStartY;
     }
 
-    public void setControlPointX(double x) {
-        setX(x);
+    @Override
+    public void setControlPointX( final double x ) {
+        setX( x );
     }
 
-    public void setControlPointY(double y) {
-        setY(y);
+    @Override
+    public void setControlPointY( final double y ) {
+        setY( y );
     }
 
     @Override
@@ -223,17 +230,24 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
         return "RectangleControlPointImpl{" + "id=" + id + ", controlType=" + controlType + "' X=" + getX() + " - Y= " + getY() + "}";
     }
 
-    public void setControlPointVisible(boolean visible) {
-        setVisible(visible);
+    @Override
+    public void setControlPointVisible( final boolean visible ) {
+        setVisible( visible );
     }
 
+    @Override
     public int getControlType() {
         return controlType;
     }
 
-    public void udpateShape(Layer layer, double x, double y) {
-        nodeDragMove((WiresRectangle) shape, x, y, layer);
-        for (Magnet m : shape.getMagnets()) {
+    @Override
+    public void updateShape( final Layer layer,
+                             final double x,
+                             final double y ) {
+        nodeDragMove( shape,
+                      x,
+                      y );
+        for ( Magnet m : shape.getMagnets() ) {
             m.placeMagnetPoints();
         }
         layer.draw();
@@ -242,33 +256,35 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 29 * hash + (this.shape != null ? this.shape.hashCode() : 0);
+        hash = 29 * hash + ( this.id != null ? this.id.hashCode() : 0 );
+        hash = 29 * hash + ( this.shape != null ? this.shape.hashCode() : 0 );
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals( Object obj ) {
+        if ( obj == null ) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if ( getClass() != obj.getClass() ) {
             return false;
         }
         final RectangleControlPointImpl other = (RectangleControlPointImpl) obj;
-        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+        if ( ( this.id == null ) ? ( other.id != null ) : !this.id.equals( other.id ) ) {
             return false;
         }
-        if (this.shape != other.shape && (this.shape == null || !this.shape.equals(other.shape))) {
+        if ( this.shape != other.shape && ( this.shape == null || !this.shape.equals( other.shape ) ) ) {
             return false;
         }
         return true;
     }
 
+    @Override
     public double getControlPointX() {
         return getX();
     }
 
+    @Override
     public double getControlPointY() {
         return getY();
     }

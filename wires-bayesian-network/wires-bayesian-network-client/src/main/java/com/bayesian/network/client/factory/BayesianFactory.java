@@ -22,8 +22,6 @@ import com.google.gwt.user.client.Window;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.wires.core.api.events.ProgressEvent;
-import org.kie.wires.core.client.canvas.Canvas;
 import org.kie.wires.core.client.shapes.ProgressBar;
 
 public class BayesianFactory extends BaseFactory {
@@ -32,23 +30,20 @@ public class BayesianFactory extends BaseFactory {
     private Event<LayerEvent> layerEvent;
     private Event<ProbabilityEvent> probabilityEvent;
     private Event<ReadyEvent> readyEvent;
-    private Event<ProgressEvent> progressEvent;
     private List<BayesVariable> nodes;
     private String[][] colors;
 
     private List<EditableBayesianNode> bayesianNodes = new ArrayList<EditableBayesianNode>();
 
-    public BayesianFactory( Caller<BayesianService> bayesianService,
-                            String xml03File,
-                            Event<LayerEvent> layerEvent,
-                            Event<ProbabilityEvent> probabilityEvent,
-                            Event<ReadyEvent> readyEvent,
-                            Event<ProgressEvent> progressEvent ) {
+    public BayesianFactory( final Caller<BayesianService> bayesianService,
+                            final String xml03File,
+                            final Event<LayerEvent> layerEvent,
+                            final Event<ProbabilityEvent> probabilityEvent,
+                            final Event<ReadyEvent> readyEvent ) {
         this.bayesianService = bayesianService;
         this.layerEvent = layerEvent;
         this.probabilityEvent = probabilityEvent;
         this.readyEvent = readyEvent;
-        this.progressEvent = progressEvent;
         init( xml03File );
     }
 
@@ -58,7 +53,6 @@ public class BayesianFactory extends BaseFactory {
     }
 
     private void buildBayesNetworkFromXML( final String xml03File ) {
-        //progressBar();
         bayesianService.call( new RemoteCallback<BayesNetwork>() {
                                   @Override
                                   public void callback( final BayesNetwork response ) {
@@ -66,7 +60,6 @@ public class BayesianFactory extends BaseFactory {
                                       for ( BayesVariable bay : response.getNodos() ) {
                                           drawBayesianNode( bay );
                                       }
-                                      //Canvas.progressBar.hide();
                                       layerEvent.fire( new LayerEvent( nodes ) );
                                       //readyEvent.fire(new ReadyEvent(bayesianNodes));
 
@@ -91,11 +84,16 @@ public class BayesianFactory extends BaseFactory {
         int positionY = (int) ( BayesianUtils.POSITION_Y_BASE + Math.round( position[ 0 ][ 1 ] ) );
         String fillNodeColor = colors[ 0 ][ 0 ];
 
-        EditableBayesianNode bayesianNode = new EditableBayesianNode( BayesianUtils.WIDTH_NODE, BayesianUtils.HEIGHT_NODE,
-                                                                      positionX, positionY, fillNodeColor );
+        EditableBayesianNode bayesianNode = new EditableBayesianNode( BayesianUtils.WIDTH_NODE,
+                                                                      BayesianUtils.HEIGHT_NODE,
+                                                                      positionX,
+                                                                      positionY,
+                                                                      fillNodeColor );
 
-        this.setHeader( node, bayesianNode );
-        this.setPorcentualBar( node, bayesianNode );
+        this.setHeader( node,
+                        bayesianNode );
+        this.setPorcentualBar( node,
+                               bayesianNode );
 
         bayesianNode.buildNode();
 
@@ -162,14 +160,6 @@ public class BayesianFactory extends BaseFactory {
 
     private void clearScreen() {
         probabilityEvent.fire( new ProbabilityEvent() );
-    }
-
-    private void progressBar() {
-        if ( Canvas.progressBar != null ) {
-            Canvas.progressBar.show();
-        } else {
-            progressEvent.fire( new ProgressEvent() );
-        }
     }
 
 }
