@@ -17,7 +17,6 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
@@ -105,16 +104,13 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
 
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
             public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.onShapeSelected( WiresLine.this );
-                Layer layer = getLayer();
-                layer.draw();
+                selectionManager.selectShape( WiresLine.this );
             }
         } );
 
         addNodeDragStartHandler( new NodeDragStartHandler() {
             public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
-                hideControlPoints();
-                hideMagnetPoints();
+                selectionManager.deselectShape( WiresLine.this );
             }
         } );
 

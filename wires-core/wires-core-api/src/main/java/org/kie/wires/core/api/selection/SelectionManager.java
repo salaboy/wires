@@ -22,8 +22,14 @@ import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
  */
 public interface SelectionManager {
 
-    public void onShapesDeselected();
+    public void clearSelection();
 
-    public void onShapeSelected( final WiresBaseGroupShape shape );
+    public void selectShape( final WiresBaseGroupShape shape );
+
+    public void deselectShape( final WiresBaseGroupShape shape );
+
+    boolean isShapeSelected();
+
+    WiresBaseGroupShape getSelectedShape();
 
 }

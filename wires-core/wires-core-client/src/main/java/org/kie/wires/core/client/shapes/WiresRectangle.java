@@ -89,16 +89,13 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
             public void onNodeMouseClick( NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.onShapeSelected( WiresRectangle.this );
-                Layer layer = getLayer();
-                layer.draw();
+                selectionManager.selectShape( WiresRectangle.this );
             }
         } );
 
         addNodeDragStartHandler( new NodeDragStartHandler() {
             public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
-                hideControlPoints();
-                hideMagnetPoints();
+                selectionManager.deselectShape( WiresRectangle.this );
             }
         } );
 
@@ -118,18 +115,26 @@ public class WiresRectangle extends WiresBaseGroupShape {
                                 // TODO: refactor this
                                 switch ( m.getType() ) {
                                     case Magnet.MAGNET_TOP:
-                                        cp.updateShape( layer, getX() + ( bounding.getWidth() / 2 ), getY() );
+                                        cp.updateShape( layer,
+                                                        getX() + ( bounding.getWidth() / 2 ),
+                                                        getY() );
                                         break;
                                     case Magnet.MAGNET_LEFT:
-                                        cp.updateShape( layer, getX(), getY() + ( bounding.getHeight() / 2 ) );
+                                        cp.updateShape( layer,
+                                                        getX(),
+                                                        getY() + ( bounding.getHeight() / 2 ) );
                                         break;
 
                                     case Magnet.MAGNET_RIGHT:
-                                        cp.updateShape( layer, getX() + bounding.getWidth(), getY() + ( bounding.getHeight() / 2 ) );
+                                        cp.updateShape( layer,
+                                                        getX() + bounding.getWidth(),
+                                                        getY() + ( bounding.getHeight() / 2 ) );
                                         break;
 
                                     case Magnet.MAGNET_BOTTOM:
-                                        cp.updateShape( layer, getX() + ( bounding.getWidth() / 2 ), getY() + bounding.getHeight() );
+                                        cp.updateShape( layer,
+                                                        getX() + ( bounding.getWidth() / 2 ),
+                                                        getY() + bounding.getHeight() );
                                         break;
                                 }
 

@@ -78,6 +78,7 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
                 cp.placeControlPoint( layer );
             }
             showingControlPoints = true;
+            getLayer().draw();
         }
     }
 
@@ -90,6 +91,7 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
                 layer.remove( (Shape) cp );
             }
             showingControlPoints = false;
+            getLayer().draw();
         }
     }
 
@@ -102,6 +104,7 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
                 m.placeMagnetPoints();
             }
             showingMagnets = true;
+            getLayer().draw();
         }
     }
 
@@ -113,6 +116,7 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
                 layer.remove( (Shape) m );
             }
             showingMagnets = false;
+            getLayer().draw();
         }
     }
 

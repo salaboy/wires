@@ -101,6 +101,7 @@ public class Canvas extends Composite implements SelectionManager,
 
     public void removeShape( final WiresBaseGroupShape shape ) {
         shape.destroy();
+        deselectShape( shape );
         canvasLayer.remove( shape );
         shapesInCanvas.remove( shape );
         canvasLayer.draw();
@@ -111,6 +112,7 @@ public class Canvas extends Composite implements SelectionManager,
             shape.destroy();
             canvasLayer.remove( (IPrimitive<?>) shape );
         }
+        clearSelection();
         shapesInCanvas.clear();
         canvasLayer.draw();
     }
@@ -171,7 +173,7 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     @Override
-    public void onShapesDeselected() {
+    public void clearSelection() {
         selectedShape = null;
         for ( EditableShape shape : getShapesInCanvas() ) {
             shape.hideControlPoints();
@@ -180,10 +182,30 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     @Override
-    public void onShapeSelected( final WiresBaseGroupShape shape ) {
-        onShapesDeselected();
+    public void selectShape( final WiresBaseGroupShape shape ) {
+        clearSelection();
         selectedShape = shape;
         selectedShape.showControlPoints();
+    }
+
+    @Override
+    public void deselectShape( final WiresBaseGroupShape shape ) {
+        if ( shape == null ) {
+            return;
+        }
+        shape.hideControlPoints();
+        shape.hideMagnetPoints();
+        selectedShape = null;
+    }
+
+    @Override
+    public boolean isShapeSelected() {
+        return selectedShape != null;
+    }
+
+    @Override
+    public WiresBaseGroupShape getSelectedShape() {
+        return selectedShape;
     }
 
 }

@@ -1,5 +1,6 @@
 package org.kie.wires.client.canvas;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -8,6 +9,7 @@ import javax.inject.Inject;
 import com.bayesian.network.client.events.ReadyEvent;
 import com.bayesian.network.client.screen.BayesianScreen;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.wires.client.layers.LayersGroup;
 import org.kie.wires.core.api.events.ClearEvent;
@@ -20,9 +22,13 @@ import org.kie.wires.core.client.canvas.Canvas;
 import org.kie.wires.core.client.shapes.WiresCircle;
 import org.kie.wires.core.client.shapes.WiresLine;
 import org.kie.wires.core.client.shapes.WiresRectangle;
+import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.mvp.Command;
+import org.uberfire.workbench.model.menu.MenuFactory;
+import org.uberfire.workbench.model.menu.Menus;
 
 @SuppressWarnings("unused")
 @Dependent
@@ -33,6 +39,9 @@ public class CanvasScreen extends Canvas {
     private Event<ShapeSelectedEvent> shapeSelectedEvent;
 
     @Inject
+    private Event<ClearEvent> clearEvent;
+
+    @Inject
     private Event<ReadyShape> readyShape;
 
     @Inject
@@ -40,6 +49,48 @@ public class CanvasScreen extends Canvas {
 
     @Inject
     private LayersGroup layerGroup;
+
+    private Menus menus;
+
+    @PostConstruct
+    public void setup() {
+        this.menus = MenuFactory
+                .newTopLevelMenu( "Clear grid" )
+                .respondsWith( new Command() {
+                    @Override
+                    public void execute() {
+                        clearEvent.fire( new ClearEvent() );
+                        menus.getItems().get( 0 ).setEnabled( false );
+                    }
+                } )
+                .endMenu()
+                .newTopLevelMenu( "Delete selected" )
+                .respondsWith( new Command() {
+                    @Override
+                    public void execute() {
+                        if ( isShapeSelected() ) {
+                            removeShape( getSelectedShape() );
+                        }
+                    }
+                } )
+                .endMenu()
+                .newTopLevelMenu( "Clear selection" )
+                .respondsWith( new Command() {
+                    @Override
+                    public void execute() {
+                        if ( isShapeSelected() ) {
+                            clearSelection();
+                            menus.getItems().get( 1 ).setEnabled( false );
+                            menus.getItems().get( 2 ).setEnabled( false );
+                        }
+                    }
+                } )
+                .endMenu()
+                .build();
+        menus.getItems().get( 0 ).setEnabled( false );
+        menus.getItems().get( 1 ).setEnabled( false );
+        menus.getItems().get( 2 ).setEnabled( false );
+    }
 
     @WorkbenchPartTitle
     @Override
@@ -52,10 +103,17 @@ public class CanvasScreen extends Canvas {
         return this;
     }
 
+    @WorkbenchMenu
+    public Menus getMenus() {
+        return menus;
+    }
+
     @Override
-    public void onShapeSelected( final WiresBaseGroupShape shape ) {
-        super.onShapeSelected( shape );
+    public void selectShape( final WiresBaseGroupShape shape ) {
+        super.selectShape( shape );
         shapeSelectedEvent.fire( new ShapeSelectedEvent( shape ) );
+        menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
     }
 
     public void myResponseObserver( @Observes ShapeAddEvent shapeAddEvent ) {
@@ -86,7 +144,8 @@ public class CanvasScreen extends Canvas {
         wiresShape.setDraggable( true );
         wiresShape.init( this.getX( shapeAddEvent.getX() ),
                          this.getY( shapeAddEvent.getY() ) );
-        this.addShape( wiresShape );
+        addShape( wiresShape );
+        menus.getItems().get( 0 ).setEnabled( true );
 
         readyShape.fire( new ReadyShape( shape ) );
     }
@@ -108,6 +167,23 @@ public class CanvasScreen extends Canvas {
 
     public void clearPanel( @Observes ClearEvent event ) {
         clear();
+    }
+
+    @Override
+    public void clear() {
+        if ( Window.confirm( "Are you sure to clean the canvas?" ) ) {
+            super.clear();
+        }
+    }
+
+    @Override
+    public void removeShape( final WiresBaseGroupShape shape ) {
+        if ( Window.confirm( "Are you sure to remove the selected shape?" ) ) {
+            super.removeShape( shape );
+            menus.getItems().get( 0 ).setEnabled( getShapesInCanvas().size() > 0 );
+            menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
+            menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
+        }
     }
 
     public void progress( @Observes ProgressEvent event ) {

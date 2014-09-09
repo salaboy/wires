@@ -11,7 +11,6 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.shared.core.types.LineCap;
 import org.kie.wires.core.api.collision.CollidableShape;
 import org.kie.wires.core.api.collision.Projection;
@@ -53,16 +52,13 @@ public class WiresCircle extends WiresBaseGroupShape {
 
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
             public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.onShapeSelected( WiresCircle.this );
-                Layer layer = getLayer();
-                layer.draw();
+                selectionManager.selectShape( WiresCircle.this );
             }
         } );
 
         addNodeDragStartHandler( new NodeDragStartHandler() {
             public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
-                hideControlPoints();
-                hideMagnetPoints();
+                selectionManager.deselectShape( WiresCircle.this );
             }
         } );
 
