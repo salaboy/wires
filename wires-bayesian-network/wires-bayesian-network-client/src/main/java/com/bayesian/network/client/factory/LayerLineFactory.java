@@ -10,10 +10,6 @@ public class LayerLineFactory extends LayerFactory<Line> {
 
     private static int layers;
 
-    public LayerLineFactory() {
-
-    }
-
     public LayerLineFactory( final Integer lay ) {
         layers = lay;
         this.drawBoundingBox( null );

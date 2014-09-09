@@ -16,10 +16,6 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
     private Event<BayesianEvent> bayesianEvent;
 
-    public LayerRectangleFactory() {
-
-    }
-
     public LayerRectangleFactory( final Integer lay,
                                   final String template,
                                   final Event<BayesianEvent> bayesianEvent ) {

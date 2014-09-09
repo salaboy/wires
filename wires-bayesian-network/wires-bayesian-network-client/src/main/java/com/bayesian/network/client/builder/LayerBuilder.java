@@ -4,10 +4,12 @@ import javax.enterprise.event.Event;
 
 import com.bayesian.network.client.events.BayesianEvent;
 import com.bayesian.network.client.events.ProbabilityEvent;
+import com.bayesian.network.client.factory.LayerCircleFactory;
 import com.bayesian.network.client.factory.LayerLineFactory;
 import com.bayesian.network.client.factory.LayerRectangleFactory;
 import com.bayesian.network.client.factory.LayerTextFactory;
 import com.bayesian.parser.client.model.BayesVariable;
+import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
@@ -44,8 +46,13 @@ public class LayerBuilder {
             templateShape = new LayerTextFactory( accountLayers,
                                                   node,
                                                   probabilityEvent ).getLayer();
+
         } else if ( shape instanceof Line ) {
             templateShape = new LayerLineFactory( accountLayers ).getLayer();
+
+        } else if ( shape instanceof Circle ) {
+            templateShape = new LayerCircleFactory( accountLayers ).getLayer();
+
         } else if ( shape instanceof Rectangle ) {
             templateShape = new LayerRectangleFactory( accountLayers,
                                                        template,

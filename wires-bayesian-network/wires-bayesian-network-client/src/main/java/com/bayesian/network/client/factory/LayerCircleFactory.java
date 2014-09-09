@@ -1,7 +1,6 @@
 package com.bayesian.network.client.factory;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
 
 public class LayerCircleFactory extends LayerFactory<Circle> {
 
@@ -11,14 +10,9 @@ public class LayerCircleFactory extends LayerFactory<Circle> {
 
     private static int layers;
 
-    public LayerCircleFactory() {
-
-    }
-
-    public LayerCircleFactory( final LienzoPanel panel,
-                               final Integer lay ) {
-        this.drawBoundingBox( null );
+    public LayerCircleFactory( final Integer lay ) {
         layers = lay;
+        this.drawBoundingBox( null );
     }
 
     @Override

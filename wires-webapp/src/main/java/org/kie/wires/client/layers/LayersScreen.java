@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import com.bayesian.network.client.events.LayerEvent;
 import com.bayesian.parser.client.model.BayesVariable;
+import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.google.gwt.core.client.GWT;
@@ -68,8 +69,7 @@ public class LayersScreen extends Composite implements RequiresResize {
     }
 
     /**
-     * TODO the events can not be within the SimplePanel because they are
-     * re-called
+     * TODO the events can not be within the SimplePanel because they are re-called
      */
     public void myResponseObserver( @Observes ReadyShape readyShape ) {
         LayersGroup.accountLayers += 1;
@@ -79,6 +79,12 @@ public class LayersScreen extends Composite implements RequiresResize {
                                                       30 ),
                                        null,
                                        LayersGroup.accountLayers );
+
+        } else if ( readyShape.getShape().equals( "WiresCircle" ) ) {
+            layersGroup.buildNewLayer( new Circle( 15 ),
+                                       null,
+                                       LayersGroup.accountLayers );
+
         } else if ( readyShape.getShape().equals( "WiresLine" ) ) {
             layersGroup.buildNewLayer( new Line( 0,
                                                  0,
