@@ -15,8 +15,6 @@
  */
 package org.kie.wires.client.factoryShapes;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -37,40 +35,23 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.kie.wires.core.api.categories.Category;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.kie.wires.core.client.shapes.PaletteShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
 @ApplicationScoped
-public class StencilBuilder extends Composite {
+public class StencilPaletteBuilder extends Composite {
 
     private static final int ZINDEX = Integer.MAX_VALUE;
 
     @Inject
-    private ShapeFactoryCache factoriesCache;
-
-    @Inject
     private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
 
-    public List<PaletteShape> getShapes( final LienzoPanel dragProxyParentPanel,
-                                         final Category shapeCategory ) {
-        final List<PaletteShape> shapes = new ArrayList<PaletteShape>();
-        for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
-            if ( factory.getCategory().equals( shapeCategory ) ) {
-                shapes.add( build( dragProxyParentPanel,
-                                   factory ) );
-            }
-        }
-        return shapes;
-    }
-
-    private PaletteShape build( final LienzoPanel dragProxyParentPanel,
-                                final ShapeFactory factory ) {
+    public PaletteShape build( final LienzoPanel dragProxyParentPanel,
+                               final ShapeFactory factory ) {
         final PaletteShape paletteShape = new PaletteShape();
         final Rectangle bounding = drawBoundingBox();
         final Shape shape = factory.getGlyph();

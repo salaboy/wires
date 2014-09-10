@@ -15,6 +15,7 @@
  */
 package org.kie.wires.client.palette;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -23,8 +24,9 @@ import javax.inject.Inject;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.client.factoryShapes.StencilBuilder;
+import org.kie.wires.client.factoryShapes.StencilPaletteBuilder;
 import org.kie.wires.client.factoryShapes.categories.ShapeCategory;
+import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.kie.wires.core.client.shapes.PaletteShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
@@ -40,7 +42,7 @@ public class ShapesGroup extends Composite {
     private ShapeFactoryCache factoriesCache;
 
     @Inject
-    private StencilBuilder stencilBuilder;
+    private StencilPaletteBuilder stencilBuilder;
 
     @PostConstruct
     public void init() {
@@ -55,9 +57,16 @@ public class ShapesGroup extends Composite {
     }
 
     private void drawShapes() {
-        final List<PaletteShape> shapes = stencilBuilder.getShapes( panel,
-                                                                    ShapeCategory.CATEGORY );
+        //Get PaletteShape for each Shape Factory
+        final List<PaletteShape> shapes = new ArrayList<PaletteShape>();
+        for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
+            if ( factory.getCategory().equals( ShapeCategory.CATEGORY ) ) {
+                shapes.add( stencilBuilder.build( panel,
+                                                  factory ) );
+            }
+        }
 
+        //Add PaletteShapes to the UI
         int shapeCount = 1;
         for ( PaletteShape shape : shapes ) {
             shape.setX( PaletteLayoutUtilities.getX( shapeCount ) );
