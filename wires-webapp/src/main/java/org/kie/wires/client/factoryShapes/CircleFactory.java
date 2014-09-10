@@ -15,31 +15,31 @@
  */
 package org.kie.wires.client.factoryShapes;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
-import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
-import org.kie.wires.core.api.events.ShapeAddEvent;
-import org.kie.wires.core.client.util.ShapeCategory;
-import org.kie.wires.core.client.util.ShapeType;
+import org.kie.wires.client.factoryShapes.categories.ShapeCategory;
+import org.kie.wires.core.api.categories.Category;
+import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
+import org.kie.wires.core.api.factories.ShapeDragProxy;
+import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.client.shapes.WiresCircle;
 import org.kie.wires.core.client.util.ShapesUtils;
 
-public class CircleFactory extends ShapeFactory<Circle> {
+@ApplicationScoped
+public class CircleFactory implements ShapeFactory<Circle> {
 
-    private static String DESCRIPTION = "Circle";
+    private static final String DESCRIPTION = "Circle";
 
-    public CircleFactory( final LienzoPanel panel,
-                          final Event<ShapeAddEvent> shapeAddEvent ) {
-        super( panel,
-               shapeAddEvent );
-    }
+    @Inject
+    private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
 
     @Override
-    protected Shape<Circle> drawShape() {
+    public Shape<Circle> getGlyph() {
         final Circle circle = new Circle( 15 );
         setAttributes( circle,
                        25,
@@ -49,38 +49,57 @@ public class CircleFactory extends ShapeFactory<Circle> {
     }
 
     @Override
-    protected String getDescription() {
+    public String getShapeDescription() {
         return DESCRIPTION;
     }
 
     @Override
-    protected void addShapeHandlers( final Shape<Circle> shape ) {
-        shape.addNodeMouseDownHandler( getNodeMouseDownEvent() );
+    public Category getCategory() {
+        return ShapeCategory.CATEGORY;
     }
 
     @Override
-    protected void addBoundingHandlers( final Rectangle boundingBox ) {
-        boundingBox.addNodeMouseDownHandler( getNodeMouseDownEvent() );
-    }
-
-    @Override
-    protected NodeMouseDownHandler getNodeMouseDownEvent() {
-        NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
-            public void onNodeMouseDown( NodeMouseDownEvent event ) {
-                final Circle floatingShape = new Circle( 20 );
-                setAttributes( floatingShape,
-                               25,
-                               25 );
-                setFloatingPanel( floatingShape,
-                                  "WiresCircle",
-                                  50,
-                                  50,
-                                  event );
+    public ShapeDragProxy<Circle> getDragProxy() {
+        final Circle proxy = new Circle( 20 );
+        setAttributes( proxy,
+                       25,
+                       25 );
+        return new ShapeDragProxy<Circle>() {
+            @Override
+            public Shape<Circle> getDragShape() {
+                return proxy;
             }
 
-        };
+            @Override
+            public String getShapeDescription() {
+                return DESCRIPTION;
+            }
 
-        return nodeMouseDownHandler;
+            @Override
+            public void onDragEnd( final int x,
+                                   final int y ) {
+                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( DESCRIPTION,
+                                                                         x,
+                                                                         y ) );
+            }
+
+            @Override
+            public int getHeight() {
+                return 50;
+            }
+
+            @Override
+            public int getWidth() {
+                return 50;
+            }
+        };
+    }
+
+    @Override
+    public WiresBaseGroupShape getShape() {
+        return new WiresCircle( 0,
+                                0,
+                                20 );
     }
 
     private void setAttributes( final Circle circle,
@@ -92,11 +111,6 @@ public class CircleFactory extends ShapeFactory<Circle> {
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
                 .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
                 .setDraggable( false );
-    }
-
-    @Override
-    protected ShapeCategory getCategory() {
-        return ShapeType.CIRCLE.getCategory();
     }
 
 }

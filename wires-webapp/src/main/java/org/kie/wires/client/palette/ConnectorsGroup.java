@@ -18,16 +18,15 @@ package org.kie.wires.client.palette;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
 import org.kie.wires.client.factoryShapes.StencilBuilder;
-import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.client.factoryShapes.categories.ConnectorCategory;
+import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.kie.wires.core.client.shapes.PaletteShape;
-import org.kie.wires.core.client.util.ShapeCategory;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.kie.wires.core.client.util.ShapesUtils;
 
@@ -38,12 +37,16 @@ public class ConnectorsGroup extends Composite {
     private LienzoPanel panel;
 
     @Inject
-    private Event<ShapeAddEvent> shapeAddEvent;
+    private ShapeFactoryCache factoriesCache;
+
+    @Inject
+    private StencilBuilder stencilBuilder;
 
     @PostConstruct
     public void init() {
         panel = new LienzoPanel( ShapeFactoryUtil.WIDTH_PANEL,
-                                 ShapesUtils.calculateHeight( ShapesUtils.getAccountShapesByCategory( ShapeCategory.CONNECTORS ) ) );
+                                 ShapesUtils.calculateHeight( ShapesUtils.getNumberOfShapesInCategory( ConnectorCategory.CATEGORY,
+                                                                                                       factoriesCache.getShapeFactories() ) ) );
         layer = new Layer();
         panel.getScene().add( layer );
         initWidget( panel );
@@ -52,9 +55,9 @@ public class ConnectorsGroup extends Composite {
     }
 
     private void drawConnectors() {
-        final List<PaletteShape> shapes = new StencilBuilder( shapeAddEvent,
-                                                              ShapeCategory.CONNECTORS,
-                                                              panel ).getShapes();
+        final List<PaletteShape> shapes = stencilBuilder.getShapes( panel,
+                                                                    ConnectorCategory.CATEGORY );
+
         int shapeCount = 1;
         for ( PaletteShape shape : shapes ) {
             shape.setX( PaletteLayoutUtilities.getX( shapeCount ) );

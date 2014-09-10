@@ -15,6 +15,7 @@
  */
 package org.kie.wires.core.client.shapes;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
@@ -91,23 +92,24 @@ public class WiresCircle extends WiresBaseGroupShape {
 
     @Override
     public boolean collidesWith( final CollidableShape shape ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return false;
     }
 
     @Override
     public boolean separationOnAxes( final List<Vector> axes,
                                      final CollidableShape shape ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return false;
     }
 
     @Override
     public List<Vector> getAxes() {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return Collections.EMPTY_LIST;
     }
 
     @Override
     public Projection project( final Vector axis ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return new Projection( 0,
+                               0 );
     }
 
 }

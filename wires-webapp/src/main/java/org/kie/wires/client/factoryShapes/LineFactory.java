@@ -15,31 +15,31 @@
  */
 package org.kie.wires.client.factoryShapes;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
-import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
 import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
-import org.kie.wires.core.api.events.ShapeAddEvent;
-import org.kie.wires.core.client.util.ShapeCategory;
-import org.kie.wires.core.client.util.ShapeType;
+import org.kie.wires.client.factoryShapes.categories.ConnectorCategory;
+import org.kie.wires.core.api.categories.Category;
+import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
+import org.kie.wires.core.api.factories.ShapeDragProxy;
+import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.client.shapes.WiresLine;
 import org.kie.wires.core.client.util.ShapesUtils;
 
-public class LineFactory extends ShapeFactory<Line> {
+@ApplicationScoped
+public class LineFactory implements ShapeFactory<Line> {
 
-    private static String DESCRIPTION = "Line";
+    private static final String DESCRIPTION = "Line";
 
-    public LineFactory( final LienzoPanel panel,
-                        final Event<ShapeAddEvent> shapeAddEvent ) {
-        super( panel,
-               shapeAddEvent );
-    }
+    @Inject
+    private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
 
     @Override
-    public Shape<Line> drawShape() {
+    public Shape<Line> getGlyph() {
         Line line = new Line( 5,
                               5,
                               45,
@@ -49,39 +49,60 @@ public class LineFactory extends ShapeFactory<Line> {
     }
 
     @Override
-    protected String getDescription() {
+    public String getShapeDescription() {
         return DESCRIPTION;
     }
 
     @Override
-    public void addShapeHandlers( final Shape<Line> shape ) {
-        shape.addNodeMouseDownHandler( getNodeMouseDownEvent() );
+    public Category getCategory() {
+        return ConnectorCategory.CATEGORY;
     }
 
     @Override
-    protected void addBoundingHandlers( final Rectangle boundingBox ) {
-        boundingBox.addNodeMouseDownHandler( getNodeMouseDownEvent() );
-    }
+    public ShapeDragProxy<Line> getDragProxy() {
+        final Line proxy = new Line( 5,
+                                     5,
+                                     45,
+                                     45 );
+        setAttributes( proxy );
 
-    @Override
-    protected NodeMouseDownHandler getNodeMouseDownEvent() {
-        NodeMouseDownHandler nodeMouseDownHandler = new NodeMouseDownHandler() {
-            public void onNodeMouseDown( NodeMouseDownEvent event ) {
-                final Line floatingShape = new Line( 0,
-                                                     0,
-                                                     30,
-                                                     30 );
-                setAttributes( floatingShape );
-                setFloatingPanel( floatingShape,
-                                  "WiresLine",
-                                  30,
-                                  30,
-                                  event );
+        return new ShapeDragProxy<Line>() {
+            @Override
+            public Shape<Line> getDragShape() {
+                return proxy;
+            }
+
+            @Override
+            public String getShapeDescription() {
+                return DESCRIPTION;
+            }
+
+            @Override
+            public void onDragEnd( final int x,
+                                   final int y ) {
+                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( DESCRIPTION,
+                                                                         x,
+                                                                         y ) );
+            }
+
+            @Override
+            public int getHeight() {
+                return 50;
+            }
+
+            @Override
+            public int getWidth() {
+                return 50;
             }
         };
+    }
 
-        return nodeMouseDownHandler;
-
+    @Override
+    public WiresBaseGroupShape getShape() {
+        return new WiresLine( 0,
+                              0,
+                              30,
+                              30 );
     }
 
     private void setAttributes( final Line line ) {
@@ -89,11 +110,6 @@ public class LineFactory extends ShapeFactory<Line> {
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
                 .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
                 .setDraggable( false );
-    }
-
-    @Override
-    protected ShapeCategory getCategory() {
-        return ShapeType.LINE.getCategory();
     }
 
 }

@@ -14,14 +14,13 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.wires.client.layers.LayersGroup;
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.api.events.ProgressEvent;
-import org.kie.wires.core.api.events.ReadyShape;
-import org.kie.wires.core.api.events.ShapeAddEvent;
+import org.kie.wires.core.api.events.ShapeAddedEvent;
+import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
+import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
 import org.kie.wires.core.client.canvas.Canvas;
-import org.kie.wires.core.client.shapes.WiresCircle;
-import org.kie.wires.core.client.shapes.WiresLine;
-import org.kie.wires.core.client.shapes.WiresRectangle;
+import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -42,13 +41,16 @@ public class CanvasScreen extends Canvas {
     private Event<ClearEvent> clearEvent;
 
     @Inject
-    private Event<ReadyShape> readyShape;
+    private Event<ShapeAddedEvent> shapeAddedEvent;
 
     @Inject
     private BayesianScreen bayesianScreen;
 
     @Inject
     private LayersGroup layerGroup;
+
+    @Inject
+    private ShapeFactoryCache factoriesCache;
 
     private Menus menus;
 
@@ -123,38 +125,33 @@ public class CanvasScreen extends Canvas {
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
     }
 
-    public void myResponseObserver( @Observes ShapeAddEvent shapeAddEvent ) {
-        String shape = shapeAddEvent.getShape();
+    public void myResponseObserver( @Observes ShapeDragCompleteEvent shapeDragCompleteEvent ) {
+        final String shapeDescription = shapeDragCompleteEvent.getShape();
 
-        //TODO This is nasty. We need to create a WiresXXX shape from the event
+        //Get a concrete Shape
         WiresBaseGroupShape wiresShape = null;
-        if ( shape.equals( "WiresRectangle" ) ) {
-            wiresShape = new WiresRectangle( 70,
-                                             40 );
-        } else if ( shape.equals( "WiresCircle" ) ) {
-            wiresShape = new WiresCircle( 0,
-                                          0,
-                                          20 );
-        } else if ( shape.equals( "WiresLine" ) ) {
-            wiresShape = new WiresLine( 0,
-                                        0,
-                                        30,
-                                        30 );
+        for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
+            if ( factory.getShapeDescription().equals( shapeDescription ) ) {
+                wiresShape = factory.getShape();
+            }
         }
 
-        if ( shapeAddEvent.getX() < getAbsoluteLeft() || shapeAddEvent.getY() < getAbsoluteTop() ) {
+        if ( wiresShape == null ) {
             return;
-        } else if ( shapeAddEvent.getX() > getAbsoluteLeft() + getOffsetWidth() || shapeAddEvent.getY() > getAbsoluteTop() + getOffsetHeight() ) {
+        }
+        if ( shapeDragCompleteEvent.getX() < getAbsoluteLeft() || shapeDragCompleteEvent.getY() < getAbsoluteTop() ) {
+            return;
+        } else if ( shapeDragCompleteEvent.getX() > getAbsoluteLeft() + getOffsetWidth() || shapeDragCompleteEvent.getY() > getAbsoluteTop() + getOffsetHeight() ) {
             return;
         }
 
         wiresShape.setDraggable( true );
-        wiresShape.init( this.getX( shapeAddEvent.getX() ),
-                         this.getY( shapeAddEvent.getY() ) );
+        wiresShape.init( this.getX( shapeDragCompleteEvent.getX() ),
+                         this.getY( shapeDragCompleteEvent.getY() ) );
         addShape( wiresShape );
         menus.getItems().get( 0 ).setEnabled( true );
 
-        readyShape.fire( new ReadyShape( shape ) );
+        shapeAddedEvent.fire( new ShapeAddedEvent( shapeDescription ) );
     }
 
     private int getX( int xShapeEvent ) {

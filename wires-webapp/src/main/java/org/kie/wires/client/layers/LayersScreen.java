@@ -7,9 +7,7 @@ import javax.inject.Inject;
 
 import com.bayesian.network.client.events.LayerEvent;
 import com.bayesian.parser.client.model.BayesVariable;
-import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Shape;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -20,7 +18,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.kie.wires.core.api.events.ClearEvent;
-import org.kie.wires.core.api.events.ReadyShape;
+import org.kie.wires.core.api.events.ShapeAddedEvent;
+import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -43,6 +43,9 @@ public class LayersScreen extends Composite implements RequiresResize {
 
     @Inject
     private LayersGroup layersGroup;
+
+    @Inject
+    private ShapeFactoryCache factoriesCache;
 
     @PostConstruct
     public void init() {
@@ -71,28 +74,25 @@ public class LayersScreen extends Composite implements RequiresResize {
     /**
      * TODO the events can not be within the SimplePanel because they are re-called
      */
-    public void myResponseObserver( @Observes ReadyShape readyShape ) {
+    public void myResponseObserver( @Observes ShapeAddedEvent shapeAddedEvent ) {
         LayersGroup.accountLayers += 1;
-        /* refactor this to be generic as well */
-        if ( readyShape.getShape().equals( "WiresRectangle" ) ) {
-            layersGroup.buildNewLayer( new Rectangle( 40,
-                                                      30 ),
-                                       null,
-                                       LayersGroup.accountLayers );
 
-        } else if ( readyShape.getShape().equals( "WiresCircle" ) ) {
-            layersGroup.buildNewLayer( new Circle( 15 ),
-                                       null,
-                                       LayersGroup.accountLayers );
-
-        } else if ( readyShape.getShape().equals( "WiresLine" ) ) {
-            layersGroup.buildNewLayer( new Line( 0,
-                                                 0,
-                                                 30,
-                                                 30 ),
-                                       null,
-                                       LayersGroup.accountLayers );
+        //Get a concrete Shape
+        Shape shape = null;
+        final String shapeDescription = shapeAddedEvent.getShape();
+        for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
+            if ( factory.getShapeDescription().equals( shapeDescription ) ) {
+                shape = factory.getGlyph();
+            }
         }
+
+        if ( shape == null ) {
+            return;
+        }
+
+        layersGroup.buildNewLayer( shape,
+                                   null,
+                                   LayersGroup.accountLayers );
         layersGroup.drawLayer();
     }
 

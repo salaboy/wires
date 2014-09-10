@@ -3,7 +3,7 @@ package org.kie.wires.core.api.events;
 import java.io.Serializable;
 
 
-public class ShapeAddEvent implements Serializable {
+public class ShapeDragCompleteEvent implements Serializable {
     private static final long serialVersionUID = 1854461682099520899L;
 
     private String shape;
@@ -11,11 +11,13 @@ public class ShapeAddEvent implements Serializable {
     private int x;
     private int y;
 
-    public ShapeAddEvent() {
+    public ShapeDragCompleteEvent() {
 
     }
 
-    public ShapeAddEvent(String shape, int x, int y) {
+    public ShapeDragCompleteEvent( String shape,
+                                   int x,
+                                   int y ) {
         this.shape = shape;
         this.x = x;
         this.y = y;

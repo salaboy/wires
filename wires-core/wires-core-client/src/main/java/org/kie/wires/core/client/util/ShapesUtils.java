@@ -1,5 +1,10 @@
 package org.kie.wires.core.client.util;
 
+import java.util.Set;
+
+import org.kie.wires.core.api.categories.Category;
+import org.kie.wires.core.api.factories.ShapeFactory;
+
 public class ShapesUtils {
 
     public static final String LIGHT_BLUE = "#A8C6FA";
@@ -17,10 +22,11 @@ public class ShapesUtils {
     public static final int RGB_STROKE_WIDTH_SHAPE = 2;
     public static final int RGB_STROKE_WIDTH_LINE = 4;
 
-    public static int getAccountShapesByCategory( ShapeCategory shapeCategory ) {
+    public static int getNumberOfShapesInCategory( final Category shapeCategory,
+                                                   final Set<ShapeFactory> factories ) {
         int account = 0;
-        for ( ShapeType shapeType : ShapeType.values() ) {
-            if ( shapeType.getCategory().equals( shapeCategory ) ) {
+        for ( ShapeFactory factory : factories ) {
+            if ( factory.getCategory().equals( shapeCategory ) ) {
                 account++;
             }
         }
