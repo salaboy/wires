@@ -25,6 +25,7 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
 import org.kie.wires.client.factories.StencilPaletteBuilder;
+import org.kie.wires.client.factories.categories.FixedShapeCategory;
 import org.kie.wires.client.factories.categories.ShapeCategory;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
@@ -32,7 +33,7 @@ import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.kie.wires.core.client.util.ShapesUtils;
 
 @Dependent
-public class ShapesGroup extends Composite {
+public class FixedShapesGroup extends Composite {
 
     private Layer layer;
     private LienzoPanel panel;
@@ -46,7 +47,7 @@ public class ShapesGroup extends Composite {
     @PostConstruct
     public void init() {
         panel = new LienzoPanel( ShapeFactoryUtil.WIDTH_PANEL,
-                                 ShapesUtils.calculateHeight( ShapesUtils.getNumberOfShapesInCategory( ShapeCategory.CATEGORY,
+                                 ShapesUtils.calculateHeight( ShapesUtils.getNumberOfShapesInCategory( FixedShapeCategory.CATEGORY,
                                                                                                        factoriesCache.getShapeFactories() ) ) );
         layer = new Layer();
         panel.getScene().add( layer );
@@ -59,7 +60,7 @@ public class ShapesGroup extends Composite {
         //Get PaletteShape for each Shape Factory
         final List<PaletteShape> shapes = new ArrayList<PaletteShape>();
         for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
-            if ( factory.getCategory().equals( ShapeCategory.CATEGORY ) ) {
+            if ( factory.getCategory().equals( FixedShapeCategory.CATEGORY ) ) {
                 shapes.add( stencilBuilder.build( panel,
                                                   factory ) );
             }

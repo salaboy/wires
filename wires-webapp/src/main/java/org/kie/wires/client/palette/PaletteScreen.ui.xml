@@ -6,10 +6,13 @@
   <g:SimplePanel>
     <b:Accordion>
       <b:AccordionGroup heading="Shapes" defaultOpen="true">
-        <g:SimplePanel ui:field="shapes"/>
+        <g:SimplePanel ui:field="categoryShapes"/>
+      </b:AccordionGroup>
+      <b:AccordionGroup heading="Fixed shapes">
+        <g:SimplePanel ui:field="categoryFixedShapes"/>
       </b:AccordionGroup>
       <b:AccordionGroup heading="Connectors">
-          <g:SimplePanel ui:field="connectors"/>
+        <g:SimplePanel ui:field="categoryConnectors"/>
       </b:AccordionGroup>
     </b:Accordion>
   </g:SimplePanel>

@@ -15,7 +15,7 @@
  */
 package org.kie.wires.core.api.selection;
 
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 
 /**
  * Mediator for Shape related operations
@@ -24,12 +24,12 @@ public interface SelectionManager {
 
     public void clearSelection();
 
-    public void selectShape( final WiresBaseGroupShape shape );
+    public void selectShape( final WiresBaseDynamicShape shape );
 
-    public void deselectShape( final WiresBaseGroupShape shape );
+    public void deselectShape( final WiresBaseDynamicShape shape );
 
     boolean isShapeSelected();
 
-    WiresBaseGroupShape getSelectedShape();
+    WiresBaseDynamicShape getSelectedShape();
 
 }

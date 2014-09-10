@@ -9,8 +9,6 @@
  */
 package org.kie.wires.core.client.collision;
 
-import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
@@ -18,9 +16,9 @@ import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
-import org.kie.wires.core.client.shapes.WiresRectangle;
+import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.client.shapes.dynamic.WiresRectangle;
 import org.kie.wires.core.client.util.UUID;
 
 import static org.kie.wires.core.client.util.ShapesUtils.*;
@@ -79,7 +77,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
             @Override
             public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
                 shape.hideMagnetPoints();
-                shape.setBeingResized( true );
                 recordStartData( shape,
                                  nodeDragStartEvent );
             }
@@ -94,15 +91,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
             }
 
         } );
-
-        addNodeDragEndHandler( new NodeDragEndHandler() {
-            @Override
-            public void onNodeDragEnd( NodeDragEndEvent nodeDragEndEvent ) {
-                shape.setBeingResized( false );
-            }
-
-        } );
-
     }
 
     @Override
@@ -148,9 +136,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
                 rect.getRectangle().setWidth( rect.getStartWidth() - deltaX );
                 rect.getRectangle().setHeight( rect.getStartHeight() - deltaY );
 
-                rect.setCurrentDragX( rect.getStartX() + deltaX );
-                rect.setCurrentDragY( rect.getStartY() + deltaY );
-
                 rect.getBounding().setWidth( rect.getRectangle().getWidth() + 12 );
                 rect.getBounding().setHeight( rect.getRectangle().getHeight() + 12 );
 
@@ -161,8 +146,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
                 rect.getRectangle().setWidth( rect.getStartWidth() - deltaX );
                 rect.getRectangle().setHeight( rect.getStartHeight() + deltaY );
 
-                rect.setCurrentDragX( rect.getStartX() + deltaX );
-
                 rect.getBounding().setWidth( rect.getRectangle().getWidth() + 12 );
                 rect.getBounding().setHeight( rect.getRectangle().getHeight() + 12 );
 
@@ -172,8 +155,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
 
                 rect.getRectangle().setWidth( rect.getStartWidth() + deltaX );
                 rect.getRectangle().setHeight( rect.getStartHeight() - deltaY );
-
-                rect.setCurrentDragY( rect.getStartY() + deltaY );
 
                 rect.getBounding().setWidth( rect.getRectangle().getWidth() + 12 );
                 rect.getBounding().setHeight( rect.getRectangle().getHeight() + 12 );
@@ -233,11 +214,6 @@ public class RectangleControlPointImpl extends Rectangle implements ControlPoint
     @Override
     public void setControlPointVisible( final boolean visible ) {
         setVisible( visible );
-    }
-
-    @Override
-    public int getControlType() {
-        return controlType;
     }
 
     @Override

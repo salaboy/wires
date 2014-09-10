@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.client.factoryShapes;
+package org.kie.wires.client.factories;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -35,11 +35,11 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.kie.wires.client.palette.PaletteShape;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.client.shapes.PaletteShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
 @ApplicationScoped
@@ -60,22 +60,23 @@ public class StencilPaletteBuilder extends Composite {
         //Callback is invoked when the drag operation ends
         final ShapeDragProxyCallback callback = new ShapeDragProxyCallback() {
             @Override
-            public void callback( final String shapeDescription,
+            public void callback( final String identifier,
                                   final int x,
                                   final int y ) {
-                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( shapeDescription,
+                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( identifier,
                                                                          x,
                                                                          y ) );
             }
         };
 
         //Attach handles for drag operation
+        final ShapeDragProxy dragProxy = factory.getDragProxy( callback );
         addBoundingHandlers( dragProxyParentPanel,
-                             factory.getDragProxy( callback ),
+                             dragProxy,
                              bounding );
 
         addShapeHandlers( dragProxyParentPanel,
-                          factory.getDragProxy( callback ),
+                          dragProxy,
                           shape );
 
         //Build Palette Shape

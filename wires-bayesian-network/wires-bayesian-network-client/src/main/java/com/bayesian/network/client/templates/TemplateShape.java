@@ -1,4 +1,4 @@
-package org.kie.wires.core.client.shapes;
+package com.bayesian.network.client.templates;
 
 import java.io.Serializable;
 

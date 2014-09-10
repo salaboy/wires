@@ -28,11 +28,10 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Picture;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.client.factoryShapes.StencilActionBuilder;
+import org.kie.wires.client.factories.StencilActionBuilder;
 import org.kie.wires.client.palette.PaletteLayoutUtilities;
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.client.resources.AppResource;
-import org.kie.wires.core.client.shapes.ActionShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.kie.wires.core.client.util.ShapesUtils;
 

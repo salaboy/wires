@@ -10,10 +10,9 @@ import java.util.List;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.WiresLine;
+import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.client.shapes.dynamic.WiresLine;
 import org.kie.wires.core.client.util.UUID;
 
 import static org.kie.wires.core.client.util.ShapesUtils.*;
@@ -91,12 +90,7 @@ public class LineMagnetImpl extends Circle implements Magnet {
     }
 
     @Override
-    public void setMagnetVisible( final boolean visible ) {
-        setVisible( visible );
-    }
-
-    @Override
-    public WiresBaseGroupShape getShape() {
+    public WiresLine getShape() {
         return shape;
     }
 

@@ -22,7 +22,7 @@ import com.google.gwt.user.client.Window;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.wires.core.client.shapes.ProgressBar;
+import org.kie.wires.core.client.canvas.ProgressBar;
 
 public class BayesianFactory extends BaseFactory {
 

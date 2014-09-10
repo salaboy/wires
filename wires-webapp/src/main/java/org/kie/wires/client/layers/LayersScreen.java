@@ -79,9 +79,9 @@ public class LayersScreen extends Composite implements RequiresResize {
 
         //Get a concrete Shape
         Shape shape = null;
-        final String shapeDescription = shapeAddedEvent.getShape();
+        final String identifier = shapeAddedEvent.getIdentifier();
         for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
-            if ( factory.getShapeDescription().equals( shapeDescription ) ) {
+            if ( factory.getIdentifier().equals( identifier ) ) {
                 shape = factory.getGlyph();
             }
         }

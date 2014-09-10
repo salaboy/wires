@@ -1,4 +1,4 @@
-package org.kie.wires.core.client.shapes;
+package org.kie.wires.core.client.canvas;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;

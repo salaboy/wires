@@ -7,7 +7,7 @@ import java.util.Map;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.google.common.collect.Maps;
-import org.kie.wires.core.client.shapes.WiresRectangle;
+import org.kie.wires.core.client.shapes.dynamic.WiresRectangle;
 
 public class EditableBayesianNode extends WiresRectangle implements Serializable {
 

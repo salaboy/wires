@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.client.factoryShapes.categories;
+package org.kie.wires.core.api.shapes;
 
-import org.kie.wires.core.api.categories.Category;
+import java.util.List;
 
-public class ShapeCategory extends Category {
+public interface HasMagnets extends WiresShape {
 
-    public static final ShapeCategory CATEGORY = new ShapeCategory();
+    List<Magnet> getMagnets();
 
-    private ShapeCategory() {
-        super( "Shapes" );
-    }
+    void addMagnet( final Magnet m );
 
+    void attachControlPointToMagnet( final Magnet magnet );
+
+    void showMagnetsPoints();
+
+    void hideMagnetPoints();
 }

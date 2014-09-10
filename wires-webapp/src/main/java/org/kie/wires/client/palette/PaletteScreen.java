@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -43,19 +42,29 @@ public class PaletteScreen extends Composite implements RequiresResize {
     private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
 
     @UiField
-    public SimplePanel shapes;
+    public SimplePanel categoryShapes;
 
     @UiField
-    public SimplePanel connectors;
+    public SimplePanel categoryFixedShapes;
+
+    @UiField
+    public SimplePanel categoryConnectors;
 
     @Inject
-    private SyncBeanManager iocManager;
+    private ShapesGroup shapesGroup;
+
+    @Inject
+    private FixedShapesGroup fixedShapesGroup;
+
+    @Inject
+    private ConnectorsGroup connectorsGroup;
 
     @PostConstruct
     public void init() {
         initWidget( uiBinder.createAndBindUi( this ) );
-        shapes.add( iocManager.lookupBean( ShapesGroup.class ).getInstance() );
-        connectors.add( iocManager.lookupBean( ConnectorsGroup.class ).getInstance() );
+        categoryShapes.setWidget( shapesGroup );
+        categoryFixedShapes.setWidget( fixedShapesGroup );
+        categoryConnectors.setWidget( connectorsGroup );
     }
 
     @WorkbenchPartTitle

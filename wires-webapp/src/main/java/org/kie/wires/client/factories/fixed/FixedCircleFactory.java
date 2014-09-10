@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.client.factoryShapes;
+package org.kie.wires.client.factories.fixed;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.client.factoryShapes.categories.ShapeCategory;
+import org.kie.wires.client.factories.categories.FixedShapeCategory;
 import org.kie.wires.core.api.categories.Category;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.WiresCircle;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.shapes.fixed.WiresFixedCircle;
 import org.kie.wires.core.client.util.ShapesUtils;
 
 @ApplicationScoped
-public class CircleFactory implements ShapeFactory<Circle> {
+public class FixedCircleFactory implements ShapeFactory<Circle> {
 
     private static final String DESCRIPTION = "Circle";
 
@@ -44,13 +44,18 @@ public class CircleFactory implements ShapeFactory<Circle> {
     }
 
     @Override
+    public String getIdentifier() {
+        return getClass().getName();
+    }
+
+    @Override
     public String getShapeDescription() {
         return DESCRIPTION;
     }
 
     @Override
     public Category getCategory() {
-        return ShapeCategory.CATEGORY;
+        return FixedShapeCategory.CATEGORY;
     }
 
     @Override
@@ -68,7 +73,7 @@ public class CircleFactory implements ShapeFactory<Circle> {
             @Override
             public void onDragEnd( final int x,
                                    final int y ) {
-                callback.callback( DESCRIPTION,
+                callback.callback( getIdentifier(),
                                    x,
                                    y );
             }
@@ -87,10 +92,10 @@ public class CircleFactory implements ShapeFactory<Circle> {
     }
 
     @Override
-    public WiresBaseGroupShape getShape() {
-        return new WiresCircle( 0,
-                                0,
-                                20 );
+    public WiresBaseShape getShape() {
+        return new WiresFixedCircle( 0,
+                                     0,
+                                     20 );
     }
 
     @Override

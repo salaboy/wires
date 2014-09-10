@@ -8,21 +8,20 @@ package org.kie.wires.core.api.events;
 
 import java.io.Serializable;
 
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-
+import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 
 public class ShapeSelectedEvent implements Serializable {
     private static final long serialVersionUID = 6413916607473536300L;
-    private WiresBaseGroupShape shape;
+    private WiresBaseDynamicShape shape;
 
     public ShapeSelectedEvent() {
     }
 
-    public ShapeSelectedEvent(WiresBaseGroupShape shape) {
+    public ShapeSelectedEvent(WiresBaseDynamicShape shape) {
         this.shape = shape;
     }
 
-    public WiresBaseGroupShape getShape() {
+    public WiresBaseDynamicShape getShape() {
         return shape;
     }
     

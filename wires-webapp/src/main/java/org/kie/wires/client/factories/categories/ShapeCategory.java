@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.client.factoryShapes.categories;
+package org.kie.wires.client.factories.categories;
 
 import org.kie.wires.core.api.categories.Category;
 
-public class ConnectorCategory extends Category {
+public class ShapeCategory extends Category {
 
-    public static final ConnectorCategory CATEGORY = new ConnectorCategory();
+    public static final ShapeCategory CATEGORY = new ShapeCategory();
 
-    private ConnectorCategory() {
-        super( "Connectors" );
+    private ShapeCategory() {
+        super( "Shapes" );
     }
 
 }

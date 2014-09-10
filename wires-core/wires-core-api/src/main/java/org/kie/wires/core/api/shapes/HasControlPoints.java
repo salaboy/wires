@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.client.shapes;
+package org.kie.wires.core.api.shapes;
 
-import java.io.Serializable;
+import java.util.List;
 
-import com.emitrom.lienzo.client.core.shape.Group;
-import com.emitrom.lienzo.client.core.shape.Picture;
-import com.emitrom.lienzo.client.core.shape.Rectangle;
+public interface HasControlPoints extends WiresShape {
 
-public class ActionShape extends Group implements Serializable {
+    void addControlPoint( final ControlPoint cp );
 
-    private static final long serialVersionUID = -6555009991474610157L;
+    List<ControlPoint> getControlPoints();
 
-    public void setBounding( final Rectangle bounding ) {
-        add( bounding );
-    }
+    void showControlPoints();
 
-    public void setPicture( final Picture picture ) {
-        add( picture );
-    }
+    void hideControlPoints();
 
 }

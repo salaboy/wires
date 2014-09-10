@@ -20,11 +20,11 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import org.kie.wires.core.api.collision.CollisionManager;
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
 import org.kie.wires.core.api.collision.RequiresCollisionManager;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.WiresLine;
+import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.HasControlPoints;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.client.shapes.dynamic.WiresLine;
 import org.kie.wires.core.client.util.UUID;
 
 import static org.kie.wires.core.client.util.ShapesUtils.*;
@@ -74,12 +74,7 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint,
     }
 
     @Override
-    public int getControlType() {
-        return controlType;
-    }
-
-    @Override
-    public WiresBaseGroupShape getShape() {
+    public HasControlPoints getShape() {
         return shape;
     }
 
@@ -115,7 +110,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint,
 
                     @Override
                     public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
-                        shape.setBeingResized( true );
                         double deltaX = nodeDragMoveEvent.getX() - dragEventStartX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventStartY;
 
@@ -139,8 +133,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint,
 
                     @Override
                     public void onNodeDragEnd( NodeDragEndEvent nodeDragEndEvent ) {
-                        shape.setBeingResized( false );
-
                         if ( selectedMagnet != null ) {
                             double deltaX = getControlPointX() - selectedMagnet.getX();
                             double deltaY = getControlPointY() - selectedMagnet.getY();
@@ -180,7 +172,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint,
 
                     @Override
                     public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
-                        shape.setBeingResized( true );
                         double deltaX = nodeDragMoveEvent.getX() - dragEventEndX;
                         double deltaY = nodeDragMoveEvent.getY() - dragEventEndY;
 
@@ -204,7 +195,6 @@ public class LineControlPointImpl extends Rectangle implements ControlPoint,
 
                     @Override
                     public void onNodeDragEnd( NodeDragEndEvent nodeDragEndEvent ) {
-                        shape.setBeingResized( false );
                         if ( selectedMagnet != null ) {
                             double deltaX = getControlPointX() - selectedMagnet.getX();
                             double deltaY = getControlPointY() - selectedMagnet.getY();

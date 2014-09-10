@@ -1,11 +1,11 @@
-package org.kie.wires.client.factoryShapes;
+package org.kie.wires.client.factories;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Picture;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.resources.client.ImageResource;
-import org.kie.wires.core.client.shapes.ActionShape;
+import org.kie.wires.client.actions.ActionShape;
 
 public class StencilActionBuilder {
 

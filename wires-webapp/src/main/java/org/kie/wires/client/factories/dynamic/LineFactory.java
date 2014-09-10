@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.client.factoryShapes;
+package org.kie.wires.client.factories.dynamic;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.client.factoryShapes.categories.ConnectorCategory;
+import org.kie.wires.client.factories.categories.ConnectorCategory;
 import org.kie.wires.core.api.categories.Category;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.WiresLine;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.shapes.dynamic.WiresLine;
 import org.kie.wires.core.client.util.ShapesUtils;
 
 @ApplicationScoped
@@ -44,6 +44,11 @@ public class LineFactory implements ShapeFactory<Line> {
                               45 );
         setAttributes( line );
         return line;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return getClass().getName();
     }
 
     @Override
@@ -73,7 +78,7 @@ public class LineFactory implements ShapeFactory<Line> {
             @Override
             public void onDragEnd( final int x,
                                    final int y ) {
-                callback.callback( DESCRIPTION,
+                callback.callback( getIdentifier(),
                                    x,
                                    y );
             }
@@ -92,7 +97,7 @@ public class LineFactory implements ShapeFactory<Line> {
     }
 
     @Override
-    public WiresBaseGroupShape getShape() {
+    public WiresBaseShape getShape() {
         return new WiresLine( 0,
                               0,
                               SHAPE_SIZE_X,

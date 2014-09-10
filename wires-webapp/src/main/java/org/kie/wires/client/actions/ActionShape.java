@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 JBoss Inc
+ * Copyright 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.factories;
+package org.kie.wires.client.actions;
 
-/**
- * Callback for when a drag event completes
- */
-public interface ShapeDragProxyCallback {
+import java.io.Serializable;
 
-    /**
-     * Callback invoked when the drag operation ends
-     * @param identifier
-     * @param x
-     * @param y
-     */
-    void callback( final String identifier,
-                   final int x,
-                   final int y );
+import com.emitrom.lienzo.client.core.shape.Group;
+import com.emitrom.lienzo.client.core.shape.Picture;
+import com.emitrom.lienzo.client.core.shape.Rectangle;
+
+public class ActionShape extends Group implements Serializable {
+
+    private static final long serialVersionUID = -6555009991474610157L;
+
+    public void setBounding( final Rectangle bounding ) {
+        add( bounding );
+    }
+
+    public void setPicture( final Picture picture ) {
+        add( picture );
+    }
 
 }

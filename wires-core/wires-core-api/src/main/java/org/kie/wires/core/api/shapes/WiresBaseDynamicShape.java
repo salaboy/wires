@@ -8,28 +8,17 @@ package org.kie.wires.core.api.shapes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.api.collision.CollidableShape;
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
-import org.kie.wires.core.api.collision.StickableShape;
 import org.kie.wires.core.api.selection.RequiresSelectionManager;
 import org.kie.wires.core.api.selection.SelectionManager;
 
-public abstract class WiresBaseGroupShape extends Group implements EditableShape,
-                                                                   CollidableShape,
-                                                                   StickableShape,
-                                                                   RequiresSelectionManager {
-
-    protected String id;
-
-    protected double currentDragX;
-    protected double currentDragY;
-
-    protected boolean beingDragged;
-    protected boolean beingResized;
+/**
+ * A Shape that can be re-sized and have connectors attached
+ */
+public abstract class WiresBaseDynamicShape extends WiresBaseShape implements HasMagnets,
+                                                                              HasControlPoints,
+                                                                              RequiresSelectionManager {
 
     protected SelectionManager selectionManager;
     protected List<ControlPoint> controlPoints = new ArrayList<ControlPoint>();
@@ -38,35 +27,19 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
 
-    public WiresBaseGroupShape() {
-        setDraggable( true );
-    }
-
     @Override
     public void setSelectionManager( final SelectionManager manager ) {
         this.selectionManager = manager;
     }
 
     @Override
-    public String getId() {
-        return this.id;
-    }
-
     public void addControlPoint( final ControlPoint cp ) {
         controlPoints.add( cp );
     }
 
-    public void addMagnet( final Magnet m ) {
-        magnets.add( m );
-    }
-
+    @Override
     public List<ControlPoint> getControlPoints() {
         return controlPoints;
-    }
-
-    @Override
-    public List<Magnet> getMagnets() {
-        return magnets;
     }
 
     @Override
@@ -96,6 +69,47 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
     }
 
     @Override
+    public void attachControlPointToMagnet( final Magnet magnet ) {
+        double[] distances = new double[ controlPoints.size() ];
+        for ( int i = 0; i < controlPoints.size(); i++ ) {
+            double pointX = ( (Shape) controlPoints.get( i ) ).getX();
+            double pointY = ( (Shape) controlPoints.get( i ) ).getY();
+
+            double deltaX = magnet.getX() - pointX;
+            double deltaY = magnet.getY() - pointY;
+
+            distances[ i ] = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
+
+        }
+        int minIndex = min( distances );
+
+        if ( !magnet.getAttachedControlPoints().contains( controlPoints.get( minIndex ) ) ) {
+            magnet.attachControlPoint( controlPoints.get( minIndex ) );
+            controlPoints.get( minIndex ).setControlPointX( magnet.getX() );
+            controlPoints.get( minIndex ).setControlPointY( magnet.getY() );
+            // I need to clean up all the other magnets of the shape to make sure that
+            // no other magnet has the same shape attached
+            for ( Magnet m : magnet.getShape().getMagnets() ) {
+                if ( !m.getId().equals( magnet.getId() ) ) {
+                    if ( m.getAttachedControlPoints().contains( controlPoints.get( minIndex ) ) ) {
+                        m.getAttachedControlPoints().remove( controlPoints.get( minIndex ) );
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void addMagnet( final Magnet m ) {
+        magnets.add( m );
+    }
+
+    @Override
+    public List<Magnet> getMagnets() {
+        return magnets;
+    }
+
+    @Override
     public void showMagnetsPoints() {
         final Layer layer = getLayer();
         if ( !magnets.isEmpty() && !showingMagnets ) {
@@ -120,47 +134,6 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
         }
     }
 
-    @Override
-    public boolean isBeingDragged() {
-        return beingDragged;
-    }
-
-    @Override
-    public boolean isBeingResized() {
-        return beingResized;
-    }
-
-    @Override
-    public void attachControlPointToMagent( final Magnet selectedMagnet ) {
-        double[] distances = new double[ controlPoints.size() ];
-        for ( int i = 0; i < controlPoints.size(); i++ ) {
-            double pointX = ( (Shape) controlPoints.get( i ) ).getX();
-            double pointY = ( (Shape) controlPoints.get( i ) ).getY();
-
-            double deltaX = selectedMagnet.getX() - pointX;
-            double deltaY = selectedMagnet.getY() - pointY;
-
-            distances[ i ] = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
-
-        }
-        int minIndex = min( distances );
-
-        if ( !selectedMagnet.getAttachedControlPoints().contains( controlPoints.get( minIndex ) ) ) {
-            selectedMagnet.attachControlPoint( controlPoints.get( minIndex ) );
-            controlPoints.get( minIndex ).setControlPointX( selectedMagnet.getX() );
-            controlPoints.get( minIndex ).setControlPointY( selectedMagnet.getY() );
-            // I need to clean up all the other magnets of the shape to make sure that 
-            // no other magnet has the same shape attached
-            for ( Magnet m : selectedMagnet.getShape().getMagnets() ) {
-                if ( !m.getId().equals( selectedMagnet.getId() ) ) {
-                    if ( m.getAttachedControlPoints().contains( controlPoints.get( minIndex ) ) ) {
-                        m.getAttachedControlPoints().remove( controlPoints.get( minIndex ) );
-                    }
-                }
-            }
-        }
-    }
-
     private static int min( final double[] values ) {
         double min = Double.MAX_VALUE;
         int i = 0;
@@ -176,11 +149,9 @@ public abstract class WiresBaseGroupShape extends Group implements EditableShape
 
     @Override
     public void destroy() {
-        Layer layer = getLayer();
         hideControlPoints();
         hideMagnetPoints();
-        layer.remove( this );
-        layer.draw();
+        super.destroy();
     }
 
 }

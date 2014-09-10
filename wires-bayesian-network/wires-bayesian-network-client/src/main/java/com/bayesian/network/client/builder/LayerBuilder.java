@@ -13,7 +13,7 @@ import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.client.shapes.TemplateShape;
+import com.bayesian.network.client.templates.TemplateShape;
 
 public class LayerBuilder {
 

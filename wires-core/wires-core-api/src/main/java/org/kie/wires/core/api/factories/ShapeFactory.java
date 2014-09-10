@@ -17,7 +17,7 @@ package org.kie.wires.core.api.factories;
 
 import com.emitrom.lienzo.client.core.shape.Shape;
 import org.kie.wires.core.api.categories.Category;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
 
 /**
  * Factory for building shapes available for authoring.
@@ -41,7 +41,7 @@ public interface ShapeFactory<T extends Shape<T>> {
      * Get a Shape to be created on the Canvas (usually at the end of a drag operation)
      * @return
      */
-    WiresBaseGroupShape getShape();
+    WiresBaseShape getShape();
 
     /**
      * Get X offset. Used to centre the "dropped" Shape at the mouse pointer position. For example a Circle with
@@ -58,6 +58,12 @@ public interface ShapeFactory<T extends Shape<T>> {
      * @return
      */
     int getShapeOffsetY();
+
+    /**
+     * Get unique identifier for Shape type
+     * @return
+     */
+    String getIdentifier();
 
     /**
      * Get description of Shape

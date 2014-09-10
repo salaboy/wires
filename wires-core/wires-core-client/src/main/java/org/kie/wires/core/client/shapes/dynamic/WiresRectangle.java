@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.client.shapes;
+package org.kie.wires.core.client.shapes.dynamic;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
@@ -30,17 +28,17 @@ import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.google.gwt.core.client.GWT;
-import org.kie.wires.core.api.collision.CollidableShape;
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
 import org.kie.wires.core.api.collision.Projection;
 import org.kie.wires.core.api.collision.Vector;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
+import org.kie.wires.core.api.shapes.WiresShape;
 import org.kie.wires.core.client.collision.RectangleControlPointImpl;
 import org.kie.wires.core.client.collision.RectangleMagnetImpl;
 import org.kie.wires.core.client.util.UUID;
 
-public class WiresRectangle extends WiresBaseGroupShape {
+public class WiresRectangle extends WiresBaseDynamicShape {
 
     private Rectangle rectangle;
     private Rectangle bounding;
@@ -101,9 +99,6 @@ public class WiresRectangle extends WiresBaseGroupShape {
         setX( x );
         setY( y );
 
-        currentDragX = x;
-        currentDragY = y;
-
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
             public void onNodeMouseClick( NodeMouseClickEvent nodeMouseClickEvent ) {
                 selectionManager.selectShape( WiresRectangle.this );
@@ -118,9 +113,6 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
             public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
-                beingDragged = true;
-                currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
-                currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
                 Layer layer = getLayer();
                 for ( Magnet m : magnets ) {
                     if ( !m.getAttachedControlPoints().isEmpty() ) {
@@ -168,12 +160,6 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
                 }
                 layer.draw();
-            }
-        } );
-
-        addNodeDragEndHandler( new NodeDragEndHandler() {
-            public void onNodeDragEnd( NodeDragEndEvent event ) {
-                beingDragged = false;
             }
         } );
     }
@@ -303,14 +289,16 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
     }
 
-    public boolean collidesWith( final CollidableShape shape ) {
+    @Override
+    public boolean collidesWith( final WiresShape shape ) {
         List<Vector> axes = getAxes();
         axes.addAll( shape.getAxes() );
         return !separationOnAxes( axes, shape );
     }
 
+    @Override
     public boolean separationOnAxes( final List<Vector> axes,
-                                     final CollidableShape shape ) {
+                                     final WiresShape shape ) {
         for ( int i = 0; i < axes.size(); ++i ) {
             Vector axis = axes.get( i );
             Projection projection1 = shape.project( axis );
@@ -323,26 +311,6 @@ public class WiresRectangle extends WiresBaseGroupShape {
         return false;
     }
 
-    public double getCurrentDragX() {
-        return currentDragX;
-    }
-
-    public double getCurrentDragY() {
-        return currentDragY;
-    }
-
-    public void setCurrentDragX( final double currentDragX ) {
-        this.currentDragX = currentDragX;
-    }
-
-    public void setCurrentDragY( final double currentDragY ) {
-        this.currentDragY = currentDragY;
-    }
-
-    public void setBeingResized( final boolean beingResized ) {
-        this.beingResized = beingResized;
-    }
-
     public Rectangle getRectangle() {
         return rectangle;
     }
@@ -353,7 +321,7 @@ public class WiresRectangle extends WiresBaseGroupShape {
 
     @Override
     public String toString() {
-        return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", bounding width = " + getBounding().getWidth() + ", bounding height = " + getBounding().getHeight() + " beingDragged= " + beingDragged + "}";
+        return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", bounding width = " + getBounding().getWidth() + ", bounding height = " + getBounding().getHeight() + "}";
     }
 
 }

@@ -13,16 +13,16 @@ import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.core.api.collision.CollidableShape;
 import org.kie.wires.core.api.collision.CollisionManager;
-import org.kie.wires.core.api.collision.Magnet;
 import org.kie.wires.core.api.collision.RequiresCollisionManager;
-import org.kie.wires.core.api.collision.StickableShape;
 import org.kie.wires.core.api.selection.RequiresSelectionManager;
 import org.kie.wires.core.api.selection.SelectionManager;
-import org.kie.wires.core.api.shapes.EditableShape;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.ProgressBar;
+import org.kie.wires.core.api.shapes.HasControlPoints;
+import org.kie.wires.core.api.shapes.HasMagnets;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.api.shapes.WiresShape;
 
 /**
  * This is the root Canvas provided by Wires
@@ -35,8 +35,8 @@ public class Canvas extends Composite implements SelectionManager,
     private LienzoPanel panel;
     private Layer canvasLayer;
 
-    private List<EditableShape> shapesInCanvas = new ArrayList<EditableShape>();
-    private WiresBaseGroupShape selectedShape;
+    private List<WiresShape> shapesInCanvas = new ArrayList<WiresShape>();
+    private WiresBaseDynamicShape selectedShape;
 
     private ProgressBar progressBar;
 
@@ -83,11 +83,11 @@ public class Canvas extends Composite implements SelectionManager,
         canvasLayer.draw();
     }
 
-    public List<EditableShape> getShapesInCanvas() {
+    public List<WiresShape> getShapesInCanvas() {
         return Collections.unmodifiableList( this.shapesInCanvas );
     }
 
-    public void addShape( final WiresBaseGroupShape shape ) {
+    public void addShape( final WiresBaseShape shape ) {
         if ( shape instanceof RequiresSelectionManager ) {
             ( (RequiresSelectionManager) shape ).setSelectionManager( this );
         }
@@ -99,7 +99,7 @@ public class Canvas extends Composite implements SelectionManager,
         canvasLayer.draw();
     }
 
-    public void removeShape( final WiresBaseGroupShape shape ) {
+    public void removeShape( final WiresBaseDynamicShape shape ) {
         shape.destroy();
         deselectShape( shape );
         canvasLayer.remove( shape );
@@ -108,7 +108,7 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     public void clear() {
-        for ( EditableShape shape : shapesInCanvas ) {
+        for ( WiresShape shape : shapesInCanvas ) {
             shape.destroy();
             canvasLayer.remove( (IPrimitive<?>) shape );
         }
@@ -118,39 +118,39 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     @Override
-    public Magnet getMagnet( final EditableShape shapeActive,
+    public Magnet getMagnet( final WiresShape activeShape,
                              final int x,
                              final int y ) {
-        Magnet selectedMagnet = null;
-        if ( shapeActive == null ) {
-            return selectedMagnet;
+        if ( activeShape == null ) {
+            return null;
         }
 
-        for ( EditableShape shape : getShapesInCanvas() ) {
-            if ( !shape.getId().equals( shapeActive.getId() ) && ( (CollidableShape) shapeActive ).collidesWith( ( (CollidableShape) shape ) ) ) {
+        Magnet selectedMagnet = null;
+        for ( WiresShape shape : getShapesInCanvas() ) {
+            if ( !shape.getId().equals( activeShape.getId() ) ) {
+                if ( shape instanceof HasMagnets ) {
+                    final HasMagnets mShape = (HasMagnets) shape;
+                    if ( shape.collidesWith( activeShape ) ) {
+                        mShape.showMagnetsPoints();
+                        double finalDistance = Double.MAX_VALUE;
+                        final List<Magnet> magnets = mShape.getMagnets();
+                        for ( Magnet magnet : magnets ) {
+                            double deltaX = x - magnet.getX();
+                            double deltaY = y - magnet.getY();
+                            double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
 
-                ( (StickableShape) shape ).showMagnetsPoints();
-
-                List<Magnet> magnets = ( (StickableShape) shape ).getMagnets();
-                double finalDistance = Double.MAX_VALUE;
-
-                for ( Magnet magnet : magnets ) {
-                    double deltaX = x - magnet.getX();
-                    double deltaY = y - magnet.getY();
-                    double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
-
-                    if ( finalDistance > distance ) {
-                        finalDistance = distance;
-                        selectedMagnet = magnet;
+                            if ( finalDistance > distance ) {
+                                finalDistance = distance;
+                                selectedMagnet = magnet;
+                            }
+                            magnet.setMagnetActive( false );
+                            ( (Shape) magnet ).setFillColor( MAGNET_RGB_FILL_SHAPE );
+                        }
+                    } else {
+                        mShape.hideMagnetPoints();
                     }
-                    magnet.setMagnetActive( false );
-                    ( (Shape) magnet ).setFillColor( MAGNET_RGB_FILL_SHAPE );
                 }
-
-            } else {
-                ( (StickableShape) shape ).hideMagnetPoints();
             }
-
         }
 
         return selectedMagnet;
@@ -158,9 +158,9 @@ public class Canvas extends Composite implements SelectionManager,
 
     @Override
     public void attachControlPointToMagnet( final Magnet selectedMagnet,
-                                            final EditableShape shapeActive ) {
+                                            final HasControlPoints shapeActive ) {
         if ( selectedMagnet != null && shapeActive != null ) {
-            ( (StickableShape) shapeActive ).attachControlPointToMagent( selectedMagnet );
+            ( (HasMagnets) shapeActive ).attachControlPointToMagnet( selectedMagnet );
             if ( !selectedMagnet.getAttachedControlPoints().isEmpty() ) {
                 ( (Shape) selectedMagnet ).setFillColor( ColorName.RED );
             }
@@ -168,28 +168,32 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     @Override
-    public void detachControlPointFromMagnet( final EditableShape shapeActive ) {
+    public void detachControlPointFromMagnet( final HasControlPoints shapeActive ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     @Override
     public void clearSelection() {
         selectedShape = null;
-        for ( EditableShape shape : getShapesInCanvas() ) {
-            shape.hideControlPoints();
-            ( (StickableShape) shape ).hideMagnetPoints();
+        for ( WiresShape shape : getShapesInCanvas() ) {
+            if ( shape instanceof HasControlPoints ) {
+                ( (HasControlPoints) shape ).hideControlPoints();
+            }
+            if ( shape instanceof HasMagnets ) {
+                ( (HasMagnets) shape ).hideMagnetPoints();
+            }
         }
     }
 
     @Override
-    public void selectShape( final WiresBaseGroupShape shape ) {
+    public void selectShape( final WiresBaseDynamicShape shape ) {
         clearSelection();
         selectedShape = shape;
         selectedShape.showControlPoints();
     }
 
     @Override
-    public void deselectShape( final WiresBaseGroupShape shape ) {
+    public void deselectShape( final WiresBaseDynamicShape shape ) {
         if ( shape == null ) {
             return;
         }
@@ -204,7 +208,7 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     @Override
-    public WiresBaseGroupShape getSelectedShape() {
+    public WiresBaseDynamicShape getSelectedShape() {
         return selectedShape;
     }
 

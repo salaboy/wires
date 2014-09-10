@@ -3,7 +3,7 @@ package com.bayesian.network.client.factory;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
-import org.kie.wires.core.client.shapes.TemplateShape;
+import com.bayesian.network.client.templates.TemplateShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.kie.wires.core.client.util.ShapesUtils;
 

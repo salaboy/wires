@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.client.shapes;
+package org.kie.wires.core.client.shapes.dynamic;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
@@ -31,22 +29,25 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.client.core.types.Point2DArray;
 import com.emitrom.lienzo.shared.core.types.LineCap;
-import org.kie.wires.core.api.collision.CollidableShape;
 import org.kie.wires.core.api.collision.CollisionManager;
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
 import org.kie.wires.core.api.collision.Projection;
 import org.kie.wires.core.api.collision.RequiresCollisionManager;
 import org.kie.wires.core.api.collision.Vector;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
+import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
+import org.kie.wires.core.api.shapes.WiresShape;
 import org.kie.wires.core.client.collision.LineControlPointImpl;
 import org.kie.wires.core.client.collision.LineMagnetImpl;
 import org.kie.wires.core.client.util.UUID;
 
-public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionManager {
+public class WiresLine extends WiresBaseDynamicShape implements RequiresCollisionManager {
 
     private Line line;
     private Line bounding;
+
+    private double currentDragX = 0;
+    private double currentDragY = 0;
 
     private LineControlPointImpl controlPointStart = new LineControlPointImpl( this,
                                                                                ControlPoint.CONTROL_START );
@@ -69,6 +70,7 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
                              y1,
                              x2,
                              y2 );
+        bounding.setStrokeWidth( 10 );
         bounding.setAlpha( 0.1 );
         add( line );
         add( bounding );
@@ -121,33 +123,22 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
 
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
             public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
-                beingDragged = true;
                 currentDragX = nodeDragMoveEvent.getDragContext().getNode().getX() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getX();
                 currentDragY = nodeDragMoveEvent.getDragContext().getNode().getY() + nodeDragMoveEvent.getDragContext().getLocalAdjusted().getY();
             }
         } );
-
-        addNodeDragEndHandler( new NodeDragEndHandler() {
-            public void onNodeDragEnd( NodeDragEndEvent event ) {
-                beingDragged = false;
-            }
-        } );
     }
 
-    public void recordStartData( final NodeDragStartEvent nodeDragStartEvent ) {
-        Point2DArray points = line.getPoints();
-        Point2D startPoint = points.getPoint( 0 );
-        Point2D endPoint = points.getPoint( 1 );
-    }
-
-    public boolean collidesWith( final CollidableShape shape ) {
+    @Override
+    public boolean collidesWith( final WiresShape shape ) {
         List<Vector> axes = getAxes();
         axes.addAll( shape.getAxes() );
         return !separationOnAxes( axes, shape );
     }
 
+    @Override
     public boolean separationOnAxes( final List<Vector> axes,
-                                     final CollidableShape shape ) {
+                                     final WiresShape shape ) {
         for ( int i = 0; i < axes.size(); ++i ) {
             Vector axis = axes.get( i );
             Projection projection1 = shape.project( axis );
@@ -160,6 +151,7 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
         return false;
     }
 
+    @Override
     public List<Vector> getAxes() {
         Vector v1 = new Vector();
         Vector v2 = new Vector();
@@ -169,20 +161,21 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
         // start
         Point2DArray points = bounding.getPoints();
         Point2D startPoint = points.getPoint( 0 );
-        v1.setX( getCurrentDragX() + startPoint.getX() );
-        v1.setY( getCurrentDragY() + startPoint.getY() );
+        v1.setX( currentDragX + startPoint.getX() );
+        v1.setY( currentDragY + startPoint.getY() );
 
         Point2D endPoint = points.getPoint( 1 );
 
         // end
-        v2.setX( getCurrentDragX() + endPoint.getX() );
-        v2.setY( getCurrentDragY() + endPoint.getY() );
+        v2.setX( currentDragX + endPoint.getX() );
+        v2.setY( currentDragY + endPoint.getY() );
 
         axes.add( v1.edge( v2 ).normal() );
 
         return axes;
     }
 
+    @Override
     public Projection project( final Vector axis ) {
         List<Double> scalars = new ArrayList<Double>();
         Vector v1 = new Vector();
@@ -190,16 +183,16 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
         Point2DArray points = bounding.getPoints();
         Point2D startPoint = points.getPoint( 0 );
         // start
-        v1.setX( getCurrentDragX() + startPoint.getX() );
-        v1.setY( getCurrentDragY() + startPoint.getY() );
+        v1.setX( currentDragX + startPoint.getX() );
+        v1.setY( currentDragY + startPoint.getY() );
 
         scalars.add( v1.dotProduct( axis ) );
 
         Point2D endPoint = points.getPoint( 1 );
         v1 = new Vector();
         // end
-        v1.setX( getCurrentDragX() + +endPoint.getX() );
-        v1.setY( getCurrentDragY() + endPoint.getY() );
+        v1.setX( currentDragX + endPoint.getX() );
+        v1.setY( currentDragY + endPoint.getY() );
 
         scalars.add( v1.dotProduct( axis ) );
 
@@ -209,20 +202,8 @@ public class WiresLine extends WiresBaseGroupShape implements RequiresCollisionM
         return new Projection( min, max );
     }
 
-    public void setBeingResized( boolean beingResized ) {
-        this.beingResized = beingResized;
-    }
-
-    public double getCurrentDragX() {
-        return currentDragX;
-    }
-
-    public double getCurrentDragY() {
-        return currentDragY;
-    }
-
     @Override
     public String toString() {
-        return "WiresLine{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", beingDragged= " + beingDragged + "}";
+        return "WiresLine{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + "}";
     }
 }

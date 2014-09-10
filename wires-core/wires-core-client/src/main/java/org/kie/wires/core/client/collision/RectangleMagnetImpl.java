@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
-import org.kie.wires.core.api.collision.ControlPoint;
-import org.kie.wires.core.api.collision.Magnet;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.WiresRectangle;
+import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
+import org.kie.wires.core.client.shapes.dynamic.WiresRectangle;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.client.util.UUID;
 
@@ -93,12 +93,7 @@ public class RectangleMagnetImpl extends Circle implements Magnet {
     }
 
     @Override
-    public void setMagnetVisible( final boolean visible ) {
-        setVisible( visible );
-    }
-
-    @Override
-    public WiresBaseGroupShape getShape() {
+    public WiresBaseDynamicShape getShape() {
         return shape;
     }
 

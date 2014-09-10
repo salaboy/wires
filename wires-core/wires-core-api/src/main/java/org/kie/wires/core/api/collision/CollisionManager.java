@@ -15,20 +15,22 @@
  */
 package org.kie.wires.core.api.collision;
 
-import org.kie.wires.core.api.shapes.EditableShape;
+import org.kie.wires.core.api.shapes.HasControlPoints;
+import org.kie.wires.core.api.shapes.Magnet;
+import org.kie.wires.core.api.shapes.WiresShape;
 
 /**
  * Manager for collision detection and related operations
  */
 public interface CollisionManager {
 
-    public Magnet getMagnet( final EditableShape shapeActive,
+    public Magnet getMagnet( final WiresShape shapeActive,
                              final int x,
                              final int y );
 
     public void attachControlPointToMagnet( final Magnet selectedMagnet,
-                                            final EditableShape shapeActive );
+                                            final HasControlPoints shapeActive );
 
-    public void detachControlPointFromMagnet( final EditableShape shapeActive );
+    public void detachControlPointFromMagnet( final HasControlPoints shapeActive );
 
 }

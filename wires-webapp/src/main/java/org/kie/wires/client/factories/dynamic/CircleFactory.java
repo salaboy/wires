@@ -13,43 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.client.factoryShapes;
+package org.kie.wires.client.factories.dynamic;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
-import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.client.factoryShapes.categories.ShapeCategory;
+import org.kie.wires.client.factories.categories.ShapeCategory;
 import org.kie.wires.core.api.categories.Category;
-import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
-import org.kie.wires.core.client.shapes.WiresRectangle;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.shapes.dynamic.WiresCircle;
 import org.kie.wires.core.client.util.ShapesUtils;
 
 @ApplicationScoped
-public class RectangleFactory implements ShapeFactory<Rectangle> {
+public class CircleFactory implements ShapeFactory<Circle> {
 
-    private static final String DESCRIPTION = "Box";
-
-    private static final int SHAPE_SIZE_X = 70;
-    private static final int SHAPE_SIZE_Y = 40;
-
-    @Inject
-    private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
+    private static final String DESCRIPTION = "Circle";
 
     @Override
-    public Shape<Rectangle> getGlyph() {
-        final Rectangle rectangle = new Rectangle( 40,
-                                                   40 );
-        setAttributes( rectangle,
-                       5,
-                       5 );
-        return rectangle;
+    public Shape<Circle> getGlyph() {
+        final Circle circle = new Circle( 15 );
+        setAttributes( circle,
+                       25,
+                       25 );
+        circle.setDraggable( false );
+        return circle;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return getClass().getName();
     }
 
     @Override
@@ -63,23 +59,21 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
     }
 
     @Override
-    public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyCallback callback ) {
-        final Rectangle proxy = new Rectangle( 90,
-                                               40 );
+    public ShapeDragProxy<Circle> getDragProxy( final ShapeDragProxyCallback callback ) {
+        final Circle proxy = new Circle( 20 );
         setAttributes( proxy,
-                       5,
-                       5 );
-
-        return new ShapeDragProxy<Rectangle>() {
+                       25,
+                       25 );
+        return new ShapeDragProxy<Circle>() {
             @Override
-            public Shape<Rectangle> getDragShape() {
+            public Shape<Circle> getDragShape() {
                 return proxy;
             }
 
             @Override
             public void onDragEnd( final int x,
                                    final int y ) {
-                callback.callback( DESCRIPTION,
+                callback.callback( getIdentifier(),
                                    x,
                                    y );
             }
@@ -91,32 +85,33 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
 
             @Override
             public int getWidth() {
-                return 100;
+                return 50;
             }
 
         };
     }
 
     @Override
-    public WiresBaseGroupShape getShape() {
-        return new WiresRectangle( SHAPE_SIZE_X,
-                                   SHAPE_SIZE_Y );
+    public WiresBaseShape getShape() {
+        return new WiresCircle( 0,
+                                0,
+                                20 );
     }
 
     @Override
     public int getShapeOffsetX() {
-        return SHAPE_SIZE_X / 2;
+        return 0;
     }
 
     @Override
     public int getShapeOffsetY() {
-        return SHAPE_SIZE_Y / 2;
+        return 0;
     }
 
-    private void setAttributes( final Rectangle floatingShape,
+    private void setAttributes( final Circle circle,
                                 final double x,
                                 final double y ) {
-        floatingShape.setX( x )
+        circle.setX( x )
                 .setY( y )
                 .setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
