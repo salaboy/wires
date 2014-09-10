@@ -16,15 +16,13 @@
 package org.kie.wires.client.factoryShapes;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import org.kie.wires.client.factoryShapes.categories.ShapeCategory;
 import org.kie.wires.core.api.categories.Category;
-import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
+import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
 import org.kie.wires.core.client.shapes.WiresCircle;
@@ -34,9 +32,6 @@ import org.kie.wires.core.client.util.ShapesUtils;
 public class CircleFactory implements ShapeFactory<Circle> {
 
     private static final String DESCRIPTION = "Circle";
-
-    @Inject
-    private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
 
     @Override
     public Shape<Circle> getGlyph() {
@@ -59,7 +54,7 @@ public class CircleFactory implements ShapeFactory<Circle> {
     }
 
     @Override
-    public ShapeDragProxy<Circle> getDragProxy() {
+    public ShapeDragProxy<Circle> getDragProxy( final ShapeDragProxyCallback callback ) {
         final Circle proxy = new Circle( 20 );
         setAttributes( proxy,
                        25,
@@ -71,16 +66,11 @@ public class CircleFactory implements ShapeFactory<Circle> {
             }
 
             @Override
-            public String getShapeDescription() {
-                return DESCRIPTION;
-            }
-
-            @Override
             public void onDragEnd( final int x,
                                    final int y ) {
-                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( DESCRIPTION,
-                                                                         x,
-                                                                         y ) );
+                callback.callback( DESCRIPTION,
+                                   x,
+                                   y );
             }
 
             @Override
@@ -92,6 +82,7 @@ public class CircleFactory implements ShapeFactory<Circle> {
             public int getWidth() {
                 return 50;
             }
+
         };
     }
 
@@ -100,6 +91,16 @@ public class CircleFactory implements ShapeFactory<Circle> {
         return new WiresCircle( 0,
                                 0,
                                 20 );
+    }
+
+    @Override
+    public int getShapeOffsetX() {
+        return 0;
+    }
+
+    @Override
+    public int getShapeOffsetY() {
+        return 0;
     }
 
     private void setAttributes( final Circle circle,

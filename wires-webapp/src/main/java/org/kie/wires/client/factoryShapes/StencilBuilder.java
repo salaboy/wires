@@ -18,6 +18,7 @@ package org.kie.wires.client.factoryShapes;
 import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
@@ -37,7 +38,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.wires.core.api.categories.Category;
+import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
+import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.kie.wires.core.client.shapes.PaletteShape;
@@ -50,6 +53,9 @@ public class StencilBuilder extends Composite {
 
     @Inject
     private ShapeFactoryCache factoriesCache;
+
+    @Inject
+    private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
 
     public List<PaletteShape> getShapes( final LienzoPanel dragProxyParentPanel,
                                          final Category shapeCategory ) {
@@ -67,18 +73,33 @@ public class StencilBuilder extends Composite {
                                 final ShapeFactory factory ) {
         final PaletteShape paletteShape = new PaletteShape();
         final Rectangle bounding = drawBoundingBox();
-        addBoundingHandlers( dragProxyParentPanel,
-                             factory.getDragProxy(),
-                             bounding );
-        paletteShape.setBounding( bounding );
-
         final Shape shape = factory.getGlyph();
-        addShapeHandlers( dragProxyParentPanel,
-                          factory.getDragProxy(),
-                          shape );
-        paletteShape.setShape( shape );
-
         final Text description = drawDescription( factory.getShapeDescription() );
+
+        //Callback is invoked when the drag operation ends
+        final ShapeDragProxyCallback callback = new ShapeDragProxyCallback() {
+            @Override
+            public void callback( final String shapeDescription,
+                                  final int x,
+                                  final int y ) {
+                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( shapeDescription,
+                                                                         x,
+                                                                         y ) );
+            }
+        };
+
+        //Attach handles for drag operation
+        addBoundingHandlers( dragProxyParentPanel,
+                             factory.getDragProxy( callback ),
+                             bounding );
+
+        addShapeHandlers( dragProxyParentPanel,
+                          factory.getDragProxy( callback ),
+                          shape );
+
+        //Build Palette Shape
+        paletteShape.setBounding( bounding );
+        paletteShape.setShape( shape );
         paletteShape.setDescription( description );
 
         return paletteShape;

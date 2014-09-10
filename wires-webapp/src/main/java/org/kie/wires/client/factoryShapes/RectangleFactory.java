@@ -25,6 +25,7 @@ import org.kie.wires.client.factoryShapes.categories.ShapeCategory;
 import org.kie.wires.core.api.categories.Category;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
+import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.shapes.WiresBaseGroupShape;
 import org.kie.wires.core.client.shapes.WiresRectangle;
@@ -34,6 +35,9 @@ import org.kie.wires.core.client.util.ShapesUtils;
 public class RectangleFactory implements ShapeFactory<Rectangle> {
 
     private static final String DESCRIPTION = "Box";
+
+    private static final int SHAPE_SIZE_X = 70;
+    private static final int SHAPE_SIZE_Y = 40;
 
     @Inject
     private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
@@ -59,7 +63,7 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
     }
 
     @Override
-    public ShapeDragProxy<Rectangle> getDragProxy() {
+    public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyCallback callback ) {
         final Rectangle proxy = new Rectangle( 90,
                                                40 );
         setAttributes( proxy,
@@ -73,16 +77,11 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
             }
 
             @Override
-            public String getShapeDescription() {
-                return DESCRIPTION;
-            }
-
-            @Override
             public void onDragEnd( final int x,
                                    final int y ) {
-                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( DESCRIPTION,
-                                                                         x,
-                                                                         y ) );
+                callback.callback( DESCRIPTION,
+                                   x,
+                                   y );
             }
 
             @Override
@@ -94,13 +93,24 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
             public int getWidth() {
                 return 100;
             }
+
         };
     }
 
     @Override
     public WiresBaseGroupShape getShape() {
-        return new WiresRectangle( 70,
-                                   40 );
+        return new WiresRectangle( SHAPE_SIZE_X,
+                                   SHAPE_SIZE_Y );
+    }
+
+    @Override
+    public int getShapeOffsetX() {
+        return SHAPE_SIZE_X / 2;
+    }
+
+    @Override
+    public int getShapeOffsetY() {
+        return SHAPE_SIZE_Y / 2;
     }
 
     private void setAttributes( final Rectangle floatingShape,

@@ -129,9 +129,13 @@ public class CanvasScreen extends Canvas {
         final String shapeDescription = shapeDragCompleteEvent.getShape();
 
         //Get a concrete Shape
+        int offsetX = 0;
+        int offsetY = 0;
         WiresBaseGroupShape wiresShape = null;
         for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
             if ( factory.getShapeDescription().equals( shapeDescription ) ) {
+                offsetX = factory.getShapeOffsetX();
+                offsetY = factory.getShapeOffsetY();
                 wiresShape = factory.getShape();
             }
         }
@@ -146,8 +150,8 @@ public class CanvasScreen extends Canvas {
         }
 
         wiresShape.setDraggable( true );
-        wiresShape.init( this.getX( shapeDragCompleteEvent.getX() ),
-                         this.getY( shapeDragCompleteEvent.getY() ) );
+        wiresShape.init( this.getX( shapeDragCompleteEvent.getX() - offsetX ),
+                         this.getY( shapeDragCompleteEvent.getY() - offsetY ) );
         addShape( wiresShape );
         menus.getItems().get( 0 ).setEnabled( true );
 
@@ -155,13 +159,13 @@ public class CanvasScreen extends Canvas {
     }
 
     private int getX( int xShapeEvent ) {
-        int x = ( ( xShapeEvent - getAbsoluteLeft() ) < 1 ) ? 1 : xShapeEvent - getAbsoluteLeft();
-        return 25 * Math.abs( x / 25 );
+        int x = ( ( xShapeEvent - getAbsoluteLeft() ) < 0 ) ? 0 : xShapeEvent - getAbsoluteLeft();
+        return x;
     }
 
     private int getY( int yShapeEvent ) {
-        int y = ( ( yShapeEvent - getAbsoluteTop() < 1 ) ) ? 1 : yShapeEvent - getAbsoluteTop();
-        return 25 * Math.abs( y / 25 );
+        int y = ( ( yShapeEvent - getAbsoluteTop() < 0 ) ) ? 0 : yShapeEvent - getAbsoluteTop();
+        return y;
     }
 
     public void addNodes( @Observes ReadyEvent event ) {

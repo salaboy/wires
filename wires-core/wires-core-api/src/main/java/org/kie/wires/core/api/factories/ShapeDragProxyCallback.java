@@ -15,37 +15,19 @@
  */
 package org.kie.wires.core.api.factories;
 
-import com.emitrom.lienzo.client.core.shape.Shape;
-
 /**
- * Proxy for Shapes being dragged from the Palette
+ * Callback for when a drag event completes
  */
-public interface ShapeDragProxy<T extends Shape<T>> {
+public interface ShapeDragProxyCallback {
 
     /**
-     * Get a Shape that is used as the drag proxy
-     * @return
-     */
-    Shape<T> getDragShape();
-
-    /**
-     * Called when the drag operation ends
+     * Callback invoked when the drag operation ends
+     * @param shapeDescription
      * @param x
      * @param y
      */
-    void onDragEnd( final int x,
-                    final int y );
-
-    /**
-     * Height of proxy used to ensure proxy is centered around mouse pointer position
-     * @return
-     */
-    int getHeight();
-
-    /**
-     * Width of proxy used to ensure proxy is centered around mouse pointer position
-     * @return
-     */
-    int getWidth();
+    void callback( final String shapeDescription,
+                   final int x,
+                   final int y );
 
 }
