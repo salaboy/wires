@@ -17,32 +17,21 @@ package org.kie.wires.core.api.shapes;
 
 import java.util.List;
 
-public interface Magnet {
+import com.emitrom.lienzo.client.core.shape.IPrimitive;
+import com.emitrom.lienzo.client.core.shape.Node;
 
-    static final int MAGNET_START = 0;
-    static final int MAGNET_END = 1;
-
-    static final int MAGNET_TOP = 2;
-    static final int MAGNET_BOTTOM = 3;
-    static final int MAGNET_RIGHT = 4;
-    static final int MAGNET_LEFT = 5;
-
-    void placeMagnetPoints();
-
-    double getX();
-
-    double getY();
-
-    void setMagnetActive( final boolean active );
-
-    void attachControlPoint( final ControlPoint controlPoint );
-
-    List<ControlPoint> getAttachedControlPoints();
+public interface Magnet<T extends Node<T>> extends IPrimitive<T> {
 
     String getId();
 
-    HasMagnets getShape();
+    void attachControlPoint( final ControlPoint controlPoint );
 
-    int getType();
+    void detachControlPoint( final ControlPoint controlPoint );
+
+    List<ControlPoint> getAttachedControlPoints();
+
+    void activate();
+
+    void deactivate();
 
 }

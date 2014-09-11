@@ -15,24 +15,34 @@
  */
 package org.kie.wires.core.client.shapes.dynamic;
 
-import java.util.Collections;
-import java.util.List;
-
+import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
+import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
-import org.kie.wires.core.api.collision.Projection;
-import org.kie.wires.core.api.collision.Vector;
+import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.ControlPointMoveHandler;
+import org.kie.wires.core.api.shapes.Magnet;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
-import org.kie.wires.core.api.shapes.WiresShape;
+import org.kie.wires.core.client.collision.DefaultControlPoint;
+import org.kie.wires.core.client.collision.DefaultMagnet;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresCircle extends WiresBaseDynamicShape {
 
+    private static final int BOUNDARY_SIZE = 10;
+
     private Circle circle;
     private Circle bounding;
+
+    private final Magnet magnet1;
+    private final Magnet magnet2;
+    private final Magnet magnet3;
+    private final Magnet magnet4;
+
+    private final ControlPoint controlPoint1;
 
     public WiresCircle( final double x,
                         final double y,
@@ -42,56 +52,87 @@ public class WiresCircle extends WiresBaseDynamicShape {
         circle.setX( x );
         circle.setY( y );
 
-        bounding = new Circle( radius + 12 );
+        bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
+        bounding.setStrokeWidth( BOUNDARY_SIZE );
+        bounding.setAlpha( 0.1 );
         bounding.setX( x );
         bounding.setY( y );
-        bounding.setAlpha( 0.1 );
 
         add( circle );
         add( bounding );
 
         magnets.clear();
+        magnet1 = new DefaultMagnet( 0 - radius,
+                                     0 );
+        magnet2 = new DefaultMagnet( radius,
+                                     0 );
+        magnet3 = new DefaultMagnet( 0,
+                                     0 - radius );
+        magnet4 = new DefaultMagnet( 0,
+                                     radius );
+        addMagnet( magnet1 );
+        addMagnet( magnet2 );
+        addMagnet( magnet3 );
+        addMagnet( magnet4 );
+
         controlPoints.clear();
+        controlPoint1 = new DefaultControlPoint( x + radius,
+                                                 y,
+                                                 new ControlPointMoveHandler() {
+                                                     @Override
+                                                     public void onMove( final double x,
+                                                                         final double y ) {
+                                                         final double r = Math.sqrt( Math.pow( x, 2 ) + Math.pow( y, 2 ) );
+                                                         magnet1.setX( 0 - r );
+                                                         magnet2.setX( r );
+                                                         magnet3.setY( 0 - r );
+                                                         magnet4.setY( r );
+                                                         circle.setRadius( r );
+                                                         bounding.setRadius( r + ( BOUNDARY_SIZE / 2 ) );
+                                                     }
+                                                 }
+        );
+        addControlPoint( controlPoint1 );
     }
 
-    public void init( final double x,
-                      final double y ) {
-        setX( x );
-        setY( y );
+    @Override
+    public void init( final double cx,
+                      final double cy ) {
+        setX( cx );
+        setY( cy );
 
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
+            @Override
             public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
                 selectionManager.selectShape( WiresCircle.this );
             }
         } );
 
         addNodeDragStartHandler( new NodeDragStartHandler() {
-            public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
+            @Override
+            public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
                 selectionManager.deselectShape( WiresCircle.this );
+            }
+        } );
+
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                magnet1.setOffset( getLocation() );
+                magnet2.setOffset( getLocation() );
+                magnet3.setOffset( getLocation() );
+                magnet4.setOffset( getLocation() );
+                getLayer().draw();
             }
         } );
     }
 
     @Override
-    public boolean collidesWith( final WiresShape shape ) {
-        return false;
-    }
-
-    @Override
-    public boolean separationOnAxes( final List<Vector> axes,
-                                     final WiresShape shape ) {
-        return false;
-    }
-
-    @Override
-    public List<Vector> getAxes() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public Projection project( final Vector axis ) {
-        return new Projection( 0,
-                               0 );
+    public boolean contains( final double cx,
+                             final double cy ) {
+        final double _x = cx - getX();
+        final double _y = cy - getY();
+        return Math.sqrt( Math.pow( _x, 2 ) + Math.pow( _y, 2 ) ) < circle.getRadius() + BOUNDARY_SIZE;
     }
 
 }

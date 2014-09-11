@@ -15,17 +15,12 @@
  */
 package org.kie.wires.core.client.shapes.dynamic;
 
-import java.util.List;
-
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.BezierCurve;
-import org.kie.wires.core.api.collision.Projection;
-import org.kie.wires.core.api.collision.Vector;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
-import org.kie.wires.core.api.shapes.WiresShape;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresBezierCurve extends WiresBaseDynamicShape {
@@ -71,10 +66,10 @@ public class WiresBezierCurve extends WiresBaseDynamicShape {
     }
 
     @Override
-    public void init( final double x,
-                      final double y ) {
-        setX( x );
-        setY( y );
+    public void init( final double cx,
+                      final double cy ) {
+        setX( cx );
+        setY( cy );
 
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
             public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
@@ -90,24 +85,9 @@ public class WiresBezierCurve extends WiresBaseDynamicShape {
     }
 
     @Override
-    public boolean collidesWith( final WiresShape shape ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-    @Override
-    public boolean separationOnAxes( final List<Vector> axes,
-                                     final WiresShape shape ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-    @Override
-    public List<Vector> getAxes() {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-    @Override
-    public Projection project( final Vector axis ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
+    public boolean contains( final double cx,
+                             final double cy ) {
+        return false;
     }
 
 }

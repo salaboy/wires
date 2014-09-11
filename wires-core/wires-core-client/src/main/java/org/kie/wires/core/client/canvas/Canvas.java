@@ -9,7 +9,6 @@ import com.emitrom.lienzo.client.core.shape.GridLayer;
 import com.emitrom.lienzo.client.core.shape.IPrimitive;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.user.client.ui.Composite;
@@ -29,8 +28,6 @@ import org.kie.wires.core.api.shapes.WiresShape;
  */
 public class Canvas extends Composite implements SelectionManager,
                                                  CollisionManager {
-
-    private final static String MAGNET_RGB_FILL_SHAPE = "#f2f2f2";
 
     private LienzoPanel panel;
     private Layer canvasLayer;
@@ -119,8 +116,8 @@ public class Canvas extends Composite implements SelectionManager,
 
     @Override
     public Magnet getMagnet( final WiresShape activeShape,
-                             final int x,
-                             final int y ) {
+                             final double cx,
+                             final double cy ) {
         if ( activeShape == null ) {
             return null;
         }
@@ -130,22 +127,27 @@ public class Canvas extends Composite implements SelectionManager,
             if ( !shape.getId().equals( activeShape.getId() ) ) {
                 if ( shape instanceof HasMagnets ) {
                     final HasMagnets mShape = (HasMagnets) shape;
-                    if ( shape.collidesWith( activeShape ) ) {
+                    if ( shape.contains( cx,
+                                         cy ) ) {
                         mShape.showMagnetsPoints();
                         double finalDistance = Double.MAX_VALUE;
                         final List<Magnet> magnets = mShape.getMagnets();
                         for ( Magnet magnet : magnets ) {
-                            double deltaX = x - magnet.getX();
-                            double deltaY = y - magnet.getY();
+                            magnet.deactivate();
+
+                            double deltaX = cx - magnet.getX() - magnet.getOffset().getX();
+                            double deltaY = cy - magnet.getY() - magnet.getOffset().getY();
                             double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
 
                             if ( finalDistance > distance ) {
                                 finalDistance = distance;
                                 selectedMagnet = magnet;
                             }
-                            magnet.setMagnetActive( false );
-                            ( (Shape) magnet ).setFillColor( MAGNET_RGB_FILL_SHAPE );
                         }
+                        if ( selectedMagnet != null ) {
+                            selectedMagnet.activate();
+                        }
+
                     } else {
                         mShape.hideMagnetPoints();
                     }
@@ -154,22 +156,6 @@ public class Canvas extends Composite implements SelectionManager,
         }
 
         return selectedMagnet;
-    }
-
-    @Override
-    public void attachControlPointToMagnet( final Magnet selectedMagnet,
-                                            final HasControlPoints shapeActive ) {
-        if ( selectedMagnet != null && shapeActive != null ) {
-            ( (HasMagnets) shapeActive ).attachControlPointToMagnet( selectedMagnet );
-            if ( !selectedMagnet.getAttachedControlPoints().isEmpty() ) {
-                ( (Shape) selectedMagnet ).setFillColor( ColorName.RED );
-            }
-        }
-    }
-
-    @Override
-    public void detachControlPointFromMagnet( final HasControlPoints shapeActive ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     @Override

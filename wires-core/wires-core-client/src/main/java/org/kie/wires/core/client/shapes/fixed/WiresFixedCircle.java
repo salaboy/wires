@@ -15,14 +15,9 @@
  */
 package org.kie.wires.core.client.shapes.fixed;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.emitrom.lienzo.client.core.shape.Circle;
-import org.kie.wires.core.api.collision.Projection;
-import org.kie.wires.core.api.collision.Vector;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
-import org.kie.wires.core.api.shapes.WiresShape;
+import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresFixedCircle extends WiresBaseShape {
@@ -34,6 +29,8 @@ public class WiresFixedCircle extends WiresBaseShape {
                              final double radius ) {
         id = UUID.uuid();
         circle = new Circle( radius );
+        circle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE );
+        circle.setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE );
         circle.setFillColor( "#ff0000" );
         circle.setAlpha( 0.75 );
         circle.setX( x );
@@ -42,32 +39,16 @@ public class WiresFixedCircle extends WiresBaseShape {
         add( circle );
     }
 
-    public void init( final double x,
-                      final double y ) {
-        setX( x );
-        setY( y );
+    @Override
+    public void init( final double cx,
+                      final double cy ) {
+        setX( cx );
+        setY( cy );
     }
 
     @Override
-    public boolean collidesWith( final WiresShape shape ) {
+    public boolean contains( final double cx,
+                             final double cy ) {
         return false;
     }
-
-    @Override
-    public boolean separationOnAxes( final List<Vector> axes,
-                                     final WiresShape shape ) {
-        return false;
-    }
-
-    @Override
-    public List<Vector> getAxes() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public Projection project( final Vector axis ) {
-        return new Projection( 0,
-                               0 );
-    }
-
 }

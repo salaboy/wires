@@ -15,44 +15,43 @@
  */
 package org.kie.wires.core.client.shapes.dynamic;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
-import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.google.gwt.core.client.GWT;
-import org.kie.wires.core.api.collision.Projection;
-import org.kie.wires.core.api.collision.Vector;
 import org.kie.wires.core.api.shapes.ControlPoint;
+import org.kie.wires.core.api.shapes.ControlPointMoveHandler;
 import org.kie.wires.core.api.shapes.Magnet;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
-import org.kie.wires.core.api.shapes.WiresShape;
-import org.kie.wires.core.client.collision.RectangleControlPointImpl;
-import org.kie.wires.core.client.collision.RectangleMagnetImpl;
+import org.kie.wires.core.client.collision.DefaultControlPoint;
+import org.kie.wires.core.client.collision.DefaultMagnet;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresRectangle extends WiresBaseDynamicShape {
 
-    private Rectangle rectangle;
-    private Rectangle bounding;
+    private static final int BOUNDARY_SIZE = 10;
 
-    private double startX;
-    private double startY;
-    private double startWidth;
-    private double startHeight;
+    private final Rectangle rectangle;
+    private final Rectangle bounding;
+
+    private final Magnet magnet1;
+    private final Magnet magnet2;
+    private final Magnet magnet3;
+    private final Magnet magnet4;
+
+    private final ControlPoint controlPoint1;
+    private final ControlPoint controlPoint2;
+    private final ControlPoint controlPoint3;
+    private final ControlPoint controlPoint4;
 
     public WiresRectangle( final double width,
                            final double height ) {
         this( width,
               height,
-              3 );
+              5 );
     }
 
     public WiresRectangle( final double width,
@@ -62,266 +61,198 @@ public class WiresRectangle extends WiresBaseDynamicShape {
         rectangle = new Rectangle( width,
                                    height,
                                    cornerRadius );
-        rectangle.setX( 6 );
-        rectangle.setY( 6 );
 
-        bounding = new Rectangle( width + 12,
-                                  height + 12,
+        bounding = new Rectangle( width + BOUNDARY_SIZE,
+                                  height + BOUNDARY_SIZE,
                                   cornerRadius );
+        bounding.setX( 0 - ( BOUNDARY_SIZE / 2 ) );
+        bounding.setY( 0 - ( BOUNDARY_SIZE / 2 ) );
+        bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setAlpha( 0.1 );
 
         add( rectangle );
         add( bounding );
 
         magnets.clear();
-        addMagnet( new RectangleMagnetImpl( this,
-                                            Magnet.MAGNET_TOP ) );
-        addMagnet( new RectangleMagnetImpl( this,
-                                            Magnet.MAGNET_RIGHT ) );
-        addMagnet( new RectangleMagnetImpl( this,
-                                            Magnet.MAGNET_BOTTOM ) );
-        addMagnet( new RectangleMagnetImpl( this,
-                                            Magnet.MAGNET_LEFT ) );
+        magnet1 = new DefaultMagnet( 0,
+                                     height / 2 );
+        magnet2 = new DefaultMagnet( width,
+                                     height / 2 );
+        magnet3 = new DefaultMagnet( width / 2,
+                                     0 );
+        magnet4 = new DefaultMagnet( width / 2,
+                                     height );
+        addMagnet( magnet1 );
+        addMagnet( magnet2 );
+        addMagnet( magnet3 );
+        addMagnet( magnet4 );
 
         controlPoints.clear();
-        addControlPoint( new RectangleControlPointImpl( this,
-                                                        ControlPoint.CONTROL_TOP_LEFT ) );
-        addControlPoint( new RectangleControlPointImpl( this,
-                                                        ControlPoint.CONTROL_TOP_RIGHT ) );
-        addControlPoint( new RectangleControlPointImpl( this,
-                                                        ControlPoint.CONTROL_BOTTOM_LEFT ) );
-        addControlPoint( new RectangleControlPointImpl( this,
-                                                        ControlPoint.CONTROL_BOTTOM_RIGHT ) );
+        final double x1 = rectangle.getX();
+        final double y1 = rectangle.getY();
+        controlPoint1 = new DefaultControlPoint( x1,
+                                                 y1,
+                                                 new ControlPointMoveHandler() {
+                                                     @Override
+                                                     public void onMove( final double x,
+                                                                         final double y ) {
+                                                         controlPoint2.setY( controlPoint1.getY() );
+                                                         controlPoint3.setX( controlPoint1.getX() );
+                                                         rectangle.setX( x );
+                                                         rectangle.setY( y );
+                                                         rectangle.setWidth( controlPoint2.getX() - controlPoint1.getX() );
+                                                         rectangle.setHeight( controlPoint3.getY() - controlPoint1.getY() );
+                                                         bounding.setX( x - ( BOUNDARY_SIZE / 2 ) );
+                                                         bounding.setY( y - ( BOUNDARY_SIZE / 2 ) );
+                                                         bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
+                                                         bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
+                                                         magnet1.setX( x );
+                                                         magnet1.setY( y + ( rectangle.getHeight() / 2 ) );
+                                                         magnet2.setY( y + ( rectangle.getHeight() / 2 ) );
+                                                         magnet3.setX( x + ( rectangle.getWidth() / 2 ) );
+                                                         magnet3.setY( y );
+                                                         magnet4.setX( x + ( rectangle.getWidth() / 2 ) );
+                                                     }
+                                                 }
+        );
+
+        final double x2 = rectangle.getX() + rectangle.getWidth();
+        final double y2 = rectangle.getY();
+        controlPoint2 = new DefaultControlPoint( x2,
+                                                 y2,
+                                                 new ControlPointMoveHandler() {
+                                                     @Override
+                                                     public void onMove( double x,
+                                                                         double y ) {
+                                                         controlPoint1.setY( controlPoint2.getY() );
+                                                         controlPoint4.setX( controlPoint2.getX() );
+                                                         rectangle.setY( y );
+                                                         rectangle.setWidth( controlPoint2.getX() - controlPoint1.getX() );
+                                                         rectangle.setHeight( controlPoint3.getY() - controlPoint1.getY() );
+                                                         bounding.setY( y - ( BOUNDARY_SIZE / 2 ) );
+                                                         bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
+                                                         bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
+                                                         magnet1.setY( y + ( rectangle.getHeight() / 2 ) );
+                                                         magnet2.setX( x );
+                                                         magnet2.setY( y + ( rectangle.getHeight() / 2 ) );
+                                                         magnet3.setX( x - ( rectangle.getWidth() / 2 ) );
+                                                         magnet3.setY( y );
+                                                         magnet4.setX( x - ( rectangle.getWidth() / 2 ) );
+                                                     }
+                                                 }
+        );
+
+        final double x3 = rectangle.getX();
+        final double y3 = rectangle.getY() + rectangle.getHeight();
+        controlPoint3 = new DefaultControlPoint( x3,
+                                                 y3,
+                                                 new ControlPointMoveHandler() {
+                                                     @Override
+                                                     public void onMove( double x,
+                                                                         double y ) {
+                                                         controlPoint1.setX( controlPoint3.getX() );
+                                                         controlPoint4.setY( controlPoint3.getY() );
+                                                         rectangle.setX( x );
+                                                         rectangle.setWidth( controlPoint2.getX() - controlPoint1.getX() );
+                                                         rectangle.setHeight( controlPoint3.getY() - controlPoint1.getY() );
+                                                         bounding.setX( x - ( BOUNDARY_SIZE / 2 ) );
+                                                         bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
+                                                         bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
+                                                         magnet1.setX( x );
+                                                         magnet1.setY( y - ( rectangle.getHeight() / 2 ) );
+                                                         magnet2.setY( y - ( rectangle.getHeight() / 2 ) );
+                                                         magnet3.setX( x + ( rectangle.getWidth() / 2 ) );
+                                                         magnet4.setX( x + ( rectangle.getWidth() / 2 ) );
+                                                         magnet4.setY( y );
+                                                     }
+                                                 }
+        );
+
+        final double x4 = rectangle.getX() + rectangle.getWidth();
+        final double y4 = rectangle.getY() + rectangle.getHeight();
+        controlPoint4 = new DefaultControlPoint( x4,
+                                                 y4,
+                                                 new ControlPointMoveHandler() {
+                                                     @Override
+                                                     public void onMove( double x,
+                                                                         double y ) {
+                                                         controlPoint2.setX( controlPoint4.getX() );
+                                                         controlPoint3.setY( controlPoint4.getY() );
+                                                         rectangle.setWidth( controlPoint2.getX() - controlPoint1.getX() );
+                                                         rectangle.setHeight( controlPoint3.getY() - controlPoint1.getY() );
+                                                         bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
+                                                         bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
+                                                         magnet1.setY( y - ( rectangle.getHeight() / 2 ) );
+                                                         magnet2.setX( x );
+                                                         magnet2.setY( y - ( rectangle.getHeight() / 2 ) );
+                                                         magnet3.setX( x - ( rectangle.getWidth() / 2 ) );
+                                                         magnet4.setX( x - ( rectangle.getWidth() / 2 ) );
+                                                         magnet4.setY( y );
+                                                     }
+                                                 }
+        );
+        addControlPoint( controlPoint1 );
+        addControlPoint( controlPoint2 );
+        addControlPoint( controlPoint3 );
+        addControlPoint( controlPoint4 );
     }
 
-    public void init( final double x,
-                      final double y ) {
-        setX( x );
-        setY( y );
+    @Override
+    public void init( final double cx,
+                      final double cy ) {
+        setX( cx );
+        setY( cy );
 
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
-            public void onNodeMouseClick( NodeMouseClickEvent nodeMouseClickEvent ) {
+            @Override
+            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
                 selectionManager.selectShape( WiresRectangle.this );
             }
         } );
 
         addNodeDragStartHandler( new NodeDragStartHandler() {
-            public void onNodeDragStart( NodeDragStartEvent nodeDragStartEvent ) {
+            @Override
+            public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
                 selectionManager.deselectShape( WiresRectangle.this );
             }
         } );
 
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            public void onNodeDragMove( NodeDragMoveEvent nodeDragMoveEvent ) {
-                Layer layer = getLayer();
-                for ( Magnet m : magnets ) {
-                    if ( !m.getAttachedControlPoints().isEmpty() ) {
-                        List<ControlPoint> removeCp = new ArrayList<ControlPoint>();
-                        for ( ControlPoint cp : m.getAttachedControlPoints() ) {
-                            if ( cp.isAttached() && cp.getShape() != null ) {
-                                cp.setControlPointVisible( true );
-                                // All the coordinate for the control points should be relative and autocalculated
-                                // TODO: refactor this
-                                switch ( m.getType() ) {
-                                    case Magnet.MAGNET_TOP:
-                                        cp.updateShape( layer,
-                                                        getX() + ( bounding.getWidth() / 2 ),
-                                                        getY() );
-                                        break;
-                                    case Magnet.MAGNET_LEFT:
-                                        cp.updateShape( layer,
-                                                        getX(),
-                                                        getY() + ( bounding.getHeight() / 2 ) );
-                                        break;
-
-                                    case Magnet.MAGNET_RIGHT:
-                                        cp.updateShape( layer,
-                                                        getX() + bounding.getWidth(),
-                                                        getY() + ( bounding.getHeight() / 2 ) );
-                                        break;
-
-                                    case Magnet.MAGNET_BOTTOM:
-                                        cp.updateShape( layer,
-                                                        getX() + ( bounding.getWidth() / 2 ),
-                                                        getY() + bounding.getHeight() );
-                                        break;
-                                }
-
-                            } else {
-                                GWT.log( "Removing non attached control point : " + cp + " from magnet" + m );
-                                removeCp.add( cp );
-                            }
-
-                        }
-                        for ( ControlPoint cp : removeCp ) {
-                            m.getAttachedControlPoints().remove( cp );
-                        }
-                    }
-
-                }
-                layer.draw();
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                magnet1.setOffset( getLocation() );
+                magnet2.setOffset( getLocation() );
+                magnet3.setOffset( getLocation() );
+                magnet4.setOffset( getLocation() );
+                getLayer().draw();
             }
         } );
     }
 
-    public double getStartX() {
-        return startX;
-    }
-
-    public void setStartX( final double startX ) {
-        this.startX = startX;
-    }
-
-    public double getStartY() {
-        return startY;
-    }
-
-    public void setStartY( final double startY ) {
-        this.startY = startY;
-    }
-
-    public double getStartWidth() {
-        return startWidth;
-    }
-
-    public void setStartWidth( final double startWidth ) {
-        this.startWidth = startWidth;
-    }
-
-    public double getStartHeight() {
-        return startHeight;
-    }
-
-    public void setStartHeight( final double startHeight ) {
-        this.startHeight = startHeight;
-    }
-
-    public List<Vector> getAxes() {
-        Vector v1 = new Vector();
-        Vector v2 = new Vector();
-        List<Vector> axes = new ArrayList<Vector>();
-
-        // THIS IS HARDCODED HERE BUT IT CAN BE A LOOP FOR POLYGONS
-        // top - left
-        v1.setX( getX() );
-        v1.setY( getY() );
-
-        // top - right
-        v2.setX( getX() + bounding.getWidth() );
-        v2.setY( getY() );
-
-        axes.add( v1.edge( v2 ).normal() );
-
-        v1 = new Vector();
-        v2 = new Vector();
-        // top - right 
-        v1.setX( getX() + bounding.getWidth() );
-        v1.setY( getY() );
-
-        // bottom - right
-        v2.setX( getX() + bounding.getWidth() );
-        v2.setY( getY() + bounding.getHeight() );
-
-        axes.add( v1.edge( v2 ).normal() );
-
-        v1 = new Vector();
-        v2 = new Vector();
-        // bottom - right
-        v1.setX( getX() + bounding.getWidth() );
-        v1.setY( getY() + bounding.getHeight() );
-
-        // bottom - left
-        v2.setX( getX() );
-        v2.setY( getY() + bounding.getHeight() );
-
-        axes.add( v1.edge( v2 ).normal() );
-
-        v1 = new Vector();
-        v2 = new Vector();
-        // bottom - left
-        v1.setX( getX() );
-        v1.setY( getY() + bounding.getHeight() );
-
-        // top - left
-        v2.setX( getX() );
-        v2.setY( getY() );
-
-        axes.add( v1.edge( v2 ).normal() );
-
-        return axes;
-    }
-
-    public Projection project( final Vector axis ) {
-        List<Double> scalars = new ArrayList<Double>();
-        Vector v1 = new Vector();
-
-        // top - left
-        v1.setX( getX() );
-        v1.setY( getY() );
-
-        scalars.add( v1.dotProduct( axis ) );
-
-        v1 = new Vector();
-        // top - right
-        v1.setX( getX() + bounding.getWidth() );
-        v1.setY( getY() );
-
-        scalars.add( v1.dotProduct( axis ) );
-
-        v1 = new Vector();
-        // bottom - right
-        v1.setX( getX() + bounding.getWidth() );
-        v1.setY( getY() + bounding.getHeight() );
-
-        scalars.add( v1.dotProduct( axis ) );
-
-        v1 = new Vector();
-        // bottom - left
-        v1.setX( getX() );
-        v1.setY( getY() + bounding.getHeight() );
-
-        scalars.add( v1.dotProduct( axis ) );
-
-        Double min = Collections.min( scalars );
-        Double max = Collections.max( scalars );
-
-        return new Projection( min, max );
-
-    }
-
     @Override
-    public boolean collidesWith( final WiresShape shape ) {
-        List<Vector> axes = getAxes();
-        axes.addAll( shape.getAxes() );
-        return !separationOnAxes( axes, shape );
-    }
-
-    @Override
-    public boolean separationOnAxes( final List<Vector> axes,
-                                     final WiresShape shape ) {
-        for ( int i = 0; i < axes.size(); ++i ) {
-            Vector axis = axes.get( i );
-            Projection projection1 = shape.project( axis );
-            Projection projection2 = this.project( axis );
-
-            if ( !projection1.overlaps( projection2 ) ) {
-                return true; // there is no need to continue testing
-            }
+    public boolean contains( final double cx,
+                             final double cy ) {
+        final double _x = cx - getX();
+        final double _y = cy - getY();
+        if ( _x < rectangle.getX() ) {
+            return false;
+        } else if ( _x > rectangle.getX() + rectangle.getWidth() ) {
+            return false;
+        } else if ( _y < rectangle.getY() ) {
+            return false;
+        } else if ( _y > rectangle.getY() + rectangle.getHeight() ) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     public Rectangle getRectangle() {
         return rectangle;
     }
 
-    public Rectangle getBounding() {
-        return bounding;
-    }
-
     @Override
     public String toString() {
-        return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + ", bounding width = " + getBounding().getWidth() + ", bounding height = " + getBounding().getHeight() + "}";
+        return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + "}";
     }
 
 }

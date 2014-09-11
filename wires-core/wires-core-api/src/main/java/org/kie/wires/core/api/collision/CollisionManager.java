@@ -15,7 +15,6 @@
  */
 package org.kie.wires.core.api.collision;
 
-import org.kie.wires.core.api.shapes.HasControlPoints;
 import org.kie.wires.core.api.shapes.Magnet;
 import org.kie.wires.core.api.shapes.WiresShape;
 
@@ -25,12 +24,7 @@ import org.kie.wires.core.api.shapes.WiresShape;
 public interface CollisionManager {
 
     public Magnet getMagnet( final WiresShape shapeActive,
-                             final int x,
-                             final int y );
-
-    public void attachControlPointToMagnet( final Magnet selectedMagnet,
-                                            final HasControlPoints shapeActive );
-
-    public void detachControlPointFromMagnet( final HasControlPoints shapeActive );
+                             final double cx,
+                             final double cy );
 
 }

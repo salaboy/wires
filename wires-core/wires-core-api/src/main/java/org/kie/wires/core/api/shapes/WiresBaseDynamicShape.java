@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import org.kie.wires.core.api.selection.RequiresSelectionManager;
 import org.kie.wires.core.api.selection.SelectionManager;
 
@@ -47,8 +46,8 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
         final Layer layer = getLayer();
         if ( !controlPoints.isEmpty() && !showingControlPoints ) {
             for ( ControlPoint cp : controlPoints ) {
-                layer.add( (Shape) cp );
-                cp.placeControlPoint( layer );
+                cp.setOffset( getLocation() );
+                layer.add( cp );
             }
             showingControlPoints = true;
             getLayer().draw();
@@ -57,45 +56,13 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
 
     @Override
     public void hideControlPoints() {
-        // can be null, after the main Shape is dragged, and control points are forcibly removed
-        Layer layer = getLayer();
+        final Layer layer = getLayer();
         if ( !controlPoints.isEmpty() && showingControlPoints ) {
             for ( ControlPoint cp : controlPoints ) {
-                layer.remove( (Shape) cp );
+                layer.remove( cp );
             }
             showingControlPoints = false;
             getLayer().draw();
-        }
-    }
-
-    @Override
-    public void attachControlPointToMagnet( final Magnet magnet ) {
-        double[] distances = new double[ controlPoints.size() ];
-        for ( int i = 0; i < controlPoints.size(); i++ ) {
-            double pointX = ( (Shape) controlPoints.get( i ) ).getX();
-            double pointY = ( (Shape) controlPoints.get( i ) ).getY();
-
-            double deltaX = magnet.getX() - pointX;
-            double deltaY = magnet.getY() - pointY;
-
-            distances[ i ] = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
-
-        }
-        int minIndex = min( distances );
-
-        if ( !magnet.getAttachedControlPoints().contains( controlPoints.get( minIndex ) ) ) {
-            magnet.attachControlPoint( controlPoints.get( minIndex ) );
-            controlPoints.get( minIndex ).setControlPointX( magnet.getX() );
-            controlPoints.get( minIndex ).setControlPointY( magnet.getY() );
-            // I need to clean up all the other magnets of the shape to make sure that
-            // no other magnet has the same shape attached
-            for ( Magnet m : magnet.getShape().getMagnets() ) {
-                if ( !m.getId().equals( magnet.getId() ) ) {
-                    if ( m.getAttachedControlPoints().contains( controlPoints.get( minIndex ) ) ) {
-                        m.getAttachedControlPoints().remove( controlPoints.get( minIndex ) );
-                    }
-                }
-            }
         }
     }
 
@@ -114,8 +81,8 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
         final Layer layer = getLayer();
         if ( !magnets.isEmpty() && !showingMagnets ) {
             for ( Magnet m : magnets ) {
-                layer.add( (Shape) m );
-                m.placeMagnetPoints();
+                m.setOffset( getLocation() );
+                layer.add( m );
             }
             showingMagnets = true;
             getLayer().draw();
@@ -124,14 +91,28 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
 
     @Override
     public void hideMagnetPoints() {
-        Layer layer = getLayer();
+        final Layer layer = getLayer();
         if ( !magnets.isEmpty() && showingMagnets ) {
             for ( Magnet m : magnets ) {
-                layer.remove( (Shape) m );
+                layer.remove( m );
             }
             showingMagnets = false;
             getLayer().draw();
         }
+    }
+
+    public void moveAttachedControlPoints( final Magnet magnet,
+                                           final double x,
+                                           final double y ) {
+        final List<ControlPoint> controlPoints = magnet.getAttachedControlPoints();
+        if ( controlPoints == null || controlPoints.isEmpty() ) {
+            return;
+        }
+        for ( ControlPoint cp : controlPoints ) {
+            cp.getHandler().onMove( x,
+                                    y );
+        }
+        getLayer().draw();
     }
 
     private static int min( final double[] values ) {

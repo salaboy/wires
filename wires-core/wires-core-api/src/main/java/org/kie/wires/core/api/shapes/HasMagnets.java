@@ -23,8 +23,6 @@ public interface HasMagnets extends WiresShape {
 
     void addMagnet( final Magnet m );
 
-    void attachControlPointToMagnet( final Magnet magnet );
-
     void showMagnetsPoints();
 
     void hideMagnetPoints();

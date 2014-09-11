@@ -15,13 +15,9 @@
  */
 package org.kie.wires.core.api.shapes;
 
-import com.emitrom.lienzo.client.core.shape.IPrimitive;
-import com.emitrom.lienzo.client.core.shape.Node;
+public interface ControlPointMoveHandler {
 
-public interface ControlPoint<T extends Node<T>> extends IPrimitive<T> {
-
-    String getId();
-
-    ControlPointMoveHandler getHandler();
+    void onMove( final double x,
+                 final double y );
 
 }

@@ -115,7 +115,8 @@ public class FixedCircleFactory implements ShapeFactory<Circle> {
                 .setY( y )
                 .setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
-                .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
+                .setFillColor( "#ff0000" )
+                .setAlpha( 0.75 )
                 .setDraggable( false );
     }
 

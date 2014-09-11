@@ -15,6 +15,7 @@ public class ShapesUtils {
 
     // Magnets
     public static final String MAGNET_RGB_FILL_SHAPE = "#f2f2f2";
+    public static final String MAGNET_ACTIVE_RGB_FILL_SHAPE = "#00ff00";
 
     // shapes
     public static final String RGB_STROKE_SHAPE = "#999999";
