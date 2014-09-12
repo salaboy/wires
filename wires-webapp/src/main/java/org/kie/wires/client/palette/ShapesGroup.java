@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.client.factories.StencilPaletteBuilder;
 import org.kie.wires.client.factories.categories.ShapeCategory;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;

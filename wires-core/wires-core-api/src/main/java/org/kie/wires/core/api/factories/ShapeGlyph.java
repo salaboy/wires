@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 JBoss Inc
+ * Copyright 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.events;
+package org.kie.wires.core.api.factories;
 
-import org.kie.wires.core.api.shapes.WiresBaseShape;
+import com.emitrom.lienzo.client.core.shape.Shape;
 
-public class ShapeSelectedEvent {
+/**
+ * A Shape Glyph.
+ */
+public interface ShapeGlyph<T extends Shape<T>> {
 
-    private WiresBaseShape shape;
+    /**
+     * Get the glyph's Shape
+     * @return
+     */
+    Shape<T> getShape();
 
-    public ShapeSelectedEvent( final WiresBaseShape shape ) {
-        this.shape = shape;
-    }
+    /**
+     * Get the glyph's width
+     * @return
+     */
+    double getWidth();
 
-    public WiresBaseShape getShape() {
-        return shape;
-    }
+    /**
+     * Get the glyph's height
+     * @return
+     */
+    double getHeight();
 
 }

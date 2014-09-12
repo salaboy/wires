@@ -1,4 +1,4 @@
-package org.kie.wires.client.factories;
+package org.kie.wires.client.actions;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Picture;

@@ -18,6 +18,8 @@ public class EditableBayesianNode extends WiresRectangle implements Serializable
 
     public EditableBayesianNode() {
         super( 0,
+               0,
+               0,
                0 );
     }
 
@@ -26,8 +28,10 @@ public class EditableBayesianNode extends WiresRectangle implements Serializable
                                  final double positionXNode,
                                  final double positionYNode,
                                  final String fillColor ) {
-        super( width,
-               height );
+        super( positionXNode,
+               positionYNode,
+               positionXNode + width,
+               positionYNode + height );
         super.init( positionXNode,
                     positionYNode );
         this.porcentualBars = Maps.newHashMap();

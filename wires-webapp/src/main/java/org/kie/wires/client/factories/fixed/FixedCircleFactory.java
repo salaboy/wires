@@ -24,6 +24,7 @@ import org.kie.wires.core.api.categories.Category;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.shapes.fixed.WiresFixedCircle;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -33,19 +34,29 @@ public class FixedCircleFactory implements ShapeFactory<Circle> {
 
     private static final String DESCRIPTION = "Circle";
 
-    @Override
-    public Shape<Circle> getGlyph() {
-        final Circle circle = new Circle( 15 );
-        setAttributes( circle,
-                       25,
-                       25 );
-        circle.setDraggable( false );
-        return circle;
-    }
+    private static final int SHAPE_RADIUS = 25;
 
     @Override
-    public String getIdentifier() {
-        return getClass().getName();
+    public ShapeGlyph<Circle> getGlyph() {
+        final Circle circle = new Circle( SHAPE_RADIUS );
+        setAttributes( circle );
+
+        return new ShapeGlyph<Circle>() {
+            @Override
+            public Shape<Circle> getShape() {
+                return circle;
+            }
+
+            @Override
+            public double getWidth() {
+                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
+            }
+
+            @Override
+            public double getHeight() {
+                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
+            }
+        };
     }
 
     @Override
@@ -60,10 +71,9 @@ public class FixedCircleFactory implements ShapeFactory<Circle> {
 
     @Override
     public ShapeDragProxy<Circle> getDragProxy( final ShapeDragProxyCallback callback ) {
-        final Circle proxy = new Circle( 20 );
-        setAttributes( proxy,
-                       25,
-                       25 );
+        final Circle proxy = new Circle( SHAPE_RADIUS );
+        setAttributes( proxy );
+
         return new ShapeDragProxy<Circle>() {
             @Override
             public Shape<Circle> getDragShape() {
@@ -71,21 +81,20 @@ public class FixedCircleFactory implements ShapeFactory<Circle> {
             }
 
             @Override
-            public void onDragEnd( final int x,
-                                   final int y ) {
-                callback.callback( getIdentifier(),
-                                   x,
+            public void onDragEnd( final double x,
+                                   final double y ) {
+                callback.callback( x,
                                    y );
             }
 
             @Override
-            public int getHeight() {
-                return 50;
+            public int getWidth() {
+                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
             }
 
             @Override
-            public int getWidth() {
-                return 50;
+            public int getHeight() {
+                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
             }
 
         };
@@ -95,25 +104,16 @@ public class FixedCircleFactory implements ShapeFactory<Circle> {
     public WiresBaseShape getShape() {
         return new WiresFixedCircle( 0,
                                      0,
-                                     20 );
+                                     SHAPE_RADIUS );
     }
 
     @Override
-    public int getShapeOffsetX() {
-        return 0;
+    public boolean builds( final WiresBaseShape shapeType ) {
+        return shapeType instanceof WiresFixedCircle;
     }
 
-    @Override
-    public int getShapeOffsetY() {
-        return 0;
-    }
-
-    private void setAttributes( final Circle circle,
-                                final double x,
-                                final double y ) {
-        circle.setX( x )
-                .setY( y )
-                .setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
+    private void setAttributes( final Circle circle ) {
+        circle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
                 .setFillColor( "#ff0000" )
                 .setAlpha( 0.75 )

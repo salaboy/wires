@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.wires.client.layers;
 
 import javax.annotation.PostConstruct;
@@ -5,9 +20,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.bayesian.network.client.events.LayerEvent;
-import com.bayesian.parser.client.model.BayesVariable;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -16,10 +28,10 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.api.events.ShapeAddedEvent;
 import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -39,9 +51,6 @@ public class LayersScreen extends Composite implements RequiresResize {
     public SimplePanel layers;
 
     @Inject
-    private SyncBeanManager iocManager;
-
-    @Inject
     private LayersGroup layersGroup;
 
     @Inject
@@ -50,7 +59,7 @@ public class LayersScreen extends Composite implements RequiresResize {
     @PostConstruct
     public void init() {
         initWidget( uiBinder.createAndBindUi( this ) );
-        layers.add( iocManager.lookupBean( LayersGroup.class ).getInstance() );
+        layers.add( layersGroup );
     }
 
     @WorkbenchPartTitle
@@ -68,49 +77,21 @@ public class LayersScreen extends Composite implements RequiresResize {
     public void onResize() {
         int height = getParent().getOffsetHeight();
         int width = getParent().getOffsetWidth();
-        super.setPixelSize( width, height );
+        super.setPixelSize( width,
+                            height );
     }
 
-    /**
-     * TODO the events can not be within the SimplePanel because they are re-called
-     */
-    public void myResponseObserver( @Observes ShapeAddedEvent shapeAddedEvent ) {
-        LayersGroup.accountLayers += 1;
-
-        //Get a concrete Shape
-        Shape shape = null;
-        final String identifier = shapeAddedEvent.getIdentifier();
+    public void onShapeAdded( @Observes ShapeAddedEvent shapeAddedEvent ) {
+        final WiresBaseShape shape = shapeAddedEvent.getShape();
         for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
-            if ( factory.getIdentifier().equals( identifier ) ) {
-                shape = factory.getGlyph();
+            if ( factory.builds( shape ) ) {
+                layersGroup.addShape( shape,
+                                      factory );
             }
         }
-
-        if ( shape == null ) {
-            return;
-        }
-
-        layersGroup.buildNewLayer( shape,
-                                   null,
-                                   LayersGroup.accountLayers );
-        layersGroup.drawLayer();
     }
 
-    public void drawNamesNode( @Observes LayerEvent layerEvent ) {
-        if ( LayersGroup.accountNodes == null ) {
-            LayersGroup.accountNodes = 0;
-            LayersGroup.accountLayers = 0;
-        }
-        for ( BayesVariable node : layerEvent.getNodes() ) {
-            LayersGroup.accountNodes += 1;
-            layersGroup.buildNewLayer( null,
-                                       node,
-                                       LayersGroup.accountNodes );
-        }
-        layersGroup.drawLayer();
-    }
-
-    public void clearPanel( @Observes ClearEvent event ) {
+    public void onClear( @Observes ClearEvent event ) {
         layersGroup.clearPanel();
     }
 

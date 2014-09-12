@@ -47,26 +47,37 @@ public class WiresRectangle extends WiresBaseDynamicShape {
     private final ControlPoint controlPoint3;
     private final ControlPoint controlPoint4;
 
-    public WiresRectangle( final double width,
-                           final double height ) {
-        this( width,
-              height,
+    public WiresRectangle( final double x1,
+                           final double y1,
+                           final double x2,
+                           final double y2 ) {
+        this( x1,
+              y1,
+              x2,
+              y2,
               5 );
     }
 
-    public WiresRectangle( final double width,
-                           final double height,
+    public WiresRectangle( final double x1,
+                           final double y1,
+                           final double x2,
+                           final double y2,
                            final double cornerRadius ) {
+        final double width = Math.abs( x2 - x1 );
+        final double height = Math.abs( y2 - y1 );
+
         id = UUID.uuid();
         rectangle = new Rectangle( width,
                                    height,
                                    cornerRadius );
+        rectangle.setX( x1 );
+        rectangle.setY( y1 );
 
         bounding = new Rectangle( width + BOUNDARY_SIZE,
                                   height + BOUNDARY_SIZE,
                                   cornerRadius );
-        bounding.setX( 0 - ( BOUNDARY_SIZE / 2 ) );
-        bounding.setY( 0 - ( BOUNDARY_SIZE / 2 ) );
+        bounding.setX( x1 - ( BOUNDARY_SIZE / 2 ) );
+        bounding.setY( y1 - ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setAlpha( 0.1 );
 
@@ -74,24 +85,24 @@ public class WiresRectangle extends WiresBaseDynamicShape {
         add( bounding );
 
         magnets.clear();
-        magnet1 = new DefaultMagnet( 0,
-                                     height / 2 );
-        magnet2 = new DefaultMagnet( width,
-                                     height / 2 );
-        magnet3 = new DefaultMagnet( width / 2,
-                                     0 );
-        magnet4 = new DefaultMagnet( width / 2,
-                                     height );
+        magnet1 = new DefaultMagnet( x1,
+                                     y1 + ( height / 2 ) );
+        magnet2 = new DefaultMagnet( x2,
+                                     y1 + ( height / 2 ) );
+        magnet3 = new DefaultMagnet( x1 + ( width / 2 ),
+                                     y1 );
+        magnet4 = new DefaultMagnet( x1 + ( width / 2 ),
+                                     y2 );
         addMagnet( magnet1 );
         addMagnet( magnet2 );
         addMagnet( magnet3 );
         addMagnet( magnet4 );
 
         controlPoints.clear();
-        final double x1 = rectangle.getX();
-        final double y1 = rectangle.getY();
-        controlPoint1 = new DefaultControlPoint( x1,
-                                                 y1,
+        final double px1 = rectangle.getX();
+        final double py1 = rectangle.getY();
+        controlPoint1 = new DefaultControlPoint( px1,
+                                                 py1,
                                                  new ControlPointMoveHandler() {
                                                      @Override
                                                      public void onMove( final double x,
@@ -116,10 +127,10 @@ public class WiresRectangle extends WiresBaseDynamicShape {
                                                  }
         );
 
-        final double x2 = rectangle.getX() + rectangle.getWidth();
-        final double y2 = rectangle.getY();
-        controlPoint2 = new DefaultControlPoint( x2,
-                                                 y2,
+        final double px2 = rectangle.getX() + rectangle.getWidth();
+        final double py2 = rectangle.getY();
+        controlPoint2 = new DefaultControlPoint( px2,
+                                                 py2,
                                                  new ControlPointMoveHandler() {
                                                      @Override
                                                      public void onMove( double x,
@@ -142,10 +153,10 @@ public class WiresRectangle extends WiresBaseDynamicShape {
                                                  }
         );
 
-        final double x3 = rectangle.getX();
-        final double y3 = rectangle.getY() + rectangle.getHeight();
-        controlPoint3 = new DefaultControlPoint( x3,
-                                                 y3,
+        final double px3 = rectangle.getX();
+        final double py3 = rectangle.getY() + rectangle.getHeight();
+        controlPoint3 = new DefaultControlPoint( px3,
+                                                 py3,
                                                  new ControlPointMoveHandler() {
                                                      @Override
                                                      public void onMove( double x,
@@ -168,10 +179,10 @@ public class WiresRectangle extends WiresBaseDynamicShape {
                                                  }
         );
 
-        final double x4 = rectangle.getX() + rectangle.getWidth();
-        final double y4 = rectangle.getY() + rectangle.getHeight();
-        controlPoint4 = new DefaultControlPoint( x4,
-                                                 y4,
+        final double px4 = rectangle.getX() + rectangle.getWidth();
+        final double py4 = rectangle.getY() + rectangle.getHeight();
+        controlPoint4 = new DefaultControlPoint( px4,
+                                                 py4,
                                                  new ControlPointMoveHandler() {
                                                      @Override
                                                      public void onMove( double x,

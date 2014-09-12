@@ -101,33 +101,6 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
         }
     }
 
-    public void moveAttachedControlPoints( final Magnet magnet,
-                                           final double x,
-                                           final double y ) {
-        final List<ControlPoint> controlPoints = magnet.getAttachedControlPoints();
-        if ( controlPoints == null || controlPoints.isEmpty() ) {
-            return;
-        }
-        for ( ControlPoint cp : controlPoints ) {
-            cp.getHandler().onMove( x,
-                                    y );
-        }
-        getLayer().draw();
-    }
-
-    private static int min( final double[] values ) {
-        double min = Double.MAX_VALUE;
-        int i = 0;
-        for ( double value : values ) {
-            if ( value < min ) {
-                min = value;
-                i++;
-            }
-        }
-
-        return i - 1;
-    }
-
     @Override
     public void destroy() {
         hideControlPoints();

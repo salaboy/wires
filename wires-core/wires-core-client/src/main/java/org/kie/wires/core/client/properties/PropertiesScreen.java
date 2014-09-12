@@ -71,7 +71,8 @@ public class PropertiesScreen extends Composite implements RequiresResize {
     }
 
     public void showPropertyEditor(@Observes ShapeSelectedEvent selected) {
-        propertyEditorWidget.handle(new PropertyEditorEvent(MY_ID, PropertyEditorUtil.createProperties(selected.getShape())));
+        propertyEditorWidget.handle(new PropertyEditorEvent(MY_ID,
+                                                            PropertyEditorUtil.createProperties(selected.getShape())));
 
     }
 

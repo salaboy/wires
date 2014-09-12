@@ -24,6 +24,7 @@ import org.kie.wires.core.api.categories.Category;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.shapes.dynamic.WiresLine;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -33,22 +34,33 @@ public class LineFactory implements ShapeFactory<Line> {
 
     private static final String DESCRIPTION = "Line";
 
-    private static final int SHAPE_SIZE_X = 30;
-    private static final int SHAPE_SIZE_Y = 30;
+    private static final int SHAPE_SIZE_X = 40;
+    private static final int SHAPE_SIZE_Y = 40;
 
     @Override
-    public Shape<Line> getGlyph() {
-        Line line = new Line( 5,
-                              5,
-                              45,
-                              45 );
+    public ShapeGlyph<Line> getGlyph() {
+        final Line line = new Line( 0 - ( SHAPE_SIZE_X / 2 ),
+                                    0 - ( SHAPE_SIZE_Y / 2 ),
+                                    SHAPE_SIZE_X / 2,
+                                    SHAPE_SIZE_Y / 2 );
         setAttributes( line );
-        return line;
-    }
 
-    @Override
-    public String getIdentifier() {
-        return getClass().getName();
+        return new ShapeGlyph<Line>() {
+            @Override
+            public Shape<Line> getShape() {
+                return line;
+            }
+
+            @Override
+            public double getWidth() {
+                return SHAPE_SIZE_X;
+            }
+
+            @Override
+            public double getHeight() {
+                return SHAPE_SIZE_Y;
+            }
+        };
     }
 
     @Override
@@ -63,10 +75,10 @@ public class LineFactory implements ShapeFactory<Line> {
 
     @Override
     public ShapeDragProxy<Line> getDragProxy( final ShapeDragProxyCallback callback ) {
-        final Line proxy = new Line( 5,
-                                     5,
-                                     45,
-                                     45 );
+        final Line proxy = new Line( 0 - ( SHAPE_SIZE_X / 2 ),
+                                     0 - ( SHAPE_SIZE_Y / 2 ),
+                                     SHAPE_SIZE_X / 2,
+                                     SHAPE_SIZE_Y / 2 );
         setAttributes( proxy );
 
         return new ShapeDragProxy<Line>() {
@@ -76,21 +88,20 @@ public class LineFactory implements ShapeFactory<Line> {
             }
 
             @Override
-            public void onDragEnd( final int x,
-                                   final int y ) {
-                callback.callback( getIdentifier(),
-                                   x,
+            public void onDragEnd( final double x,
+                                   final double y ) {
+                callback.callback( x,
                                    y );
             }
 
             @Override
-            public int getHeight() {
-                return 50;
+            public int getWidth() {
+                return SHAPE_SIZE_X;
             }
 
             @Override
-            public int getWidth() {
-                return 50;
+            public int getHeight() {
+                return SHAPE_SIZE_Y;
             }
 
         };
@@ -98,20 +109,15 @@ public class LineFactory implements ShapeFactory<Line> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresLine( 0,
-                              0,
-                              SHAPE_SIZE_X,
-                              SHAPE_SIZE_Y );
+        return new WiresLine( 0 - ( SHAPE_SIZE_X / 2 ),
+                              0 - ( SHAPE_SIZE_Y / 2 ),
+                              SHAPE_SIZE_X / 2,
+                              SHAPE_SIZE_Y / 2 );
     }
 
     @Override
-    public int getShapeOffsetX() {
-        return SHAPE_SIZE_X / 2;
-    }
-
-    @Override
-    public int getShapeOffsetY() {
-        return SHAPE_SIZE_Y / 2;
+    public boolean builds( final WiresBaseShape shapeType ) {
+        return shapeType instanceof WiresLine;
     }
 
     private void setAttributes( final Line line ) {

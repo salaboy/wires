@@ -19,6 +19,8 @@ public class EditableBayesianProbability extends WiresRectangle implements Seria
 
     public EditableBayesianProbability() {
         super( 0,
+               0,
+               0,
                0 );
     }
 
@@ -26,8 +28,10 @@ public class EditableBayesianProbability extends WiresRectangle implements Seria
                                         final double height,
                                         final double positionXNode,
                                         final double positionYNode ) {
-        super( width,
-               height );
+        super( positionXNode,
+               positionYNode,
+               positionXNode + width,
+               positionYNode + height );
         super.init( positionXNode,
                     positionYNode );
         super.getRectangle().setStrokeColor( ColorName.WHITE.getValue() );

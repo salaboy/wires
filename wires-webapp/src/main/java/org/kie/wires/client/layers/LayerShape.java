@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.events;
+package org.kie.wires.client.layers;
 
-import org.kie.wires.core.api.shapes.WiresBaseShape;
+import com.emitrom.lienzo.client.core.shape.Group;
+import com.emitrom.lienzo.client.core.shape.Rectangle;
+import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.core.shape.Text;
 
-public class ShapeSelectedEvent {
+public class LayerShape extends Group {
 
-    private WiresBaseShape shape;
-
-    public ShapeSelectedEvent( final WiresBaseShape shape ) {
-        this.shape = shape;
+    public void setBounding( final Rectangle bounding ) {
+        add( bounding );
     }
 
-    public WiresBaseShape getShape() {
-        return shape;
+    public void setShape( final Shape<?> shape ) {
+        add( shape );
+    }
+
+    public void setDescription( final Text description ) {
+        add( description );
     }
 
 }

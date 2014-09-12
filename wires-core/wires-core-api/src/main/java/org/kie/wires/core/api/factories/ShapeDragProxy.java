@@ -33,8 +33,8 @@ public interface ShapeDragProxy<T extends Shape<T>> {
      * @param x
      * @param y
      */
-    void onDragEnd( final int x,
-                    final int y );
+    void onDragEnd( final double x,
+                    final double y );
 
     /**
      * Height of proxy used to ensure proxy is centered around mouse pointer position

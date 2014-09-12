@@ -28,7 +28,7 @@ public interface ShapeFactory<T extends Shape<T>> {
      * Get a glyph to represent the Shape. Used by the Palette Screen and Layers Screen
      * @return
      */
-    Shape<T> getGlyph();
+    ShapeGlyph<T> getGlyph();
 
     /**
      * Get a proxy used during and at the end of a drag operation
@@ -44,26 +44,11 @@ public interface ShapeFactory<T extends Shape<T>> {
     WiresBaseShape getShape();
 
     /**
-     * Get X offset. Used to centre the "dropped" Shape at the mouse pointer position. For example a Circle with
-     * centre (0, 0) and radius R is automatically centred at the mouse pointer position because its bounding extent
-     * is (-R, -R)->(R, R) whereas a Rectangle (0, 0)->(100, 80) needs to be offset (-50, -40) to be centred.
-     * @return
+     * Does the Factory build the given shape type
+     * @param shapeType
+     * @return true is the Factor builds the given type
      */
-    int getShapeOffsetX();
-
-    /**
-     * Get Y offset. Used to centre the "dropped" Shape at the mouse pointer position. For example a Circle with
-     * centre (0, 0) and radius R is automatically centred at the mouse pointer position because its bounding extent
-     * is (-R, -R)->(R, R) whereas a Rectangle (0, 0)->(100, 80) needs to be offset (-50, -40) to be centred.
-     * @return
-     */
-    int getShapeOffsetY();
-
-    /**
-     * Get unique identifier for Shape type
-     * @return
-     */
-    String getIdentifier();
+    boolean builds( final WiresBaseShape shapeType );
 
     /**
      * Get description of Shape

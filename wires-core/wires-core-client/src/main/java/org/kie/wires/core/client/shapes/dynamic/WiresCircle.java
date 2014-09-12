@@ -44,19 +44,13 @@ public class WiresCircle extends WiresBaseDynamicShape {
 
     private final ControlPoint controlPoint1;
 
-    public WiresCircle( final double x,
-                        final double y,
-                        final double radius ) {
+    public WiresCircle( final double radius ) {
         id = UUID.uuid();
         circle = new Circle( radius );
-        circle.setX( x );
-        circle.setY( y );
 
         bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setAlpha( 0.1 );
-        bounding.setX( x );
-        bounding.setY( y );
 
         add( circle );
         add( bounding );
@@ -76,8 +70,8 @@ public class WiresCircle extends WiresBaseDynamicShape {
         addMagnet( magnet4 );
 
         controlPoints.clear();
-        controlPoint1 = new DefaultControlPoint( x + radius,
-                                                 y,
+        controlPoint1 = new DefaultControlPoint( radius,
+                                                 0,
                                                  new ControlPointMoveHandler() {
                                                      @Override
                                                      public void onMove( final double x,

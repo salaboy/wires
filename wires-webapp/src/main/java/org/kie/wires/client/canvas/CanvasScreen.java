@@ -6,8 +6,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.bayesian.network.client.events.ReadyEvent;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.wires.core.api.events.ClearEvent;
@@ -15,8 +13,6 @@ import org.kie.wires.core.api.events.ProgressEvent;
 import org.kie.wires.core.api.events.ShapeAddedEvent;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
-import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.Canvas;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
@@ -104,34 +100,25 @@ public class CanvasScreen extends Canvas {
     }
 
     @Override
-    public void selectShape( final WiresBaseDynamicShape shape ) {
-        super.selectShape( shape );
+    public void selectShape( final WiresBaseShape shape ) {
         shapeSelectedEvent.fire( new ShapeSelectedEvent( shape ) );
+    }
+
+    public void onShapeSelected( @Observes ShapeSelectedEvent event ) {
+        super.selectShape( event.getShape() );
         menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
     }
 
     @Override
-    public void deselectShape( final WiresBaseDynamicShape shape ) {
+    public void deselectShape( final WiresBaseShape shape ) {
         super.deselectShape( shape );
         menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
     }
 
     public void myResponseObserver( @Observes ShapeDragCompleteEvent shapeDragCompleteEvent ) {
-        final String identifier = shapeDragCompleteEvent.getIdentifier();
-
-        //Get a concrete Shape
-        int offsetX = 0;
-        int offsetY = 0;
-        WiresBaseShape wiresShape = null;
-        for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
-            if ( factory.getIdentifier().equals( identifier ) ) {
-                offsetX = factory.getShapeOffsetX();
-                offsetY = factory.getShapeOffsetY();
-                wiresShape = factory.getShape();
-            }
-        }
+        final WiresBaseShape wiresShape = shapeDragCompleteEvent.getShape();
 
         if ( wiresShape == null ) {
             return;
@@ -142,27 +129,22 @@ public class CanvasScreen extends Canvas {
             return;
         }
 
-        wiresShape.init( this.getX( shapeDragCompleteEvent.getX() - offsetX ),
-                         this.getY( shapeDragCompleteEvent.getY() - offsetY ) );
+        wiresShape.init( this.getX( shapeDragCompleteEvent.getX() ),
+                         this.getY( shapeDragCompleteEvent.getY() ) );
         addShape( wiresShape );
         menus.getItems().get( 0 ).setEnabled( true );
 
-        shapeAddedEvent.fire( new ShapeAddedEvent( identifier ) );
+        shapeAddedEvent.fire( new ShapeAddedEvent( wiresShape ) );
     }
 
-    private int getX( int xShapeEvent ) {
-        int x = ( ( xShapeEvent - getAbsoluteLeft() ) < 0 ) ? 0 : xShapeEvent - getAbsoluteLeft();
+    private double getX( double xShapeEvent ) {
+        double x = ( ( xShapeEvent - getAbsoluteLeft() ) < 0 ) ? 0 : xShapeEvent - getAbsoluteLeft();
         return x;
     }
 
-    private int getY( int yShapeEvent ) {
-        int y = ( ( yShapeEvent - getAbsoluteTop() < 0 ) ) ? 0 : yShapeEvent - getAbsoluteTop();
+    private double getY( double yShapeEvent ) {
+        double y = ( ( yShapeEvent - getAbsoluteTop() < 0 ) ) ? 0 : yShapeEvent - getAbsoluteTop();
         return y;
-    }
-
-    public void addNodes( @Observes ReadyEvent event ) {
-        GWT.log( "---event.getBayesianNodes() " + event.getBayesianNodes().size() );
-        addShape( event.getBayesianNodes().get( 0 ) );
     }
 
     public void clearPanel( @Observes ClearEvent event ) {
@@ -180,7 +162,7 @@ public class CanvasScreen extends Canvas {
     }
 
     @Override
-    public void removeShape( final WiresBaseDynamicShape shape ) {
+    public void removeShape( final WiresBaseShape shape ) {
         if ( Window.confirm( "Are you sure to remove the selected shape?" ) ) {
             super.removeShape( shape );
             menus.getItems().get( 0 ).setEnabled( getShapesInCanvas().size() > 0 );

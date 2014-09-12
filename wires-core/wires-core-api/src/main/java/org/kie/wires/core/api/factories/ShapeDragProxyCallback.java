@@ -22,12 +22,10 @@ public interface ShapeDragProxyCallback {
 
     /**
      * Callback invoked when the drag operation ends
-     * @param identifier
      * @param x
      * @param y
      */
-    void callback( final String identifier,
-                   final int x,
-                   final int y );
+    void callback( final double x,
+                   final double y );
 
 }

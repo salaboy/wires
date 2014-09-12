@@ -33,7 +33,7 @@ public class Canvas extends Composite implements SelectionManager,
     private Layer canvasLayer;
 
     private List<WiresShape> shapesInCanvas = new ArrayList<WiresShape>();
-    private WiresBaseDynamicShape selectedShape;
+    private WiresBaseShape selectedShape;
 
     private ProgressBar progressBar;
 
@@ -96,7 +96,7 @@ public class Canvas extends Composite implements SelectionManager,
         canvasLayer.draw();
     }
 
-    public void removeShape( final WiresBaseDynamicShape shape ) {
+    public void removeShape( final WiresBaseShape shape ) {
         shape.destroy();
         deselectShape( shape );
         canvasLayer.remove( shape );
@@ -172,19 +172,25 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     @Override
-    public void selectShape( final WiresBaseDynamicShape shape ) {
+    public void selectShape( final WiresBaseShape shape ) {
         clearSelection();
         selectedShape = shape;
-        selectedShape.showControlPoints();
+        if ( shape instanceof HasControlPoints ) {
+            ( (HasControlPoints) selectedShape ).showControlPoints();
+        }
     }
 
     @Override
-    public void deselectShape( final WiresBaseDynamicShape shape ) {
+    public void deselectShape( final WiresBaseShape shape ) {
         if ( shape == null ) {
             return;
         }
-        shape.hideControlPoints();
-        shape.hideMagnetPoints();
+        if ( shape instanceof HasControlPoints ) {
+            ( (HasControlPoints) shape ).hideControlPoints();
+        }
+        if ( shape instanceof HasMagnets ) {
+            ( (HasMagnets) shape ).hideMagnetPoints();
+        }
         selectedShape = null;
     }
 
@@ -194,7 +200,7 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     @Override
-    public WiresBaseDynamicShape getSelectedShape() {
+    public WiresBaseShape getSelectedShape() {
         return selectedShape;
     }
 

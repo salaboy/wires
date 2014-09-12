@@ -1,34 +1,42 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.wires.client.layers;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.bayesian.network.client.builder.LayerBuilder;
-import com.bayesian.network.client.events.ProbabilityEvent;
-import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
+import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
 @Dependent
 public class LayersGroup extends Composite {
 
-    private static Layer layer;
-
-    private static LienzoPanel panel;
-
-    public static int accountLayers;
-    public static Integer accountNodes;
+    private Layer layer;
+    private LienzoPanel panel;
+    private List<LayerShape> shapes = new ArrayList<LayerShape>();
 
     @Inject
-    private Event<ProbabilityEvent> probabilityEvent;
-
-    public LayersGroup() {
-    }
+    private StencilLayerBuilder stencilBuilder;
 
     @PostConstruct
     public void init() {
@@ -38,24 +46,21 @@ public class LayersGroup extends Composite {
         panel.getScene().add( layer );
     }
 
-    public void buildNewLayer( final Shape<?> shape,
-                               final BayesVariable node,
-                               final int account ) {
-        layer.add( new LayerBuilder( shape,
-                                     account,
-                                     null,
-                                     null,
-                                     node,
-                                     probabilityEvent ).getLayer() );
-    }
+    public void addShape( final WiresBaseShape shape,
+                          final ShapeFactory factory ) {
+        final LayerShape stencil = stencilBuilder.build( shape,
+                                                         factory );
+        shapes.add( stencil );
 
-    public void drawLayer() {
+        //Add LayerShape to the UI
+        stencil.setX( 0 );
+        stencil.setY( ( ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER + 5 ) * ( shapes.size() - 1 ) );
+        layer.add( stencil );
         layer.draw();
     }
 
     public void clearPanel() {
-        accountNodes = null;
-        accountLayers = 0;
+        shapes.clear();
         layer.removeAll();
         layer.draw();
     }

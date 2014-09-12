@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.client.factories;
+package org.kie.wires.client.palette;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -35,17 +35,19 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.kie.wires.client.palette.PaletteShape;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
 @ApplicationScoped
 public class StencilPaletteBuilder extends Composite {
 
     private static final int ZINDEX = Integer.MAX_VALUE;
+    private static final int GLYPH_WIDTH = 45;
+    private static final int GLYPH_HEIGHT = 45;
 
     @Inject
     private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
@@ -54,16 +56,15 @@ public class StencilPaletteBuilder extends Composite {
                                final ShapeFactory factory ) {
         final PaletteShape paletteShape = new PaletteShape();
         final Rectangle bounding = drawBoundingBox();
-        final Shape shape = factory.getGlyph();
+        final ShapeGlyph glyph = factory.getGlyph();
         final Text description = drawDescription( factory.getShapeDescription() );
 
         //Callback is invoked when the drag operation ends
         final ShapeDragProxyCallback callback = new ShapeDragProxyCallback() {
             @Override
-            public void callback( final String identifier,
-                                  final int x,
-                                  final int y ) {
-                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( identifier,
+            public void callback( final double x,
+                                  final double y ) {
+                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( factory.getShape(),
                                                                          x,
                                                                          y ) );
             }
@@ -77,14 +78,22 @@ public class StencilPaletteBuilder extends Composite {
 
         addShapeHandlers( dragProxyParentPanel,
                           dragProxy,
-                          shape );
+                          glyph.getShape() );
 
         //Build Palette Shape
         paletteShape.setBounding( bounding );
-        paletteShape.setShape( shape );
+        paletteShape.setShape( scaleGlyph( glyph ) );
         paletteShape.setDescription( description );
 
         return paletteShape;
+    }
+
+    private Shape scaleGlyph( final ShapeGlyph glyph ) {
+        final double sx = GLYPH_WIDTH / glyph.getWidth();
+        final double sy = GLYPH_HEIGHT / glyph.getHeight();
+        final Shape shape = glyph.getShape();
+        return shape.setX( ShapeFactoryUtil.WIDTH_BOUNDING / 2 ).setY( ShapeFactoryUtil.WIDTH_BOUNDING / 2 ).setScale( sx,
+                                                                                                                       sy );
     }
 
     private Rectangle drawBoundingBox() {
@@ -128,15 +137,23 @@ public class StencilPaletteBuilder extends Composite {
 
             @Override
             public void onNodeMouseDown( final NodeMouseDownEvent event ) {
-                final LienzoPanel dragProxyPanel = new LienzoPanel( proxy.getWidth(),
-                                                                    proxy.getHeight() );
+                final int proxyWidth = proxy.getWidth();
+                final int proxyHeight = proxy.getHeight();
+                final Shape dragShape = proxy.getDragShape();
+                dragShape.setX( proxyWidth / 2 );
+                dragShape.setY( proxyHeight / 2 );
+
+                final LienzoPanel dragProxyPanel = new LienzoPanel( proxyWidth,
+                                                                    proxyHeight );
                 final Layer dragProxyLayer = new Layer();
-                dragProxyLayer.add( proxy.getDragShape() );
+                dragProxyLayer.add( dragShape );
                 dragProxyPanel.add( dragProxyLayer );
                 dragProxyLayer.draw();
 
                 setDragProxyPosition( dragProxyParentPanel,
                                       dragProxyPanel,
+                                      proxyWidth,
+                                      proxyHeight,
                                       event );
                 attachDragProxyHandlers( dragProxyPanel,
                                          proxy );
@@ -148,12 +165,14 @@ public class StencilPaletteBuilder extends Composite {
 
     private void setDragProxyPosition( final LienzoPanel dragProxyParentPanel,
                                        final LienzoPanel dragProxyPanel,
+                                       final int proxyWidth,
+                                       final int proxyHeight,
                                        final NodeMouseDownEvent event ) {
         Style style = dragProxyPanel.getElement().getStyle();
         style.setPosition( Style.Position.ABSOLUTE );
-        style.setLeft( dragProxyParentPanel.getAbsoluteLeft() + event.getX() - ( dragProxyPanel.getWidth() / 2 ),
+        style.setLeft( dragProxyParentPanel.getAbsoluteLeft() + event.getX() - ( proxyWidth / 2 ),
                        Style.Unit.PX );
-        style.setTop( dragProxyParentPanel.getAbsoluteTop() + event.getY() - ( dragProxyPanel.getHeight() / 2 ),
+        style.setTop( dragProxyParentPanel.getAbsoluteTop() + event.getY() - ( proxyHeight / 2 ),
                       Style.Unit.PX );
         style.setZIndex( ZINDEX );
     }
