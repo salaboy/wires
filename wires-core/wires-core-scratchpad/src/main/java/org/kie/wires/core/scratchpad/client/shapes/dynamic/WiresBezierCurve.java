@@ -15,12 +15,15 @@
  */
 package org.kie.wires.core.scratchpad.client.shapes.dynamic;
 
+import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
+import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.BezierCurve;
 import com.emitrom.lienzo.client.core.shape.Line;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
+import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.magnets.MagnetManager;
 import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
@@ -41,10 +44,10 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresM
     private final Line controlLine1;
     private final Line controlLine2;
 
-    private final ControlPoint controlPoint1;
+    private final ConnectibleControlPoint controlPoint1;
     private final ControlPoint controlPoint2;
     private final ControlPoint controlPoint3;
-    private final ControlPoint controlPoint4;
+    private final ConnectibleControlPoint controlPoint4;
 
     public WiresBezierCurve( final BezierCurve shape ) {
         this( shape,
@@ -204,6 +207,25 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresM
         addNodeMouseClickHandler( new NodeMouseClickHandler() {
             public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
                 selectionManager.selectShape( WiresBezierCurve.this );
+            }
+        } );
+
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                controlPoint1.setOffset( getLocation() );
+                controlPoint2.setOffset( getLocation() );
+                controlPoint3.setOffset( getLocation() );
+                controlPoint4.setOffset( getLocation() );
+                final Magnet boundMagnet1 = controlPoint1.getBoundMagnet();
+                final Magnet boundMagnet4 = controlPoint4.getBoundMagnet();
+                if ( boundMagnet1 != null ) {
+                    boundMagnet1.detachControlPoint( controlPoint1 );
+                }
+                if ( boundMagnet4 != null ) {
+                    boundMagnet4.detachControlPoint( controlPoint4 );
+                }
+                getLayer().draw();
             }
         } );
     }
