@@ -42,10 +42,11 @@ public class WiresCircle extends WiresBaseDynamicShape {
 
     private final ControlPoint controlPoint1;
 
-    public WiresCircle( final double radius ) {
-        id = UUID.uuid();
-        circle = new Circle( radius );
+    public WiresCircle( final Circle shape ) {
+        this.id = UUID.uuid();
+        this.circle = shape;
 
+        final double radius = circle.getRadius();
         bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setVisible( false );

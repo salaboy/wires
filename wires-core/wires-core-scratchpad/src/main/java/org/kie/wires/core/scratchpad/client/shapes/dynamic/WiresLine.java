@@ -20,15 +20,14 @@ import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.shared.core.types.LineCap;
-import org.kie.wires.core.api.magnets.MagnetManager;
-import org.kie.wires.core.client.util.GeometryUtil;
-import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.magnets.Magnet;
+import org.kie.wires.core.api.magnets.MagnetManager;
+import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.client.controlpoints.ConnectibleControlPoint;
+import org.kie.wires.core.client.util.GeometryUtil;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresLine extends WiresBaseDynamicShape implements RequiresMagnetManager {
@@ -45,17 +44,21 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresMagnetMa
     private final ConnectibleControlPoint controlPoint1;
     private final ConnectibleControlPoint controlPoint2;
 
-    public WiresLine( final double x1,
+    public WiresLine( final Line shape ) {
+        this( shape,
+              shape.getPoints().getPoint( 0 ).getX(),
+              shape.getPoints().getPoint( 0 ).getY(),
+              shape.getPoints().getPoint( 1 ).getX(),
+              shape.getPoints().getPoint( 1 ).getY() );
+    }
+
+    public WiresLine( final Line shape,
+                      final double x1,
                       final double y1,
                       final double x2,
                       final double y2 ) {
         id = UUID.uuid();
-        line = new Line( x1,
-                         y1,
-                         x2,
-                         y2 );
-        line.setLineCap( LineCap.ROUND );
-        line.setStrokeWidth( 3 );
+        line = shape;
 
         bounding = new Line( x1,
                              y1,

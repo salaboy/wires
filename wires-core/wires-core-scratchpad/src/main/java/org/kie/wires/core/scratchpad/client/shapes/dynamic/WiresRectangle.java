@@ -45,35 +45,45 @@ public class WiresRectangle extends WiresBaseDynamicShape {
     private final ControlPoint controlPoint3;
     private final ControlPoint controlPoint4;
 
-    public WiresRectangle( final double x1,
-                           final double y1,
-                           final double x2,
-                           final double y2 ) {
-        this( x1,
-              y1,
-              x2,
-              y2,
-              5 );
+    public WiresRectangle( final Rectangle shape ) {
+        this( shape,
+              shape.getOffset().getX(),
+              shape.getOffset().getY(),
+              shape.getOffset().getX() + shape.getWidth(),
+              shape.getOffset().getY() + shape.getHeight() );
     }
 
     public WiresRectangle( final double x1,
                            final double y1,
                            final double x2,
-                           final double y2,
-                           final double cornerRadius ) {
+                           final double y2 ) {
+        this( new Rectangle( x2 - x1,
+                             y2 - y1 ),
+              x1,
+              y1,
+              x2,
+              y2 );
+    }
+
+    public WiresRectangle( final Rectangle shape,
+                           final double x1,
+                           final double y1,
+                           final double x2,
+                           final double y2 ) {
         final double width = Math.abs( x2 - x1 );
         final double height = Math.abs( y2 - y1 );
 
         id = UUID.uuid();
-        rectangle = new Rectangle( width,
-                                   height,
-                                   cornerRadius );
+        rectangle = shape;
+
         rectangle.setX( x1 );
         rectangle.setY( y1 );
+        rectangle.setOffset( 0,
+                             0 );
 
         bounding = new Rectangle( width + BOUNDARY_SIZE,
                                   height + BOUNDARY_SIZE,
-                                  cornerRadius );
+                                  rectangle.getCornerRadius() );
         bounding.setX( x1 - ( BOUNDARY_SIZE / 2 ) );
         bounding.setY( y1 - ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );

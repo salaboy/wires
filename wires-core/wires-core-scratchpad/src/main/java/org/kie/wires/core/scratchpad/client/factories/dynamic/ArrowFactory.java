@@ -21,11 +21,11 @@ import com.emitrom.lienzo.client.core.shape.Arrow;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.shared.core.types.ArrowType;
-import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
+import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.categories.ConnectorCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -46,16 +46,7 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
 
     @Override
     public ShapeGlyph<Arrow> getGlyph() {
-        final Arrow arrow = new Arrow( new Point2D( 0 - ( SHAPE_SIZE_X / 2 ),
-                                                    0 - ( SHAPE_SIZE_Y / 2 ) ),
-                                       new Point2D( SHAPE_SIZE_X / 2,
-                                                    SHAPE_SIZE_Y / 2 ),
-                                       BASE_WIDTH,
-                                       HEAD_WIDTH,
-                                       ARROW_ANGLE,
-                                       BASE_ANGLE,
-                                       ArrowType.AT_END );
-        setAttributes( arrow );
+        final Arrow arrow = makeArrow();
 
         return new ShapeGlyph<Arrow>() {
             @Override
@@ -87,21 +78,12 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
 
     @Override
     public ShapeDragProxy<Arrow> getDragProxy( final ShapeDragProxyCallback callback ) {
-        final Arrow proxy = new Arrow( new Point2D( 0 - ( SHAPE_SIZE_X / 2 ),
-                                                    0 - ( SHAPE_SIZE_Y / 2 ) ),
-                                       new Point2D( SHAPE_SIZE_X / 2,
-                                                    SHAPE_SIZE_Y / 2 ),
-                                       BASE_WIDTH,
-                                       HEAD_WIDTH,
-                                       ARROW_ANGLE,
-                                       BASE_ANGLE,
-                                       ArrowType.AT_END );
-        setAttributes( proxy );
+        final Arrow arrow = makeArrow();
 
         return new ShapeDragProxy<Arrow>() {
             @Override
             public Shape<Arrow> getDragShape() {
-                return proxy;
+                return arrow;
             }
 
             @Override
@@ -126,10 +108,7 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresArrow( 0 - ( SHAPE_SIZE_X / 2 ),
-                               0 - ( SHAPE_SIZE_Y / 2 ),
-                               SHAPE_SIZE_X / 2,
-                               SHAPE_SIZE_Y / 2 );
+        return new WiresArrow( makeArrow() );
     }
 
     @Override
@@ -137,11 +116,21 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
         return shapeType instanceof WiresArrow;
     }
 
-    private void setAttributes( final Arrow arrow ) {
+    private Arrow makeArrow() {
+        final Arrow arrow = new Arrow( new Point2D( 0 - ( SHAPE_SIZE_X / 2 ),
+                                                    0 - ( SHAPE_SIZE_Y / 2 ) ),
+                                       new Point2D( SHAPE_SIZE_X / 2,
+                                                    SHAPE_SIZE_Y / 2 ),
+                                       BASE_WIDTH,
+                                       HEAD_WIDTH,
+                                       ARROW_ANGLE,
+                                       BASE_ANGLE,
+                                       ArrowType.AT_END );
         arrow.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
                 .setStrokeWidth( 1 )
                 .setFillColor( "#ffff00" )
                 .setDraggable( false );
+        return arrow;
     }
 
 }

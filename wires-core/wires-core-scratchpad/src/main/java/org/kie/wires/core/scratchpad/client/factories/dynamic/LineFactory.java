@@ -19,11 +19,12 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.api.factories.categories.Category;
+import com.emitrom.lienzo.shared.core.types.LineCap;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
+import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.categories.ConnectorCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -39,11 +40,7 @@ public class LineFactory implements ShapeFactory<Line> {
 
     @Override
     public ShapeGlyph<Line> getGlyph() {
-        final Line line = new Line( 0 - ( SHAPE_SIZE_X / 2 ),
-                                    0 - ( SHAPE_SIZE_Y / 2 ),
-                                    SHAPE_SIZE_X / 2,
-                                    SHAPE_SIZE_Y / 2 );
-        setAttributes( line );
+        final Line line = makeLine();
 
         return new ShapeGlyph<Line>() {
             @Override
@@ -75,16 +72,12 @@ public class LineFactory implements ShapeFactory<Line> {
 
     @Override
     public ShapeDragProxy<Line> getDragProxy( final ShapeDragProxyCallback callback ) {
-        final Line proxy = new Line( 0 - ( SHAPE_SIZE_X / 2 ),
-                                     0 - ( SHAPE_SIZE_Y / 2 ),
-                                     SHAPE_SIZE_X / 2,
-                                     SHAPE_SIZE_Y / 2 );
-        setAttributes( proxy );
+        final Line line = makeLine();
 
         return new ShapeDragProxy<Line>() {
             @Override
             public Shape<Line> getDragShape() {
-                return proxy;
+                return line;
             }
 
             @Override
@@ -109,10 +102,7 @@ public class LineFactory implements ShapeFactory<Line> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresLine( 0 - ( SHAPE_SIZE_X / 2 ),
-                              0 - ( SHAPE_SIZE_Y / 2 ),
-                              SHAPE_SIZE_X / 2,
-                              SHAPE_SIZE_Y / 2 );
+        return new WiresLine( makeLine() );
     }
 
     @Override
@@ -120,11 +110,18 @@ public class LineFactory implements ShapeFactory<Line> {
         return shapeType instanceof WiresLine;
     }
 
-    private void setAttributes( final Line line ) {
+    private Line makeLine() {
+        final Line line = new Line( 0 - ( SHAPE_SIZE_X / 2 ),
+                                    0 - ( SHAPE_SIZE_Y / 2 ),
+                                    SHAPE_SIZE_X / 2,
+                                    SHAPE_SIZE_Y / 2 );
         line.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
                 .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
+                .setLineCap( LineCap.ROUND )
+                .setStrokeWidth( 3 )
                 .setDraggable( false );
+        return line;
     }
 
 }

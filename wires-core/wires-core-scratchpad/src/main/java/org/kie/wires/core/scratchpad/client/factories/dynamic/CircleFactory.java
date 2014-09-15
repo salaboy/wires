@@ -19,11 +19,11 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
+import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.categories.ShapeCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -38,8 +38,7 @@ public class CircleFactory implements ShapeFactory<Circle> {
 
     @Override
     public ShapeGlyph<Circle> getGlyph() {
-        final Circle circle = new Circle( SHAPE_RADIUS );
-        setAttributes( circle );
+        final Circle circle = makeCircle();
 
         return new ShapeGlyph<Circle>() {
             @Override
@@ -71,13 +70,12 @@ public class CircleFactory implements ShapeFactory<Circle> {
 
     @Override
     public ShapeDragProxy<Circle> getDragProxy( final ShapeDragProxyCallback callback ) {
-        final Circle proxy = new Circle( SHAPE_RADIUS );
-        setAttributes( proxy );
+        final Circle circle = makeCircle();
 
         return new ShapeDragProxy<Circle>() {
             @Override
             public Shape<Circle> getDragShape() {
-                return proxy;
+                return circle;
             }
 
             @Override
@@ -102,7 +100,7 @@ public class CircleFactory implements ShapeFactory<Circle> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresCircle( SHAPE_RADIUS );
+        return new WiresCircle( makeCircle() );
     }
 
     @Override
@@ -110,11 +108,13 @@ public class CircleFactory implements ShapeFactory<Circle> {
         return shapeType instanceof WiresCircle;
     }
 
-    private void setAttributes( final Circle circle ) {
+    private Circle makeCircle() {
+        final Circle circle = new Circle( SHAPE_RADIUS );
         circle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
                 .setFillColor( "#00ff00" )
                 .setDraggable( false );
+        return circle;
     }
 
 }

@@ -22,14 +22,14 @@ import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Arrow;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.shared.core.types.ArrowType;
-import org.kie.wires.core.api.magnets.MagnetManager;
-import org.kie.wires.core.client.util.GeometryUtil;
-import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.magnets.Magnet;
+import org.kie.wires.core.api.magnets.MagnetManager;
+import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.client.controlpoints.ConnectibleControlPoint;
+import org.kie.wires.core.client.util.GeometryUtil;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresArrow extends WiresBaseDynamicShape implements RequiresMagnetManager {
@@ -47,20 +47,21 @@ public class WiresArrow extends WiresBaseDynamicShape implements RequiresMagnetM
     private final ConnectibleControlPoint controlPoint1;
     private final ConnectibleControlPoint controlPoint2;
 
-    public WiresArrow( final double x1,
+    public WiresArrow( final Arrow shape ) {
+        this( shape,
+              shape.getStart().getX(),
+              shape.getStart().getY(),
+              shape.getEnd().getX(),
+              shape.getEnd().getY() );
+    }
+
+    public WiresArrow( final Arrow shape,
+                       final double x1,
                        final double y1,
                        final double x2,
                        final double y2 ) {
         id = UUID.uuid();
-        arrow = new Arrow( new Point2D( x1,
-                                        y1 ),
-                           new Point2D( x2,
-                                        y2 ),
-                           BASE_WIDTH,
-                           HEAD_WIDTH,
-                           ARROW_ANGLE,
-                           BASE_ANGLE,
-                           ArrowType.AT_END );
+        arrow = shape;
 
         bounding = new Arrow( new Point2D( x1,
                                            y1 ),

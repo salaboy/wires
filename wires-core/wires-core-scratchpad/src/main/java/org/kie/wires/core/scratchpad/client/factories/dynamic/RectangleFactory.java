@@ -19,11 +19,11 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
+import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.categories.ShapeCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -39,10 +39,7 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
 
     @Override
     public ShapeGlyph<Rectangle> getGlyph() {
-        final Rectangle rectangle = new Rectangle( SHAPE_SIZE_X,
-                                                   SHAPE_SIZE_Y,
-                                                   5 );
-        setAttributes( rectangle );
+        final Rectangle rectangle = makeRectangle();
 
         return new ShapeGlyph<Rectangle>() {
             @Override
@@ -74,15 +71,12 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
 
     @Override
     public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyCallback callback ) {
-        final Rectangle proxy = new Rectangle( SHAPE_SIZE_X,
-                                               SHAPE_SIZE_Y,
-                                               5 );
-        setAttributes( proxy );
+        final Rectangle rectangle = makeRectangle();
 
         return new ShapeDragProxy<Rectangle>() {
             @Override
             public Shape<Rectangle> getDragShape() {
-                return proxy;
+                return rectangle;
             }
 
             @Override
@@ -107,10 +101,7 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresRectangle( 0 - ( SHAPE_SIZE_X / 2 ),
-                                   0 - ( SHAPE_SIZE_Y / 2 ),
-                                   SHAPE_SIZE_X / 2,
-                                   SHAPE_SIZE_Y / 2 );
+        return new WiresRectangle( makeRectangle() );
     }
 
     @Override
@@ -118,13 +109,17 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
         return shapeType instanceof WiresRectangle;
     }
 
-    private void setAttributes( final Rectangle floatingShape ) {
-        floatingShape.setOffset( 0 - ( SHAPE_SIZE_X / 2 ),
-                                 0 - ( SHAPE_SIZE_Y / 2 ) )
+    private Rectangle makeRectangle() {
+        final Rectangle rectangle = new Rectangle( SHAPE_SIZE_X,
+                                                   SHAPE_SIZE_Y,
+                                                   5 );
+        rectangle.setOffset( 0 - ( SHAPE_SIZE_X / 2 ),
+                             0 - ( SHAPE_SIZE_Y / 2 ) )
                 .setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
                 .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
                 .setDraggable( false );
+        return rectangle;
     }
 
 }

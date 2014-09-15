@@ -19,7 +19,6 @@ import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
-import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresFixedCircle extends WiresBaseShape {
@@ -29,15 +28,11 @@ public class WiresFixedCircle extends WiresBaseShape {
     private Circle circle;
     private Circle bounding;
 
-    public WiresFixedCircle( final double radius ) {
+    public WiresFixedCircle( final Circle shape ) {
         id = UUID.uuid();
-        circle = new Circle( radius );
-        circle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE );
-        circle.setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE );
-        circle.setFillColor( "#ff0000" );
-        circle.setAlpha( 0.75 );
+        circle = shape;
 
-        bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
+        bounding = new Circle( circle.getRadius() + ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setVisible( false );
         bounding.setAlpha( 0.1 );
