@@ -16,7 +16,7 @@
 package org.kie.wires.core.api.factories;
 
 import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.api.categories.Category;
+import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 
 /**

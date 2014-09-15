@@ -3,65 +3,47 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>wires-bayesian-network</artifactId>
+    <artifactId>wires-core</artifactId>
     <groupId>org.kie</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>wires-bayesian-network-client</artifactId>
+  <artifactId>wires-core-scratchpad</artifactId>
 
-  <name>Wires :: Bayesian Network Client</name>
-  <description>Wires Bayesian Network Client</description>
+  <name>Wires :: Core Scratch Pad</name>
+  <description>Wires Core Scratch Pad</description>
 
   <dependencies>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>wires-core-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-    <!-- Wires -->
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>wires-core-client</artifactId>
-      <version>${wires-core.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>wires-core-scratchpad</artifactId>
-      <version>${wires-core.version}</version>
-    </dependency>
-
-    <!-- GWT and GWT Extensions -->
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-servlet</artifactId>
-      <scope>provided</scope>
-      <version>${gwt.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <scope>provided</scope>
       <version>${gwt.version}</version>
+      <scope>provided</scope>
     </dependency>
 
-    <!--URI Util -->
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${cdi-api.version}</version>
-      <!-- <scope>provided</scope> -->
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-all</artifactId>
+      <version>${uberfire.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.emitrom</groupId>
       <artifactId>lienzo-core</artifactId>
       <version>${lienzo.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>wires-bayesian-parser-backend</artifactId>
-      <version>${bayesian-api.version}</version>
     </dependency>
 
   </dependencies>
@@ -73,7 +55,7 @@
         <directory>src/main/java</directory>
       </resource>
       <!-- Include module descriptors from src/main/resources in order not to
-        break the Intellij GWT plug-in -->
+      break the Intellij GWT plug-in -->
       <resource>
         <directory>src/main/resources</directory>
       </resource>

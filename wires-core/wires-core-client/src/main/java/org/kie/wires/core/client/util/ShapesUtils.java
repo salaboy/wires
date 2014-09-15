@@ -2,7 +2,7 @@ package org.kie.wires.core.client.util;
 
 import java.util.Set;
 
-import org.kie.wires.core.api.categories.Category;
+import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.factories.ShapeFactory;
 
 public class ShapesUtils {

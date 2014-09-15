@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
+import org.kie.wires.core.api.controlpoints.ControlPoint;
+import org.kie.wires.core.api.controlpoints.HasControlPoints;
+import org.kie.wires.core.api.magnets.HasMagnets;
+import org.kie.wires.core.api.magnets.Magnet;
 
 /**
  * A Shape that can be re-sized and have connectors attached

@@ -12,12 +12,12 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.core.api.collision.CollisionManager;
-import org.kie.wires.core.api.collision.RequiresCollisionManager;
+import org.kie.wires.core.api.controlpoints.HasControlPoints;
+import org.kie.wires.core.api.magnets.HasMagnets;
+import org.kie.wires.core.api.magnets.Magnet;
+import org.kie.wires.core.api.magnets.MagnetManager;
+import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.selection.SelectionManager;
-import org.kie.wires.core.api.shapes.HasControlPoints;
-import org.kie.wires.core.api.shapes.HasMagnets;
-import org.kie.wires.core.api.shapes.Magnet;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.api.shapes.WiresShape;
 
@@ -25,7 +25,7 @@ import org.kie.wires.core.api.shapes.WiresShape;
  * This is the root Canvas provided by Wires
  */
 public class Canvas extends Composite implements SelectionManager,
-                                                 CollisionManager {
+                                                 MagnetManager {
 
     private LienzoPanel panel;
     private Layer canvasLayer;
@@ -82,8 +82,8 @@ public class Canvas extends Composite implements SelectionManager,
 
     public void addShape( final WiresBaseShape shape ) {
         shape.setSelectionManager( this );
-        if ( shape instanceof RequiresCollisionManager ) {
-            ( (RequiresCollisionManager) shape ).setCollisionManager( this );
+        if ( shape instanceof RequiresMagnetManager ) {
+            ( (RequiresMagnetManager) shape ).setMagnetManager( this );
         }
         canvasLayer.add( shape );
         shapesInCanvas.add( shape );
@@ -106,6 +106,16 @@ public class Canvas extends Composite implements SelectionManager,
         clearSelection();
         shapesInCanvas.clear();
         canvasLayer.draw();
+    }
+
+    @Override
+    public void hideAllMagnets() {
+        for ( WiresShape shape : getShapesInCanvas() ) {
+            if ( shape instanceof HasMagnets ) {
+                final HasMagnets mShape = (HasMagnets) shape;
+                mShape.hideMagnetPoints();
+            }
+        }
     }
 
     @Override

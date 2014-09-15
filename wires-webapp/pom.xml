@@ -48,6 +48,14 @@
       <version>${lienzo.version}</version>
     </dependency>
 
+    <!--Wires Scratch Pad dependencies-->
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>wires-core-scratchpad</artifactId>
+      <version>${wires-core.version}</version>
+    </dependency>
+
+    <!--Bayesian Network dependencies-->
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>wires-bayesian-parser-backend</artifactId>
@@ -190,6 +198,7 @@
             <compileSourcesArtifact>org.guvnor:guvnor-structure-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-core-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-core-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie:wires-core-scratchpad</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-bayesian-parser-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-bayesian-network-client</compileSourcesArtifact>
           </compileSourcesArtifacts>

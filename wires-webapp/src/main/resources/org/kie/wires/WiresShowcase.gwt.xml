@@ -13,6 +13,11 @@
   <!-- Wires dependencies -->
   <inherits name="com.emitrom.lienzo.Lienzo"/>
   <inherits name="org.kie.wires.core.WiresCoreClient"/>
+
+  <!-- Wires Scratch Pad dependencies -->
+  <inherits name="org.kie.wires.core.scratchpad.WiresCoreScratchPad"/>
+
+  <!-- Bayesian Network dependencies -->
   <inherits name="com.bayesian.parser.BayesianAPI"/>
   <inherits name="com.bayesian.network.BayesianNetworkClient"/>
 
