@@ -48,13 +48,18 @@ public class StencilLayerBuilder extends Composite {
         final ShapeGlyph glyph = factory.getGlyph();
         final Text description = drawDescription( factory.getShapeDescription() );
 
-        //Clicking on the Shape selects it
-        layerShape.addNodeMouseClickHandler( new NodeMouseClickHandler() {
+        //Clicking on the Shape selects it - Lienzo doesn't support bubbling click events down through
+        //overlapping items as it uses a bitmap SelectionLayer to detect mouse-clicks. Therefore we need
+        //to attach the handler to all elements
+        final NodeMouseClickHandler handler = new NodeMouseClickHandler() {
             @Override
             public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
                 shapeSelectedEvent.fire( new ShapeSelectedEvent( shape ) );
             }
-        } );
+        };
+        layerShape.addNodeMouseClickHandler( handler );
+        glyph.getShape().addNodeMouseClickHandler( handler );
+        description.addNodeMouseClickHandler( handler );
 
         //Build Layer Shape
         layerShape.setBounding( bounding );

@@ -15,6 +15,10 @@
  */
 package org.kie.wires.core.client.shapes.fixed;
 
+import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
+import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
+import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -22,21 +26,31 @@ import org.kie.wires.core.client.util.UUID;
 
 public class WiresFixedCircle extends WiresBaseShape {
 
-    private Circle circle;
+    private static final int BOUNDARY_SIZE = 10;
 
-    public WiresFixedCircle( final double x,
-                             final double y,
-                             final double radius ) {
+    private Circle circle;
+    private Circle bounding;
+
+    public WiresFixedCircle( final double radius ) {
         id = UUID.uuid();
         circle = new Circle( radius );
         circle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE );
         circle.setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE );
         circle.setFillColor( "#ff0000" );
         circle.setAlpha( 0.75 );
-        circle.setX( x );
-        circle.setY( y );
+
+        bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
+        bounding.setStrokeWidth( BOUNDARY_SIZE );
+        bounding.setVisible( false );
+        bounding.setAlpha( 0.1 );
 
         add( circle );
+        add( bounding );
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        bounding.setVisible( isSelected );
     }
 
     @Override
@@ -44,6 +58,20 @@ public class WiresFixedCircle extends WiresBaseShape {
                       final double cy ) {
         setX( cx );
         setY( cy );
+
+        addNodeMouseClickHandler( new NodeMouseClickHandler() {
+            @Override
+            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
+                selectionManager.selectShape( WiresFixedCircle.this );
+            }
+        } );
+
+        addNodeDragStartHandler( new NodeDragStartHandler() {
+            @Override
+            public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
+                selectionManager.deselectShape( WiresFixedCircle.this );
+            }
+        } );
     }
 
     @Override

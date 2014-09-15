@@ -9,27 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
-import org.kie.wires.core.api.selection.RequiresSelectionManager;
-import org.kie.wires.core.api.selection.SelectionManager;
 
 /**
  * A Shape that can be re-sized and have connectors attached
  */
 public abstract class WiresBaseDynamicShape extends WiresBaseShape implements HasMagnets,
-                                                                              HasControlPoints,
-                                                                              RequiresSelectionManager {
+                                                                              HasControlPoints {
 
-    protected SelectionManager selectionManager;
     protected List<ControlPoint> controlPoints = new ArrayList<ControlPoint>();
     protected List<Magnet> magnets = new ArrayList<Magnet>();
 
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
-
-    @Override
-    public void setSelectionManager( final SelectionManager manager ) {
-        this.selectionManager = manager;
-    }
 
     @Override
     public void addControlPoint( final ControlPoint cp ) {
@@ -81,8 +72,10 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
         final Layer layer = getLayer();
         if ( !magnets.isEmpty() && !showingMagnets ) {
             for ( Magnet m : magnets ) {
-                m.setOffset( getLocation() );
-                layer.add( m );
+                if ( m.isEnabled() ) {
+                    m.setOffset( getLocation() );
+                    layer.add( m );
+                }
             }
             showingMagnets = true;
             getLayer().draw();
@@ -94,7 +87,9 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
         final Layer layer = getLayer();
         if ( !magnets.isEmpty() && showingMagnets ) {
             for ( Magnet m : magnets ) {
-                layer.remove( m );
+                if ( m.isEnabled() ) {
+                    layer.remove( m );
+                }
             }
             showingMagnets = false;
             getLayer().draw();

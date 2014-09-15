@@ -79,6 +79,7 @@ public class WiresRectangle extends WiresBaseDynamicShape {
         bounding.setX( x1 - ( BOUNDARY_SIZE / 2 ) );
         bounding.setY( y1 - ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
+        bounding.setVisible( false );
         bounding.setAlpha( 0.1 );
 
         add( rectangle );
@@ -206,6 +207,11 @@ public class WiresRectangle extends WiresBaseDynamicShape {
         addControlPoint( controlPoint2 );
         addControlPoint( controlPoint3 );
         addControlPoint( controlPoint4 );
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        bounding.setVisible( isSelected );
     }
 
     @Override

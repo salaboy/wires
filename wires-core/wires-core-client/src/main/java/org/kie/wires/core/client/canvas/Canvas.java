@@ -14,12 +14,10 @@ import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.user.client.ui.Composite;
 import org.kie.wires.core.api.collision.CollisionManager;
 import org.kie.wires.core.api.collision.RequiresCollisionManager;
-import org.kie.wires.core.api.selection.RequiresSelectionManager;
 import org.kie.wires.core.api.selection.SelectionManager;
 import org.kie.wires.core.api.shapes.HasControlPoints;
 import org.kie.wires.core.api.shapes.HasMagnets;
 import org.kie.wires.core.api.shapes.Magnet;
-import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.api.shapes.WiresShape;
 
@@ -31,10 +29,8 @@ public class Canvas extends Composite implements SelectionManager,
 
     private LienzoPanel panel;
     private Layer canvasLayer;
-
     private List<WiresShape> shapesInCanvas = new ArrayList<WiresShape>();
     private WiresBaseShape selectedShape;
-
     private ProgressBar progressBar;
 
     @PostConstruct
@@ -85,9 +81,7 @@ public class Canvas extends Composite implements SelectionManager,
     }
 
     public void addShape( final WiresBaseShape shape ) {
-        if ( shape instanceof RequiresSelectionManager ) {
-            ( (RequiresSelectionManager) shape ).setSelectionManager( this );
-        }
+        shape.setSelectionManager( this );
         if ( shape instanceof RequiresCollisionManager ) {
             ( (RequiresCollisionManager) shape ).setCollisionManager( this );
         }
@@ -96,7 +90,7 @@ public class Canvas extends Composite implements SelectionManager,
         canvasLayer.draw();
     }
 
-    public void removeShape( final WiresBaseShape shape ) {
+    public void deleteShape( final WiresBaseShape shape ) {
         shape.destroy();
         deselectShape( shape );
         canvasLayer.remove( shape );
@@ -133,19 +127,21 @@ public class Canvas extends Composite implements SelectionManager,
                         double finalDistance = Double.MAX_VALUE;
                         final List<Magnet> magnets = mShape.getMagnets();
                         for ( Magnet magnet : magnets ) {
-                            magnet.deactivate();
+                            magnet.setActive( false );
 
-                            double deltaX = cx - magnet.getX() - magnet.getOffset().getX();
-                            double deltaY = cy - magnet.getY() - magnet.getOffset().getY();
-                            double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
+                            if ( magnet.isEnabled() ) {
+                                double deltaX = cx - magnet.getX() - magnet.getOffset().getX();
+                                double deltaY = cy - magnet.getY() - magnet.getOffset().getY();
+                                double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
 
-                            if ( finalDistance > distance ) {
-                                finalDistance = distance;
-                                selectedMagnet = magnet;
+                                if ( finalDistance > distance ) {
+                                    finalDistance = distance;
+                                    selectedMagnet = magnet;
+                                }
                             }
                         }
                         if ( selectedMagnet != null ) {
-                            selectedMagnet.activate();
+                            selectedMagnet.setActive( true );
                         }
 
                     } else {
@@ -162,6 +158,7 @@ public class Canvas extends Composite implements SelectionManager,
     public void clearSelection() {
         selectedShape = null;
         for ( WiresShape shape : getShapesInCanvas() ) {
+            shape.setSelected( false );
             if ( shape instanceof HasControlPoints ) {
                 ( (HasControlPoints) shape ).hideControlPoints();
             }
@@ -169,15 +166,21 @@ public class Canvas extends Composite implements SelectionManager,
                 ( (HasMagnets) shape ).hideMagnetPoints();
             }
         }
+        canvasLayer.draw();
     }
 
     @Override
     public void selectShape( final WiresBaseShape shape ) {
+        if ( shape == null ) {
+            return;
+        }
         clearSelection();
         selectedShape = shape;
+        selectedShape.setSelected( true );
         if ( shape instanceof HasControlPoints ) {
             ( (HasControlPoints) selectedShape ).showControlPoints();
         }
+        canvasLayer.draw();
     }
 
     @Override
@@ -185,13 +188,14 @@ public class Canvas extends Composite implements SelectionManager,
         if ( shape == null ) {
             return;
         }
+        selectedShape = null;
         if ( shape instanceof HasControlPoints ) {
             ( (HasControlPoints) shape ).hideControlPoints();
         }
         if ( shape instanceof HasMagnets ) {
             ( (HasMagnets) shape ).hideMagnetPoints();
         }
-        selectedShape = null;
+        canvasLayer.draw();
     }
 
     @Override

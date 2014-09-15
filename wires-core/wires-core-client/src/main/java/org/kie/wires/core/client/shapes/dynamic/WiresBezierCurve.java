@@ -25,6 +25,8 @@ import org.kie.wires.core.client.util.UUID;
 
 public class WiresBezierCurve extends WiresBaseDynamicShape {
 
+    private static final int BOUNDARY_SIZE = 10;
+
     private BezierCurve curve;
     private BezierCurve bounding;
 
@@ -56,6 +58,8 @@ public class WiresBezierCurve extends WiresBaseDynamicShape {
                                     controlY2,
                                     endX,
                                     endY );
+        bounding.setStrokeWidth( BOUNDARY_SIZE );
+        bounding.setVisible( false );
         bounding.setAlpha( 0.1 );
 
         add( curve );
@@ -63,6 +67,11 @@ public class WiresBezierCurve extends WiresBaseDynamicShape {
 
         magnets.clear();
         controlPoints.clear();
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        bounding.setVisible( isSelected );
     }
 
     @Override

@@ -50,6 +50,7 @@ public class WiresCircle extends WiresBaseDynamicShape {
 
         bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
+        bounding.setVisible( false );
         bounding.setAlpha( 0.1 );
 
         add( circle );
@@ -87,6 +88,11 @@ public class WiresCircle extends WiresBaseDynamicShape {
                                                  }
         );
         addControlPoint( controlPoint1 );
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        bounding.setVisible( isSelected );
     }
 
     @Override

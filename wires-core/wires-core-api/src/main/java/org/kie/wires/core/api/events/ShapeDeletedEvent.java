@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.shapes;
+package org.kie.wires.core.api.events;
 
-/**
- * Handler for when a ControlPoint is moved
- */
-public interface ControlPointMoveHandler {
+import org.kie.wires.core.api.shapes.WiresBaseShape;
 
-    /**
-     * ControlPoint has been moved to (x, y)
-     * @param x
-     * @param y
-     */
-    void onMove( final double x,
-                 final double y );
+public class ShapeDeletedEvent {
+
+    private WiresBaseShape shape;
+
+    public ShapeDeletedEvent( final WiresBaseShape shape ) {
+        this.shape = shape;
+    }
+
+    public WiresBaseShape getShape() {
+        return shape;
+    }
 
 }

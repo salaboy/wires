@@ -102,9 +102,7 @@ public class FixedCircleFactory implements ShapeFactory<Circle> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresFixedCircle( 0,
-                                     0,
-                                     SHAPE_RADIUS );
+        return new WiresFixedCircle( SHAPE_RADIUS );
     }
 
     @Override

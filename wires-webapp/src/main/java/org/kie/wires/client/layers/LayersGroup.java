@@ -33,7 +33,8 @@ public class LayersGroup extends Composite {
 
     private Layer layer;
     private LienzoPanel panel;
-    private List<LayerShape> shapes = new ArrayList<LayerShape>();
+    private List<LayerShape> stencils = new ArrayList<LayerShape>();
+    private List<WiresBaseShape> shapes = new ArrayList<WiresBaseShape>();
 
     @Inject
     private StencilLayerBuilder stencilBuilder;
@@ -50,12 +51,28 @@ public class LayersGroup extends Composite {
                           final ShapeFactory factory ) {
         final LayerShape stencil = stencilBuilder.build( shape,
                                                          factory );
-        shapes.add( stencil );
+        shapes.add( shape );
+        stencils.add( stencil );
 
         //Add LayerShape to the UI
         stencil.setX( 0 );
         stencil.setY( ( ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER + 5 ) * ( shapes.size() - 1 ) );
         layer.add( stencil );
+        layer.draw();
+    }
+
+    public void deleteShape( final WiresBaseShape shape ) {
+        //Remove from UI
+        final int index = shapes.indexOf( shape );
+        layer.remove( stencils.get( index ) );
+        shapes.remove( index );
+        stencils.remove( index );
+
+        int shapeCount = 0;
+        for ( LayerShape stencil : stencils ) {
+            stencil.setY( ( ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER + 5 ) * shapeCount );
+            shapeCount++;
+        }
         layer.draw();
     }
 

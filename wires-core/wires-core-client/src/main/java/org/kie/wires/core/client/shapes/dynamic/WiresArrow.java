@@ -15,8 +15,6 @@
  */
 package org.kie.wires.core.client.shapes.dynamic;
 
-import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
@@ -29,10 +27,8 @@ import org.kie.wires.core.api.collision.Geometry;
 import org.kie.wires.core.api.collision.RequiresCollisionManager;
 import org.kie.wires.core.api.shapes.ControlPoint;
 import org.kie.wires.core.api.shapes.ControlPointMoveHandler;
-import org.kie.wires.core.api.shapes.Magnet;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.client.collision.ConnectibleControlPoint;
-import org.kie.wires.core.client.collision.DefaultMagnet;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresArrow extends WiresBaseDynamicShape implements RequiresCollisionManager {
@@ -46,9 +42,6 @@ public class WiresArrow extends WiresBaseDynamicShape implements RequiresCollisi
 
     private final Arrow arrow;
     private final Arrow bounding;
-
-    private final Magnet magnet1;
-    private final Magnet magnet2;
 
     private final ControlPoint controlPoint1;
     private final ControlPoint controlPoint2;
@@ -78,18 +71,13 @@ public class WiresArrow extends WiresBaseDynamicShape implements RequiresCollisi
                               BASE_ANGLE,
                               ArrowType.AT_END );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
+        bounding.setVisible( false );
         bounding.setAlpha( 0.1 );
 
         add( arrow );
         add( bounding );
 
         magnets.clear();
-        magnet1 = new DefaultMagnet( x1,
-                                     y1 );
-        magnet2 = new DefaultMagnet( x2,
-                                     y2 );
-        addMagnet( magnet1 );
-        addMagnet( magnet2 );
 
         controlPoints.clear();
         controlPoint1 = new ConnectibleControlPoint( x1,
@@ -99,8 +87,6 @@ public class WiresArrow extends WiresBaseDynamicShape implements RequiresCollisi
                                                          @Override
                                                          public void onMove( final double x,
                                                                              final double y ) {
-                                                             magnet1.setX( x );
-                                                             magnet1.setY( y );
                                                              arrow.setStart( new Point2D( x,
                                                                                           y ) );
                                                              bounding.setStart( new Point2D( x,
@@ -116,8 +102,6 @@ public class WiresArrow extends WiresBaseDynamicShape implements RequiresCollisi
                                                          @Override
                                                          public void onMove( final double x,
                                                                              final double y ) {
-                                                             magnet2.setX( x );
-                                                             magnet2.setY( y );
                                                              arrow.setEnd( new Point2D( x,
                                                                                         y ) );
                                                              bounding.setEnd( new Point2D( x,
@@ -139,6 +123,11 @@ public class WiresArrow extends WiresBaseDynamicShape implements RequiresCollisi
     }
 
     @Override
+    public void setSelected( final boolean isSelected ) {
+        bounding.setVisible( isSelected );
+    }
+
+    @Override
     public void init( final double cx,
                       final double cy ) {
         setX( cx );
@@ -155,15 +144,6 @@ public class WiresArrow extends WiresBaseDynamicShape implements RequiresCollisi
             @Override
             public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
                 selectionManager.deselectShape( WiresArrow.this );
-            }
-        } );
-
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                magnet1.setOffset( getLocation() );
-                magnet2.setOffset( getLocation() );
-                getLayer().draw();
             }
         } );
     }

@@ -17,7 +17,16 @@ package org.kie.wires.core.api.shapes;
 
 public interface WiresShape {
 
+    /**
+     * Get UUID for Shape
+     * @return
+     */
     String getId();
+
+    /**
+     * Select the shape. Implementations may choose to change their appearance
+     */
+    void setSelected( final boolean isSelected );
 
     /**
      * Initialise a Shape

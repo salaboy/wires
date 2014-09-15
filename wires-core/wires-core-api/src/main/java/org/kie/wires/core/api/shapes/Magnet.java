@@ -24,14 +24,16 @@ public interface Magnet<T extends Node<T>> extends IPrimitive<T> {
 
     String getId();
 
+    void setEnabled( final boolean isEnabled );
+
+    boolean isEnabled();
+
     void attachControlPoint( final ControlPoint controlPoint );
 
     void detachControlPoint( final ControlPoint controlPoint );
 
     List<ControlPoint> getAttachedControlPoints();
 
-    void activate();
-
-    void deactivate();
+    void setActive( final boolean isActive );
 
 }

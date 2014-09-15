@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.api.events.ShapeAddedEvent;
+import org.kie.wires.core.api.events.ShapeDeletedEvent;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
@@ -89,6 +90,11 @@ public class LayersScreen extends Composite implements RequiresResize {
                                       factory );
             }
         }
+    }
+
+    public void onShapeDeleted( @Observes ShapeDeletedEvent shapeDeletedEvent ) {
+        final WiresBaseShape shape = shapeDeletedEvent.getShape();
+        layersGroup.deleteShape( shape );
     }
 
     public void onClear( @Observes ClearEvent event ) {

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.wires.core.api.events.ClearEvent;
 import org.kie.wires.core.api.events.ProgressEvent;
 import org.kie.wires.core.api.events.ShapeAddedEvent;
+import org.kie.wires.core.api.events.ShapeDeletedEvent;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
@@ -39,6 +40,9 @@ public class CanvasScreen extends Canvas {
     private Event<ShapeAddedEvent> shapeAddedEvent;
 
     @Inject
+    private Event<ShapeDeletedEvent> shapeDeletedEvent;
+
+    @Inject
     private ShapeFactoryCache factoriesCache;
 
     private Menus menus;
@@ -60,7 +64,7 @@ public class CanvasScreen extends Canvas {
                     @Override
                     public void execute() {
                         if ( isShapeSelected() ) {
-                            removeShape( getSelectedShape() );
+                            deleteShape( getSelectedShape() );
                         }
                     }
                 } )
@@ -162,13 +166,17 @@ public class CanvasScreen extends Canvas {
     }
 
     @Override
-    public void removeShape( final WiresBaseShape shape ) {
+    public void deleteShape( final WiresBaseShape shape ) {
         if ( Window.confirm( "Are you sure to remove the selected shape?" ) ) {
-            super.removeShape( shape );
-            menus.getItems().get( 0 ).setEnabled( getShapesInCanvas().size() > 0 );
-            menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
-            menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
+            shapeDeletedEvent.fire( new ShapeDeletedEvent( shape ) );
         }
+    }
+
+    public void onShapeDeleted( @Observes ShapeDeletedEvent event ) {
+        super.deleteShape( event.getShape() );
+        menus.getItems().get( 0 ).setEnabled( getShapesInCanvas().size() > 0 );
+        menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
     }
 
     public void progress( @Observes ProgressEvent event ) {

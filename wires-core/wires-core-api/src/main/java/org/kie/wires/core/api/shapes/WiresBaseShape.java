@@ -17,13 +17,17 @@ package org.kie.wires.core.api.shapes;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
+import org.kie.wires.core.api.selection.RequiresSelectionManager;
+import org.kie.wires.core.api.selection.SelectionManager;
 
 /**
  * A Fixed Shape that cannot be re-sized or have connectors attached
  */
-public abstract class WiresBaseShape extends Group implements WiresShape {
+public abstract class WiresBaseShape extends Group implements WiresShape,
+                                                              RequiresSelectionManager {
 
     protected String id;
+    protected SelectionManager selectionManager;
 
     public WiresBaseShape() {
         setDraggable( true );
@@ -32,6 +36,11 @@ public abstract class WiresBaseShape extends Group implements WiresShape {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public void setSelectionManager( final SelectionManager manager ) {
+        this.selectionManager = manager;
     }
 
     @Override

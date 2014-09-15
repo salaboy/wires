@@ -30,17 +30,20 @@ import org.kie.wires.core.api.shapes.Magnet;
  */
 public class ConnectibleControlPoint extends DefaultControlPoint implements RequiresCollisionManager {
 
+    private static final int MAGNET_ATTRACTION = 30;
+
     private Magnet selectedMagnet;
     private HasControlPoints shape;
+
     private CollisionManager collisionManager;
 
     public ConnectibleControlPoint( final double x,
                                     final double y,
                                     final HasControlPoints shape,
-                                    final ControlPointMoveHandler handler ) {
+                                    final ControlPointMoveHandler cpMoveHandler ) {
         super( x,
                y,
-               handler );
+               cpMoveHandler );
         this.shape = shape;
     }
 
@@ -77,7 +80,7 @@ public class ConnectibleControlPoint extends DefaultControlPoint implements Requ
                     double deltaX = ( getX() + getOffset().getX() ) - ( selectedMagnet.getX() + selectedMagnet.getOffset().getX() );
                     double deltaY = ( getY() + getOffset().getY() ) - ( selectedMagnet.getY() + selectedMagnet.getOffset().getY() );
                     double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
-                    if ( distance < 30 ) {
+                    if ( distance < MAGNET_ATTRACTION ) {
                         selectedMagnet.attachControlPoint( ConnectibleControlPoint.this );
                         final double x = selectedMagnet.getX() + selectedMagnet.getOffset().getX() - getOffset().getX();
                         final double y = selectedMagnet.getY() + selectedMagnet.getOffset().getY() - getOffset().getY();

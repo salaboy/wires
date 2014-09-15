@@ -23,6 +23,8 @@ public class DefaultMagnet extends Circle implements Magnet<Circle> {
     private final String id;
     private final List<ControlPoint> attachedControlPoints = new ArrayList<ControlPoint>();
 
+    private boolean isEnabled = true;
+
     public DefaultMagnet( final double x,
                           final double y ) {
         super( RADIUS );
@@ -41,6 +43,16 @@ public class DefaultMagnet extends Circle implements Magnet<Circle> {
     }
 
     @Override
+    public void setEnabled( final boolean isEnabled ) {
+        this.isEnabled = isEnabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    @Override
     public void attachControlPoint( final ControlPoint controlPoint ) {
         attachedControlPoints.add( controlPoint );
     }
@@ -56,13 +68,12 @@ public class DefaultMagnet extends Circle implements Magnet<Circle> {
     }
 
     @Override
-    public void activate() {
-        setFillColor( MAGNET_ACTIVE_RGB_FILL_SHAPE );
-    }
-
-    @Override
-    public void deactivate() {
-        setFillColor( MAGNET_RGB_FILL_SHAPE );
+    public void setActive( final boolean isActive ) {
+        if ( isActive ) {
+            setFillColor( MAGNET_ACTIVE_RGB_FILL_SHAPE );
+        } else {
+            setFillColor( MAGNET_RGB_FILL_SHAPE );
+        }
     }
 
     @Override

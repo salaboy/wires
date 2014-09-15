@@ -32,14 +32,14 @@ public class DefaultControlPoint extends Circle implements ControlPoint<Circle> 
     private static final int RADIUS = 6;
 
     private final String id;
-    private final ControlPointMoveHandler handler;
+    private final ControlPointMoveHandler cpMoveHandler;
 
     public DefaultControlPoint( final double x,
                                 final double y,
-                                final ControlPointMoveHandler handler ) {
+                                final ControlPointMoveHandler cpMoveHandler ) {
         super( RADIUS );
         this.id = UUID.uuid();
-        this.handler = handler;
+        this.cpMoveHandler = cpMoveHandler;
 
         setFillColor( CP_RGB_FILL_COLOR );
         setStrokeWidth( CP_RGB_STROKE_WIDTH_SHAPE );
@@ -47,7 +47,7 @@ public class DefaultControlPoint extends Circle implements ControlPoint<Circle> 
         setY( y );
         setDraggable( true );
 
-        setupHandlers( handler );
+        setupHandlers( cpMoveHandler );
     }
 
     @Override
@@ -57,16 +57,16 @@ public class DefaultControlPoint extends Circle implements ControlPoint<Circle> 
 
     @Override
     public ControlPointMoveHandler getHandler() {
-        return handler;
+        return cpMoveHandler;
     }
 
-    protected void setupHandlers( final ControlPointMoveHandler handler ) {
+    protected void setupHandlers( final ControlPointMoveHandler moveHandler ) {
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
 
             @Override
             public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                handler.onMove( DefaultControlPoint.this.getX(),
-                                DefaultControlPoint.this.getY() );
+                moveHandler.onMove( DefaultControlPoint.this.getX(),
+                                    DefaultControlPoint.this.getY() );
                 getLayer().draw();
             }
         } );

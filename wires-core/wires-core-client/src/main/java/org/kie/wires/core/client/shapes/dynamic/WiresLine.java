@@ -15,8 +15,6 @@
  */
 package org.kie.wires.core.client.shapes.dynamic;
 
-import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
@@ -28,21 +26,20 @@ import org.kie.wires.core.api.collision.Geometry;
 import org.kie.wires.core.api.collision.RequiresCollisionManager;
 import org.kie.wires.core.api.shapes.ControlPoint;
 import org.kie.wires.core.api.shapes.ControlPointMoveHandler;
-import org.kie.wires.core.api.shapes.Magnet;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.client.collision.ConnectibleControlPoint;
-import org.kie.wires.core.client.collision.DefaultMagnet;
 import org.kie.wires.core.client.util.UUID;
 
 public class WiresLine extends WiresBaseDynamicShape implements RequiresCollisionManager {
 
     private static final int BOUNDARY_SIZE = 10;
 
+    //We do not hide the boundary item for Lines as it makes selecting them very difficult
+    private static final double ALPHA_DESELECTED = 0.01;
+    private static final double ALPHA_SELECTED = 0.1;
+
     private final Line line;
     private final Line bounding;
-
-    private final Magnet magnet1;
-    private final Magnet magnet2;
 
     private final ControlPoint controlPoint1;
     private final ControlPoint controlPoint2;
@@ -64,20 +61,18 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresCollisio
                              x2,
                              y2 );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
-        bounding.setAlpha( 0.1 );
+        bounding.setAlpha( ALPHA_DESELECTED );
 
         add( line );
         add( bounding );
 
         magnets.clear();
-        magnet1 = new DefaultMagnet( x1,
-                                     y1 );
-        magnet2 = new DefaultMagnet( x2,
-                                     y2 );
-        addMagnet( magnet1 );
-        addMagnet( magnet2 );
 
         controlPoints.clear();
+        //We use ControlPointAttachedHandlers for Lines as they have both a Magnet and ControlPoint at the same position.
+        //When a ControlPoint is attached to a Magnet if we do not disable the Magnet at the same Position as the ControlPoint
+        //it is possible to connect another ControlPoint to the Magnet that is in the same position as the ControlPoint
+        //already attached to a Magnet that can lead to recursion between ControlPointMoveHandlers and Magnets.
         controlPoint1 = new ConnectibleControlPoint( x1,
                                                      y1,
                                                      this,
@@ -85,15 +80,12 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresCollisio
                                                          @Override
                                                          public void onMove( final double x,
                                                                              final double y ) {
-                                                             magnet1.setX( x );
-                                                             magnet1.setY( y );
                                                              line.getPoints().getPoint( 0 ).setX( x );
                                                              line.getPoints().getPoint( 0 ).setY( y );
                                                              bounding.getPoints().getPoint( 0 ).setX( x );
                                                              bounding.getPoints().getPoint( 0 ).setY( y );
                                                          }
-                                                     }
-        );
+                                                     } );
 
         controlPoint2 = new ConnectibleControlPoint( x2,
                                                      y2,
@@ -102,15 +94,12 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresCollisio
                                                          @Override
                                                          public void onMove( final double x,
                                                                              final double y ) {
-                                                             magnet2.setX( x );
-                                                             magnet2.setY( y );
                                                              line.getPoints().getPoint( 1 ).setX( x );
                                                              line.getPoints().getPoint( 1 ).setY( y );
                                                              bounding.getPoints().getPoint( 1 ).setX( x );
                                                              bounding.getPoints().getPoint( 1 ).setY( y );
                                                          }
-                                                     }
-        );
+                                                     } );
         addControlPoint( controlPoint1 );
         addControlPoint( controlPoint2 );
     }
@@ -122,6 +111,11 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresCollisio
                 ( (RequiresCollisionManager) cp ).setCollisionManager( manager );
             }
         }
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        bounding.setAlpha( isSelected ? ALPHA_SELECTED : ALPHA_DESELECTED );
     }
 
     @Override
@@ -141,15 +135,6 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresCollisio
             @Override
             public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
                 selectionManager.deselectShape( WiresLine.this );
-            }
-        } );
-
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                magnet1.setOffset( getLocation() );
-                magnet2.setOffset( getLocation() );
-                getLayer().draw();
             }
         } );
     }
