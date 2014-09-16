@@ -17,8 +17,6 @@ package org.kie.wires.core.scratchpad.client.shapes.dynamic;
 
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Arrow;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.shared.core.types.ArrowType;
@@ -154,21 +152,12 @@ public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
     @Override
     public void init( final double cx,
                       final double cy ) {
-        setX( cx );
-        setY( cy );
-
-        addNodeMouseClickHandler( new NodeMouseClickHandler() {
-            @Override
-            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.selectShape( WiresArrow.this );
-            }
-        } );
+        super.init( cx,
+                    cy );
 
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
             @Override
             public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                controlPoint1.setOffset( getLocation() );
-                controlPoint2.setOffset( getLocation() );
                 final Magnet boundMagnet1 = controlPoint1.getBoundMagnet();
                 final Magnet boundMagnet2 = controlPoint2.getBoundMagnet();
                 if ( boundMagnet1 != null ) {

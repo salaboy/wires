@@ -8,6 +8,8 @@ package org.kie.wires.core.api.shapes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
+import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.HasControlPoints;
@@ -98,6 +100,27 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
             showingMagnets = false;
             getLayer().draw();
         }
+    }
+
+    @Override
+    public void init( final double cx,
+                      final double cy ) {
+        super.init( cx,
+                    cy );
+
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                for ( Magnet m : getMagnets() ) {
+                    m.setOffset( getLocation() );
+                }
+                for ( ControlPoint cp : getControlPoints() ) {
+                    cp.setOffset( getLocation() );
+                }
+                getLayer().draw();
+            }
+        } );
+
     }
 
     @Override

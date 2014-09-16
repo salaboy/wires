@@ -2,26 +2,29 @@ package org.kie.wires.core.client.util;
 
 import java.util.Set;
 
-import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.factories.ShapeFactory;
+import org.kie.wires.core.api.factories.categories.Category;
 
 public class ShapesUtils {
-
-    public static final String LIGHT_BLUE = "#A8C6FA";
 
     // Control Points
     public static final String CP_RGB_FILL_COLOR = "#0000FF";
     public static final int CP_RGB_STROKE_WIDTH_SHAPE = 1;
 
     // Magnets
-    public static final String MAGNET_RGB_FILL_SHAPE = "#f2f2f2";
-    public static final String MAGNET_ACTIVE_RGB_FILL_SHAPE = "#00ff00";
+    public static final String MAGNET_RGB_FILL_SHAPE = "#F2F2F2";
+    public static final String MAGNET_ACTIVE_RGB_FILL_SHAPE = "#00FF00";
 
     // shapes
     public static final String RGB_STROKE_SHAPE = "#999999";
-    public static final String RGB_FILL_SHAPE = "#f2f2f2";
+    public static final String RGB_FILL_SHAPE = "#F2F2F2";
     public static final int RGB_STROKE_WIDTH_SHAPE = 2;
-    public static final int RGB_STROKE_WIDTH_LINE = 4;
+
+    //Containers
+    public static final String RGB_STROKE_CONTAINER = "#FF9900";
+    public static final String RGB_FILL_CONTAINER = "#FFFF66";
+    public static final int RGB_STROKE_WIDTH_CONTAINER = 4;
+    public static final double RGB_ALPHA_CONTAINER = 0.75;
 
     public static int getNumberOfShapesInCategory( final Category shapeCategory,
                                                    final Set<ShapeFactory> factories ) {

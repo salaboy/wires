@@ -14,6 +14,9 @@
       <b:AccordionGroup heading="Connectors">
         <g:SimplePanel ui:field="categoryConnectors"/>
       </b:AccordionGroup>
+      <b:AccordionGroup heading="Containers">
+        <g:SimplePanel ui:field="categoryContainers"/>
+      </b:AccordionGroup>
     </b:Accordion>
   </g:SimplePanel>
 

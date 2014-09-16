@@ -15,10 +15,6 @@
  */
 package org.kie.wires.core.scratchpad.client.shapes.dynamic;
 
-import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
@@ -94,32 +90,6 @@ public class WiresCircle extends WiresBaseDynamicShape {
         } else {
             remove( bounding );
         }
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        setX( cx );
-        setY( cy );
-
-        addNodeMouseClickHandler( new NodeMouseClickHandler() {
-            @Override
-            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.selectShape( WiresCircle.this );
-            }
-        } );
-
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                magnet1.setOffset( getLocation() );
-                magnet2.setOffset( getLocation() );
-                magnet3.setOffset( getLocation() );
-                magnet4.setOffset( getLocation() );
-                controlPoint1.setOffset( getLocation() );
-                getLayer().draw();
-            }
-        } );
     }
 
     @Override

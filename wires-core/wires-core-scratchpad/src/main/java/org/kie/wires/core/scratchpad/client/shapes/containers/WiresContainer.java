@@ -13,35 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.scratchpad.client.shapes.dynamic;
+package org.kie.wires.core.scratchpad.client.shapes.containers;
 
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
-import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
-import org.kie.wires.core.client.magnets.DefaultMagnet;
 import org.kie.wires.core.client.util.UUID;
 
-public class WiresRectangle extends WiresBaseDynamicShape {
+public class WiresContainer extends WiresBaseDynamicShape {
 
     private static final int BOUNDARY_SIZE = 10;
 
     private final Rectangle rectangle;
     private final Rectangle bounding;
 
-    private final Magnet magnet1;
-    private final Magnet magnet2;
-    private final Magnet magnet3;
-    private final Magnet magnet4;
-
     private final ControlPoint controlPoint1;
     private final ControlPoint controlPoint2;
     private final ControlPoint controlPoint3;
     private final ControlPoint controlPoint4;
 
-    public WiresRectangle( final Rectangle shape ) {
+    public WiresContainer( final Rectangle shape ) {
         this( shape,
               shape.getOffset().getX(),
               shape.getOffset().getY(),
@@ -49,19 +42,7 @@ public class WiresRectangle extends WiresBaseDynamicShape {
               shape.getOffset().getY() + shape.getHeight() );
     }
 
-    public WiresRectangle( final double x1,
-                           final double y1,
-                           final double x2,
-                           final double y2 ) {
-        this( new Rectangle( x2 - x1,
-                             y2 - y1 ),
-              x1,
-              y1,
-              x2,
-              y2 );
-    }
-
-    public WiresRectangle( final Rectangle shape,
+    public WiresContainer( final Rectangle shape,
                            final double x1,
                            final double y1,
                            final double x2,
@@ -88,19 +69,6 @@ public class WiresRectangle extends WiresBaseDynamicShape {
         add( rectangle );
 
         magnets.clear();
-        magnet1 = new DefaultMagnet( x1,
-                                     y1 + ( height / 2 ) );
-        magnet2 = new DefaultMagnet( x2,
-                                     y1 + ( height / 2 ) );
-        magnet3 = new DefaultMagnet( x1 + ( width / 2 ),
-                                     y1 );
-        magnet4 = new DefaultMagnet( x1 + ( width / 2 ),
-                                     y2 );
-        addMagnet( magnet1 );
-        addMagnet( magnet2 );
-        addMagnet( magnet3 );
-        addMagnet( magnet4 );
-
         controlPoints.clear();
         final double px1 = rectangle.getX();
         final double py1 = rectangle.getY();
@@ -120,12 +88,6 @@ public class WiresRectangle extends WiresBaseDynamicShape {
                                                          bounding.setY( y - ( BOUNDARY_SIZE / 2 ) );
                                                          bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
                                                          bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
-                                                         magnet1.setX( x );
-                                                         magnet1.setY( y + ( rectangle.getHeight() / 2 ) );
-                                                         magnet2.setY( y + ( rectangle.getHeight() / 2 ) );
-                                                         magnet3.setX( x + ( rectangle.getWidth() / 2 ) );
-                                                         magnet3.setY( y );
-                                                         magnet4.setX( x + ( rectangle.getWidth() / 2 ) );
                                                      }
                                                  }
         );
@@ -146,12 +108,6 @@ public class WiresRectangle extends WiresBaseDynamicShape {
                                                          bounding.setY( y - ( BOUNDARY_SIZE / 2 ) );
                                                          bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
                                                          bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
-                                                         magnet1.setY( y + ( rectangle.getHeight() / 2 ) );
-                                                         magnet2.setX( x );
-                                                         magnet2.setY( y + ( rectangle.getHeight() / 2 ) );
-                                                         magnet3.setX( x - ( rectangle.getWidth() / 2 ) );
-                                                         magnet3.setY( y );
-                                                         magnet4.setX( x - ( rectangle.getWidth() / 2 ) );
                                                      }
                                                  }
         );
@@ -172,12 +128,6 @@ public class WiresRectangle extends WiresBaseDynamicShape {
                                                          bounding.setX( x - ( BOUNDARY_SIZE / 2 ) );
                                                          bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
                                                          bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
-                                                         magnet1.setX( x );
-                                                         magnet1.setY( y - ( rectangle.getHeight() / 2 ) );
-                                                         magnet2.setY( y - ( rectangle.getHeight() / 2 ) );
-                                                         magnet3.setX( x + ( rectangle.getWidth() / 2 ) );
-                                                         magnet4.setX( x + ( rectangle.getWidth() / 2 ) );
-                                                         magnet4.setY( y );
                                                      }
                                                  }
         );
@@ -196,12 +146,6 @@ public class WiresRectangle extends WiresBaseDynamicShape {
                                                          rectangle.setHeight( controlPoint3.getY() - controlPoint1.getY() );
                                                          bounding.setWidth( rectangle.getWidth() + BOUNDARY_SIZE );
                                                          bounding.setHeight( rectangle.getHeight() + BOUNDARY_SIZE );
-                                                         magnet1.setY( y - ( rectangle.getHeight() / 2 ) );
-                                                         magnet2.setX( x );
-                                                         magnet2.setY( y - ( rectangle.getHeight() / 2 ) );
-                                                         magnet3.setX( x - ( rectangle.getWidth() / 2 ) );
-                                                         magnet4.setX( x - ( rectangle.getWidth() / 2 ) );
-                                                         magnet4.setY( y );
                                                      }
                                                  }
         );

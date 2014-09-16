@@ -15,6 +15,8 @@
  */
 package org.kie.wires.core.api.shapes;
 
+import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import org.kie.wires.core.api.selection.RequiresSelectionManager;
@@ -41,6 +43,20 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     @Override
     public void setSelectionManager( final SelectionManager manager ) {
         this.selectionManager = manager;
+    }
+
+    @Override
+    public void init( final double cx,
+                      final double cy ) {
+        setX( cx );
+        setY( cy );
+
+        addNodeMouseClickHandler( new NodeMouseClickHandler() {
+            @Override
+            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
+                selectionManager.selectShape( WiresBaseShape.this );
+            }
+        } );
     }
 
     @Override

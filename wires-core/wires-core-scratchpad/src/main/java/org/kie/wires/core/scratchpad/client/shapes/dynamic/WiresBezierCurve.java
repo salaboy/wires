@@ -17,8 +17,6 @@ package org.kie.wires.core.scratchpad.client.shapes.dynamic;
 
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.BezierCurve;
 import com.emitrom.lienzo.client.core.shape.Line;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
@@ -39,6 +37,7 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetMan
 
     //We do not hide the boundary item for Lines as it makes selecting them very difficult
     private static final double ALPHA_DESELECTED = 0.01;
+    private static final double ALPHA_SELECTED = 0.1;
 
     private final BezierCurve curve;
     private final BezierCurve bounding;
@@ -86,7 +85,6 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetMan
                                     endY );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setAlpha( ALPHA_DESELECTED );
-        bounding.setAlpha( 0.1 );
 
         controlLine1 = new Line( x,
                                  y,
@@ -212,31 +210,23 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetMan
         if ( isSelected ) {
             add( controlLine1 );
             add( controlLine2 );
+            bounding.setAlpha( ALPHA_SELECTED );
         } else {
             remove( controlLine1 );
             remove( controlLine2 );
+            bounding.setAlpha( ALPHA_DESELECTED );
         }
     }
 
     @Override
     public void init( final double cx,
                       final double cy ) {
-        setX( cx );
-        setY( cy );
-
-        addNodeMouseClickHandler( new NodeMouseClickHandler() {
-            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.selectShape( WiresBezierCurve.this );
-            }
-        } );
+        super.init( cx,
+                    cy );
 
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
             @Override
             public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                controlPoint1.setOffset( getLocation() );
-                controlPoint2.setOffset( getLocation() );
-                controlPoint3.setOffset( getLocation() );
-                controlPoint4.setOffset( getLocation() );
                 final Magnet boundMagnet1 = controlPoint1.getBoundMagnet();
                 final Magnet boundMagnet4 = controlPoint4.getBoundMagnet();
                 if ( boundMagnet1 != null ) {

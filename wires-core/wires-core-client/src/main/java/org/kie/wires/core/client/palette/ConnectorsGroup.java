@@ -15,65 +15,17 @@
  */
 package org.kie.wires.core.client.palette;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
-import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
-import com.google.gwt.user.client.ui.Composite;
+import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.client.factories.categories.ConnectorCategory;
-import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.client.factories.ShapeFactoryCache;
-import org.kie.wires.core.client.util.ShapeFactoryUtil;
-import org.kie.wires.core.client.util.ShapesUtils;
 
 @Dependent
-public class ConnectorsGroup extends Composite {
+public class ConnectorsGroup extends BaseGroup {
 
-    private Layer layer;
-    private LienzoPanel panel;
-
-    @Inject
-    private ShapeFactoryCache factoriesCache;
-
-    @Inject
-    private StencilPaletteBuilder stencilBuilder;
-
-    @PostConstruct
-    public void init() {
-        panel = new LienzoPanel( ShapeFactoryUtil.WIDTH_PANEL,
-                                 ShapesUtils.calculateHeight( ShapesUtils.getNumberOfShapesInCategory( ConnectorCategory.CATEGORY,
-                                                                                                       factoriesCache.getShapeFactories() ) ) );
-        layer = new Layer();
-        panel.getScene().add( layer );
-        initWidget( panel );
-
-        drawConnectors();
-    }
-
-    private void drawConnectors() {
-        //Get PaletteShape for each Connector Factory
-        final List<PaletteShape> shapes = new ArrayList<PaletteShape>();
-        for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
-            if ( factory.getCategory().equals( ConnectorCategory.CATEGORY ) ) {
-                shapes.add( stencilBuilder.build( panel,
-                                                  factory ) );
-            }
-        }
-
-        //Add PaletteShapes to the UI
-        int shapeCount = 1;
-        for ( PaletteShape shape : shapes ) {
-            shape.setX( PaletteLayoutUtilities.getX( shapeCount ) );
-            shape.setY( PaletteLayoutUtilities.getY( shapeCount ) );
-            layer.add( shape );
-            shapeCount++;
-        }
-
-        layer.draw();
+    @Override
+    public Category getCategory() {
+        return ConnectorCategory.CATEGORY;
     }
 
 }

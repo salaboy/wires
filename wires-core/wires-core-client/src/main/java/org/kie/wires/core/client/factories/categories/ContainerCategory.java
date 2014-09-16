@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.client.palette;
-
-import javax.enterprise.context.Dependent;
+package org.kie.wires.core.client.factories.categories;
 
 import org.kie.wires.core.api.factories.categories.Category;
-import org.kie.wires.core.client.factories.categories.FixedShapeCategory;
 
-@Dependent
-public class FixedShapesGroup extends BaseGroup {
+public class ContainerCategory extends Category {
 
-    @Override
-    public Category getCategory() {
-        return FixedShapeCategory.CATEGORY;
+    public static final ContainerCategory CATEGORY = new ContainerCategory();
+
+    private ContainerCategory() {
+        super( "Containers" );
     }
 
 }

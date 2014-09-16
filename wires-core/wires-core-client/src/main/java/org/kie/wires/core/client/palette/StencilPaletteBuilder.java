@@ -36,21 +36,26 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
+import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
 @ApplicationScoped
 public class StencilPaletteBuilder extends Composite {
 
     private static final int ZINDEX = Integer.MAX_VALUE;
-    private static final int GLYPH_WIDTH = 45;
-    private static final int GLYPH_HEIGHT = 45;
+    private static final int GLYPH_WIDTH = 65;
+    private static final int GLYPH_HEIGHT = 65;
 
     @Inject
     private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
+
+    @Inject
+    private Event<ShapeDragPreviewEvent> shapeDragPreviewEvent;
 
     public PaletteShape build( final LienzoPanel dragProxyParentPanel,
                                final ShapeFactory factory ) {
@@ -60,7 +65,7 @@ public class StencilPaletteBuilder extends Composite {
         final Text description = drawDescription( factory.getShapeDescription() );
 
         //Callback is invoked when the drag operation ends
-        final ShapeDragProxyCallback callback = new ShapeDragProxyCallback() {
+        final ShapeDragProxyCallback dragCompleteCallback = new ShapeDragProxyCallback() {
             @Override
             public void callback( final double x,
                                   final double y ) {
@@ -70,8 +75,20 @@ public class StencilPaletteBuilder extends Composite {
             }
         };
 
+        //Callback is invoked during the drag operation
+        final WiresBaseShape shape = factory.getShape();
+        final ShapeDragProxyCallback dragPreviewCallback = new ShapeDragProxyCallback() {
+            @Override
+            public void callback( final double x,
+                                  final double y ) {
+                shapeDragPreviewEvent.fire( new ShapeDragPreviewEvent( shape,
+                                                                       x,
+                                                                       y ) );
+            }
+        };
+
         //Attach handles for drag operation
-        final ShapeDragProxy dragProxy = factory.getDragProxy( callback );
+        final ShapeDragProxy dragProxy = factory.getDragProxy( dragCompleteCallback );
         addBoundingHandlers( dragProxyParentPanel,
                              dragProxy,
                              bounding );
@@ -127,7 +144,7 @@ public class StencilPaletteBuilder extends Composite {
         text.setFillColor( ShapeFactoryUtil.RGB_TEXT_DESCRIPTION );
         text.setTextBaseLine( TextBaseLine.MIDDLE );
         text.setX( 5 );
-        text.setY( 60 );
+        text.setY( 85 );
         return text;
     }
 

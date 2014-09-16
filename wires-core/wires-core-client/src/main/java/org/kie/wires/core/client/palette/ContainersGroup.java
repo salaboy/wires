@@ -18,14 +18,14 @@ package org.kie.wires.core.client.palette;
 import javax.enterprise.context.Dependent;
 
 import org.kie.wires.core.api.factories.categories.Category;
-import org.kie.wires.core.client.factories.categories.FixedShapeCategory;
+import org.kie.wires.core.client.factories.categories.ContainerCategory;
 
 @Dependent
-public class FixedShapesGroup extends BaseGroup {
+public class ContainersGroup extends BaseGroup {
 
     @Override
     public Category getCategory() {
-        return FixedShapeCategory.CATEGORY;
+        return ContainerCategory.CATEGORY;
     }
 
 }

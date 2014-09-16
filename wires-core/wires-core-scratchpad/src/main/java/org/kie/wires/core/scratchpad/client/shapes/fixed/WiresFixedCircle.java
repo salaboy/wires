@@ -15,8 +15,6 @@
  */
 package org.kie.wires.core.scratchpad.client.shapes.fixed;
 
-import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
-import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.UUID;
@@ -46,20 +44,6 @@ public class WiresFixedCircle extends WiresBaseShape {
         } else {
             remove( bounding );
         }
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        setX( cx );
-        setY( cy );
-
-        addNodeMouseClickHandler( new NodeMouseClickHandler() {
-            @Override
-            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.selectShape( WiresFixedCircle.this );
-            }
-        } );
     }
 
     @Override

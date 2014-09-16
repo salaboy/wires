@@ -50,6 +50,9 @@ public class PaletteScreen extends Composite implements RequiresResize {
     @UiField
     public SimplePanel categoryConnectors;
 
+    @UiField
+    public SimplePanel categoryContainers;
+
     @Inject
     private ShapesGroup shapesGroup;
 
@@ -59,12 +62,16 @@ public class PaletteScreen extends Composite implements RequiresResize {
     @Inject
     private ConnectorsGroup connectorsGroup;
 
+    @Inject
+    private ContainersGroup containersGroup;
+
     @PostConstruct
     public void init() {
         initWidget( uiBinder.createAndBindUi( this ) );
         categoryShapes.setWidget( shapesGroup );
         categoryFixedShapes.setWidget( fixedShapesGroup );
         categoryConnectors.setWidget( connectorsGroup );
+        categoryContainers.setWidget( containersGroup );
     }
 
     @WorkbenchPartTitle
