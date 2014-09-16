@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.magnets;
+package org.kie.wires.core.api.containers;
 
-import java.util.List;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.api.shapes.WiresShape;
 
-import com.emitrom.lienzo.client.core.shape.IPrimitive;
-import com.emitrom.lienzo.client.core.shape.Node;
-import org.kie.wires.core.api.controlpoints.ControlPoint;
+public interface WiresContainer extends WiresShape {
 
-public interface Magnet<T extends Node<T>> extends IPrimitive<T> {
+    void attachShape( final WiresBaseShape shape );
 
-    String getId();
-
-    void attachControlPoint( final ControlPoint controlPoint );
-
-    void detachControlPoint( final ControlPoint controlPoint );
-
-    List<ControlPoint> getAttachedControlPoints();
-
-    void setActive( final boolean isActive );
+    void detachShape( final WiresBaseShape shape );
 
 }

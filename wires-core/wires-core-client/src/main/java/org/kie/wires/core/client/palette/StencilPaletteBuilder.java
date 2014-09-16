@@ -38,7 +38,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
@@ -65,7 +66,7 @@ public class StencilPaletteBuilder extends Composite {
         final Text description = drawDescription( factory.getShapeDescription() );
 
         //Callback is invoked when the drag operation ends
-        final ShapeDragProxyCallback dragCompleteCallback = new ShapeDragProxyCallback() {
+        final ShapeDragProxyCompleteCallback dragCompleteCallback = new ShapeDragProxyCompleteCallback() {
             @Override
             public void callback( final double x,
                                   final double y ) {
@@ -77,7 +78,7 @@ public class StencilPaletteBuilder extends Composite {
 
         //Callback is invoked during the drag operation
         final WiresBaseShape shape = factory.getShape();
-        final ShapeDragProxyCallback dragPreviewCallback = new ShapeDragProxyCallback() {
+        final ShapeDragProxyPreviewCallback dragPreviewCallback = new ShapeDragProxyPreviewCallback() {
             @Override
             public void callback( final double x,
                                   final double y ) {
@@ -88,7 +89,8 @@ public class StencilPaletteBuilder extends Composite {
         };
 
         //Attach handles for drag operation
-        final ShapeDragProxy dragProxy = factory.getDragProxy( dragCompleteCallback );
+        final ShapeDragProxy dragProxy = factory.getDragProxy( dragPreviewCallback,
+                                                               dragCompleteCallback );
         addBoundingHandlers( dragProxyParentPanel,
                              dragProxy,
                              bounding );
@@ -208,6 +210,8 @@ public class StencilPaletteBuilder extends Composite {
                                Style.Unit.PX );
                 style.setTop( mouseMoveEvent.getY() - ( floatingPanel.getHeight() / 2 ),
                               Style.Unit.PX );
+                proxy.onDragPreview( mouseMoveEvent.getX(),
+                                     mouseMoveEvent.getY() );
             }
         }, MouseMoveEvent.getType() );
 
@@ -219,8 +223,8 @@ public class StencilPaletteBuilder extends Composite {
                 handlerRegs[ 0 ].removeHandler();
                 handlerRegs[ 1 ].removeHandler();
                 RootPanel.get().remove( floatingPanel );
-                proxy.onDragEnd( mouseUpEvent.getX(),
-                                 mouseUpEvent.getY() );
+                proxy.onDragComplete( mouseUpEvent.getX(),
+                                      mouseUpEvent.getY() );
             }
         }, MouseUpEvent.getType() );
     }

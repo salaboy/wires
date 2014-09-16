@@ -20,7 +20,8 @@ import javax.enterprise.context.ApplicationScoped;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
@@ -70,7 +71,8 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
     }
 
     @Override
-    public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyCallback callback ) {
+    public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
+                                                   final ShapeDragProxyCompleteCallback dragEndCallBack ) {
         final Rectangle rectangle = makeRectangle();
 
         return new ShapeDragProxy<Rectangle>() {
@@ -80,10 +82,17 @@ public class RectangleFactory implements ShapeFactory<Rectangle> {
             }
 
             @Override
-            public void onDragEnd( final double x,
-                                   final double y ) {
-                callback.callback( x,
-                                   y );
+            public void onDragPreview( final double x,
+                                       final double y ) {
+                dragPreviewCallback.callback( x,
+                                              y );
+            }
+
+            @Override
+            public void onDragComplete( final double x,
+                                        final double y ) {
+                dragEndCallBack.callback( x,
+                                          y );
             }
 
             @Override

@@ -23,8 +23,6 @@ public class DefaultMagnet extends Circle implements Magnet<Circle> {
     private final String id;
     private final List<ControlPoint> attachedControlPoints = new ArrayList<ControlPoint>();
 
-    private boolean isEnabled = true;
-
     public DefaultMagnet( final double x,
                           final double y ) {
         super( RADIUS );
@@ -40,16 +38,6 @@ public class DefaultMagnet extends Circle implements Magnet<Circle> {
     @Override
     public String getId() {
         return id;
-    }
-
-    @Override
-    public void setEnabled( final boolean isEnabled ) {
-        this.isEnabled = isEnabled;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return isEnabled;
     }
 
     @Override

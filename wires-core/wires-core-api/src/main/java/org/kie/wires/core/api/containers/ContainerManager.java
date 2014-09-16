@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.magnets;
+package org.kie.wires.core.api.containers;
 
 /**
- * Marker interface indicating an element needs a MagnetManager
+ * Manager for Containers and related operations
  */
-public interface RequiresMagnetManager {
+public interface ContainerManager {
 
-    void setMagnetManager( final MagnetManager magnetManager );
+    /**
+     * Get the Container that contains the given Canvas co-ordinate
+     * @param cx Canvas X co-ordinate
+     * @param cy Canvas Y co-ordinate
+     * @return A Container or null if the point was not within a Container
+     */
+    WiresContainer getContainer( final double cx,
+                                 final double cy );
 
 }

@@ -15,16 +15,27 @@
  */
 package org.kie.wires.core.scratchpad.client.shapes.fixed;
 
+import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
+import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
+import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
+import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
+import org.kie.wires.core.api.containers.ContainerManager;
+import org.kie.wires.core.api.containers.RequiresContainerManager;
+import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.UUID;
 
-public class WiresFixedCircle extends WiresBaseShape {
+public class WiresFixedCircle extends WiresBaseShape implements RequiresContainerManager {
 
     private static final int BOUNDARY_SIZE = 10;
 
     private Circle circle;
     private Circle bounding;
+
+    private WiresContainer boundContainer;
+
+    protected ContainerManager containerManager;
 
     public WiresFixedCircle( final Circle shape ) {
         id = UUID.uuid();
@@ -38,12 +49,50 @@ public class WiresFixedCircle extends WiresBaseShape {
     }
 
     @Override
+    public void setContainerManager( final ContainerManager containerManager ) {
+        this.containerManager = containerManager;
+    }
+
+    @Override
     public void setSelected( final boolean isSelected ) {
         if ( isSelected ) {
             add( bounding );
         } else {
             remove( bounding );
         }
+    }
+
+    @Override
+    public void init( double cx,
+                      double cy ) {
+        super.init( cx,
+                    cy );
+
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                boundContainer = containerManager.getContainer( WiresFixedCircle.this.getX(),
+                                                                WiresFixedCircle.this.getY() );
+                if ( boundContainer != null ) {
+                    boundContainer.detachShape( WiresFixedCircle.this );
+                }
+
+                getLayer().draw();
+            }
+        } );
+
+        addNodeDragEndHandler( new NodeDragEndHandler() {
+
+            @Override
+            public void onNodeDragEnd( final NodeDragEndEvent nodeDragEndEvent ) {
+                if ( boundContainer != null ) {
+                    boundContainer.attachShape( WiresFixedCircle.this );
+                }
+
+                getLayer().draw();
+            }
+        } );
     }
 
     @Override

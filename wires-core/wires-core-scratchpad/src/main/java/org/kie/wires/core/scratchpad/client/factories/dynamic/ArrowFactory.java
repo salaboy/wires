@@ -22,7 +22,8 @@ import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.shared.core.types.ArrowType;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
@@ -77,7 +78,8 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
     }
 
     @Override
-    public ShapeDragProxy<Arrow> getDragProxy( final ShapeDragProxyCallback callback ) {
+    public ShapeDragProxy<Arrow> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
+                                               final ShapeDragProxyCompleteCallback dragEndCallBack ) {
         final Arrow arrow = makeArrow();
 
         return new ShapeDragProxy<Arrow>() {
@@ -87,10 +89,17 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
             }
 
             @Override
-            public void onDragEnd( final double x,
-                                   final double y ) {
-                callback.callback( x,
-                                   y );
+            public void onDragPreview( final double x,
+                                       final double y ) {
+                dragPreviewCallback.callback( x,
+                                              y );
+            }
+
+            @Override
+            public void onDragComplete( final double x,
+                                        final double y ) {
+                dragEndCallBack.callback( x,
+                                          y );
             }
 
             @Override

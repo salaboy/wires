@@ -32,10 +32,12 @@ public interface ShapeFactory<T extends Shape<T>> {
 
     /**
      * Get a proxy used during and at the end of a drag operation
-     * @param callback
+     * @param dragPreviewCallback
+     * @param dragEndCallBack
      * @return
      */
-    ShapeDragProxy<T> getDragProxy( final ShapeDragProxyCallback callback );
+    ShapeDragProxy<T> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
+                                    final ShapeDragProxyCompleteCallback dragEndCallBack );
 
     /**
      * Get a Shape to be created on the Canvas (usually at the end of a drag operation)

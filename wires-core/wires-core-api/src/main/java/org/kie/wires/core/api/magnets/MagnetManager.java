@@ -22,10 +22,10 @@ import org.kie.wires.core.api.shapes.WiresShape;
  */
 public interface MagnetManager {
 
-    public void hideAllMagnets();
+    void hideAllMagnets();
 
-    public Magnet getMagnet( final WiresShape shapeActive,
-                             final double cx,
-                             final double cy );
+    Magnet getMagnet( final WiresShape shapeActive,
+                      final double cx,
+                      final double cy );
 
 }

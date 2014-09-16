@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 JBoss Inc
+ * Copyright 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.factories;
+package org.kie.wires.core.scratchpad.client.canvas;
 
-/**
- * Callback for when a drag event completes
- */
-public interface ShapeDragProxyCallback {
+import org.kie.wires.core.api.factories.ShapeDropContext;
+import org.kie.wires.core.api.containers.WiresContainer;
 
-    /**
-     * Callback invoked when the drag operation ends
-     * @param x
-     * @param y
-     */
-    void callback( final double x,
-                   final double y );
+public class DefaultShapeDropContext implements ShapeDropContext {
+
+    private WiresContainer container;
+
+    @Override
+    public WiresContainer getContainer() {
+        return container;
+    }
+
+    @Override
+    public void setContainer( final WiresContainer context ) {
+        this.container = context;
+    }
 
 }

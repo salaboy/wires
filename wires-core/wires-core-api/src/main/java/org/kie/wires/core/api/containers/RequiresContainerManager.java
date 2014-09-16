@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.magnets;
+package org.kie.wires.core.api.containers;
 
 /**
- * Marker interface indicating an element needs a MagnetManager
+ * Marker interface indicating an element needs a ContainerManager
  */
-public interface RequiresMagnetManager {
+public interface RequiresContainerManager {
 
-    void setMagnetManager( final MagnetManager magnetManager );
+    void setContainerManager( final ContainerManager containerManager );
 
 }

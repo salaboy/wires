@@ -20,7 +20,6 @@ import org.kie.wires.core.api.shapes.WiresBaseShape;
 public class ShapeDragPreviewEvent {
 
     private WiresBaseShape shape;
-
     private double x;
     private double y;
 

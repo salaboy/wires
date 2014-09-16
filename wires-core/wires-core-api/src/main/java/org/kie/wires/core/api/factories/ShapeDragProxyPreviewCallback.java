@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.magnets;
+package org.kie.wires.core.api.factories;
 
 /**
- * Marker interface indicating an element needs a MagnetManager
+ * Callback for when a drag event completes
  */
-public interface RequiresMagnetManager {
+public interface ShapeDragProxyPreviewCallback {
 
-    void setMagnetManager( final MagnetManager magnetManager );
+    /**
+     * Callback invoked when the drag operation ends
+     * @param x
+     * @param y
+     */
+    void callback( final double x,
+                   final double y );
 
 }

@@ -29,12 +29,20 @@ public interface ShapeDragProxy<T extends Shape<T>> {
     Shape<T> getDragShape();
 
     /**
-     * Called when the drag operation ends
+     * Called during the drag operation
      * @param x
      * @param y
      */
-    void onDragEnd( final double x,
-                    final double y );
+    void onDragPreview( final double x,
+                        final double y );
+
+    /**
+     * Called when the drag operation completes
+     * @param x
+     * @param y
+     */
+    void onDragComplete( final double x,
+                         final double y );
 
     /**
      * Height of proxy used to ensure proxy is centered around mouse pointer position

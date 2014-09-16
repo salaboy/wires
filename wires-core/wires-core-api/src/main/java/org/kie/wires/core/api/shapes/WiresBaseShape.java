@@ -57,6 +57,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                 selectionManager.selectShape( WiresBaseShape.this );
             }
         } );
+
     }
 
     @Override

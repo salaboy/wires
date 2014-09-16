@@ -20,17 +20,18 @@ import javax.enterprise.context.ApplicationScoped;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.categories.ContainerCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
-import org.kie.wires.core.scratchpad.client.shapes.containers.WiresContainer;
+import org.kie.wires.core.scratchpad.client.shapes.containers.WiresDefaultContainer;
 
 @ApplicationScoped
-public class ContainerFactory implements ShapeFactory<Rectangle> {
+public class DefaultContainerFactory implements ShapeFactory<Rectangle> {
 
     private static final String DESCRIPTION = "Container";
 
@@ -70,7 +71,8 @@ public class ContainerFactory implements ShapeFactory<Rectangle> {
     }
 
     @Override
-    public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyCallback callback ) {
+    public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
+                                                   final ShapeDragProxyCompleteCallback dragEndCallBack ) {
         final Rectangle rectangle = makeRectangle();
 
         return new ShapeDragProxy<Rectangle>() {
@@ -80,10 +82,17 @@ public class ContainerFactory implements ShapeFactory<Rectangle> {
             }
 
             @Override
-            public void onDragEnd( final double x,
-                                   final double y ) {
-                callback.callback( x,
-                                   y );
+            public void onDragPreview( final double x,
+                                       final double y ) {
+                dragPreviewCallback.callback( x,
+                                              y );
+            }
+
+            @Override
+            public void onDragComplete( final double x,
+                                        final double y ) {
+                dragEndCallBack.callback( x,
+                                          y );
             }
 
             @Override
@@ -101,12 +110,12 @@ public class ContainerFactory implements ShapeFactory<Rectangle> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresContainer( makeRectangle() );
+        return new WiresDefaultContainer( makeRectangle() );
     }
 
     @Override
     public boolean builds( final WiresBaseShape shapeType ) {
-        return shapeType instanceof WiresContainer;
+        return shapeType instanceof WiresDefaultContainer;
     }
 
     private Rectangle makeRectangle() {

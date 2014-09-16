@@ -12,6 +12,9 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.user.client.ui.Composite;
+import org.kie.wires.core.api.containers.ContainerManager;
+import org.kie.wires.core.api.containers.RequiresContainerManager;
+import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.controlpoints.HasControlPoints;
 import org.kie.wires.core.api.magnets.HasMagnets;
 import org.kie.wires.core.api.magnets.Magnet;
@@ -25,13 +28,15 @@ import org.kie.wires.core.api.shapes.WiresShape;
  * This is the root Canvas provided by Wires
  */
 public class Canvas extends Composite implements SelectionManager,
-                                                 MagnetManager {
+                                                 MagnetManager,
+                                                 ContainerManager {
 
     private LienzoPanel panel;
-    private Layer canvasLayer;
     private List<WiresShape> shapesInCanvas = new ArrayList<WiresShape>();
     private WiresBaseShape selectedShape;
     private ProgressBar progressBar;
+
+    protected Layer canvasLayer;
 
     @PostConstruct
     public void init() {
@@ -85,6 +90,9 @@ public class Canvas extends Composite implements SelectionManager,
         if ( shape instanceof RequiresMagnetManager ) {
             ( (RequiresMagnetManager) shape ).setMagnetManager( this );
         }
+        if ( shape instanceof RequiresContainerManager ) {
+            ( (RequiresContainerManager) shape ).setContainerManager( this );
+        }
         canvasLayer.add( shape );
         shapesInCanvas.add( shape );
         canvasLayer.draw();
@@ -106,62 +114,6 @@ public class Canvas extends Composite implements SelectionManager,
         clearSelection();
         shapesInCanvas.clear();
         canvasLayer.draw();
-    }
-
-    @Override
-    public void hideAllMagnets() {
-        for ( WiresShape shape : getShapesInCanvas() ) {
-            if ( shape instanceof HasMagnets ) {
-                final HasMagnets mShape = (HasMagnets) shape;
-                mShape.hideMagnetPoints();
-            }
-        }
-    }
-
-    @Override
-    public Magnet getMagnet( final WiresShape activeShape,
-                             final double cx,
-                             final double cy ) {
-        if ( activeShape == null ) {
-            return null;
-        }
-
-        Magnet selectedMagnet = null;
-        for ( WiresShape shape : getShapesInCanvas() ) {
-            if ( !shape.getId().equals( activeShape.getId() ) ) {
-                if ( shape instanceof HasMagnets ) {
-                    final HasMagnets mShape = (HasMagnets) shape;
-                    if ( shape.contains( cx,
-                                         cy ) ) {
-                        mShape.showMagnetsPoints();
-                        double finalDistance = Double.MAX_VALUE;
-                        final List<Magnet> magnets = mShape.getMagnets();
-                        for ( Magnet magnet : magnets ) {
-                            magnet.setActive( false );
-
-                            if ( magnet.isEnabled() ) {
-                                double deltaX = cx - magnet.getX() - magnet.getOffset().getX();
-                                double deltaY = cy - magnet.getY() - magnet.getOffset().getY();
-                                double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
-
-                                if ( finalDistance > distance ) {
-                                    finalDistance = distance;
-                                    selectedMagnet = magnet;
-                                }
-                            }
-                        }
-                        if ( selectedMagnet != null ) {
-                            selectedMagnet.setActive( true );
-                        }
-
-                    } else {
-                        mShape.hideMagnetPoints();
-                    }
-                }
-            }
-        }
-
-        return selectedMagnet;
     }
 
     @Override
@@ -216,6 +168,78 @@ public class Canvas extends Composite implements SelectionManager,
     @Override
     public WiresBaseShape getSelectedShape() {
         return selectedShape;
+    }
+
+    @Override
+    public void hideAllMagnets() {
+        for ( WiresShape shape : getShapesInCanvas() ) {
+            if ( shape instanceof HasMagnets ) {
+                final HasMagnets mShape = (HasMagnets) shape;
+                mShape.hideMagnetPoints();
+            }
+        }
+    }
+
+    @Override
+    public Magnet getMagnet( final WiresShape activeShape,
+                             final double cx,
+                             final double cy ) {
+        if ( activeShape == null ) {
+            return null;
+        }
+
+        Magnet selectedMagnet = null;
+        for ( WiresShape shape : getShapesInCanvas() ) {
+            if ( !shape.getId().equals( activeShape.getId() ) ) {
+                if ( shape instanceof HasMagnets ) {
+                    final HasMagnets mShape = (HasMagnets) shape;
+                    if ( shape.contains( cx,
+                                         cy ) ) {
+                        mShape.showMagnetsPoints();
+                        double finalDistance = Double.MAX_VALUE;
+                        final List<Magnet> magnets = mShape.getMagnets();
+                        for ( Magnet magnet : magnets ) {
+                            magnet.setActive( false );
+
+                            double deltaX = cx - magnet.getX() - magnet.getOffset().getX();
+                            double deltaY = cy - magnet.getY() - magnet.getOffset().getY();
+                            double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
+
+                            if ( finalDistance > distance ) {
+                                finalDistance = distance;
+                                selectedMagnet = magnet;
+                            }
+                        }
+                        if ( selectedMagnet != null ) {
+                            selectedMagnet.setActive( true );
+                        }
+
+                    } else {
+                        mShape.hideMagnetPoints();
+                    }
+                }
+            }
+        }
+
+        return selectedMagnet;
+    }
+
+    @Override
+    public WiresContainer getContainer( final double cx,
+                                        final double cy ) {
+        WiresContainer container = null;
+        for ( WiresShape ws : getShapesInCanvas() ) {
+            if ( ws instanceof WiresContainer ) {
+                final WiresContainer wc = (WiresContainer) ws;
+                wc.setSelected( false );
+                if ( wc.contains( cx,
+                                  cy ) ) {
+                    wc.setSelected( true );
+                    container = wc;
+                }
+            }
+        }
+        return container;
     }
 
 }

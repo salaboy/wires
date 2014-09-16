@@ -21,7 +21,8 @@ import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.LineCap;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
+import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
@@ -71,7 +72,8 @@ public class LineFactory implements ShapeFactory<Line> {
     }
 
     @Override
-    public ShapeDragProxy<Line> getDragProxy( final ShapeDragProxyCallback callback ) {
+    public ShapeDragProxy<Line> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
+                                              final ShapeDragProxyCompleteCallback dragEndCallBack ) {
         final Line line = makeLine();
 
         return new ShapeDragProxy<Line>() {
@@ -81,10 +83,17 @@ public class LineFactory implements ShapeFactory<Line> {
             }
 
             @Override
-            public void onDragEnd( final double x,
-                                   final double y ) {
-                callback.callback( x,
-                                   y );
+            public void onDragPreview( final double x,
+                                       final double y ) {
+                dragPreviewCallback.callback( x,
+                                              y );
+            }
+
+            @Override
+            public void onDragComplete( final double x,
+                                        final double y ) {
+                dragEndCallBack.callback( x,
+                                          y );
             }
 
             @Override
