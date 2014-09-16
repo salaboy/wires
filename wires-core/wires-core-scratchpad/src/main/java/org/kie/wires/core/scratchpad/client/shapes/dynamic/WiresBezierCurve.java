@@ -27,17 +27,18 @@ import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.magnets.MagnetManager;
 import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
+import org.kie.wires.core.api.shapes.WiresShape;
 import org.kie.wires.core.client.controlpoints.ConnectibleControlPoint;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
 import org.kie.wires.core.client.util.UUID;
 
-public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresMagnetManager {
+public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetManager,
+                                                                       RequiresMagnetManager {
 
     private static final int BOUNDARY_SIZE = 10;
 
     //We do not hide the boundary item for Lines as it makes selecting them very difficult
     private static final double ALPHA_DESELECTED = 0.01;
-    private static final double ALPHA_SELECTED = 0.1;
 
     private final BezierCurve curve;
     private final BezierCurve bounding;
@@ -48,6 +49,8 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresM
     private final ControlPoint controlPoint2;
     private final ControlPoint controlPoint3;
     private final ConnectibleControlPoint controlPoint4;
+
+    private MagnetManager magnetManager;
 
     public WiresBezierCurve( final BezierCurve shape ) {
         this( shape,
@@ -90,7 +93,6 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresM
                                  controlX1,
                                  controlY1 );
         controlLine1.setAlpha( 0.5 );
-        controlLine1.setVisible( false );
         controlLine1.setStrokeColor( "#0000ff" );
         controlLine1.setDashArray( 2, 2 );
         controlLine2 = new Line( controlX2,
@@ -98,20 +100,18 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresM
                                  endX,
                                  endY );
         controlLine2.setAlpha( 0.5 );
-        controlLine2.setVisible( false );
         controlLine2.setStrokeColor( "#0000ff" );
         controlLine2.setDashArray( 2, 2 );
 
         add( curve );
         add( bounding );
-        add( controlLine1 );
-        add( controlLine2 );
 
         magnets.clear();
 
         controlPoints.clear();
         controlPoint1 = new ConnectibleControlPoint( curve.getControlPoints().getPoint( 0 ).getX(),
                                                      curve.getControlPoints().getPoint( 0 ).getY(),
+                                                     this,
                                                      this,
                                                      new ControlPointMoveHandler() {
                                                          @Override
@@ -162,6 +162,7 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresM
         controlPoint4 = new ConnectibleControlPoint( curve.getControlPoints().getPoint( 3 ).getX(),
                                                      curve.getControlPoints().getPoint( 3 ).getY(),
                                                      this,
+                                                     this,
                                                      new ControlPointMoveHandler() {
                                                          @Override
                                                          public void onMove( final double x,
@@ -183,19 +184,38 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements RequiresM
     }
 
     @Override
-    public void setMagnetManager( final MagnetManager manager ) {
-        for ( ControlPoint cp : getControlPoints() ) {
-            if ( cp instanceof RequiresMagnetManager ) {
-                ( (RequiresMagnetManager) cp ).setMagnetManager( manager );
-            }
+    public void setMagnetManager( final MagnetManager magnetManager ) {
+        this.magnetManager = magnetManager;
+    }
+
+    @Override
+    public void hideAllMagnets() {
+        if ( magnetManager != null ) {
+            magnetManager.hideAllMagnets();
         }
     }
 
     @Override
+    public Magnet getMagnet( final WiresShape shapeActive,
+                             final double cx,
+                             final double cy ) {
+        if ( this.magnetManager != null ) {
+            return magnetManager.getMagnet( shapeActive,
+                                            cx,
+                                            cy );
+        }
+        return null;
+    }
+
+    @Override
     public void setSelected( final boolean isSelected ) {
-        bounding.setAlpha( isSelected ? ALPHA_SELECTED : ALPHA_DESELECTED );
-        controlLine1.setVisible( isSelected );
-        controlLine2.setVisible( isSelected );
+        if ( isSelected ) {
+            add( controlLine1 );
+            add( controlLine2 );
+        } else {
+            remove( controlLine1 );
+            remove( controlLine2 );
+        }
     }
 
     @Override

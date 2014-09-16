@@ -23,32 +23,28 @@ import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.controlpoints.HasControlPoints;
 import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.magnets.MagnetManager;
-import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 
 /**
  * A Control Point that can be connected to Magnets
  */
-public class ConnectibleControlPoint extends DefaultControlPoint implements RequiresMagnetManager {
+public class ConnectibleControlPoint extends DefaultControlPoint {
 
     private static final int MAGNET_ATTRACTION = 30;
 
     private Magnet boundMagnet;
-    private HasControlPoints shape;
 
-    private MagnetManager magnetManager;
+    private final HasControlPoints shape;
+    private final MagnetManager magnetManager;
 
     public ConnectibleControlPoint( final double x,
                                     final double y,
                                     final HasControlPoints shape,
+                                    final MagnetManager magnetManager,
                                     final ControlPointMoveHandler cpMoveHandler ) {
         super( x,
                y,
                cpMoveHandler );
         this.shape = shape;
-    }
-
-    @Override
-    public void setMagnetManager( final MagnetManager magnetManager ) {
         this.magnetManager = magnetManager;
     }
 

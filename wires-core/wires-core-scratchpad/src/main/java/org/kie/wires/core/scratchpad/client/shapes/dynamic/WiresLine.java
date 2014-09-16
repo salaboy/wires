@@ -20,29 +20,28 @@ import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Line;
-import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.magnets.MagnetManager;
 import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
+import org.kie.wires.core.api.shapes.WiresShape;
 import org.kie.wires.core.client.controlpoints.ConnectibleControlPoint;
 import org.kie.wires.core.client.util.GeometryUtil;
 import org.kie.wires.core.client.util.UUID;
 
-public class WiresLine extends WiresBaseDynamicShape implements RequiresMagnetManager {
+public class WiresLine extends WiresBaseDynamicShape implements MagnetManager,
+                                                                RequiresMagnetManager {
 
     private static final int BOUNDARY_SIZE = 10;
-
-    //We do not hide the boundary item for Lines as it makes selecting them very difficult
-    private static final double ALPHA_DESELECTED = 0.01;
-    private static final double ALPHA_SELECTED = 0.1;
 
     private final Line line;
     private final Line bounding;
 
     private final ConnectibleControlPoint controlPoint1;
     private final ConnectibleControlPoint controlPoint2;
+
+    private MagnetManager magnetManager;
 
     public WiresLine( final Line shape ) {
         this( shape,
@@ -65,20 +64,16 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresMagnetMa
                              x2,
                              y2 );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
-        bounding.setAlpha( ALPHA_DESELECTED );
+        bounding.setAlpha( 0.1 );
 
         add( line );
-        add( bounding );
 
         magnets.clear();
 
         controlPoints.clear();
-        //We use ControlPointAttachedHandlers for Lines as they have both a Magnet and ControlPoint at the same position.
-        //When a ControlPoint is attached to a Magnet if we do not disable the Magnet at the same Position as the ControlPoint
-        //it is possible to connect another ControlPoint to the Magnet that is in the same position as the ControlPoint
-        //already attached to a Magnet that can lead to recursion between ControlPointMoveHandlers and Magnets.
         controlPoint1 = new ConnectibleControlPoint( x1,
                                                      y1,
+                                                     this,
                                                      this,
                                                      new ControlPointMoveHandler() {
                                                          @Override
@@ -93,6 +88,7 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresMagnetMa
 
         controlPoint2 = new ConnectibleControlPoint( x2,
                                                      y2,
+                                                     this,
                                                      this,
                                                      new ControlPointMoveHandler() {
                                                          @Override
@@ -109,17 +105,36 @@ public class WiresLine extends WiresBaseDynamicShape implements RequiresMagnetMa
     }
 
     @Override
-    public void setMagnetManager( final MagnetManager manager ) {
-        for ( ControlPoint cp : getControlPoints() ) {
-            if ( cp instanceof RequiresMagnetManager ) {
-                ( (RequiresMagnetManager) cp ).setMagnetManager( manager );
-            }
+    public void setMagnetManager( final MagnetManager magnetManager ) {
+        this.magnetManager = magnetManager;
+    }
+
+    @Override
+    public void hideAllMagnets() {
+        if ( magnetManager != null ) {
+            magnetManager.hideAllMagnets();
         }
     }
 
     @Override
+    public Magnet getMagnet( final WiresShape shapeActive,
+                             final double cx,
+                             final double cy ) {
+        if ( this.magnetManager != null ) {
+            return magnetManager.getMagnet( shapeActive,
+                                            cx,
+                                            cy );
+        }
+        return null;
+    }
+
+    @Override
     public void setSelected( final boolean isSelected ) {
-        bounding.setAlpha( isSelected ? ALPHA_SELECTED : ALPHA_DESELECTED );
+        if ( isSelected ) {
+            add( bounding );
+        } else {
+            remove( bounding );
+        }
     }
 
     @Override

@@ -20,6 +20,6 @@ package org.kie.wires.core.api.magnets;
  */
 public interface RequiresMagnetManager {
 
-    public void setMagnetManager( final MagnetManager manager );
+    public void setMagnetManager( final MagnetManager magnetManager );
 
 }

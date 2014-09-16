@@ -49,11 +49,9 @@ public class WiresCircle extends WiresBaseDynamicShape {
         final double radius = circle.getRadius();
         bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
-        bounding.setVisible( false );
         bounding.setAlpha( 0.1 );
 
         add( circle );
-        add( bounding );
 
         magnets.clear();
         magnet1 = new DefaultMagnet( 0 - radius,
@@ -91,7 +89,11 @@ public class WiresCircle extends WiresBaseDynamicShape {
 
     @Override
     public void setSelected( final boolean isSelected ) {
-        bounding.setVisible( isSelected );
+        if ( isSelected ) {
+            add( bounding );
+        } else {
+            remove( bounding );
+        }
     }
 
     @Override
