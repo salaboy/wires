@@ -11,6 +11,8 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 import org.kie.wires.core.api.containers.ContainerManager;
 import org.kie.wires.core.api.containers.RequiresContainerManager;
@@ -48,8 +50,34 @@ public class Canvas extends Composite implements ShapesManager,
 
         initWidget( panel );
 
-        canvasLayer = new Layer();
+        //This is an optimization to ensure only one draw() is called per browser loop. The Wires
+        //framework makes calls to draw() from different places for different purposes. To avoid
+        //multiple calls inside a single browser loop we simply record a draw() request has been
+        //received and schedule it's invocation for later.
+        canvasLayer = new Layer() {
 
+            private boolean scheduled = false;
+
+            @Override
+            public void draw() {
+                if ( !scheduled ) {
+                    scheduled = true;
+                    Scheduler.get().scheduleFinally( new Command() {
+                        @Override
+                        public void execute() {
+                            doDraw();
+                        }
+                    } );
+                }
+            }
+
+            private void doDraw() {
+                scheduled = false;
+                super.draw();
+            }
+        };
+
+        //Grid...
         Line line1 = new Line( 0,
                                0,
                                0,
