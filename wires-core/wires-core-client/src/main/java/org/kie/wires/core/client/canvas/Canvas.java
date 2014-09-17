@@ -91,6 +91,7 @@ public class Canvas extends Composite implements ShapesManager,
 
     @Override
     public void addShape( final WiresBaseShape shape ) {
+        //Attach relevant handlers
         shape.setSelectionManager( this );
         if ( shape instanceof RequiresShapesManager ) {
             ( (RequiresShapesManager) shape ).setShapesManager( this );
@@ -101,8 +102,15 @@ public class Canvas extends Composite implements ShapesManager,
         if ( shape instanceof RequiresContainerManager ) {
             ( (RequiresContainerManager) shape ).setContainerManager( this );
         }
+
         canvasLayer.add( shape );
         shapesInCanvas.add( shape );
+
+        //Containers are always at the bottom of the render stack
+        if ( shape instanceof WiresContainer ) {
+            shape.moveToBottom();
+        }
+
         canvasLayer.draw();
     }
 
@@ -117,14 +125,23 @@ public class Canvas extends Composite implements ShapesManager,
 
     @Override
     public void forceDeleteShape( final WiresBaseShape shape ) {
-        shape.destroy();
-        deselectShape( shape );
-        canvasLayer.remove( shape );
-        shapesInCanvas.remove( shape );
-        canvasLayer.draw();
+        deleteShape( shape );
     }
 
     public void clear() {
+        //Detach Shapes in Containers; as destroying a Container automatically destroys it's contained Shapes
+        //This sounds as though we need not worry about those, however "shapesInCanvas" this means we cannot
+        //simply iterate over "shapesInCanvas" as it's content changes as Shapes are destroyed.
+        for ( WiresShape shape : shapesInCanvas ) {
+            if ( shape instanceof WiresContainer ) {
+                final WiresContainer wc = (WiresContainer) shape;
+                for ( WiresBaseShape bc : wc.getContainedShapes() ) {
+                    wc.detachShape( bc );
+                }
+            }
+        }
+
+        //Now it's safe to destroy all Shapes
         for ( WiresShape shape : shapesInCanvas ) {
             shape.destroy();
             canvasLayer.remove( (IPrimitive<?>) shape );
@@ -225,6 +242,9 @@ public class Canvas extends Composite implements ShapesManager,
 
                             if ( finalDistance > distance ) {
                                 finalDistance = distance;
+                                if ( selectedMagnet != null ) {
+                                    selectedMagnet.setActive( false );
+                                }
                                 selectedMagnet = magnet;
                             }
                         }

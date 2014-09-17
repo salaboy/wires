@@ -29,7 +29,7 @@ import static org.kie.wires.core.client.util.ShapesUtils.*;
  */
 public class DefaultControlPoint extends Circle implements ControlPoint<Circle> {
 
-    private static final int RADIUS = 6;
+    private static final int RADIUS = 8;
 
     private final String id;
     private final ControlPointMoveHandler cpMoveHandler;

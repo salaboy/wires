@@ -78,6 +78,7 @@ public class LayersGroup extends Composite {
 
     public void clearPanel() {
         shapes.clear();
+        stencils.clear();
         layer.removeAll();
         layer.draw();
     }

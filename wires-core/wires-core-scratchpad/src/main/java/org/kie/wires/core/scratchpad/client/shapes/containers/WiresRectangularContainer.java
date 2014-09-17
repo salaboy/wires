@@ -16,6 +16,7 @@
 package org.kie.wires.core.scratchpad.client.shapes.containers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
@@ -246,12 +247,16 @@ public class WiresRectangularContainer extends WiresBaseDynamicShape implements 
     @Override
     public void attachShape( final WiresBaseShape shape ) {
         children.add( shape );
-        shape.moveToTop();
     }
 
     @Override
     public void detachShape( final WiresBaseShape shape ) {
         children.remove( shape );
+    }
+
+    @Override
+    public List<WiresBaseShape> getContainedShapes() {
+        return Collections.unmodifiableList( children );
     }
 
     @Override

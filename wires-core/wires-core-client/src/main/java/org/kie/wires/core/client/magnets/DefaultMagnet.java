@@ -18,7 +18,7 @@ import static org.kie.wires.core.client.util.ShapesUtils.*;
 
 public class DefaultMagnet extends Circle implements Magnet<Circle> {
 
-    private static final int RADIUS = 6;
+    private static final int RADIUS = 8;
 
     private final String id;
     private final List<ControlPoint> attachedControlPoints = new ArrayList<ControlPoint>();

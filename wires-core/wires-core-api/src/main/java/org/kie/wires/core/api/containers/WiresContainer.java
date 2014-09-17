@@ -15,6 +15,8 @@
  */
 package org.kie.wires.core.api.containers;
 
+import java.util.List;
+
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.api.shapes.WiresShape;
 
@@ -31,6 +33,12 @@ public interface WiresContainer extends WiresShape {
      * @param shape
      */
     void detachShape( final WiresBaseShape shape );
+
+    /**
+     * Get a list of WiresBaseShape contained within the Container
+     * @return
+     */
+    List<WiresBaseShape> getContainedShapes();
 
     /**
      * Signal the Container is being hovered over

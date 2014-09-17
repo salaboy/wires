@@ -75,7 +75,7 @@ public class CanvasScreen extends Canvas {
                 .respondsWith( new Command() {
                     @Override
                     public void execute() {
-                        clearEvent.fire( new ClearEvent() );
+                        clear();
                         menus.getItems().get( 0 ).setEnabled( false );
                     }
                 } )
@@ -209,14 +209,11 @@ public class CanvasScreen extends Canvas {
         return yShapeEvent - getAbsoluteTop();
     }
 
-    public void clearPanel( @Observes ClearEvent event ) {
-        clear();
-    }
-
     @Override
     public void clear() {
         if ( Window.confirm( "Are you sure to clean the canvas?" ) ) {
             super.clear();
+            clearEvent.fire( new ClearEvent() );
             menus.getItems().get( 0 ).setEnabled( false );
             menus.getItems().get( 1 ).setEnabled( false );
             menus.getItems().get( 2 ).setEnabled( false );
