@@ -21,13 +21,16 @@ import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.magnets.MagnetManager;
 import org.kie.wires.core.api.magnets.RequiresMagnetManager;
 import org.kie.wires.core.api.selection.SelectionManager;
+import org.kie.wires.core.api.shapes.RequiresShapesManager;
+import org.kie.wires.core.api.shapes.ShapesManager;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.api.shapes.WiresShape;
 
 /**
  * This is the root Canvas provided by Wires
  */
-public class Canvas extends Composite implements SelectionManager,
+public class Canvas extends Composite implements ShapesManager,
+                                                 SelectionManager,
                                                  MagnetManager,
                                                  ContainerManager {
 
@@ -81,12 +84,17 @@ public class Canvas extends Composite implements SelectionManager,
         canvasLayer.draw();
     }
 
+    @Override
     public List<WiresShape> getShapesInCanvas() {
         return Collections.unmodifiableList( this.shapesInCanvas );
     }
 
+    @Override
     public void addShape( final WiresBaseShape shape ) {
         shape.setSelectionManager( this );
+        if ( shape instanceof RequiresShapesManager ) {
+            ( (RequiresShapesManager) shape ).setShapesManager( this );
+        }
         if ( shape instanceof RequiresMagnetManager ) {
             ( (RequiresMagnetManager) shape ).setMagnetManager( this );
         }
@@ -98,7 +106,17 @@ public class Canvas extends Composite implements SelectionManager,
         canvasLayer.draw();
     }
 
+    @Override
     public void deleteShape( final WiresBaseShape shape ) {
+        shape.destroy();
+        deselectShape( shape );
+        canvasLayer.remove( shape );
+        shapesInCanvas.remove( shape );
+        canvasLayer.draw();
+    }
+
+    @Override
+    public void forceDeleteShape( final WiresBaseShape shape ) {
         shape.destroy();
         deselectShape( shape );
         canvasLayer.remove( shape );
@@ -231,10 +249,10 @@ public class Canvas extends Composite implements SelectionManager,
         for ( WiresShape ws : getShapesInCanvas() ) {
             if ( ws instanceof WiresContainer ) {
                 final WiresContainer wc = (WiresContainer) ws;
-                wc.setSelected( false );
+                wc.setHover( false );
                 if ( wc.contains( cx,
                                   cy ) ) {
-                    wc.setSelected( true );
+                    wc.setHover( true );
                     container = wc;
                 }
             }

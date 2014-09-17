@@ -30,8 +30,8 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
 
     private static final int BOUNDARY_SIZE = 10;
 
-    private Circle circle;
-    private Circle bounding;
+    private final Circle circle;
+    private final Circle bounding;
 
     private WiresContainer boundContainer;
 

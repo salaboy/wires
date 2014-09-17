@@ -23,14 +23,34 @@ import org.kie.wires.core.api.controlpoints.ControlPoint;
 
 public interface Magnet<T extends Node<T>> extends IPrimitive<T> {
 
+    /**
+     * Get UUID for Magnet
+     * @return
+     */
     String getId();
 
+    /**
+     * Attach a ControlPoint to the Magnet
+     * @param controlPoint
+     */
     void attachControlPoint( final ControlPoint controlPoint );
 
+    /**
+     * Detach a ControlPoint from the Magnet
+     * @param controlPoint
+     */
     void detachControlPoint( final ControlPoint controlPoint );
 
+    /**
+     * Get a list of ControlPoints attached to the Magnet
+     * @return
+     */
     List<ControlPoint> getAttachedControlPoints();
 
+    /**
+     * Activate the Magnet
+     * @param isActive
+     */
     void setActive( final boolean isActive );
 
 }

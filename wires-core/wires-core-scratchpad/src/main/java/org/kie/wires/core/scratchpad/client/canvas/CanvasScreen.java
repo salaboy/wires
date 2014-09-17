@@ -189,7 +189,7 @@ public class CanvasScreen extends Canvas {
         final WiresContainer container = dropContext.getContainer();
         if ( container != null ) {
             container.attachShape( wiresShape );
-            container.setSelected( false );
+            container.setHover( false );
         }
 
         addShape( wiresShape );
@@ -202,13 +202,11 @@ public class CanvasScreen extends Canvas {
     }
 
     private double getX( double xShapeEvent ) {
-        double x = ( ( xShapeEvent - getAbsoluteLeft() ) < 0 ) ? 0 : xShapeEvent - getAbsoluteLeft();
-        return x;
+        return xShapeEvent - getAbsoluteLeft();
     }
 
     private double getY( double yShapeEvent ) {
-        double y = ( ( yShapeEvent - getAbsoluteTop() < 0 ) ) ? 0 : yShapeEvent - getAbsoluteTop();
-        return y;
+        return yShapeEvent - getAbsoluteTop();
     }
 
     public void clearPanel( @Observes ClearEvent event ) {
@@ -230,6 +228,11 @@ public class CanvasScreen extends Canvas {
         if ( Window.confirm( "Are you sure to remove the selected shape?" ) ) {
             shapeDeletedEvent.fire( new ShapeDeletedEvent( shape ) );
         }
+    }
+
+    @Override
+    public void forceDeleteShape( final WiresBaseShape shape ) {
+        shapeDeletedEvent.fire( new ShapeDeletedEvent( shape ) );
     }
 
     public void onShapeDeleted( @Observes ShapeDeletedEvent event ) {

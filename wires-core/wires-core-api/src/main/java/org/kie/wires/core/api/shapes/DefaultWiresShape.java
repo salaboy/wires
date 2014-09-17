@@ -53,7 +53,7 @@ public abstract class DefaultWiresShape extends WiresBaseDynamicShape implements
             public void onNodeDragEnd( final NodeDragEndEvent nodeDragEndEvent ) {
                 if ( boundContainer != null ) {
                     boundContainer.attachShape( DefaultWiresShape.this );
-                    boundContainer.setSelected( false );
+                    boundContainer.setHover( false );
                 }
 
                 getLayer().draw();

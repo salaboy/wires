@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 JBoss Inc
+ * Copyright 2012 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.magnets;
+package org.kie.wires.core.api.shapes;
 
-import java.util.List;
+/**
+ * Marker interface indicating an element needs a ShapesManager
+ */
+public interface RequiresShapesManager {
 
-import org.kie.wires.core.api.shapes.WiresShape;
+    void setShapesManager( final ShapesManager shapesManager );
 
-public interface HasMagnets extends WiresShape {
-
-    /**
-     * Get a list of Magnets associated with the Shape
-     * @return
-     */
-    List<Magnet> getMagnets();
-
-    /**
-     * Add a Magnet to the Shape
-     * @param m
-     */
-    void addMagnet( final Magnet m );
-
-    /**
-     * Show Magnets
-     */
-    void showMagnetsPoints();
-
-    /**
-     * Hide Magnets
-     */
-    void hideMagnetPoints();
 }

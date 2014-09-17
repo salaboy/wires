@@ -23,6 +23,9 @@ public class ShapesUtils {
     //Containers
     public static final String RGB_STROKE_CONTAINER = "#FF9900";
     public static final String RGB_FILL_CONTAINER = "#FFFF66";
+    public static final String RGB_STROKE_HOVER_CONTAINER = "#33CC33";
+    public static final String RGB_FILL_HOVER_CONTAINER = "#33FF33";
+
     public static final int RGB_STROKE_WIDTH_CONTAINER = 4;
     public static final double RGB_ALPHA_CONTAINER = 0.75;
 

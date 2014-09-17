@@ -27,18 +27,24 @@ import com.emitrom.lienzo.client.core.types.Point2D;
 import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
+import org.kie.wires.core.api.shapes.RequiresShapesManager;
+import org.kie.wires.core.api.shapes.ShapesManager;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
+import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.client.util.UUID;
 import org.uberfire.commons.data.Pair;
 
-public class WiresDefaultContainer extends WiresBaseDynamicShape implements WiresContainer {
+public class WiresRectangularContainer extends WiresBaseDynamicShape implements WiresContainer,
+                                                                                RequiresShapesManager {
 
     private static final int BOUNDARY_SIZE = 10;
 
     private final Rectangle rectangle;
     private final Rectangle bounding;
+    private final String rectangleFillColour;
+    private final String rectangleStokeColour;
 
     private final ControlPoint controlPoint1;
     private final ControlPoint controlPoint2;
@@ -46,10 +52,11 @@ public class WiresDefaultContainer extends WiresBaseDynamicShape implements Wire
     private final ControlPoint controlPoint4;
 
     private List<WiresBaseShape> children = new ArrayList<WiresBaseShape>();
-
     private List<Pair<WiresBaseShape, Point2D>> dragStartLocations = new ArrayList<Pair<WiresBaseShape, Point2D>>();
 
-    public WiresDefaultContainer( final Rectangle shape ) {
+    private ShapesManager shapesManager;
+
+    public WiresRectangularContainer( final Rectangle shape ) {
         this( shape,
               shape.getOffset().getX(),
               shape.getOffset().getY(),
@@ -57,16 +64,18 @@ public class WiresDefaultContainer extends WiresBaseDynamicShape implements Wire
               shape.getOffset().getY() + shape.getHeight() );
     }
 
-    public WiresDefaultContainer( final Rectangle shape,
-                                  final double x1,
-                                  final double y1,
-                                  final double x2,
-                                  final double y2 ) {
+    public WiresRectangularContainer( final Rectangle shape,
+                                      final double x1,
+                                      final double y1,
+                                      final double x2,
+                                      final double y2 ) {
         final double width = Math.abs( x2 - x1 );
         final double height = Math.abs( y2 - y1 );
 
-        id = UUID.uuid();
-        rectangle = shape;
+        this.id = UUID.uuid();
+        this.rectangle = shape;
+        this.rectangleFillColour = shape.getFillColor();
+        this.rectangleStokeColour = shape.getStrokeColor();
 
         rectangle.setX( x1 );
         rectangle.setY( y1 );
@@ -171,6 +180,11 @@ public class WiresDefaultContainer extends WiresBaseDynamicShape implements Wire
     }
 
     @Override
+    public void setShapesManager( final ShapesManager shapesManager ) {
+        this.shapesManager = shapesManager;
+    }
+
+    @Override
     public void setSelected( final boolean isSelected ) {
         if ( isSelected ) {
             add( bounding );
@@ -229,10 +243,6 @@ public class WiresDefaultContainer extends WiresBaseDynamicShape implements Wire
         return true;
     }
 
-    public Rectangle getRectangle() {
-        return rectangle;
-    }
-
     @Override
     public void attachShape( final WiresBaseShape shape ) {
         children.add( shape );
@@ -245,16 +255,27 @@ public class WiresDefaultContainer extends WiresBaseDynamicShape implements Wire
     }
 
     @Override
+    public void setHover( final boolean isHover ) {
+        if ( isHover ) {
+            rectangle.setFillColor( ShapesUtils.RGB_FILL_HOVER_CONTAINER );
+            rectangle.setStrokeColor( ShapesUtils.RGB_STROKE_HOVER_CONTAINER );
+        } else {
+            rectangle.setFillColor( rectangleFillColour );
+            rectangle.setStrokeColor( rectangleStokeColour );
+        }
+    }
+
+    @Override
     public void destroy() {
         super.destroy();
         for ( WiresBaseShape shape : children ) {
-            shape.destroy();
+            shapesManager.forceDeleteShape( shape );
         }
     }
 
     @Override
     public String toString() {
-        return "WiresDefaultContainer{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + "}";
+        return "WiresRectangularContainer{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + "}";
     }
 
 }

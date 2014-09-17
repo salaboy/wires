@@ -28,10 +28,10 @@ import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.categories.ContainerCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
-import org.kie.wires.core.scratchpad.client.shapes.containers.WiresDefaultContainer;
+import org.kie.wires.core.scratchpad.client.shapes.containers.WiresRectangularContainer;
 
 @ApplicationScoped
-public class DefaultContainerFactory implements ShapeFactory<Rectangle> {
+public class RectangularContainerFactory implements ShapeFactory<Rectangle> {
 
     private static final String DESCRIPTION = "Container";
 
@@ -110,12 +110,12 @@ public class DefaultContainerFactory implements ShapeFactory<Rectangle> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresDefaultContainer( makeRectangle() );
+        return new WiresRectangularContainer( makeRectangle() );
     }
 
     @Override
     public boolean builds( final WiresBaseShape shapeType ) {
-        return shapeType instanceof WiresDefaultContainer;
+        return shapeType instanceof WiresRectangularContainer;
     }
 
     private Rectangle makeRectangle() {

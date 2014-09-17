@@ -13,33 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.magnets;
+package org.kie.wires.core.api.shapes;
 
 import java.util.List;
 
-import org.kie.wires.core.api.shapes.WiresShape;
-
-public interface HasMagnets extends WiresShape {
+public interface ShapesManager {
 
     /**
-     * Get a list of Magnets associated with the Shape
+     * Get a list of all Shapes on the Canvas
      * @return
      */
-    List<Magnet> getMagnets();
+    List<WiresShape> getShapesInCanvas();
 
     /**
-     * Add a Magnet to the Shape
-     * @param m
+     * Add a Shape to the Canvas
+     * @param shape
      */
-    void addMagnet( final Magnet m );
+    void addShape( final WiresBaseShape shape );
 
     /**
-     * Show Magnets
+     * Delete a Shape from the Canvas. Implementations may prompt the User for confirmation.
+     * @param shape
      */
-    void showMagnetsPoints();
+    void deleteShape( final WiresBaseShape shape );
 
     /**
-     * Hide Magnets
+     * Forcefully delete a Shape from the Canvas. This allows deletion of Shapes without prompting the User for confirmation.
+     * @param shape
      */
-    void hideMagnetPoints();
+    void forceDeleteShape( final WiresBaseShape shape );
+
 }
