@@ -57,12 +57,13 @@ public class ConnectibleControlPoint extends DefaultControlPoint {
                 handler.onMove( ConnectibleControlPoint.this.getX(),
                                 ConnectibleControlPoint.this.getY() );
 
-                boundMagnet = magnetManager.getMagnet( shape,
-                                                       ConnectibleControlPoint.this.getX() + getOffset().getX(),
-                                                       ConnectibleControlPoint.this.getY() + getOffset().getY() );
                 if ( boundMagnet != null ) {
                     boundMagnet.detachControlPoint( ConnectibleControlPoint.this );
                 }
+
+                boundMagnet = magnetManager.getMagnet( shape,
+                                                       ConnectibleControlPoint.this.getX() + getOffset().getX(),
+                                                       ConnectibleControlPoint.this.getY() + getOffset().getY() );
 
                 getLayer().draw();
             }
