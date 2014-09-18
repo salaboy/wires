@@ -40,7 +40,7 @@ public class FixedTextFactory implements ShapeFactory<Text> {
 
     private static final String DESCRIPTION = "Text";
 
-    private static final int FONT_POINT = 32;
+    private static final int FONT_POINT = 30;
 
     private final double TEXT_WIDTH;
     private final double TEXT_HEIGHT;

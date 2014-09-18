@@ -15,16 +15,20 @@
  */
 package org.kie.wires.core.scratchpad.client.properties;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
+import com.emitrom.lienzo.shared.core.types.TextAlign;
 import com.google.common.collect.Lists;
 import org.kie.uberfire.properties.editor.model.PropertyEditorCategory;
 import org.kie.uberfire.properties.editor.model.PropertyEditorFieldInfo;
 import org.kie.uberfire.properties.editor.model.PropertyEditorType;
 import org.kie.wires.core.api.properties.PropertyEditorAdaptor;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.properties.WiresComboPropertyEditorFieldInfo;
 import org.kie.wires.core.scratchpad.client.shapes.fixed.WiresFixedText;
 
 /**
@@ -57,12 +61,86 @@ public class WiresFixedTextPropertyEditorAdaptor implements PropertyEditorAdapto
             }
         };
 
+        final PropertyEditorFieldInfo fieldInfo2 = new WiresComboPropertyEditorFieldInfo( "Text Align",
+                                                                                          w.getTextAlign().getValue(),
+                                                                                          getTextAlignValues() ) {
+            @Override
+            public void setCurrentStringValue( final String currentStringValue ) {
+                super.setCurrentStringValue( currentStringValue );
+                w.setTextAlign( TextAlign.lookup( currentStringValue ) );
+                w.getLayer().draw();
+            }
+
+        };
+
+        final PropertyEditorFieldInfo fieldInfo3 = new PropertyEditorFieldInfo( "Stroke colour",
+                                                                                String.valueOf( w.getStrokeColour() ),
+                                                                                PropertyEditorType.TEXT ) {
+            @Override
+            public void setCurrentStringValue( final String currentStringValue ) {
+                super.setCurrentStringValue( currentStringValue );
+                w.setStrokeColour( currentStringValue );
+                w.getLayer().draw();
+            }
+        };
+
+        final PropertyEditorFieldInfo fieldInfo4 = new PropertyEditorFieldInfo( "Fill colour",
+                                                                                String.valueOf( w.getFillColour() ),
+                                                                                PropertyEditorType.TEXT ) {
+            @Override
+            public void setCurrentStringValue( final String currentStringValue ) {
+                super.setCurrentStringValue( currentStringValue );
+                w.setFillColour( currentStringValue );
+                w.getLayer().draw();
+            }
+        };
+
+        final PropertyEditorFieldInfo fieldInfo5 = new WiresComboPropertyEditorFieldInfo( "Font size",
+                                                                                          String.valueOf( w.getFontSize() ),
+                                                                                          getFontSizeValues() ) {
+            @Override
+            public void setCurrentStringValue( final String currentStringValue ) {
+                super.setCurrentStringValue( currentStringValue );
+                try {
+                    final double fontSize = Double.parseDouble( currentStringValue );
+                    w.setFontSize( fontSize );
+                    w.getLayer().draw();
+                } catch ( NumberFormatException e ) {
+                    //Swallow
+                }
+            }
+        };
+
         //We're issued with a default TextValidator that demands values are longer than 8 characters; so get rid of it
         fieldInfo1.getValidators().clear();
+        fieldInfo2.getValidators().clear();
+        fieldInfo3.getValidators().clear();
+        fieldInfo4.getValidators().clear();
+        fieldInfo5.getValidators().clear();
 
-        final PropertyEditorCategory attributes = new PropertyEditorCategory( ATTRIBUTES ).withField( fieldInfo1 );
+        fieldInfo3.getValidators().add( new CssHexColourValidator() );
+        fieldInfo4.getValidators().add( new CssHexColourValidator() );
+
+        final PropertyEditorCategory attributes = new PropertyEditorCategory( ATTRIBUTES )
+                .withField( fieldInfo1 )
+                .withField( fieldInfo2 )
+                .withField( fieldInfo3 )
+                .withField( fieldInfo4 )
+                .withField( fieldInfo5 );
 
         return Lists.newArrayList( attributes );
+    }
+
+    private List<String> getTextAlignValues() {
+        final List<String> values = new ArrayList<String>();
+        for ( TextAlign ta : TextAlign.values() ) {
+            values.add( ta.getValue() );
+        }
+        return values;
+    }
+
+    private List<String> getFontSizeValues() {
+        return Arrays.asList( new String[]{ "15", "20", "25", "30", "35", "40", "45", "50" } );
     }
 
 }

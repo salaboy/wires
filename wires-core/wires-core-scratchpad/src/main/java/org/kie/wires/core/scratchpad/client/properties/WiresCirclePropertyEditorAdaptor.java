@@ -25,6 +25,7 @@ import org.kie.uberfire.properties.editor.model.PropertyEditorFieldInfo;
 import org.kie.uberfire.properties.editor.model.PropertyEditorType;
 import org.kie.wires.core.api.properties.PropertyEditorAdaptor;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.properties.DoubleValidator;
 import org.kie.wires.core.scratchpad.client.shapes.dynamic.WiresCircle;
 
 /**

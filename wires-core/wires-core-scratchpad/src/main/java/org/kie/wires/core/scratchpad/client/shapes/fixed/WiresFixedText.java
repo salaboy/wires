@@ -20,6 +20,7 @@ import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.shape.Text;
+import com.emitrom.lienzo.shared.core.types.TextAlign;
 import org.kie.wires.core.api.containers.ContainerManager;
 import org.kie.wires.core.api.containers.RequiresContainerManager;
 import org.kie.wires.core.api.containers.WiresContainer;
@@ -113,6 +114,40 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
     public void setText( final String text ) {
         this.text.setText( text );
         this.bounding.setText( text );
+    }
+
+    public TextAlign getTextAlign() {
+        return text.getTextAlign();
+    }
+
+    public void setTextAlign( final TextAlign align ) {
+        text.setTextAlign( align );
+        bounding.setTextAlign( align );
+    }
+
+    public String getStrokeColour() {
+        return text.getStrokeColor();
+    }
+
+    public void setStrokeColour( final String strokeColour ) {
+        text.setStrokeColor( strokeColour );
+    }
+
+    public String getFillColour() {
+        return text.getFillColor();
+    }
+
+    public void setFillColour( final String fillColour ) {
+        text.setFillColor( fillColour );
+    }
+
+    public double getFontSize() {
+        return text.getFontSize();
+    }
+
+    public void setFontSize( final double fontSize ) {
+        text.setFontSize( fontSize );
+        bounding.setFontSize( fontSize );
     }
 
 }
