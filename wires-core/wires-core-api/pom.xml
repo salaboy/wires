@@ -34,6 +34,12 @@
       <version>${lienzo.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.kie.uberfire</groupId>
+      <artifactId>kie-uberfire-widgets-properties-editor-api</artifactId>
+      <version>${kie.workbench.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>

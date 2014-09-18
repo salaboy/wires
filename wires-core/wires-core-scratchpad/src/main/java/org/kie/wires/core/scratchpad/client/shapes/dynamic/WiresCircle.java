@@ -100,4 +100,13 @@ public class WiresCircle extends DefaultWiresShape {
         return Math.sqrt( Math.pow( _x, 2 ) + Math.pow( _y, 2 ) ) < circle.getRadius() + BOUNDARY_SIZE;
     }
 
+    public double getRadius() {
+        return circle.getRadius();
+    }
+
+    public void setRadius( final double radius ) {
+        circle.setRadius( radius );
+        bounding.setRadius( radius + ( BOUNDARY_SIZE / 2 ) );
+    }
+
 }

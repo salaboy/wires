@@ -19,33 +19,37 @@ import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
-import com.emitrom.lienzo.client.core.shape.Circle;
+import com.emitrom.lienzo.client.core.shape.Text;
 import org.kie.wires.core.api.containers.ContainerManager;
 import org.kie.wires.core.api.containers.RequiresContainerManager;
 import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.UUID;
 
-public class WiresFixedCircle extends WiresBaseShape implements RequiresContainerManager {
+public class WiresFixedText extends WiresBaseShape implements RequiresContainerManager {
 
     private static final int BOUNDARY_SIZE = 10;
 
-    private final Circle circle;
-    private final Circle bounding;
+    private final Text text;
+    private final Text bounding;
 
     private WiresContainer boundContainer;
 
     protected ContainerManager containerManager;
 
-    public WiresFixedCircle( final Circle shape ) {
+    public WiresFixedText( final Text shape ) {
         id = UUID.uuid();
-        circle = shape;
+        text = shape;
 
-        bounding = new Circle( circle.getRadius() + ( BOUNDARY_SIZE / 2 ) );
+        bounding = new Text( text.getText(),
+                             text.getFontFamily(),
+                             text.getFontSize() );
+        bounding.setTextBaseLine( text.getTextBaseLine() );
+        bounding.setTextAlign( text.getTextAlign() );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setAlpha( 0.1 );
 
-        add( circle );
+        add( text );
     }
 
     @Override
@@ -72,10 +76,10 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
 
             @Override
             public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                boundContainer = containerManager.getContainer( WiresFixedCircle.this.getX(),
-                                                                WiresFixedCircle.this.getY() );
+                boundContainer = containerManager.getContainer( WiresFixedText.this.getX(),
+                                                                WiresFixedText.this.getY() );
                 if ( boundContainer != null ) {
-                    boundContainer.detachShape( WiresFixedCircle.this );
+                    boundContainer.detachShape( WiresFixedText.this );
                 }
 
                 getLayer().draw();
@@ -87,7 +91,7 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
             @Override
             public void onNodeDragEnd( final NodeDragEndEvent nodeDragEndEvent ) {
                 if ( boundContainer != null ) {
-                    boundContainer.attachShape( WiresFixedCircle.this );
+                    boundContainer.attachShape( WiresFixedText.this );
                     boundContainer.setHover( false );
                 }
 
@@ -101,4 +105,14 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
                              final double cy ) {
         return false;
     }
+
+    public String getText() {
+        return text.getText();
+    }
+
+    public void setText( final String text ) {
+        this.text.setText( text );
+        this.bounding.setText( text );
+    }
+
 }

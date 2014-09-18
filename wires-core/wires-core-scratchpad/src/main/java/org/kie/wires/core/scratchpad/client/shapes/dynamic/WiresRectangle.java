@@ -241,6 +241,22 @@ public class WiresRectangle extends DefaultWiresShape {
         return rectangle;
     }
 
+    public double getWidth() {
+        return rectangle.getWidth();
+    }
+
+    public void setWidth( final double width ) {
+        rectangle.setWidth( width );
+    }
+
+    public double getHeight() {
+        return rectangle.getHeight();
+    }
+
+    public void setHeight( final double height ) {
+        rectangle.setHeight( height );
+    }
+
     @Override
     public String toString() {
         return "WiresRectangle{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + "}";
