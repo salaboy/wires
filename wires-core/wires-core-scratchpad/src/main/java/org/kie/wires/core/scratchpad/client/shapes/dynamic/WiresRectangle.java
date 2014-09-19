@@ -247,6 +247,9 @@ public class WiresRectangle extends DefaultWiresShape {
 
     public void setWidth( final double width ) {
         rectangle.setWidth( width );
+        bounding.setWidth( width + BOUNDARY_SIZE );
+        controlPoint2.setX( rectangle.getX() + width );
+        controlPoint4.setX( rectangle.getX() + width );
     }
 
     public double getHeight() {
@@ -255,6 +258,9 @@ public class WiresRectangle extends DefaultWiresShape {
 
     public void setHeight( final double height ) {
         rectangle.setHeight( height );
+        bounding.setHeight( height + BOUNDARY_SIZE );
+        controlPoint3.setY( rectangle.getY() + height );
+        controlPoint4.setY( rectangle.getY() + height );
     }
 
     @Override

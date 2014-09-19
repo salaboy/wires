@@ -107,6 +107,9 @@ public class WiresCircle extends DefaultWiresShape {
     public void setRadius( final double radius ) {
         circle.setRadius( radius );
         bounding.setRadius( radius + ( BOUNDARY_SIZE / 2 ) );
+        final double theta = Math.atan( controlPoint1.getY() / controlPoint1.getX() );
+        controlPoint1.setX( radius * Math.cos( theta ) );
+        controlPoint1.setY( radius * Math.sin( theta ) );
     }
 
 }
