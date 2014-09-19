@@ -26,6 +26,7 @@ import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.canvas.FocusableLienzoPanel;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
 @Dependent
@@ -41,7 +42,8 @@ public class LayersGroup extends Composite {
 
     @PostConstruct
     public void init() {
-        panel = new LienzoPanel( ShapeFactoryUtil.WIDTH_PANEL, ShapeFactoryUtil.HEIGHT_PANEL );
+        panel = new FocusableLienzoPanel( ShapeFactoryUtil.WIDTH_PANEL,
+                                          ShapeFactoryUtil.HEIGHT_PANEL );
         super.initWidget( panel );
         layer = new Layer();
         panel.getScene().add( layer );

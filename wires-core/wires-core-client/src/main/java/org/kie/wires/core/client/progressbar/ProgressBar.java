@@ -1,4 +1,4 @@
-package org.kie.wires.core.client.canvas;
+package org.kie.wires.core.client.progressbar;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;

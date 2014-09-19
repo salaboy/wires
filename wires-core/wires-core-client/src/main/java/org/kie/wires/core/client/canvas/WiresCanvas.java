@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.wires.core.client.canvas;
 
 import java.util.ArrayList;
@@ -9,7 +24,6 @@ import com.emitrom.lienzo.client.core.shape.GridLayer;
 import com.emitrom.lienzo.client.core.shape.IPrimitive;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
@@ -27,16 +41,17 @@ import org.kie.wires.core.api.shapes.RequiresShapesManager;
 import org.kie.wires.core.api.shapes.ShapesManager;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.api.shapes.WiresShape;
+import org.kie.wires.core.client.progressbar.ProgressBar;
 
 /**
  * This is the root Canvas provided by Wires
  */
-public class Canvas extends Composite implements ShapesManager,
-                                                 SelectionManager,
-                                                 MagnetManager,
-                                                 ContainerManager {
+public class WiresCanvas extends Composite implements ShapesManager,
+                                                      SelectionManager,
+                                                      MagnetManager,
+                                                      ContainerManager {
 
-    private LienzoPanel panel;
+    private FocusableLienzoPanel panel;
     private List<WiresShape> shapesInCanvas = new ArrayList<WiresShape>();
     private WiresBaseShape selectedShape;
     private ProgressBar progressBar;
@@ -45,8 +60,8 @@ public class Canvas extends Composite implements ShapesManager,
 
     @PostConstruct
     public void init() {
-        panel = new LienzoPanel( 1000,
-                                 1000 );
+        panel = new FocusableLienzoPanel( 1000,
+                                          1000 );
 
         initWidget( panel );
 

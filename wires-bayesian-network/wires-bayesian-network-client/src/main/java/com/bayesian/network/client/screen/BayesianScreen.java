@@ -12,10 +12,10 @@ import com.bayesian.network.client.events.ReadyEvent;
 import com.bayesian.network.client.factory.BayesianFactory;
 import com.bayesian.parser.client.service.BayesianService;
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.wires.core.client.canvas.Canvas;
+import org.kie.wires.core.client.canvas.WiresCanvas;
 
 @Dependent
-public class BayesianScreen extends Canvas {
+public class BayesianScreen extends WiresCanvas {
 
     @Inject
     private Caller<BayesianService> bayesianService;

@@ -28,8 +28,9 @@ import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Picture;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.core.client.palette.PaletteLayoutUtilities;
 import org.kie.wires.core.api.events.ClearEvent;
+import org.kie.wires.core.client.canvas.FocusableLienzoPanel;
+import org.kie.wires.core.client.palette.PaletteLayoutUtilities;
 import org.kie.wires.core.client.resources.AppResource;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.kie.wires.core.client.util.ShapesUtils;
@@ -50,8 +51,8 @@ public class ActionsGroup extends Composite {
 
     @PostConstruct
     public void init() {
-        panel = new LienzoPanel( ShapeFactoryUtil.WIDTH_PANEL,
-                                 ShapesUtils.calculateHeight( 1 ) );
+        panel = new FocusableLienzoPanel( ShapeFactoryUtil.WIDTH_PANEL,
+                                          ShapesUtils.calculateHeight( 1 ) );
         layer = new Layer();
         panel.getScene().add( layer );
         initWidget( panel );

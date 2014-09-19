@@ -19,8 +19,18 @@ import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
+import com.emitrom.lienzo.client.core.event.NodeMouseDoubleClickEvent;
+import com.emitrom.lienzo.client.core.event.NodeMouseDoubleClickHandler;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.shared.core.types.TextAlign;
+import com.github.gwtbootstrap.client.ui.TextBox;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.wires.core.api.containers.ContainerManager;
 import org.kie.wires.core.api.containers.RequiresContainerManager;
 import org.kie.wires.core.api.containers.WiresContainer;
@@ -37,6 +47,8 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
     private WiresContainer boundContainer;
 
     protected ContainerManager containerManager;
+
+    private final TextBox editTextBox = new TextBox();
 
     public WiresFixedText( final Text shape ) {
         id = UUID.uuid();
@@ -97,6 +109,41 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
                 }
 
                 getLayer().draw();
+            }
+        } );
+
+        //Add support for "in place" editing of text
+        editTextBox.addBlurHandler( new BlurHandler() {
+            @Override
+            public void onBlur( final BlurEvent event ) {
+                text.setText( editTextBox.getText() );
+                bounding.setText( editTextBox.getText() );
+                text.getLayer().draw();
+                RootPanel.get().remove( editTextBox );
+            }
+        } );
+        editTextBox.addKeyDownHandler( new KeyDownHandler() {
+            @Override
+            public void onKeyDown( final KeyDownEvent event ) {
+                if ( event.getNativeKeyCode() == KeyCodes.KEY_ENTER ) {
+                    text.setText( editTextBox.getText() );
+                    bounding.setText( editTextBox.getText() );
+                    text.getLayer().draw();
+                    RootPanel.get().remove( editTextBox );
+                }
+            }
+        } );
+        addNodeMouseDoubleClickHandler( new NodeMouseDoubleClickHandler() {
+            @Override
+            public void onNodeMouseDoubleClick( final NodeMouseDoubleClickEvent nodeMouseDoubleClickEvent ) {
+                editTextBox.setText( text.getText() );
+                editTextBox.getElement().getStyle().setPosition( Style.Position.FIXED );
+                editTextBox.getElement().getStyle().setLeft( getX() + getLayer().getCanvasElement().getAbsoluteLeft(),
+                                                             Style.Unit.PX );
+                editTextBox.getElement().getStyle().setTop( getY() + getLayer().getCanvasElement().getAbsoluteTop(),
+                                                            Style.Unit.PX );
+                RootPanel.get().add( editTextBox );
+                editTextBox.setFocus( true );
             }
         } );
     }

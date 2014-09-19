@@ -34,7 +34,7 @@ import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.factories.ShapeDropContext;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
-import org.kie.wires.core.client.canvas.Canvas;
+import org.kie.wires.core.client.canvas.WiresCanvas;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -47,7 +47,7 @@ import org.uberfire.workbench.model.menu.Menus;
 @SuppressWarnings("unused")
 @Dependent
 @WorkbenchScreen(identifier = "WiresCanvasScreen")
-public class CanvasScreen extends Canvas {
+public class WiresCanvasScreen extends WiresCanvas {
 
     @Inject
     private Event<ClearEvent> clearEvent;
@@ -76,7 +76,6 @@ public class CanvasScreen extends Canvas {
                     @Override
                     public void execute() {
                         clear();
-                        menus.getItems().get( 0 ).setEnabled( false );
                     }
                 } )
                 .endMenu()
