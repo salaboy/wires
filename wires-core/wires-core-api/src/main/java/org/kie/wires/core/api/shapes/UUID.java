@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.kie.wires.core.client.util;
+package org.kie.wires.core.api.shapes;
 /*
 File: Math.uuid.js
 Version: 1.3

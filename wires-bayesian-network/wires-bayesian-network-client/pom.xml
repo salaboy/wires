@@ -53,6 +53,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-all</artifactId>
+      <version>${uberfire.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.emitrom</groupId>
       <artifactId>lienzo-core</artifactId>
       <version>${lienzo.version}</version>

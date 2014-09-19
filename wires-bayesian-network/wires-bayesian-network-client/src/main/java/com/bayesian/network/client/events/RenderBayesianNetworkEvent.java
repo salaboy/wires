@@ -13,15 +13,15 @@ import com.bayesian.network.client.shapes.EditableBayesianNode;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class ReadyEvent implements Serializable {
+public class RenderBayesianNetworkEvent implements Serializable {
 
     private static final long serialVersionUID = 60336200253522640L;
     private List<EditableBayesianNode> bayesianNodes;
 
-    public ReadyEvent() {
+    public RenderBayesianNetworkEvent() {
     }
 
-    public ReadyEvent( final List<EditableBayesianNode> bayesianNodes ) {
+    public RenderBayesianNetworkEvent( final List<EditableBayesianNode> bayesianNodes ) {
         this.bayesianNodes = bayesianNodes;
     }
 

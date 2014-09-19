@@ -22,7 +22,6 @@ import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.shapes.DefaultWiresShape;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
 import org.kie.wires.core.client.magnets.DefaultMagnet;
-import org.kie.wires.core.client.util.UUID;
 
 public class WiresCircle extends DefaultWiresShape {
 
@@ -39,10 +38,9 @@ public class WiresCircle extends DefaultWiresShape {
     private final ControlPoint controlPoint1;
 
     public WiresCircle( final Circle shape ) {
-        this.id = UUID.uuid();
-        this.circle = shape;
+        final double radius = shape.getRadius();
 
-        final double radius = circle.getRadius();
+        circle = shape;
         bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
         bounding.setAlpha( 0.1 );

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.scratchpad.client.shapes.dynamic;
+package org.kie.wires.core.scratchpad.client.shapes.connectors;
 
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
@@ -28,7 +28,6 @@ import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.api.shapes.WiresShape;
 import org.kie.wires.core.client.controlpoints.ConnectibleControlPoint;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
-import org.kie.wires.core.client.util.UUID;
 
 public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetManager,
                                                                        RequiresMagnetManager {
@@ -52,29 +51,16 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetMan
     private MagnetManager magnetManager;
 
     public WiresBezierCurve( final BezierCurve shape ) {
-        this( shape,
-              shape.getControlPoints().getPoint( 0 ).getX(),
-              shape.getControlPoints().getPoint( 0 ).getY(),
-              shape.getControlPoints().getPoint( 1 ).getX(),
-              shape.getControlPoints().getPoint( 1 ).getY(),
-              shape.getControlPoints().getPoint( 2 ).getX(),
-              shape.getControlPoints().getPoint( 2 ).getY(),
-              shape.getControlPoints().getPoint( 3 ).getX(),
-              shape.getControlPoints().getPoint( 3 ).getY() );
-    }
+        final double x = shape.getControlPoints().getPoint( 0 ).getX();
+        final double y = shape.getControlPoints().getPoint( 0 ).getY();
+        final double controlX1 = shape.getControlPoints().getPoint( 1 ).getX();
+        final double controlY1 = shape.getControlPoints().getPoint( 1 ).getY();
+        final double controlX2 = shape.getControlPoints().getPoint( 2 ).getX();
+        final double controlY2 = shape.getControlPoints().getPoint( 2 ).getY();
+        final double endX = shape.getControlPoints().getPoint( 3 ).getX();
+        final double endY = shape.getControlPoints().getPoint( 3 ).getY();
 
-    public WiresBezierCurve( final BezierCurve shape,
-                             final double x,
-                             final double y,
-                             final double controlX1,
-                             final double controlY1,
-                             final double controlX2,
-                             final double controlY2,
-                             final double endX,
-                             final double endY ) {
-        id = UUID.uuid();
         curve = shape;
-
         bounding = new BezierCurve( x,
                                     y,
                                     controlX1,

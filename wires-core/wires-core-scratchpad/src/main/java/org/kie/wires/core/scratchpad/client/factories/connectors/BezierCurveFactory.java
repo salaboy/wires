@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.scratchpad.client.factories.dynamic;
+package org.kie.wires.core.scratchpad.client.factories.connectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -28,7 +28,7 @@ import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.categories.ConnectorCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
-import org.kie.wires.core.scratchpad.client.shapes.dynamic.WiresBezierCurve;
+import org.kie.wires.core.scratchpad.client.shapes.connectors.WiresBezierCurve;
 
 @ApplicationScoped
 public class BezierCurveFactory implements ShapeFactory<BezierCurve> {

@@ -22,7 +22,6 @@ import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.shapes.DefaultWiresShape;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
 import org.kie.wires.core.client.magnets.DefaultMagnet;
-import org.kie.wires.core.client.util.UUID;
 
 public class WiresRectangle extends DefaultWiresShape {
 
@@ -42,36 +41,14 @@ public class WiresRectangle extends DefaultWiresShape {
     private final ControlPoint controlPoint4;
 
     public WiresRectangle( final Rectangle shape ) {
-        this( shape,
-              shape.getOffset().getX(),
-              shape.getOffset().getY(),
-              shape.getOffset().getX() + shape.getWidth(),
-              shape.getOffset().getY() + shape.getHeight() );
-    }
-
-    public WiresRectangle( final double x1,
-                           final double y1,
-                           final double x2,
-                           final double y2 ) {
-        this( new Rectangle( x2 - x1,
-                             y2 - y1 ),
-              x1,
-              y1,
-              x2,
-              y2 );
-    }
-
-    public WiresRectangle( final Rectangle shape,
-                           final double x1,
-                           final double y1,
-                           final double x2,
-                           final double y2 ) {
+        final double x1 = shape.getOffset().getX();
+        final double y1 = shape.getOffset().getY();
+        final double x2 = shape.getOffset().getX() + shape.getWidth();
+        final double y2 = shape.getOffset().getY() + shape.getHeight();
         final double width = Math.abs( x2 - x1 );
         final double height = Math.abs( y2 - y1 );
 
-        id = UUID.uuid();
         rectangle = shape;
-
         rectangle.setX( x1 );
         rectangle.setY( y1 );
         rectangle.setOffset( 0,
@@ -235,10 +212,6 @@ public class WiresRectangle extends DefaultWiresShape {
             return false;
         }
         return true;
-    }
-
-    public Rectangle getRectangle() {
-        return rectangle;
     }
 
     public double getWidth() {

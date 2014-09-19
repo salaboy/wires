@@ -5,40 +5,58 @@ import java.util.Map;
 
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
-import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.common.collect.Maps;
-import org.kie.wires.core.scratchpad.client.shapes.dynamic.WiresRectangle;
+import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.util.ShapesUtils;
 
-public class EditableBayesianProbability extends WiresRectangle implements Serializable {
+public class EditableBayesianProbability extends WiresBaseShape implements Serializable {
 
     private static final long serialVersionUID = 286548230036126637L;
+
     private Map<Text, Rectangle> parentNode;
     private Map<Text, Rectangle> porcentualOptions;
     private Map<Text, Rectangle> porcentualValues;
     private Map<Map<Text, Rectangle>, Map<Text, Rectangle>> incomingNodes;
 
+    private final Rectangle rectangle;
+
     public EditableBayesianProbability() {
-        super( 0,
-               0,
-               0,
-               0 );
+        this( 0,
+              0,
+              0,
+              0 );
     }
 
     public EditableBayesianProbability( final double width,
                                         final double height,
                                         final double positionXNode,
                                         final double positionYNode ) {
-        super( positionXNode,
-               positionYNode,
-               positionXNode + width,
-               positionYNode + height );
-        super.init( positionXNode,
-                    positionYNode );
-        super.getRectangle().setStrokeColor( ColorName.WHITE.getValue() );
+        rectangle = new Rectangle( width,
+                                   height );
+        rectangle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE );
+        rectangle.setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE );
+
+        add( rectangle );
+
+        init( positionXNode,
+              positionYNode );
+
         this.parentNode = Maps.newHashMap();
         this.porcentualOptions = Maps.newHashMap();
         this.porcentualValues = Maps.newHashMap();
         this.incomingNodes = Maps.newHashMap();
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        //We don't support visual changes when selected
+    }
+
+    @Override
+    public boolean contains( double cx,
+                             double cy ) {
+        //We don't have any ControlPoints so no need to worry about whether we contain a given point
+        return false;
     }
 
     public void buildGrid() {

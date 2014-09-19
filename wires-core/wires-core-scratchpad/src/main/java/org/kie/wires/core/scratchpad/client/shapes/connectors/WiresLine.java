@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.scratchpad.client.shapes.dynamic;
+package org.kie.wires.core.scratchpad.client.shapes.connectors;
 
 import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
-import com.emitrom.lienzo.client.core.shape.Arrow;
-import com.emitrom.lienzo.client.core.types.Point2D;
-import com.emitrom.lienzo.shared.core.types.ArrowType;
+import com.emitrom.lienzo.client.core.shape.Line;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.magnets.Magnet;
 import org.kie.wires.core.api.magnets.MagnetManager;
@@ -28,55 +26,40 @@ import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 import org.kie.wires.core.api.shapes.WiresShape;
 import org.kie.wires.core.client.controlpoints.ConnectibleControlPoint;
 import org.kie.wires.core.client.util.GeometryUtil;
-import org.kie.wires.core.client.util.UUID;
 
-public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
-                                                                 RequiresMagnetManager {
+public class WiresLine extends WiresBaseDynamicShape implements MagnetManager,
+                                                                RequiresMagnetManager {
 
     private static final int BOUNDARY_SIZE = 10;
 
-    private static final int BASE_WIDTH = 10;
-    private static final int HEAD_WIDTH = 20;
-    private static final int ARROW_ANGLE = 45;
-    private static final int BASE_ANGLE = 30;
+    //We do not hide the boundary item for Lines as it makes selecting them very difficult
+    private static final double ALPHA_DESELECTED = 0.01;
+    private static final double ALPHA_SELECTED = 0.1;
 
-    private final Arrow arrow;
-    private final Arrow bounding;
+    private final Line line;
+    private final Line bounding;
 
     private final ConnectibleControlPoint controlPoint1;
     private final ConnectibleControlPoint controlPoint2;
 
     private MagnetManager magnetManager;
 
-    public WiresArrow( final Arrow shape ) {
-        this( shape,
-              shape.getStart().getX(),
-              shape.getStart().getY(),
-              shape.getEnd().getX(),
-              shape.getEnd().getY() );
-    }
+    public WiresLine( final Line shape ) {
+        final double x1 = shape.getPoints().getPoint( 0 ).getX();
+        final double y1 = shape.getPoints().getPoint( 0 ).getY();
+        final double x2 = shape.getPoints().getPoint( 1 ).getX();
+        final double y2 = shape.getPoints().getPoint( 1 ).getY();
 
-    public WiresArrow( final Arrow shape,
-                       final double x1,
-                       final double y1,
-                       final double x2,
-                       final double y2 ) {
-        id = UUID.uuid();
-        arrow = shape;
-
-        bounding = new Arrow( new Point2D( x1,
-                                           y1 ),
-                              new Point2D( x2,
-                                           y2 ),
-                              BASE_WIDTH,
-                              HEAD_WIDTH,
-                              ARROW_ANGLE,
-                              BASE_ANGLE,
-                              ArrowType.AT_END );
+        line = shape;
+        bounding = new Line( x1,
+                             y1,
+                             x2,
+                             y2 );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
-        bounding.setAlpha( 0.1 );
+        bounding.setAlpha( ALPHA_DESELECTED );
 
-        add( arrow );
+        add( line );
+        add( bounding );
 
         magnets.clear();
 
@@ -89,13 +72,12 @@ public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
                                                          @Override
                                                          public void onMove( final double x,
                                                                              final double y ) {
-                                                             arrow.setStart( new Point2D( x,
-                                                                                          y ) );
-                                                             bounding.setStart( new Point2D( x,
-                                                                                             y ) );
+                                                             line.getPoints().getPoint( 0 ).setX( x );
+                                                             line.getPoints().getPoint( 0 ).setY( y );
+                                                             bounding.getPoints().getPoint( 0 ).setX( x );
+                                                             bounding.getPoints().getPoint( 0 ).setY( y );
                                                          }
-                                                     }
-        );
+                                                     } );
 
         controlPoint2 = new ConnectibleControlPoint( x2,
                                                      y2,
@@ -105,13 +87,12 @@ public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
                                                          @Override
                                                          public void onMove( final double x,
                                                                              final double y ) {
-                                                             arrow.setEnd( new Point2D( x,
-                                                                                        y ) );
-                                                             bounding.setEnd( new Point2D( x,
-                                                                                           y ) );
+                                                             line.getPoints().getPoint( 1 ).setX( x );
+                                                             line.getPoints().getPoint( 1 ).setY( y );
+                                                             bounding.getPoints().getPoint( 1 ).setX( x );
+                                                             bounding.getPoints().getPoint( 1 ).setY( y );
                                                          }
-                                                     }
-        );
+                                                     } );
         addControlPoint( controlPoint1 );
         addControlPoint( controlPoint2 );
     }
@@ -143,9 +124,9 @@ public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
     @Override
     public void setSelected( final boolean isSelected ) {
         if ( isSelected ) {
-            add( bounding );
+            bounding.setAlpha( ALPHA_SELECTED );
         } else {
-            remove( bounding );
+            bounding.setAlpha( ALPHA_DESELECTED );
         }
     }
 
@@ -176,16 +157,16 @@ public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
                              final double cy ) {
         final double _x = cx - getX();
         final double _y = cy - getY();
-        return Math.sqrt( GeometryUtil.ptSegDistSq( arrow.getPoints().getPoint( 0 ).getX(),
-                                                    arrow.getPoints().getPoint( 0 ).getY(),
-                                                    arrow.getPoints().getPoint( 1 ).getX(),
-                                                    arrow.getPoints().getPoint( 1 ).getY(),
+        return Math.sqrt( GeometryUtil.ptSegDistSq( line.getPoints().getPoint( 0 ).getX(),
+                                                    line.getPoints().getPoint( 0 ).getY(),
+                                                    line.getPoints().getPoint( 1 ).getX(),
+                                                    line.getPoints().getPoint( 1 ).getY(),
                                                     _x,
                                                     _y ) ) < BOUNDARY_SIZE;
     }
 
     @Override
     public String toString() {
-        return "WiresArrow{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + "}";
+        return "WiresLine{" + "id=" + getId() + ",x = " + getX() + ", y = " + getY() + "}";
     }
 }

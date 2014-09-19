@@ -6,7 +6,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.bayesian.network.client.builder.LayerBuilder;
-import com.bayesian.network.client.events.BayesianEvent;
+import com.bayesian.network.client.events.BayesianTemplateSelectedEvent;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
@@ -27,7 +27,7 @@ public class TemplatesGroup extends Composite {
     public static int accountLayers;
 
     @Inject
-    private Event<BayesianEvent> bayesianEvent;
+    private Event<BayesianTemplateSelectedEvent> bayesianEvent;
 
     public TemplatesGroup() {
     }

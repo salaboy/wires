@@ -24,7 +24,6 @@ import org.kie.wires.core.api.containers.ContainerManager;
 import org.kie.wires.core.api.containers.RequiresContainerManager;
 import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
-import org.kie.wires.core.client.util.UUID;
 
 public class WiresFixedCircle extends WiresBaseShape implements RequiresContainerManager {
 
@@ -38,7 +37,6 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
     protected ContainerManager containerManager;
 
     public WiresFixedCircle( final Circle shape ) {
-        id = UUID.uuid();
         circle = shape;
 
         bounding = new Circle( circle.getRadius() + ( BOUNDARY_SIZE / 2 ) );

@@ -21,7 +21,6 @@ import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.shapes.WiresBaseDynamicContainer;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
 import org.kie.wires.core.client.util.ShapesUtils;
-import org.kie.wires.core.client.util.UUID;
 
 public class WiresRectangularContainer extends WiresBaseDynamicContainer {
 
@@ -53,10 +52,9 @@ public class WiresRectangularContainer extends WiresBaseDynamicContainer {
         final double width = Math.abs( x2 - x1 );
         final double height = Math.abs( y2 - y1 );
 
-        this.id = UUID.uuid();
-        this.rectangle = shape;
-        this.rectangleFillColour = shape.getFillColor();
-        this.rectangleStokeColour = shape.getStrokeColor();
+        rectangle = shape;
+        rectangleFillColour = shape.getFillColor();
+        rectangleStokeColour = shape.getStrokeColor();
 
         rectangle.setX( x1 );
         rectangle.setY( y1 );
@@ -75,6 +73,7 @@ public class WiresRectangularContainer extends WiresBaseDynamicContainer {
 
         magnets.clear();
         controlPoints.clear();
+
         final double px1 = rectangle.getX();
         final double py1 = rectangle.getY();
         controlPoint1 = new DefaultControlPoint( px1,

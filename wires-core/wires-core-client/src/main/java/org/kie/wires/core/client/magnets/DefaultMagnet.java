@@ -12,7 +12,7 @@ import com.emitrom.lienzo.client.core.shape.Circle;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.magnets.Magnet;
-import org.kie.wires.core.client.util.UUID;
+import org.kie.wires.core.api.shapes.UUID;
 
 import static org.kie.wires.core.client.util.ShapesUtils.*;
 

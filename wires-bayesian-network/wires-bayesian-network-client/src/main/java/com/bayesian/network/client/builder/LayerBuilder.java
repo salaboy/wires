@@ -2,7 +2,7 @@ package com.bayesian.network.client.builder;
 
 import javax.enterprise.event.Event;
 
-import com.bayesian.network.client.events.BayesianEvent;
+import com.bayesian.network.client.events.BayesianTemplateSelectedEvent;
 import com.bayesian.network.client.events.ProbabilityEvent;
 import com.bayesian.network.client.factory.LayerCircleFactory;
 import com.bayesian.network.client.factory.LayerLineFactory;
@@ -25,7 +25,7 @@ public class LayerBuilder {
     public LayerBuilder( final Shape<?> shape,
                          final int accountLayers,
                          final String template,
-                         final Event<BayesianEvent> bayesianEvent,
+                         final Event<BayesianTemplateSelectedEvent> bayesianEvent,
                          final BayesVariable node,
                          final Event<ProbabilityEvent> probabilityEvent ) {
         this.newLayer( shape,
@@ -39,7 +39,7 @@ public class LayerBuilder {
     public void newLayer( final Shape<?> shape,
                           final int accountLayers,
                           final String template,
-                          final Event<BayesianEvent> bayesianEvent,
+                          final Event<BayesianTemplateSelectedEvent> bayesianEvent,
                           final BayesVariable node,
                           final Event<ProbabilityEvent> probabilityEvent ) {
         if ( shape == null ) {

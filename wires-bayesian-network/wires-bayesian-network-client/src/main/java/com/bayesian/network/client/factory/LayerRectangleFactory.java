@@ -2,7 +2,7 @@ package com.bayesian.network.client.factory;
 
 import javax.enterprise.event.Event;
 
-import com.bayesian.network.client.events.BayesianEvent;
+import com.bayesian.network.client.events.BayesianTemplateSelectedEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
@@ -14,11 +14,11 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
     private static int layers;
 
-    private Event<BayesianEvent> bayesianEvent;
+    private Event<BayesianTemplateSelectedEvent> bayesianEvent;
 
     public LayerRectangleFactory( final Integer lay,
                                   final String template,
-                                  final Event<BayesianEvent> bayesianEvent ) {
+                                  final Event<BayesianTemplateSelectedEvent> bayesianEvent ) {
         layers = lay;
         this.bayesianEvent = bayesianEvent;
         this.drawBoundingBox( template );
@@ -44,7 +44,7 @@ public class LayerRectangleFactory extends LayerFactory<Rectangle> {
 
             @Override
             public void onNodeMouseClick( NodeMouseClickEvent event ) {
-                bayesianEvent.fire( new BayesianEvent( xml03File ) );
+                bayesianEvent.fire( new BayesianTemplateSelectedEvent( xml03File ) );
             }
         } );
     }

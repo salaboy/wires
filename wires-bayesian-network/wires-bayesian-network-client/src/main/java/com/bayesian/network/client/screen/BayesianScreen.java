@@ -1,40 +1,46 @@
 package com.bayesian.network.client.screen;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.bayesian.network.client.events.BayesianEvent;
-import com.bayesian.network.client.events.LayerEvent;
-import com.bayesian.network.client.events.ProbabilityEvent;
-import com.bayesian.network.client.events.ReadyEvent;
+import com.bayesian.network.client.events.BayesianTemplateSelectedEvent;
+import com.bayesian.network.client.events.RenderBayesianNetworkEvent;
 import com.bayesian.network.client.factory.BayesianFactory;
-import com.bayesian.parser.client.service.BayesianService;
-import org.jboss.errai.common.client.api.Caller;
+import com.bayesian.network.client.shapes.EditableBayesianNode;
+import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.wires.core.client.canvas.WiresCanvas;
+import org.uberfire.client.annotations.WorkbenchPartTitle;
+import org.uberfire.client.annotations.WorkbenchPartView;
+import org.uberfire.client.annotations.WorkbenchScreen;
 
 @Dependent
+@WorkbenchScreen(identifier = "BayesianScreen")
 public class BayesianScreen extends WiresCanvas {
 
     @Inject
-    private Caller<BayesianService> bayesianService;
+    private BayesianFactory factory;
 
-    @Inject
-    private Event<ProbabilityEvent> probabilityEvent;
+    public void onBayesianEvent( @Observes BayesianTemplateSelectedEvent event ) {
+        factory.init( event.getTemplate() );
+    }
 
-    @Inject
-    private Event<ReadyEvent> readyEvent;
+    public void onReadyEvent( @Observes RenderBayesianNetworkEvent event ) {
+        clear();
+        for ( EditableBayesianNode node : event.getBayesianNodes() ) {
+            addShape( node );
+        }
+    }
 
-    @Inject
-    private Event<LayerEvent> layerEvent;
+    @WorkbenchPartTitle
+    @Override
+    public String getTitle() {
+        return "Bayesian Network";
+    }
 
-    public void addNewPanel( @Observes BayesianEvent event ) {
-        new BayesianFactory( bayesianService,
-                             event.getTemplate(),
-                             layerEvent,
-                             probabilityEvent,
-                             readyEvent );
+    @WorkbenchPartView
+    public IsWidget getView() {
+        return this;
     }
 
 }

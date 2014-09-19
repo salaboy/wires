@@ -36,11 +36,6 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
     }
 
     @Override
-    public List<ControlPoint> getControlPoints() {
-        return controlPoints;
-    }
-
-    @Override
     public void showControlPoints() {
         final Layer layer = getLayer();
         if ( !controlPoints.isEmpty() && !showingControlPoints ) {

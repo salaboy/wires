@@ -35,7 +35,6 @@ import org.kie.wires.core.api.containers.ContainerManager;
 import org.kie.wires.core.api.containers.RequiresContainerManager;
 import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
-import org.kie.wires.core.client.util.UUID;
 
 public class WiresFixedText extends WiresBaseShape implements RequiresContainerManager {
 
@@ -54,7 +53,6 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
     protected ContainerManager containerManager;
 
     public WiresFixedText( final Text shape ) {
-        id = UUID.uuid();
         text = shape;
         text.setText( "Text" );
 

@@ -32,6 +32,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     protected SelectionManager selectionManager;
 
     public WiresBaseShape() {
+        id = UUID.uuid();
         setDraggable( true );
     }
 

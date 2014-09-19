@@ -23,7 +23,6 @@ import org.kie.wires.core.api.shapes.WiresBaseDynamicContainer;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
 import org.kie.wires.core.client.magnets.DefaultMagnet;
 import org.kie.wires.core.client.util.ShapesUtils;
-import org.kie.wires.core.client.util.UUID;
 
 public class WiresCircularContainer extends WiresBaseDynamicContainer {
 
@@ -42,10 +41,9 @@ public class WiresCircularContainer extends WiresBaseDynamicContainer {
     private final ControlPoint controlPoint1;
 
     public WiresCircularContainer( final Circle shape ) {
-        this.id = UUID.uuid();
-        this.circle = shape;
-        this.circleFillColour = shape.getFillColor();
-        this.circleStrokeColour = shape.getStrokeColor();
+        circle = shape;
+        circleFillColour = shape.getFillColor();
+        circleStrokeColour = shape.getStrokeColor();
 
         final double radius = circle.getRadius();
         bounding = new Circle( radius + ( BOUNDARY_SIZE / 2 ) );

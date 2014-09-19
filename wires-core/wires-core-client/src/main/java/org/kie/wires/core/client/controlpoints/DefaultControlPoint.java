@@ -20,7 +20,7 @@ import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
-import org.kie.wires.core.client.util.UUID;
+import org.kie.wires.core.api.shapes.UUID;
 
 import static org.kie.wires.core.client.util.ShapesUtils.*;
 

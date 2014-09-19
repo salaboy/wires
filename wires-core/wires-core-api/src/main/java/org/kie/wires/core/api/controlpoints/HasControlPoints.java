@@ -15,15 +15,11 @@
  */
 package org.kie.wires.core.api.controlpoints;
 
-import java.util.List;
-
 import org.kie.wires.core.api.shapes.WiresShape;
 
 public interface HasControlPoints extends WiresShape {
 
     void addControlPoint( final ControlPoint cp );
-
-    List<ControlPoint> getControlPoints();
 
     void showControlPoints();
 
