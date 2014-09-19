@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.bayesian.network.client.shapes;
 
 import java.io.Serializable;
@@ -5,9 +20,9 @@ import java.util.Map;
 
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
+import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.common.collect.Maps;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
-import org.kie.wires.core.client.util.ShapesUtils;
 
 public class EditableBayesianProbability extends WiresBaseShape implements Serializable {
 
@@ -33,13 +48,13 @@ public class EditableBayesianProbability extends WiresBaseShape implements Seria
                                         final double positionYNode ) {
         rectangle = new Rectangle( width,
                                    height );
-        rectangle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE );
-        rectangle.setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE );
+        rectangle.setStrokeColor( ColorName.WHITE.getValue() );
 
         add( rectangle );
 
         init( positionXNode,
               positionYNode );
+        setDraggable( false );
 
         this.parentNode = Maps.newHashMap();
         this.porcentualOptions = Maps.newHashMap();
@@ -49,7 +64,7 @@ public class EditableBayesianProbability extends WiresBaseShape implements Seria
 
     @Override
     public void setSelected( final boolean isSelected ) {
-        //We don't support visual changes when selected
+        //It's not possible to select these Shapes
     }
 
     @Override

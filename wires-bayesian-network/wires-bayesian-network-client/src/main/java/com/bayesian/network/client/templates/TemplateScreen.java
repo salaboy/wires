@@ -18,7 +18,7 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
 @Dependent
-@WorkbenchScreen(identifier = "WiresTemplateScreen")
+@WorkbenchScreen(identifier = "BayesianTemplatesScreen")
 public class TemplateScreen extends Composite implements RequiresResize {
 
     interface ViewBinder extends UiBinder<Widget, TemplateScreen> {

@@ -33,7 +33,6 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
@@ -46,7 +45,7 @@ import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
 @ApplicationScoped
-public class StencilPaletteBuilder extends Composite {
+public class StencilPaletteBuilder {
 
     private static final int ZINDEX = Integer.MAX_VALUE;
     private static final int GLYPH_WIDTH = 65;

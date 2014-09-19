@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.bayesian.network.client.factory;
 
 import java.util.ArrayList;
@@ -7,7 +22,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.bayesian.network.client.events.LayerEvent;
 import com.bayesian.network.client.events.RenderBayesianNetworkEvent;
 import com.bayesian.network.client.shapes.EditableBayesianNode;
 import com.bayesian.network.client.utils.BayesianUtils;
@@ -32,25 +46,19 @@ public class BayesianFactory extends BaseFactory {
     private Caller<BayesianService> bayesianService;
 
     @Inject
-    private Event<LayerEvent> layerEvent;
-
-    @Inject
     private Event<RenderBayesianNetworkEvent> readyEvent;
 
     private String[][] colors;
-    private List<BayesVariable> nodes = new ArrayList<BayesVariable>();
     private List<EditableBayesianNode> bayesianNodes = new ArrayList<EditableBayesianNode>();
 
     public void init( final String xml03File ) {
         bayesianService.call( new RemoteCallback<BayesNetwork>() {
                                   @Override
                                   public void callback( final BayesNetwork response ) {
-                                      nodes.clear();
                                       bayesianNodes.clear();
                                       for ( BayesVariable bay : response.getNodos() ) {
                                           drawBayesianNode( bay );
                                       }
-                                      layerEvent.fire( new LayerEvent( nodes ) );
                                       readyEvent.fire( new RenderBayesianNetworkEvent( bayesianNodes ) );
 
                                   }
@@ -78,7 +86,8 @@ public class BayesianFactory extends BaseFactory {
                                                                       BayesianUtils.HEIGHT_NODE,
                                                                       positionX,
                                                                       positionY,
-                                                                      fillNodeColor );
+                                                                      fillNodeColor,
+                                                                      node );
 
         this.setHeader( node,
                         bayesianNode );
@@ -87,7 +96,6 @@ public class BayesianFactory extends BaseFactory {
 
         bayesianNode.buildNode();
 
-        nodes.add( node );
         bayesianNodes.add( bayesianNode );
     }
 

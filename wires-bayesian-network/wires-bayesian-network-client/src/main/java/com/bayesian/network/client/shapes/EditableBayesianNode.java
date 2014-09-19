@@ -1,9 +1,25 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.bayesian.network.client.shapes;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.google.common.collect.Maps;
@@ -14,29 +30,47 @@ public class EditableBayesianNode extends WiresBaseShape implements Serializable
 
     private static final long serialVersionUID = -5490131652690005490L;
 
-    private Rectangle rectangle;
+    private static final int BOUNDARY_SIZE = 10;
+
     private Rectangle header;
     private Text textHeader;
     private Map<Text, List<Rectangle>> porcentualBars;
+
+    private final Rectangle rectangle;
+    private final Rectangle bounding;
+
+    private final BayesVariable variable;
 
     public EditableBayesianNode() {
         this( 0,
               0,
               0,
               0,
-              "" );
+              "",
+              null );
     }
 
     public EditableBayesianNode( final double width,
                                  final double height,
                                  final double positionXNode,
                                  final double positionYNode,
-                                 final String fillColor ) {
+                                 final String fillColor,
+                                 final BayesVariable variable ) {
+        this.variable = variable;
+
         rectangle = new Rectangle( width,
                                    height );
         rectangle.setStrokeColor( ShapesUtils.RGB_STROKE_SHAPE );
         rectangle.setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE );
         rectangle.setFillColor( fillColor );
+
+        bounding = new Rectangle( width + BOUNDARY_SIZE,
+                                  height + BOUNDARY_SIZE,
+                                  rectangle.getCornerRadius() );
+        bounding.setX( getX() - ( BOUNDARY_SIZE / 2 ) );
+        bounding.setY( getY() - ( BOUNDARY_SIZE / 2 ) );
+        bounding.setStrokeWidth( BOUNDARY_SIZE );
+        bounding.setAlpha( 0.1 );
 
         add( rectangle );
 
@@ -48,7 +82,11 @@ public class EditableBayesianNode extends WiresBaseShape implements Serializable
 
     @Override
     public void setSelected( final boolean isSelected ) {
-        //We don't support visual changes when selected
+        if ( isSelected ) {
+            add( bounding );
+        } else {
+            remove( bounding );
+        }
     }
 
     @Override
@@ -99,6 +137,10 @@ public class EditableBayesianNode extends WiresBaseShape implements Serializable
 
     public double getWidth() {
         return rectangle.getWidth();
+    }
+
+    public BayesVariable getVariable() {
+        return variable;
     }
 
 }

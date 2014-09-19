@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.bayesian.network.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,13 +37,12 @@ import static org.uberfire.workbench.model.PanelType.*;
 @WorkbenchPerspective(identifier = "WiresBayesianPerspective")
 public class WiresBayesianPerspective {
 
-    private static final String WIRES = "Wires";
+    private static final String WIRES = "Bayesian Networks";
 
     private static final String BAYESIAN_SCREEN = "BayesianScreen";
     private static final String WIRES_LAYERS_SCREEN = "WiresLayersScreen";
-    private static final String WIRES_TEMPLATE_SCREEN = "WiresTemplateScreen";
-    private static final String WIRES_ACTIONS_SCREEN = "WiresActionsScreen";
-    private static final String BAYESIAN_SOUTH_SCREEN = "bayesianSouthScreen";
+    private static final String WIRES_TEMPLATE_SCREEN = "BayesianTemplatesScreen";
+    private static final String BAYESIAN_SOUTH_SCREEN = "BayesianVariablesScreen";
 
     private static final int MIN_WIDTH_PANEL = 200;
     private static final int WIDTH_PANEL = 300;
@@ -45,7 +59,8 @@ public class WiresBayesianPerspective {
         this.createPanelWithChild( perspective,
                                    Position.EAST );
         this.drawPanel( perspective,
-                        Position.SOUTH, BAYESIAN_SOUTH_SCREEN );
+                        Position.SOUTH,
+                        BAYESIAN_SOUTH_SCREEN );
 
         perspective.setTransient( true );
 
@@ -63,12 +78,6 @@ public class WiresBayesianPerspective {
 
     private void createPanelWithChild( final PerspectiveDefinition p,
                                        final Position position ) {
-        final PanelDefinition actionsPanel = newPanel( p,
-                                                       position,
-                                                       WIRES_ACTIONS_SCREEN );
-        actionsPanel.setHeight( 150 );
-        actionsPanel.setMinHeight( 80 );
-
         final PanelDefinition templatePanel = newPanel( p,
                                                         position,
                                                         WIRES_TEMPLATE_SCREEN );
@@ -82,11 +91,9 @@ public class WiresBayesianPerspective {
         parentPanel.setMinHeight( 150 );
         parentPanel.appendChild( Position.SOUTH,
                                  templatePanel );
-        parentPanel.appendChild( Position.SOUTH,
-                                 actionsPanel );
+
         p.getRoot().insertChild( position,
                                  parentPanel );
-
     }
 
     private PanelDefinition newPanel( final PerspectiveDefinition p,

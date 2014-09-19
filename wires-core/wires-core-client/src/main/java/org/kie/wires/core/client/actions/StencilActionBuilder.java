@@ -14,9 +14,9 @@ public class StencilActionBuilder {
     private static final int WIDTH_PICTURE = 16;
 
     public ActionShape build( final String pictureCategory,
-                              final NodeMouseClickHandler clickEvent,
+                              final NodeMouseClickHandler clickHandler,
                               final ImageResource img ) {
-        final Rectangle bounding = getBoundingImage( clickEvent );
+        final Rectangle bounding = getBoundingImage( clickHandler );
         final Picture icon = new Picture( img,
                                           WIDTH_PICTURE,
                                           HEIGHT_PICTURE,
@@ -29,10 +29,10 @@ public class StencilActionBuilder {
         return shape;
     }
 
-    private Rectangle getBoundingImage( final NodeMouseClickHandler clickEvent ) {
+    private Rectangle getBoundingImage( final NodeMouseClickHandler clickHandler ) {
         final Rectangle bounding = new Rectangle( WIDTH_BOUNDING,
                                                   HEIGHT_BOUNDING ).setX( 0 ).setY( 0 ).setStrokeColor( ColorName.WHITE.getValue() );
-        bounding.addNodeMouseClickHandler( clickEvent );
+        bounding.addNodeMouseClickHandler( clickHandler );
         return bounding;
     }
 
