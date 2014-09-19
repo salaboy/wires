@@ -41,18 +41,22 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
 
     private static final int BOUNDARY_SIZE = 10;
 
+    //We do not hide the boundary item for Lines as it makes selecting them very difficult
+    private static final double ALPHA_DESELECTED = 0.01;
+    private static final double ALPHA_SELECTED = 0.1;
+
     private final Text text;
     private final Text bounding;
+    private final TextBox editTextBox = new TextBox();
 
     private WiresContainer boundContainer;
 
     protected ContainerManager containerManager;
 
-    private final TextBox editTextBox = new TextBox();
-
     public WiresFixedText( final Text shape ) {
         id = UUID.uuid();
         text = shape;
+        text.setText( "Text" );
 
         bounding = new Text( text.getText(),
                              text.getFontFamily(),
@@ -60,9 +64,10 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
         bounding.setTextBaseLine( text.getTextBaseLine() );
         bounding.setTextAlign( text.getTextAlign() );
         bounding.setStrokeWidth( BOUNDARY_SIZE );
-        bounding.setAlpha( 0.1 );
+        bounding.setAlpha( ALPHA_DESELECTED );
 
         add( text );
+        add( bounding );
     }
 
     @Override
@@ -73,9 +78,9 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
     @Override
     public void setSelected( final boolean isSelected ) {
         if ( isSelected ) {
-            add( bounding );
+            bounding.setAlpha( ALPHA_SELECTED );
         } else {
-            remove( bounding );
+            bounding.setAlpha( ALPHA_DESELECTED );
         }
     }
 
@@ -129,6 +134,9 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
                     text.setText( editTextBox.getText() );
                     bounding.setText( editTextBox.getText() );
                     text.getLayer().draw();
+                    RootPanel.get().remove( editTextBox );
+                }
+                if ( event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE ) {
                     RootPanel.get().remove( editTextBox );
                 }
             }

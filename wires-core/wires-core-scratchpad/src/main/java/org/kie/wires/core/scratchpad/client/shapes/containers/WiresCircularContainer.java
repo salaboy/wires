@@ -15,32 +15,17 @@
  */
 package org.kie.wires.core.scratchpad.client.shapes.containers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
-import com.emitrom.lienzo.client.core.event.NodeDragStartEvent;
-import com.emitrom.lienzo.client.core.event.NodeDragStartHandler;
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.types.Point2D;
-import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.magnets.Magnet;
-import org.kie.wires.core.api.shapes.RequiresShapesManager;
-import org.kie.wires.core.api.shapes.ShapesManager;
-import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
-import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.api.shapes.WiresBaseDynamicContainer;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
 import org.kie.wires.core.client.magnets.DefaultMagnet;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.client.util.UUID;
-import org.uberfire.commons.data.Pair;
 
-public class WiresCircularContainer extends WiresBaseDynamicShape implements WiresContainer,
-                                                                             RequiresShapesManager {
+public class WiresCircularContainer extends WiresBaseDynamicContainer {
 
     private static final int BOUNDARY_SIZE = 10;
 
@@ -55,11 +40,6 @@ public class WiresCircularContainer extends WiresBaseDynamicShape implements Wir
     private final Magnet magnet4;
 
     private final ControlPoint controlPoint1;
-
-    private List<WiresBaseShape> children = new ArrayList<WiresBaseShape>();
-    private List<Pair<WiresBaseShape, Point2D>> dragStartLocations = new ArrayList<Pair<WiresBaseShape, Point2D>>();
-
-    private ShapesManager shapesManager;
 
     public WiresCircularContainer( final Circle shape ) {
         this.id = UUID.uuid();
@@ -109,50 +89,12 @@ public class WiresCircularContainer extends WiresBaseDynamicShape implements Wir
     }
 
     @Override
-    public void setShapesManager( final ShapesManager shapesManager ) {
-        this.shapesManager = shapesManager;
-    }
-
-    @Override
     public void setSelected( final boolean isSelected ) {
         if ( isSelected ) {
             add( bounding );
         } else {
             remove( bounding );
         }
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        super.init( cx,
-                    cy );
-
-        addNodeDragStartHandler( new NodeDragStartHandler() {
-            @Override
-            public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
-                dragStartLocations.clear();
-                for ( WiresBaseShape shape : children ) {
-                    dragStartLocations.add( new Pair( shape,
-                                                      new Point2D( shape.getLocation().getX(),
-                                                                   shape.getLocation().getY() ) ) );
-                }
-            }
-        } );
-
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                final double deltaX = nodeDragMoveEvent.getDragContext().getDx();
-                final double deltaY = nodeDragMoveEvent.getDragContext().getDy();
-                final Point2D delta = new Point2D( deltaX,
-                                                   deltaY );
-                for ( Pair<WiresBaseShape, Point2D> dragStartLocation : dragStartLocations ) {
-                    dragStartLocation.getK1().setLocation( dragStartLocation.getK2().plus( delta ) );
-                }
-                getLayer().draw();
-            }
-        } );
     }
 
     @Override
@@ -164,21 +106,6 @@ public class WiresCircularContainer extends WiresBaseDynamicShape implements Wir
     }
 
     @Override
-    public void attachShape( final WiresBaseShape shape ) {
-        children.add( shape );
-    }
-
-    @Override
-    public void detachShape( final WiresBaseShape shape ) {
-        children.remove( shape );
-    }
-
-    @Override
-    public List<WiresBaseShape> getContainedShapes() {
-        return Collections.unmodifiableList( children );
-    }
-
-    @Override
     public void setHover( final boolean isHover ) {
         if ( isHover ) {
             circle.setFillColor( ShapesUtils.RGB_FILL_HOVER_CONTAINER );
@@ -186,14 +113,6 @@ public class WiresCircularContainer extends WiresBaseDynamicShape implements Wir
         } else {
             circle.setFillColor( circleFillColour );
             circle.setStrokeColor( circleStrokeColour );
-        }
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        for ( WiresBaseShape shape : children ) {
-            shapesManager.forceDeleteShape( shape );
         }
     }
 
