@@ -15,34 +15,27 @@
  */
 package org.kie.wires.client;
 
-import java.util.Collection;
-import java.util.Iterator;
 import javax.inject.Inject;
 
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
-import org.uberfire.client.mvp.AbstractWorkbenchPerspectiveActivity;
 import org.uberfire.client.mvp.ActivityManager;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBarPresenter;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.security.Identity;
 import org.uberfire.workbench.model.menu.MenuPosition;
 import org.uberfire.workbench.model.menu.Menus;
 
 import static org.uberfire.workbench.model.menu.MenuFactory.*;
 
 /**
- * GWT's Entry-point for Uberfire-showcase
+ * GWT's Entry-point for Wires
  */
 @EntryPoint
 public class ShowcaseEntryPoint {
@@ -56,12 +49,6 @@ public class ShowcaseEntryPoint {
     @Inject
     private ActivityManager activityManager;
 
-    @Inject
-    private SyncBeanManager iocManager;
-
-    @Inject
-    public Identity identity;
-
     @AfterInitialization
     public void startApp() {
         setupMenu();
@@ -69,28 +56,22 @@ public class ShowcaseEntryPoint {
     }
 
     private void setupMenu() {
-        final AbstractWorkbenchPerspectiveActivity defaultPerspective = getDefaultPerspectiveActivity();
-        final Menus menus = newTopLevelMenu( "Wires" ).respondsWith( new Command() {
+        final Menus menus = newTopLevelMenu( "Wires ScratchPad" ).respondsWith( new Command() {
             @Override
             public void execute() {
-                if ( defaultPerspective != null ) {
-                    placeManager.goTo( new DefaultPlaceRequest( defaultPerspective.getIdentifier() ) );
-                } else {
-                    Window.alert( "Default perspective not found." );
-                }
+                placeManager.goTo( new DefaultPlaceRequest( "WiresScratchPadPerspective" ) );
             }
-        } ).endMenu().
-                newTopLevelMenu( "Bayesian Networks" ).respondsWith( new Command() {
+        } ).endMenu().newTopLevelMenu( "Wires Trees" ).respondsWith( new Command() {
             @Override
             public void execute() {
-                if ( defaultPerspective != null ) {
-                    placeManager.goTo( new DefaultPlaceRequest( "WiresBayesianPerspective" ) );
-                } else {
-                    Window.alert( "Default perspective not found." );
-                }
+                placeManager.goTo( new DefaultPlaceRequest( "WiresTreesPerspective" ) );
             }
-        } ).endMenu().
-                newTopLevelMenu( "Logout" ).position( MenuPosition.RIGHT ).respondsWith( new Command() {
+        } ).endMenu().newTopLevelMenu( "Bayesian Networks" ).respondsWith( new Command() {
+            @Override
+            public void execute() {
+                placeManager.goTo( new DefaultPlaceRequest( "WiresBayesianPerspective" ) );
+            }
+        } ).endMenu().newTopLevelMenu( "Logout" ).position( MenuPosition.RIGHT ).respondsWith( new Command() {
             @Override
             public void execute() {
                 redirect( GWT.getModuleBaseURL() + "uf_logout" );
@@ -98,25 +79,6 @@ public class ShowcaseEntryPoint {
         } ).endMenu().build();
 
         menubar.addMenus( menus );
-    }
-
-    private AbstractWorkbenchPerspectiveActivity getDefaultPerspectiveActivity() {
-        AbstractWorkbenchPerspectiveActivity defaultPerspective = null;
-        final Collection<IOCBeanDef<AbstractWorkbenchPerspectiveActivity>> perspectives = iocManager
-                .lookupBeans( AbstractWorkbenchPerspectiveActivity.class );
-        final Iterator<IOCBeanDef<AbstractWorkbenchPerspectiveActivity>> perspectivesIterator = perspectives.iterator();
-        outer_loop:
-        while ( perspectivesIterator.hasNext() ) {
-            final IOCBeanDef<AbstractWorkbenchPerspectiveActivity> perspective = perspectivesIterator.next();
-            final AbstractWorkbenchPerspectiveActivity instance = perspective.getInstance();
-            if ( instance.isDefault() ) {
-                defaultPerspective = instance;
-                break outer_loop;
-            } else {
-                iocManager.destroyBean( instance );
-            }
-        }
-        return defaultPerspective;
     }
 
     // Fade out the "Loading application" pop-up

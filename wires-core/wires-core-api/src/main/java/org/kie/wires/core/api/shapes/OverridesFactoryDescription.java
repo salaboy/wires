@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 JBoss Inc
+ * Copyright 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.factories;
+package org.kie.wires.core.api.shapes;
 
 /**
- * Drop Context for Shapes being dragged from the Palette into a Canvas
+ * ShapeFactory provides the means for Shapes to define a generic description (e.g. Circle, Rectangle). This interface
+ * allows for a Shape to declare it provides it's own naming implementation; supporting different instances of
+ * a Shape to have different descriptions.
  */
-public interface ShapeDropContext<T> {
+public interface OverridesFactoryDescription {
 
-    T getContext();
-
-    void setContext( final T context );
+    /**
+     * Get Description of specific Shape instance; overriding the generic description provides by Factories
+     * @return
+     */
+    String getDescription();
 
 }

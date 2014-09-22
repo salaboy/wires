@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Composite;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.ShapeGlyph;
+import org.kie.wires.core.api.shapes.OverridesFactoryDescription;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 
@@ -46,7 +47,10 @@ public class StencilLayerBuilder extends Composite {
         final LayerShape layerShape = new LayerShape();
         final Rectangle bounding = drawBoundingBox();
         final ShapeGlyph glyph = factory.getGlyph();
-        final Text description = drawDescription( factory.getShapeDescription() );
+
+        //Get display name to show in Panel
+        final String name = ( shape instanceof OverridesFactoryDescription ) ? ( (OverridesFactoryDescription) shape ).getDescription() : factory.getShapeDescription();
+        final Text description = drawDescription( name );
 
         //Clicking on the Shape selects it - Lienzo doesn't support bubbling click events down through
         //overlapping items as it uses a bitmap SelectionLayer to detect mouse-clicks. Therefore we need

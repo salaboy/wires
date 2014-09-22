@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.scratchpad.client.canvas;
+package org.kie.wires.core.trees.client.canvas;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -21,21 +21,18 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.emitrom.lienzo.client.core.types.Point2D;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.wires.core.api.containers.RequiresContainerManager;
-import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.events.ClearEvent;
-import org.kie.wires.core.api.events.ProgressEvent;
 import org.kie.wires.core.api.events.ShapeAddedEvent;
 import org.kie.wires.core.api.events.ShapeDeletedEvent;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
-import org.kie.wires.core.api.factories.ShapeDropContext;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.WiresCanvas;
-import org.kie.wires.core.client.factories.ShapeFactoryCache;
+import org.kie.wires.core.trees.client.shapes.WiresTreeNode;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -44,10 +41,11 @@ import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
-@SuppressWarnings("unused")
 @Dependent
-@WorkbenchScreen(identifier = "WiresCanvasScreen")
-public class WiresCanvasScreen extends WiresCanvas {
+@WorkbenchScreen(identifier = "WiresTreesScreen")
+public class WiresTreesScreen extends WiresCanvas {
+
+    private static final int MAX_PROXIMITY = 200;
 
     @Inject
     private Event<ClearEvent> clearEvent;
@@ -61,12 +59,11 @@ public class WiresCanvasScreen extends WiresCanvas {
     @Inject
     private Event<ShapeDeletedEvent> shapeDeletedEvent;
 
-    @Inject
-    private ShapeFactoryCache factoriesCache;
-
     private Menus menus;
 
-    private ShapeDropContext dropContext = new DefaultShapeDropContext();
+    private WiresTreeNodeDropContext dropContext = new WiresTreeNodeDropContext();
+
+    private WiresTreeNodeConnector connector = null;
 
     @PostConstruct
     public void setup() {
@@ -142,18 +139,36 @@ public class WiresCanvasScreen extends WiresCanvas {
     }
 
     public void onDragPreviewHandler( @Observes ShapeDragPreviewEvent shapeDragPreviewEvent ) {
-        //Only Shapes that require a ContainerManager can be dropped into Containers
-        if ( !( shapeDragPreviewEvent.getShape() instanceof RequiresContainerManager ) ) {
-            dropContext.setContainer( null );
+        //We can only connect WiresTreeNodes to each other
+        if ( !( shapeDragPreviewEvent.getShape() instanceof WiresTreeNode ) ) {
+            dropContext.setContext( null );
             return;
         }
 
-        //Find a Container to drop the Shape into
+        //Find a Parent Node to attach the Shape to
         final double cx = getX( shapeDragPreviewEvent.getX() );
         final double cy = getY( shapeDragPreviewEvent.getY() );
-        final WiresContainer container = getContainer( cx,
-                                                       cy );
-        dropContext.setContainer( container );
+        final WiresTreeNode child = (WiresTreeNode) shapeDragPreviewEvent.getShape();
+        final WiresTreeNode prospectiveParent = getParentNode( child,
+                                                               cx,
+                                                               cy );
+
+        //If there is a prospective parent show the line between child and parent
+        if ( prospectiveParent != null ) {
+            if ( connector == null ) {
+                connector = new WiresTreeNodeConnector();
+                canvasLayer.add( connector );
+                connector.moveToBottom();
+            }
+            connector.getPoints().getPoint( 0 ).set( prospectiveParent.getLocation() );
+            connector.getPoints().getPoint( 1 ).set( new Point2D( cx,
+                                                                  cy ) );
+        } else if ( connector != null ) {
+            canvasLayer.remove( connector );
+            connector = null;
+        }
+
+        dropContext.setContext( prospectiveParent );
         canvasLayer.draw();
     }
 
@@ -163,6 +178,12 @@ public class WiresCanvasScreen extends WiresCanvas {
         //If there's no Shape to add then exit
         if ( wiresShape == null ) {
             return;
+        }
+
+        //Hide the temporary connector
+        if ( connector != null ) {
+            canvasLayer.remove( connector );
+            connector = null;
         }
 
         //Get Shape's co-ordinates relative to the Canvas
@@ -177,21 +198,19 @@ public class WiresCanvasScreen extends WiresCanvas {
             return;
         }
 
-        //Add Shape to Canvas
-        wiresShape.init( cx,
-                         cy );
+        //Add the new Node to it's parent (unless this is the first node)
+        final WiresTreeNode parent = dropContext.getContext();
+        boolean addShape = getShapesInCanvas().size() == 0 || getShapesInCanvas().size() > 0 && parent != null;
+        boolean addChildToParent = parent != null;
 
-        //If we're adding the Shape to a Container notify the Container of a new child. We cannot add Shape
-        //to the Container's underlying (impl) Group (which would be ideal) as we can no longer select the
-        //child separately from the Group. We therefore just keep a reference to children in the Container
-        //and move them when we move the Container
-        final WiresContainer container = dropContext.getContainer();
-        if ( container != null ) {
-            container.attachShape( wiresShape );
-            container.setHover( false );
+        if ( addShape ) {
+            wiresShape.init( cx,
+                             cy );
+            addShape( wiresShape );
         }
-
-        addShape( wiresShape );
+        if ( addChildToParent ) {
+            parent.addChildNode( (WiresTreeNode) wiresShape );
+        }
 
         //Enable clearing of Canvas now a Shape has been added
         menus.getItems().get( 0 ).setEnabled( true );
@@ -213,9 +232,6 @@ public class WiresCanvasScreen extends WiresCanvas {
         if ( Window.confirm( "Are you sure to clean the canvas?" ) ) {
             super.clear();
             clearEvent.fire( new ClearEvent() );
-            menus.getItems().get( 0 ).setEnabled( false );
-            menus.getItems().get( 1 ).setEnabled( false );
-            menus.getItems().get( 2 ).setEnabled( false );
         }
     }
 
@@ -238,12 +254,32 @@ public class WiresCanvasScreen extends WiresCanvas {
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
     }
 
-    public void progress( @Observes ProgressEvent event ) {
-        if ( !hasProgressBar() ) {
-//            final ProgressBar progressBar = new ProgressBar( 300, 34, canvasLayer );
-//            setProgressBar (progressBar );
-//            progressBar.setX( 20 ).setY( 10 );
+    protected WiresTreeNode getParentNode( final WiresTreeNode dragShape,
+                                           final double cx,
+                                           final double cy ) {
+        WiresTreeNode prospectiveParent = null;
+        double finalDistance = Double.MAX_VALUE;
+        for ( WiresBaseShape ws : getShapesInCanvas() ) {
+            if ( ws instanceof WiresTreeNode ) {
+                final WiresTreeNode node = (WiresTreeNode) ws;
+                if ( node.acceptChildNode( dragShape ) ) {
+                    double deltaX = cx - node.getX();
+                    double deltaY = cy - node.getY();
+                    double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
+
+                    if ( finalDistance > distance ) {
+                        finalDistance = distance;
+                        prospectiveParent = node;
+                    }
+                }
+            }
         }
+
+        //If we're too far away from a parent we might as well not have a parent
+        if ( finalDistance > MAX_PROXIMITY ) {
+            prospectiveParent = null;
+        }
+        return prospectiveParent;
     }
 
 }

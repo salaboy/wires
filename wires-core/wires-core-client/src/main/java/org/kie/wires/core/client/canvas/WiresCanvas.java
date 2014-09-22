@@ -28,8 +28,6 @@ import com.emitrom.lienzo.shared.core.types.ColorName;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.wires.core.api.containers.ContainerManager;
-import org.kie.wires.core.api.containers.RequiresContainerManager;
 import org.kie.wires.core.api.containers.WiresContainer;
 import org.kie.wires.core.api.controlpoints.HasControlPoints;
 import org.kie.wires.core.api.magnets.HasMagnets;
@@ -48,11 +46,10 @@ import org.kie.wires.core.client.progressbar.ProgressBar;
  */
 public class WiresCanvas extends Composite implements ShapesManager,
                                                       SelectionManager,
-                                                      MagnetManager,
-                                                      ContainerManager {
+                                                      MagnetManager {
 
     private FocusableLienzoPanel panel;
-    private List<WiresShape> shapesInCanvas = new ArrayList<WiresShape>();
+    private List<WiresBaseShape> shapesInCanvas = new ArrayList<WiresBaseShape>();
     private WiresBaseShape selectedShape;
     private ProgressBar progressBar;
 
@@ -128,7 +125,7 @@ public class WiresCanvas extends Composite implements ShapesManager,
     }
 
     @Override
-    public List<WiresShape> getShapesInCanvas() {
+    public List<WiresBaseShape> getShapesInCanvas() {
         return Collections.unmodifiableList( this.shapesInCanvas );
     }
 
@@ -141,9 +138,6 @@ public class WiresCanvas extends Composite implements ShapesManager,
         }
         if ( shape instanceof RequiresMagnetManager ) {
             ( (RequiresMagnetManager) shape ).setMagnetManager( this );
-        }
-        if ( shape instanceof RequiresContainerManager ) {
-            ( (RequiresContainerManager) shape ).setContainerManager( this );
         }
 
         canvasLayer.add( shape );
@@ -267,6 +261,7 @@ public class WiresCanvas extends Composite implements ShapesManager,
         }
 
         Magnet selectedMagnet = null;
+        double finalDistance = Double.MAX_VALUE;
         for ( WiresShape shape : getShapesInCanvas() ) {
             if ( !shape.getId().equals( activeShape.getId() ) ) {
                 if ( shape instanceof HasMagnets ) {
@@ -274,7 +269,6 @@ public class WiresCanvas extends Composite implements ShapesManager,
                     if ( shape.contains( cx,
                                          cy ) ) {
                         mShape.showMagnetsPoints();
-                        double finalDistance = Double.MAX_VALUE;
                         final List<Magnet> magnets = mShape.getMagnets();
                         for ( Magnet magnet : magnets ) {
                             magnet.setActive( false );
@@ -303,24 +297,6 @@ public class WiresCanvas extends Composite implements ShapesManager,
         }
 
         return selectedMagnet;
-    }
-
-    @Override
-    public WiresContainer getContainer( final double cx,
-                                        final double cy ) {
-        WiresContainer container = null;
-        for ( WiresShape ws : getShapesInCanvas() ) {
-            if ( ws instanceof WiresContainer ) {
-                final WiresContainer wc = (WiresContainer) ws;
-                wc.setHover( false );
-                if ( wc.contains( cx,
-                                  cy ) ) {
-                    wc.setHover( true );
-                    container = wc;
-                }
-            }
-        }
-        return container;
     }
 
 }

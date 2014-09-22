@@ -19,11 +19,11 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import org.kie.wires.core.api.controlpoints.ControlPoint;
 import org.kie.wires.core.api.controlpoints.ControlPointMoveHandler;
 import org.kie.wires.core.api.magnets.Magnet;
-import org.kie.wires.core.api.shapes.DefaultWiresShape;
 import org.kie.wires.core.client.controlpoints.DefaultControlPoint;
 import org.kie.wires.core.client.magnets.DefaultMagnet;
+import org.kie.wires.core.scratchpad.client.shapes.WiresScratchPadDefaultShape;
 
-public class WiresRectangle extends DefaultWiresShape {
+public class WiresRectangle extends WiresScratchPadDefaultShape {
 
     private static final int BOUNDARY_SIZE = 10;
 

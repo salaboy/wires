@@ -55,6 +55,13 @@
       <version>${wires-core.version}</version>
     </dependency>
 
+    <!--Wires Trees dependencies-->
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>wires-trees</artifactId>
+      <version>${wires-core.version}</version>
+    </dependency>
+
     <!--Bayesian Network dependencies-->
     <dependency>
       <groupId>org.kie</groupId>
@@ -199,6 +206,7 @@
             <compileSourcesArtifact>org.kie:wires-core-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-core-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-core-scratchpad</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie:wires-trees</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-bayesian-parser-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie:wires-bayesian-network-client</compileSourcesArtifact>
           </compileSourcesArtifacts>

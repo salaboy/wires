@@ -19,14 +19,17 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.bayesian.network.client.utils.BayesianUtils;
 import com.bayesian.parser.client.model.BayesVariable;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.google.common.collect.Maps;
+import org.kie.wires.core.api.shapes.OverridesFactoryDescription;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapesUtils;
 
-public class EditableBayesianNode extends WiresBaseShape implements Serializable {
+public class EditableBayesianNode extends WiresBaseShape implements OverridesFactoryDescription,
+                                                                    Serializable {
 
     private static final long serialVersionUID = -5490131652690005490L;
 
@@ -46,8 +49,28 @@ public class EditableBayesianNode extends WiresBaseShape implements Serializable
               0,
               0,
               0,
-              "",
-              null );
+              "" );
+    }
+
+    public EditableBayesianNode( final Rectangle shape ) {
+        this( shape.getWidth(),
+              shape.getHeight(),
+              shape.getOffset().getX(),
+              shape.getOffset().getY(),
+              BayesianUtils.getNodeColors()[ 0 ][ 0 ] );
+    }
+
+    public EditableBayesianNode( final double width,
+                                 final double height,
+                                 final double positionXNode,
+                                 final double positionYNode,
+                                 final String fillColor ) {
+        this( width,
+              height,
+              positionXNode,
+              positionYNode,
+              fillColor,
+              new BayesVariable() );
     }
 
     public EditableBayesianNode( final double width,
@@ -143,4 +166,8 @@ public class EditableBayesianNode extends WiresBaseShape implements Serializable
         return variable;
     }
 
+    @Override
+    public String getDescription() {
+        return variable.getName();
+    }
 }

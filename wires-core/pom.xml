@@ -17,6 +17,7 @@
     <module>wires-core-api</module>
     <module>wires-core-client</module>
     <module>wires-core-scratchpad</module>
+    <module>wires-trees</module>
   </modules>
 
 </project>

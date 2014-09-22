@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.scratchpad.client.canvas;
+package org.kie.wires.core.trees.client.canvas;
 
 import org.kie.wires.core.api.factories.ShapeDropContext;
-import org.kie.wires.core.api.containers.WiresContainer;
+import org.kie.wires.core.trees.client.shapes.WiresTreeNode;
 
-public class DefaultShapeDropContext implements ShapeDropContext {
+public class WiresTreeNodeDropContext implements ShapeDropContext<WiresTreeNode> {
 
-    private WiresContainer container;
+    private WiresTreeNode context;
 
     @Override
-    public WiresContainer getContainer() {
-        return container;
+    public WiresTreeNode getContext() {
+        return context;
     }
 
     @Override
-    public void setContainer( final WiresContainer context ) {
-        this.container = context;
+    public void setContext( final WiresTreeNode context ) {
+        this.context = context;
     }
 
 }

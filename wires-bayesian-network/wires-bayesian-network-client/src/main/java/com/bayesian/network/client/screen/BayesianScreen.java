@@ -26,6 +26,7 @@ import com.bayesian.network.client.factory.BayesianFactory;
 import com.bayesian.network.client.shapes.EditableBayesianNode;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.wires.core.api.events.ClearEvent;
+import org.kie.wires.core.api.events.ShapeAddedEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.WiresCanvas;
@@ -48,6 +49,9 @@ public class BayesianScreen extends WiresCanvas {
 
     @Inject
     private Event<ShapeSelectedEvent> shapeSelectedEvent;
+
+    @Inject
+    private Event<ShapeAddedEvent> shapeAddedEvent;
 
     public void onBayesianEvent( @Observes BayesianTemplateSelectedEvent event ) {
         factory.init( event.getTemplate() );
@@ -77,9 +81,20 @@ public class BayesianScreen extends WiresCanvas {
     }
 
     @Override
+    public void addShape( final WiresBaseShape shape ) {
+        //ShapeAddedEvent integrates with Layers Panel
+        super.addShape( shape );
+        shapeAddedEvent.fire( new ShapeAddedEvent( shape ) );
+    }
+
+    @Override
     public void selectShape( final WiresBaseShape shape ) {
-        super.selectShape( shape );
         shapeSelectedEvent.fire( new ShapeSelectedEvent( shape ) );
+    }
+
+    public void onShapeSelected( @Observes ShapeSelectedEvent event ) {
+        //ShapeSelectedEvent integrates with Layers Panel and this Canvas
+        super.selectShape( event.getShape() );
     }
 
 }

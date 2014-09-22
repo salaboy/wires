@@ -17,6 +17,9 @@
   <!-- Wires Scratch Pad dependencies -->
   <inherits name="org.kie.wires.core.scratchpad.WiresCoreScratchPad"/>
 
+  <!-- Wires Trees dependencies -->
+  <inherits name="org.kie.wires.core.trees.WiresCoreTrees"/>
+
   <!-- Bayesian Network dependencies -->
   <inherits name="com.bayesian.parser.BayesianAPI"/>
   <inherits name="com.bayesian.network.BayesianNetworkClient"/>

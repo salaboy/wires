@@ -20,13 +20,13 @@ import static org.uberfire.workbench.model.PanelType.*;
  */
 @ApplicationScoped
 @WorkbenchPerspective(identifier = "WiresScratchPadPerspective", isDefault = true)
-public class WiresMainPerspective {
+public class WiresScratchPadPerspective {
 
     private static final String WIRES = "Wires";
 
     private static final String WIRES_LAYERS_SCREEN = "WiresLayersScreen";
     private static final String WIRES_PALETTE_SCREEN = "WiresPaletteScreen";
-    private static final String WIRES_CANVAS_SCREEN = "WiresCanvasScreen";
+    private static final String WIRES_CANVAS_SCREEN = "WiresScratchPadScreen";
     private static final String WIRES_ACTIONS_SCREEN = "WiresActionsScreen";
     private static final String WIRES_PROPERTIES_SCREEN = "WiresPropertiesScreen";
 

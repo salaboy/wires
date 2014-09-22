@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 JBoss Inc
+ * Copyright 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.api.factories;
+package org.kie.wires.core.scratchpad.client.canvas;
 
-/**
- * Drop Context for Shapes being dragged from the Palette into a Canvas
- */
-public interface ShapeDropContext<T> {
+import org.kie.wires.core.api.containers.WiresContainer;
+import org.kie.wires.core.api.factories.ShapeDropContext;
 
-    T getContext();
+public class WiresScratchPadDropContext implements ShapeDropContext<WiresContainer> {
 
-    void setContext( final T context );
+    private WiresContainer context;
+
+    @Override
+    public WiresContainer getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext( final WiresContainer context ) {
+        this.context = context;
+    }
 
 }

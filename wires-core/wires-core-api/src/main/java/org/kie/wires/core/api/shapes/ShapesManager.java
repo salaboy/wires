@@ -23,7 +23,7 @@ public interface ShapesManager {
      * Get a list of all Shapes on the Canvas
      * @return
      */
-    List<WiresShape> getShapesInCanvas();
+    List<WiresBaseShape> getShapesInCanvas();
 
     /**
      * Add a Shape to the Canvas

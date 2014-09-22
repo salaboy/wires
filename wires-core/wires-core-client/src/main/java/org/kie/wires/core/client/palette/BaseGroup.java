@@ -50,13 +50,13 @@ public abstract class BaseGroup extends Composite {
         panel.getScene().add( layer );
         initWidget( panel );
 
-        drawConnectors();
+        drawStencils();
     }
 
     public abstract Category getCategory();
 
-    protected void drawConnectors() {
-        //Get PaletteShape for each Connector Factory
+    protected void drawStencils() {
+        //Get PaletteShape for each Factory
         final Category category = getCategory();
         final List<PaletteShape> shapes = new ArrayList<PaletteShape>();
         for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {

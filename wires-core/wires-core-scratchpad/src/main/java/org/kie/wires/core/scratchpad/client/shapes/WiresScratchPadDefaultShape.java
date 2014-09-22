@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kie.wires.core.api.shapes;
+package org.kie.wires.core.scratchpad.client.shapes;
 
 import com.emitrom.lienzo.client.core.event.NodeDragEndEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragEndHandler;
@@ -12,11 +12,12 @@ import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import org.kie.wires.core.api.containers.ContainerManager;
 import org.kie.wires.core.api.containers.RequiresContainerManager;
 import org.kie.wires.core.api.containers.WiresContainer;
+import org.kie.wires.core.api.shapes.WiresBaseDynamicShape;
 
 /**
  * A Shape that can be re-sized and have connectors attached. It CAN be added to Containers.
  */
-public abstract class DefaultWiresShape extends WiresBaseDynamicShape implements RequiresContainerManager {
+public abstract class WiresScratchPadDefaultShape extends WiresBaseDynamicShape implements RequiresContainerManager {
 
     protected ContainerManager containerManager;
 
@@ -37,10 +38,10 @@ public abstract class DefaultWiresShape extends WiresBaseDynamicShape implements
 
             @Override
             public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                boundContainer = containerManager.getContainer( DefaultWiresShape.this.getX(),
-                                                                DefaultWiresShape.this.getY() );
+                boundContainer = containerManager.getContainer( WiresScratchPadDefaultShape.this.getX(),
+                                                                WiresScratchPadDefaultShape.this.getY() );
                 if ( boundContainer != null ) {
-                    boundContainer.detachShape( DefaultWiresShape.this );
+                    boundContainer.detachShape( WiresScratchPadDefaultShape.this );
                 }
 
                 getLayer().draw();
@@ -52,7 +53,7 @@ public abstract class DefaultWiresShape extends WiresBaseDynamicShape implements
             @Override
             public void onNodeDragEnd( final NodeDragEndEvent nodeDragEndEvent ) {
                 if ( boundContainer != null ) {
-                    boundContainer.attachShape( DefaultWiresShape.this );
+                    boundContainer.attachShape( WiresScratchPadDefaultShape.this );
                     boundContainer.setHover( false );
                 }
 
