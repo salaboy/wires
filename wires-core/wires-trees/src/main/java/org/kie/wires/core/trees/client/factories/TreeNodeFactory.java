@@ -28,7 +28,8 @@ import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.trees.client.factories.categories.TreeNodesCategory;
-import org.kie.wires.core.trees.client.shapes.WiresTreeNode;
+import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
+import org.kie.wires.core.trees.client.shapes.WiresExampleTreeNode1;
 
 @ApplicationScoped
 public class TreeNodeFactory implements ShapeFactory<Circle> {
@@ -109,12 +110,12 @@ public class TreeNodeFactory implements ShapeFactory<Circle> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresTreeNode( makeCircle() );
+        return new WiresExampleTreeNode1( makeCircle() );
     }
 
     @Override
     public boolean builds( final WiresBaseShape shapeType ) {
-        return shapeType instanceof WiresTreeNode;
+        return shapeType instanceof WiresBaseTreeNode;
     }
 
     private Circle makeCircle() {

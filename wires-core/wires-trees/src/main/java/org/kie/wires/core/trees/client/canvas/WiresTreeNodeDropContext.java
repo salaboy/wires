@@ -16,19 +16,19 @@
 package org.kie.wires.core.trees.client.canvas;
 
 import org.kie.wires.core.api.factories.ShapeDropContext;
-import org.kie.wires.core.trees.client.shapes.WiresTreeNode;
+import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
 
-public class WiresTreeNodeDropContext implements ShapeDropContext<WiresTreeNode> {
+public class WiresTreeNodeDropContext implements ShapeDropContext<WiresBaseTreeNode> {
 
-    private WiresTreeNode context;
+    private WiresBaseTreeNode context;
 
     @Override
-    public WiresTreeNode getContext() {
+    public WiresBaseTreeNode getContext() {
         return context;
     }
 
     @Override
-    public void setContext( final WiresTreeNode context ) {
+    public void setContext( final WiresBaseTreeNode context ) {
         this.context = context;
     }
 

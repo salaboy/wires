@@ -32,7 +32,7 @@ import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.WiresCanvas;
-import org.kie.wires.core.trees.client.shapes.WiresTreeNode;
+import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -98,10 +98,28 @@ public class WiresTreesScreen extends WiresCanvas {
                     }
                 } )
                 .endMenu()
+                .newTopLevelMenu( "Collapse node" )
+                .respondsWith( new Command() {
+                    @Override
+                    public void execute() {
+                        collapseNode();
+                    }
+                } )
+                .endMenu()
+                .newTopLevelMenu( "Expand node" )
+                .respondsWith( new Command() {
+                    @Override
+                    public void execute() {
+                        expandNode();
+                    }
+                } )
+                .endMenu()
                 .build();
         menus.getItems().get( 0 ).setEnabled( false );
         menus.getItems().get( 1 ).setEnabled( false );
         menus.getItems().get( 2 ).setEnabled( false );
+        menus.getItems().get( 3 ).setEnabled( false );
+        menus.getItems().get( 4 ).setEnabled( false );
     }
 
     @WorkbenchPartTitle
@@ -126,9 +144,12 @@ public class WiresTreesScreen extends WiresCanvas {
     }
 
     public void onShapeSelected( @Observes ShapeSelectedEvent event ) {
-        super.selectShape( event.getShape() );
+        final WiresBaseShape shape = event.getShape();
+        super.selectShape( shape );
         menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 3 ).setEnabled( nodeHasChildren( shape ) && !nodeHasCollapsedChildren( shape ) );
+        menus.getItems().get( 4 ).setEnabled( nodeHasCollapsedChildren( shape ) );
     }
 
     @Override
@@ -136,11 +157,13 @@ public class WiresTreesScreen extends WiresCanvas {
         super.deselectShape( shape );
         menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 3 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 4 ).setEnabled( isShapeSelected() );
     }
 
     public void onDragPreviewHandler( @Observes ShapeDragPreviewEvent shapeDragPreviewEvent ) {
         //We can only connect WiresTreeNodes to each other
-        if ( !( shapeDragPreviewEvent.getShape() instanceof WiresTreeNode ) ) {
+        if ( !( shapeDragPreviewEvent.getShape() instanceof WiresBaseTreeNode ) ) {
             dropContext.setContext( null );
             return;
         }
@@ -148,10 +171,10 @@ public class WiresTreesScreen extends WiresCanvas {
         //Find a Parent Node to attach the Shape to
         final double cx = getX( shapeDragPreviewEvent.getX() );
         final double cy = getY( shapeDragPreviewEvent.getY() );
-        final WiresTreeNode child = (WiresTreeNode) shapeDragPreviewEvent.getShape();
-        final WiresTreeNode prospectiveParent = getParentNode( child,
-                                                               cx,
-                                                               cy );
+        final WiresBaseTreeNode child = (WiresBaseTreeNode) shapeDragPreviewEvent.getShape();
+        final WiresBaseTreeNode prospectiveParent = getParentNode( child,
+                                                                   cx,
+                                                                   cy );
 
         //If there is a prospective parent show the line between child and parent
         if ( prospectiveParent != null ) {
@@ -199,7 +222,7 @@ public class WiresTreesScreen extends WiresCanvas {
         }
 
         //Add the new Node to it's parent (unless this is the first node)
-        final WiresTreeNode parent = dropContext.getContext();
+        final WiresBaseTreeNode parent = dropContext.getContext();
         boolean addShape = getShapesInCanvas().size() == 0 || getShapesInCanvas().size() > 0 && parent != null;
         boolean addChildToParent = parent != null;
 
@@ -207,16 +230,17 @@ public class WiresTreesScreen extends WiresCanvas {
             wiresShape.init( cx,
                              cy );
             addShape( wiresShape );
-        }
-        if ( addChildToParent ) {
-            parent.addChildNode( (WiresTreeNode) wiresShape );
-        }
 
-        //Enable clearing of Canvas now a Shape has been added
-        menus.getItems().get( 0 ).setEnabled( true );
+            if ( addChildToParent ) {
+                parent.addChildNode( (WiresBaseTreeNode) wiresShape );
+            }
 
-        //Notify other Panels of a Shape being added
-        shapeAddedEvent.fire( new ShapeAddedEvent( wiresShape ) );
+            //Enable clearing of Canvas now a Shape has been added
+            menus.getItems().get( 0 ).setEnabled( true );
+
+            //Notify other Panels of a Shape being added
+            shapeAddedEvent.fire( new ShapeAddedEvent( wiresShape ) );
+        }
     }
 
     private double getX( double xShapeEvent ) {
@@ -252,16 +276,18 @@ public class WiresTreesScreen extends WiresCanvas {
         menus.getItems().get( 0 ).setEnabled( getShapesInCanvas().size() > 0 );
         menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
         menus.getItems().get( 2 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 3 ).setEnabled( isShapeSelected() );
+        menus.getItems().get( 4 ).setEnabled( isShapeSelected() );
     }
 
-    protected WiresTreeNode getParentNode( final WiresTreeNode dragShape,
-                                           final double cx,
-                                           final double cy ) {
-        WiresTreeNode prospectiveParent = null;
+    protected WiresBaseTreeNode getParentNode( final WiresBaseTreeNode dragShape,
+                                               final double cx,
+                                               final double cy ) {
+        WiresBaseTreeNode prospectiveParent = null;
         double finalDistance = Double.MAX_VALUE;
         for ( WiresBaseShape ws : getShapesInCanvas() ) {
-            if ( ws instanceof WiresTreeNode ) {
-                final WiresTreeNode node = (WiresTreeNode) ws;
+            if ( ws instanceof WiresBaseTreeNode ) {
+                final WiresBaseTreeNode node = (WiresBaseTreeNode) ws;
                 if ( node.acceptChildNode( dragShape ) ) {
                     double deltaX = cx - node.getX();
                     double deltaY = cy - node.getY();
@@ -280,6 +306,58 @@ public class WiresTreesScreen extends WiresCanvas {
             prospectiveParent = null;
         }
         return prospectiveParent;
+    }
+
+    private void collapseNode() {
+        if ( !isShapeSelected() ) {
+            return;
+        }
+        final WiresBaseShape shape = getSelectedShape();
+        if ( !( shape instanceof WiresBaseTreeNode ) ) {
+            return;
+        }
+        final WiresBaseTreeNode node = (WiresBaseTreeNode) shape;
+        node.collapse( new Command() {
+            @Override
+            public void execute() {
+                menus.getItems().get( 3 ).setEnabled( false );
+                menus.getItems().get( 4 ).setEnabled( true );
+            }
+        } );
+    }
+
+    private void expandNode() {
+        if ( !isShapeSelected() ) {
+            return;
+        }
+        final WiresBaseShape shape = getSelectedShape();
+        if ( !( shape instanceof WiresBaseTreeNode ) ) {
+            return;
+        }
+        final WiresBaseTreeNode node = (WiresBaseTreeNode) shape;
+        node.expand( new Command() {
+            @Override
+            public void execute() {
+                menus.getItems().get( 3 ).setEnabled( true );
+                menus.getItems().get( 4 ).setEnabled( false );
+            }
+        } );
+    }
+
+    private boolean nodeHasChildren( final WiresBaseShape shape ) {
+        if ( !( shape instanceof WiresBaseTreeNode ) ) {
+            return false;
+        }
+        final WiresBaseTreeNode node = (WiresBaseTreeNode) shape;
+        return node.hasChildren();
+    }
+
+    private boolean nodeHasCollapsedChildren( final WiresBaseShape shape ) {
+        if ( !( shape instanceof WiresBaseTreeNode ) ) {
+            return false;
+        }
+        final WiresBaseTreeNode node = (WiresBaseTreeNode) shape;
+        return node.hasCollapsedChildren();
     }
 
 }
