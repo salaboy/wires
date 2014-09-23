@@ -28,13 +28,12 @@ import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.trees.client.factories.categories.TreeNodesCategory;
-import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
-import org.kie.wires.core.trees.client.shapes.WiresExampleTreeNode1;
+import org.kie.wires.core.trees.client.shapes.WiresExampleTreeNode2;
 
 @ApplicationScoped
-public class TreeNodeFactory implements ShapeFactory<Circle> {
+public class ExampleTreeNode2Factory implements ShapeFactory<Circle> {
 
-    private static final String DESCRIPTION = "Node";
+    private static final String DESCRIPTION = "Node2";
 
     private static final int SHAPE_RADIUS = 25;
 
@@ -110,19 +109,19 @@ public class TreeNodeFactory implements ShapeFactory<Circle> {
 
     @Override
     public WiresBaseShape getShape() {
-        return new WiresExampleTreeNode1( makeCircle() );
+        return new WiresExampleTreeNode2( makeCircle() );
     }
 
     @Override
     public boolean builds( final WiresBaseShape shapeType ) {
-        return shapeType instanceof WiresBaseTreeNode;
+        return shapeType instanceof WiresExampleTreeNode2;
     }
 
     private Circle makeCircle() {
         final Circle circle = new Circle( SHAPE_RADIUS );
         circle.setStrokeColor( "#000000" )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
-                .setFillColor( "#ff0000" )
+                .setFillColor( "#ffff00" )
                 .setDraggable( false );
         return circle;
     }

@@ -22,9 +22,9 @@ import com.emitrom.lienzo.shared.core.types.TextAlign;
 import com.emitrom.lienzo.shared.core.types.TextBaseLine;
 
 /**
- * Example Node that can have all other types of node added as children
+ * Example Node that can only have WiresExampleTreeNode2 types of node added as children
  */
-public class WiresExampleTreeNode1 extends WiresBaseTreeNode {
+public class WiresExampleTreeNode2 extends WiresBaseTreeNode {
 
     private static final int BOUNDARY_SIZE = 10;
 
@@ -34,7 +34,7 @@ public class WiresExampleTreeNode1 extends WiresBaseTreeNode {
                                         "normal",
                                         50 );
 
-    public WiresExampleTreeNode1( final Circle shape ) {
+    public WiresExampleTreeNode2( final Circle shape ) {
         circle = shape;
 
         bounding = new Circle( circle.getRadius() + ( BOUNDARY_SIZE / 2 ) );
@@ -47,6 +47,11 @@ public class WiresExampleTreeNode1 extends WiresBaseTreeNode {
         plus.setStrokeColor( ColorName.BLUE );
 
         add( circle );
+    }
+
+    @Override
+    public boolean acceptChildNode( final WiresBaseTreeNode child ) {
+        return child instanceof WiresExampleTreeNode2;
     }
 
     @Override
