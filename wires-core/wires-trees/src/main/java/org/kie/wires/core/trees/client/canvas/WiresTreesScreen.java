@@ -116,6 +116,8 @@ public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
                             clearSelection();
                             menus.getItems().get( 1 ).setEnabled( false );
                             menus.getItems().get( 2 ).setEnabled( false );
+                            menus.getItems().get( 3 ).setEnabled( false );
+                            menus.getItems().get( 4 ).setEnabled( false );
                         }
                     }
                 } )

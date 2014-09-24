@@ -18,48 +18,21 @@ package org.kie.wires.core.scratchpad.client.factories.connectors;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Line;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.shared.core.types.LineCap;
-import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
-import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
-import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.factories.AbstractBaseFactory;
 import org.kie.wires.core.client.factories.categories.ConnectorCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.scratchpad.client.shapes.connectors.WiresLine;
 
 @ApplicationScoped
-public class LineFactory implements ShapeFactory<Line> {
+public class LineFactory extends AbstractBaseFactory<Line> {
 
     private static final String DESCRIPTION = "Line";
 
     private static final int SHAPE_SIZE_X = 40;
     private static final int SHAPE_SIZE_Y = 40;
-
-    @Override
-    public ShapeGlyph<Line> getGlyph() {
-        final Line line = makeLine();
-
-        return new ShapeGlyph<Line>() {
-            @Override
-            public Shape<Line> getShape() {
-                return line;
-            }
-
-            @Override
-            public double getWidth() {
-                return SHAPE_SIZE_X;
-            }
-
-            @Override
-            public double getHeight() {
-                return SHAPE_SIZE_Y;
-            }
-        };
-    }
 
     @Override
     public String getShapeDescription() {
@@ -72,46 +45,8 @@ public class LineFactory implements ShapeFactory<Line> {
     }
 
     @Override
-    public ShapeDragProxy<Line> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
-                                              final ShapeDragProxyCompleteCallback dragEndCallBack ) {
-        final Line line = makeLine();
-
-        return new ShapeDragProxy<Line>() {
-            @Override
-            public Shape<Line> getDragShape() {
-                return line;
-            }
-
-            @Override
-            public void onDragPreview( final double x,
-                                       final double y ) {
-                dragPreviewCallback.callback( x,
-                                              y );
-            }
-
-            @Override
-            public void onDragComplete( final double x,
-                                        final double y ) {
-                dragEndCallBack.callback( x,
-                                          y );
-            }
-
-            @Override
-            public int getWidth() {
-                return SHAPE_SIZE_X;
-            }
-
-            @Override
-            public int getHeight() {
-                return SHAPE_SIZE_Y;
-            }
-
-        };
-    }
-
-    @Override
     public WiresBaseShape getShape() {
-        return new WiresLine( makeLine() );
+        return new WiresLine( makeShape() );
     }
 
     @Override
@@ -119,7 +54,8 @@ public class LineFactory implements ShapeFactory<Line> {
         return shapeType instanceof WiresLine;
     }
 
-    private Line makeLine() {
+    @Override
+    protected Line makeShape() {
         final Line line = new Line( 0 - ( SHAPE_SIZE_X / 2 ),
                                     0 - ( SHAPE_SIZE_Y / 2 ),
                                     SHAPE_SIZE_X / 2,
@@ -131,6 +67,16 @@ public class LineFactory implements ShapeFactory<Line> {
                 .setStrokeWidth( 3 )
                 .setDraggable( false );
         return line;
+    }
+
+    @Override
+    protected int getWidth() {
+        return SHAPE_SIZE_X;
+    }
+
+    @Override
+    protected int getHeight() {
+        return SHAPE_SIZE_Y;
     }
 
 }

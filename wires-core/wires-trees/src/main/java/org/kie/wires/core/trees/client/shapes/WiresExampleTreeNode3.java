@@ -18,17 +18,17 @@ package org.kie.wires.core.trees.client.shapes;
 import com.emitrom.lienzo.client.core.shape.Circle;
 
 /**
- * Example Node that can only have WiresExampleTreeNode2 types of node added as children
+ * Example Node that can only have WiresExampleTreeNode2 or WiresExampleTreeNode3 types of node added as children
  */
-public class WiresExampleTreeNode2 extends WiresExampleTreeNode1 {
+public class WiresExampleTreeNode3 extends WiresExampleTreeNode1 {
 
-    public WiresExampleTreeNode2( final Circle shape ) {
+    public WiresExampleTreeNode3( final Circle shape ) {
         super( shape );
     }
 
     @Override
     public boolean acceptChildNode( final WiresBaseTreeNode child ) {
-        return child instanceof WiresExampleTreeNode2;
+        return ( child instanceof WiresExampleTreeNode2 ) || ( child instanceof WiresExampleTreeNode3 );
     }
 
 }

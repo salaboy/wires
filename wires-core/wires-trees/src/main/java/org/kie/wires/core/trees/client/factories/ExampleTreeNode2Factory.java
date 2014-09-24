@@ -18,46 +18,19 @@ package org.kie.wires.core.trees.client.factories;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
-import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
-import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
-import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.factories.AbstractBaseFactory;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.trees.client.factories.categories.TreeNodesCategory;
 import org.kie.wires.core.trees.client.shapes.WiresExampleTreeNode2;
 
 @ApplicationScoped
-public class ExampleTreeNode2Factory implements ShapeFactory<Circle> {
+public class ExampleTreeNode2Factory extends AbstractBaseFactory<Circle> {
 
     private static final String DESCRIPTION = "Node2";
 
     private static final int SHAPE_RADIUS = 25;
-
-    @Override
-    public ShapeGlyph<Circle> getGlyph() {
-        final Circle circle = makeCircle();
-
-        return new ShapeGlyph<Circle>() {
-            @Override
-            public Shape<Circle> getShape() {
-                return circle;
-            }
-
-            @Override
-            public double getWidth() {
-                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
-            }
-
-            @Override
-            public double getHeight() {
-                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
-            }
-        };
-    }
 
     @Override
     public String getShapeDescription() {
@@ -70,46 +43,8 @@ public class ExampleTreeNode2Factory implements ShapeFactory<Circle> {
     }
 
     @Override
-    public ShapeDragProxy<Circle> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
-                                                final ShapeDragProxyCompleteCallback dragEndCallBack ) {
-        final Circle circle = makeCircle();
-
-        return new ShapeDragProxy<Circle>() {
-            @Override
-            public Shape<Circle> getDragShape() {
-                return circle;
-            }
-
-            @Override
-            public void onDragPreview( final double x,
-                                       final double y ) {
-                dragPreviewCallback.callback( x,
-                                              y );
-            }
-
-            @Override
-            public void onDragComplete( final double x,
-                                        final double y ) {
-                dragEndCallBack.callback( x,
-                                          y );
-            }
-
-            @Override
-            public int getWidth() {
-                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
-            }
-
-            @Override
-            public int getHeight() {
-                return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
-            }
-
-        };
-    }
-
-    @Override
     public WiresBaseShape getShape() {
-        return new WiresExampleTreeNode2( makeCircle() );
+        return new WiresExampleTreeNode2( makeShape() );
     }
 
     @Override
@@ -117,13 +52,24 @@ public class ExampleTreeNode2Factory implements ShapeFactory<Circle> {
         return shapeType instanceof WiresExampleTreeNode2;
     }
 
-    private Circle makeCircle() {
+    @Override
+    protected Circle makeShape() {
         final Circle circle = new Circle( SHAPE_RADIUS );
         circle.setStrokeColor( "#000000" )
                 .setStrokeWidth( ShapesUtils.RGB_STROKE_WIDTH_SHAPE )
                 .setFillColor( "#ffff00" )
                 .setDraggable( false );
         return circle;
+    }
+
+    @Override
+    protected int getWidth() {
+        return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
+    }
+
+    @Override
+    protected int getHeight() {
+        return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
     }
 
 }

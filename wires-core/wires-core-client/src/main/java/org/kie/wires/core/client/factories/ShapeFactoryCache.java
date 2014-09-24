@@ -16,6 +16,7 @@
 package org.kie.wires.core.client.factories;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.kie.wires.core.api.factories.ShapeFactory;
+import org.uberfire.commons.validation.PortablePreconditions;
 
 /**
  * A cache of Factories
@@ -43,7 +45,12 @@ public class ShapeFactoryCache {
     }
 
     public Set<ShapeFactory> getShapeFactories() {
-        return factories;
+        return Collections.unmodifiableSet( factories );
+    }
+
+    public void addShapeFactory( final ShapeFactory factory ) {
+        factories.add( PortablePreconditions.checkNotNull( "factory",
+                                                           factory ) );
     }
 
     private Set<ShapeFactory> getAvailableFactories() {

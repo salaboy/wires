@@ -18,22 +18,17 @@ package org.kie.wires.core.scratchpad.client.factories.connectors;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Arrow;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.shared.core.types.ArrowType;
-import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
-import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
-import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.factories.AbstractBaseFactory;
 import org.kie.wires.core.client.factories.categories.ConnectorCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.scratchpad.client.shapes.connectors.WiresArrow;
 
 @ApplicationScoped
-public class ArrowFactory implements ShapeFactory<Arrow> {
+public class ArrowFactory extends AbstractBaseFactory<Arrow> {
 
     private static final String DESCRIPTION = "Arrow";
 
@@ -46,28 +41,6 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
     private static final int SHAPE_SIZE_Y = 50;
 
     @Override
-    public ShapeGlyph<Arrow> getGlyph() {
-        final Arrow arrow = makeArrow();
-
-        return new ShapeGlyph<Arrow>() {
-            @Override
-            public Shape<Arrow> getShape() {
-                return arrow;
-            }
-
-            @Override
-            public double getWidth() {
-                return SHAPE_SIZE_X + 10;
-            }
-
-            @Override
-            public double getHeight() {
-                return SHAPE_SIZE_Y + 10;
-            }
-        };
-    }
-
-    @Override
     public String getShapeDescription() {
         return DESCRIPTION;
     }
@@ -78,46 +51,8 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
     }
 
     @Override
-    public ShapeDragProxy<Arrow> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
-                                               final ShapeDragProxyCompleteCallback dragEndCallBack ) {
-        final Arrow arrow = makeArrow();
-
-        return new ShapeDragProxy<Arrow>() {
-            @Override
-            public Shape<Arrow> getDragShape() {
-                return arrow;
-            }
-
-            @Override
-            public void onDragPreview( final double x,
-                                       final double y ) {
-                dragPreviewCallback.callback( x,
-                                              y );
-            }
-
-            @Override
-            public void onDragComplete( final double x,
-                                        final double y ) {
-                dragEndCallBack.callback( x,
-                                          y );
-            }
-
-            @Override
-            public int getWidth() {
-                return SHAPE_SIZE_X + 10;
-            }
-
-            @Override
-            public int getHeight() {
-                return SHAPE_SIZE_Y + 10;
-            }
-
-        };
-    }
-
-    @Override
     public WiresBaseShape getShape() {
-        return new WiresArrow( makeArrow() );
+        return new WiresArrow( makeShape() );
     }
 
     @Override
@@ -125,7 +60,8 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
         return shapeType instanceof WiresArrow;
     }
 
-    private Arrow makeArrow() {
+    @Override
+    protected Arrow makeShape() {
         final Arrow arrow = new Arrow( new Point2D( 0 - ( SHAPE_SIZE_X / 2 ),
                                                     0 - ( SHAPE_SIZE_Y / 2 ) ),
                                        new Point2D( SHAPE_SIZE_X / 2,
@@ -142,4 +78,13 @@ public class ArrowFactory implements ShapeFactory<Arrow> {
         return arrow;
     }
 
+    @Override
+    protected int getWidth() {
+        return SHAPE_SIZE_X + 10;
+    }
+
+    @Override
+    protected int getHeight() {
+        return SHAPE_SIZE_Y + 10;
+    }
 }

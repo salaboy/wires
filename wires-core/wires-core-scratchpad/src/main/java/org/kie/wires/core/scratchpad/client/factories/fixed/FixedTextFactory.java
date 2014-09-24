@@ -18,25 +18,20 @@ package org.kie.wires.core.scratchpad.client.factories.fixed;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.client.core.types.TextMetrics;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.TextAlign;
 import com.emitrom.lienzo.shared.core.types.TextBaseLine;
-import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
-import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
-import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.factories.AbstractBaseFactory;
 import org.kie.wires.core.client.factories.categories.FixedShapeCategory;
 import org.kie.wires.core.client.util.ShapesUtils;
 import org.kie.wires.core.scratchpad.client.shapes.fixed.WiresFixedText;
 
 @ApplicationScoped
-public class FixedTextFactory implements ShapeFactory<Text> {
+public class FixedTextFactory extends AbstractBaseFactory<Text> {
 
     private static final String DESCRIPTION = "Text";
 
@@ -46,7 +41,7 @@ public class FixedTextFactory implements ShapeFactory<Text> {
     private final double TEXT_HEIGHT;
 
     public FixedTextFactory() {
-        final Text text = makeText();
+        final Text text = makeShape();
         final LienzoPanel panel = new LienzoPanel( 100,
                                                    100 );
         final Layer layer = new Layer();
@@ -54,28 +49,6 @@ public class FixedTextFactory implements ShapeFactory<Text> {
         final TextMetrics tm = text.measure( layer.getContext() );
         TEXT_WIDTH = tm.getWidth();
         TEXT_HEIGHT = tm.getHeight();
-    }
-
-    @Override
-    public ShapeGlyph<Text> getGlyph() {
-        final Text text = makeText();
-
-        return new ShapeGlyph<Text>() {
-            @Override
-            public Shape<Text> getShape() {
-                return text;
-            }
-
-            @Override
-            public double getWidth() {
-                return TEXT_WIDTH;
-            }
-
-            @Override
-            public double getHeight() {
-                return TEXT_HEIGHT;
-            }
-        };
     }
 
     @Override
@@ -89,46 +62,8 @@ public class FixedTextFactory implements ShapeFactory<Text> {
     }
 
     @Override
-    public ShapeDragProxy<Text> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
-                                              final ShapeDragProxyCompleteCallback dragEndCallBack ) {
-        final Text text = makeText();
-
-        return new ShapeDragProxy<Text>() {
-            @Override
-            public Shape<Text> getDragShape() {
-                return text;
-            }
-
-            @Override
-            public void onDragPreview( final double x,
-                                       final double y ) {
-                dragPreviewCallback.callback( x,
-                                              y );
-            }
-
-            @Override
-            public void onDragComplete( final double x,
-                                        final double y ) {
-                dragEndCallBack.callback( x,
-                                          y );
-            }
-
-            @Override
-            public int getWidth() {
-                return (int) Math.round( TEXT_WIDTH );
-            }
-
-            @Override
-            public int getHeight() {
-                return (int) Math.round( TEXT_HEIGHT );
-            }
-
-        };
-    }
-
-    @Override
     public WiresBaseShape getShape() {
-        return new WiresFixedText( makeText() );
+        return new WiresFixedText( makeShape() );
     }
 
     @Override
@@ -136,7 +71,8 @@ public class FixedTextFactory implements ShapeFactory<Text> {
         return shapeType instanceof WiresFixedText;
     }
 
-    private Text makeText() {
+    @Override
+    protected Text makeShape() {
         final Text text = new Text( "T",
                                     "normal",
                                     FONT_POINT );
@@ -146,6 +82,16 @@ public class FixedTextFactory implements ShapeFactory<Text> {
                 .setTextAlign( TextAlign.CENTER )
                 .setDraggable( false );
         return text;
+    }
+
+    @Override
+    protected int getWidth() {
+        return (int) Math.round( TEXT_WIDTH );
+    }
+
+    @Override
+    protected int getHeight() {
+        return (int) Math.round( TEXT_HEIGHT );
     }
 
 }

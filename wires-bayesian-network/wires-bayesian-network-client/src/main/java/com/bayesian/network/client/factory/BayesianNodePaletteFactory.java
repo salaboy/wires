@@ -19,45 +19,18 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.bayesian.network.client.shapes.EditableBayesianNode;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
-import org.kie.wires.core.api.factories.ShapeDragProxy;
-import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
-import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
-import org.kie.wires.core.api.factories.ShapeFactory;
-import org.kie.wires.core.api.factories.ShapeGlyph;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
+import org.kie.wires.core.client.factories.AbstractBaseFactory;
 import org.kie.wires.core.client.util.ShapesUtils;
 
 @ApplicationScoped
-public class BayesianNodePaletteFactory implements ShapeFactory<Rectangle> {
+public class BayesianNodePaletteFactory extends AbstractBaseFactory<Rectangle> {
 
     private static final String DESCRIPTION = "Bayesian Node";
 
     private static final int SHAPE_SIZE_X = 40;
     private static final int SHAPE_SIZE_Y = 40;
-
-    @Override
-    public ShapeGlyph<Rectangle> getGlyph() {
-        final Rectangle rectangle = makeRectangle();
-
-        return new ShapeGlyph<Rectangle>() {
-            @Override
-            public Shape<Rectangle> getShape() {
-                return rectangle;
-            }
-
-            @Override
-            public double getWidth() {
-                return SHAPE_SIZE_X;
-            }
-
-            @Override
-            public double getHeight() {
-                return SHAPE_SIZE_Y;
-            }
-        };
-    }
 
     @Override
     public String getShapeDescription() {
@@ -70,46 +43,8 @@ public class BayesianNodePaletteFactory implements ShapeFactory<Rectangle> {
     }
 
     @Override
-    public ShapeDragProxy<Rectangle> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
-                                                   final ShapeDragProxyCompleteCallback dragEndCallBack ) {
-        final Rectangle rectangle = makeRectangle();
-
-        return new ShapeDragProxy<Rectangle>() {
-            @Override
-            public Shape<Rectangle> getDragShape() {
-                return rectangle;
-            }
-
-            @Override
-            public void onDragPreview( final double x,
-                                       final double y ) {
-                dragPreviewCallback.callback( x,
-                                              y );
-            }
-
-            @Override
-            public void onDragComplete( final double x,
-                                        final double y ) {
-                dragEndCallBack.callback( x,
-                                          y );
-            }
-
-            @Override
-            public int getWidth() {
-                return SHAPE_SIZE_X;
-            }
-
-            @Override
-            public int getHeight() {
-                return SHAPE_SIZE_Y;
-            }
-
-        };
-    }
-
-    @Override
     public WiresBaseShape getShape() {
-        return new EditableBayesianNode( makeRectangle() );
+        return new EditableBayesianNode( makeShape() );
     }
 
     @Override
@@ -117,7 +52,8 @@ public class BayesianNodePaletteFactory implements ShapeFactory<Rectangle> {
         return shapeType instanceof EditableBayesianNode;
     }
 
-    private Rectangle makeRectangle() {
+    @Override
+    protected Rectangle makeShape() {
         final Rectangle rectangle = new Rectangle( SHAPE_SIZE_X,
                                                    SHAPE_SIZE_Y,
                                                    5 );
@@ -128,6 +64,16 @@ public class BayesianNodePaletteFactory implements ShapeFactory<Rectangle> {
                 .setFillColor( ShapesUtils.RGB_FILL_SHAPE )
                 .setDraggable( false );
         return rectangle;
+    }
+
+    @Override
+    protected int getWidth() {
+        return SHAPE_SIZE_X;
+    }
+
+    @Override
+    protected int getHeight() {
+        return SHAPE_SIZE_Y;
     }
 
 }
