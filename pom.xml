@@ -31,6 +31,7 @@
     <bayesian-api.version>1.0-SNAPSHOT</bayesian-api.version>
     <xstream.version>1.3</xstream.version>
     <wires-core.version>1.0-SNAPSHOT</wires-core.version>
+    <maven-source-plugin.version>2.0.4</maven-source-plugin.version>
   </properties>
 
   <repositories>
