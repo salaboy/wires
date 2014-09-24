@@ -44,9 +44,9 @@ public abstract class WiresBaseDynamicContainer extends WiresBaseDynamicShape im
             public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
                 dragStartLocations.clear();
                 for ( WiresBaseShape shape : children ) {
-                    dragStartLocations.add( new Pair( shape,
-                                                      new Point2D( shape.getLocation().getX(),
-                                                                   shape.getLocation().getY() ) ) );
+                    dragStartLocations.add( new Pair<WiresBaseShape, Point2D>( shape,
+                                                                               new Point2D( shape.getLocation().getX(),
+                                                                                            shape.getLocation().getY() ) ) );
                 }
             }
         } );

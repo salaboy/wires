@@ -45,10 +45,10 @@ import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.WiresCanvas;
 import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
 import org.kie.wires.core.trees.client.treelayout.AbstractTreeForTreeLayout;
+import org.kie.wires.core.trees.client.treelayout.Configuration;
 import org.kie.wires.core.trees.client.treelayout.DefaultConfiguration;
 import org.kie.wires.core.trees.client.treelayout.NodeExtentProvider;
 import org.kie.wires.core.trees.client.treelayout.Rectangle2D;
-import org.kie.wires.core.trees.client.treelayout.TreeForTreeLayout;
 import org.kie.wires.core.trees.client.treelayout.TreeLayout;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -410,13 +410,13 @@ public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
         }
 
         //Layout tree
-        final TreeForTreeLayout<WiresBaseTreeNode> treeNodesProvider = new WiresTreeForTreeLayout( root );
-        final NodeExtentProvider<WiresBaseTreeNode> treeNodesExtentProvider = new WiresTreeNodeExtentProvider();
-        final DefaultConfiguration treeNodesLayoutConfiguration = new DefaultConfiguration( 50,
-                                                                                            50 );
-        final TreeLayout layout = new TreeLayout( treeNodesProvider,
-                                                  treeNodesExtentProvider,
-                                                  treeNodesLayoutConfiguration );
+        final WiresTreeForTreeLayout treeNodesProvider = new WiresTreeForTreeLayout( root );
+        final WiresTreeNodeExtentProvider treeNodesExtentProvider = new WiresTreeNodeExtentProvider();
+        final Configuration<WiresBaseTreeNode> treeNodesLayoutConfiguration = new DefaultConfiguration<WiresBaseTreeNode>( 50,
+                                                                                                                           50 );
+        final TreeLayout<WiresBaseTreeNode> layout = new TreeLayout<WiresBaseTreeNode>( treeNodesProvider,
+                                                                                        treeNodesExtentProvider,
+                                                                                        treeNodesLayoutConfiguration );
 
         //Calculate offset so tree appears centred in the X-axis of the Canvas
         final Map<WiresBaseTreeNode, Rectangle2D> bounds = layout.getNodeBounds();
@@ -498,8 +498,8 @@ public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
                               //Lienzo's IAnimation.getPercent() passes values > 1.0
                               final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
 
+                              //Move each descendant along the line between its origin and the target destination
                               for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
-                                  //Move each descendant along the line between its origin and the target destination
                                   final Point2D descendantOrigin = e.getValue().getK1();
                                   final Point2D descendantTarget = e.getValue().getK2();
                                   final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;

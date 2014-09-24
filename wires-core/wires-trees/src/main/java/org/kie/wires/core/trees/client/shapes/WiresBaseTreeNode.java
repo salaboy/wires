@@ -231,8 +231,8 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
                          //Lienzo's IAnimation.getPercent() passes values > 1.0
                          final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
 
+                         //Move each descendant along the line between its origin and the target destination
                          for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
-                             //Move each descendant along the line between its origin and the target destination
                              final Point2D descendantOrigin = e.getValue().getK1();
                              final Point2D descendantTarget = e.getValue().getK2();
                              final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;
@@ -362,8 +362,8 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
                          //Lienzo's IAnimation.getPercent() passes values > 1.0
                          final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
 
+                         //Move each descendant along the line between its origin and the target destination
                          for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
-                             //Move each descendant along the line between its origin and the target destination
                              final Point2D descendantOrigin = e.getValue().getK1();
                              final Point2D descendantTarget = e.getValue().getK2();
                              final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;
