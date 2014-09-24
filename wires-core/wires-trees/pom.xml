@@ -46,6 +46,12 @@
       <version>${lienzo.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.abego.treelayout</groupId>
+      <artifactId>org.abego.treelayout.core</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+
   </dependencies>
 
   <build>

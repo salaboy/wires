@@ -79,4 +79,14 @@ public class WiresExampleTreeNode1 extends WiresBaseTreeNode {
         remove( plus );
     }
 
+    @Override
+    public double getWidth() {
+        return circle.getRadius() * 2;
+    }
+
+    @Override
+    public double getHeight() {
+        return circle.getRadius() * 2;
+    }
+
 }

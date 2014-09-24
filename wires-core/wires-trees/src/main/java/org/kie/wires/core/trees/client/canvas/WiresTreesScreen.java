@@ -15,12 +15,21 @@
  */
 package org.kie.wires.core.trees.client.canvas;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.emitrom.lienzo.client.core.animation.AnimationProperties;
+import com.emitrom.lienzo.client.core.animation.AnimationTweener;
+import com.emitrom.lienzo.client.core.animation.IAnimation;
+import com.emitrom.lienzo.client.core.animation.IAnimationCallback;
+import com.emitrom.lienzo.client.core.animation.IAnimationHandle;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -30,22 +39,33 @@ import org.kie.wires.core.api.events.ShapeDeletedEvent;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
 import org.kie.wires.core.api.events.ShapeSelectedEvent;
+import org.kie.wires.core.api.layout.LayoutManager;
+import org.kie.wires.core.api.layout.RequiresLayoutManager;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.WiresCanvas;
 import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
+import org.kie.wires.core.trees.client.treelayout.AbstractTreeForTreeLayout;
+import org.kie.wires.core.trees.client.treelayout.DefaultConfiguration;
+import org.kie.wires.core.trees.client.treelayout.NodeExtentProvider;
+import org.kie.wires.core.trees.client.treelayout.Rectangle2D;
+import org.kie.wires.core.trees.client.treelayout.TreeForTreeLayout;
+import org.kie.wires.core.trees.client.treelayout.TreeLayout;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.commons.data.Pair;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresTreesScreen")
-public class WiresTreesScreen extends WiresCanvas {
+public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
 
     private static final int MAX_PROXIMITY = 200;
+
+    private static final int ANIMATION_DURATION = 250;
 
     @Inject
     private Event<ClearEvent> clearEvent;
@@ -64,6 +84,8 @@ public class WiresTreesScreen extends WiresCanvas {
     private WiresTreeNodeDropContext dropContext = new WiresTreeNodeDropContext();
 
     private WiresTreeNodeConnector connector = null;
+
+    private WiresBaseTreeNode root;
 
     @PostConstruct
     public void setup() {
@@ -229,11 +251,15 @@ public class WiresTreesScreen extends WiresCanvas {
         if ( addShape ) {
             wiresShape.init( cx,
                              cy );
-            addShape( wiresShape );
 
             if ( addChildToParent ) {
                 parent.addChildNode( (WiresBaseTreeNode) wiresShape );
+            } else if ( wiresShape instanceof WiresBaseTreeNode ) {
+                root = (WiresBaseTreeNode) wiresShape;
             }
+
+            addShape( wiresShape );
+            layout();
 
             //Enable clearing of Canvas now a Shape has been added
             menus.getItems().get( 0 ).setEnabled( true );
@@ -256,6 +282,7 @@ public class WiresTreesScreen extends WiresCanvas {
         if ( Window.confirm( "Are you sure to clean the canvas?" ) ) {
             super.clear();
             clearEvent.fire( new ClearEvent() );
+            root = null;
         }
     }
 
@@ -263,6 +290,7 @@ public class WiresTreesScreen extends WiresCanvas {
     public void deleteShape( final WiresBaseShape shape ) {
         if ( Window.confirm( "Are you sure to remove the selected shape?" ) ) {
             shapeDeletedEvent.fire( new ShapeDeletedEvent( shape ) );
+            layout();
         }
     }
 
@@ -272,6 +300,9 @@ public class WiresTreesScreen extends WiresCanvas {
     }
 
     public void onShapeDeleted( @Observes ShapeDeletedEvent event ) {
+        if ( root != null && root.equals( event.getShape() ) ) {
+            root = null;
+        }
         super.deleteShape( event.getShape() );
         menus.getItems().get( 0 ).setEnabled( getShapesInCanvas().size() > 0 );
         menus.getItems().get( 1 ).setEnabled( isShapeSelected() );
@@ -280,22 +311,34 @@ public class WiresTreesScreen extends WiresCanvas {
         menus.getItems().get( 4 ).setEnabled( isShapeSelected() );
     }
 
+    @Override
+    public void addShape( final WiresBaseShape shape ) {
+        super.addShape( shape );
+
+        //Attach relevant handlers
+        if ( shape instanceof RequiresLayoutManager ) {
+            ( (RequiresLayoutManager) shape ).setLayoutManager( this );
+        }
+    }
+
     protected WiresBaseTreeNode getParentNode( final WiresBaseTreeNode dragShape,
                                                final double cx,
                                                final double cy ) {
         WiresBaseTreeNode prospectiveParent = null;
         double finalDistance = Double.MAX_VALUE;
         for ( WiresBaseShape ws : getShapesInCanvas() ) {
-            if ( ws instanceof WiresBaseTreeNode ) {
-                final WiresBaseTreeNode node = (WiresBaseTreeNode) ws;
-                if ( node.acceptChildNode( dragShape ) ) {
-                    double deltaX = cx - node.getX();
-                    double deltaY = cy - node.getY();
-                    double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
+            if ( ws.isVisible() ) {
+                if ( ws instanceof WiresBaseTreeNode ) {
+                    final WiresBaseTreeNode node = (WiresBaseTreeNode) ws;
+                    if ( node.acceptChildNode( dragShape ) && !node.hasCollapsedChildren() ) {
+                        double deltaX = cx - node.getX();
+                        double deltaY = cy - node.getY();
+                        double distance = Math.sqrt( Math.pow( deltaX, 2 ) + Math.pow( deltaY, 2 ) );
 
-                    if ( finalDistance > distance ) {
-                        finalDistance = distance;
-                        prospectiveParent = node;
+                        if ( finalDistance > distance ) {
+                            finalDistance = distance;
+                            prospectiveParent = node;
+                        }
                     }
                 }
             }
@@ -358,6 +401,159 @@ public class WiresTreesScreen extends WiresCanvas {
         }
         final WiresBaseTreeNode node = (WiresBaseTreeNode) shape;
         return node.hasCollapsedChildren();
+    }
+
+    @Override
+    public Map<WiresBaseShape, Point2D> getLayoutInformation() {
+        if ( root == null ) {
+            return Collections.emptyMap();
+        }
+
+        //Layout tree
+        final TreeForTreeLayout<WiresBaseTreeNode> treeNodesProvider = new WiresTreeForTreeLayout( root );
+        final NodeExtentProvider<WiresBaseTreeNode> treeNodesExtentProvider = new WiresTreeNodeExtentProvider();
+        final DefaultConfiguration treeNodesLayoutConfiguration = new DefaultConfiguration( 50,
+                                                                                            50 );
+        final TreeLayout layout = new TreeLayout( treeNodesProvider,
+                                                  treeNodesExtentProvider,
+                                                  treeNodesLayoutConfiguration );
+
+        //Calculate offset so tree appears centred in the X-axis of the Canvas
+        final Map<WiresBaseTreeNode, Rectangle2D> bounds = layout.getNodeBounds();
+        final Rectangle2D rootBounds = bounds.get( root );
+        final double offsetX = ( canvasLayer.getWidth() / 2 ) - rootBounds.getX();
+        final double offsetY = 100;
+
+        final Map<WiresBaseShape, Point2D> locations = new HashMap<WiresBaseShape, Point2D>();
+        for ( Map.Entry<WiresBaseTreeNode, Rectangle2D> e : bounds.entrySet() ) {
+            locations.put( e.getKey(),
+                           new Point2D( e.getValue().getX() + offsetX,
+                                        e.getValue().getY() + offsetY ) );
+        }
+
+        //Collapse children into parent if required
+        collapseChildren( root,
+                          locations );
+
+        return locations;
+    }
+
+    private void collapseChildren( final WiresBaseTreeNode node,
+                                   final Map<WiresBaseShape, Point2D> locations ) {
+        if ( node.hasCollapsedChildren() ) {
+            final Point2D destination = locations.get( node );
+            for ( WiresBaseTreeNode child : node.getChildren() ) {
+                collapseChildren( child,
+                                  destination,
+                                  locations );
+            }
+
+        } else {
+            for ( WiresBaseTreeNode child : node.getChildren() ) {
+                collapseChildren( child,
+                                  locations );
+            }
+        }
+    }
+
+    private void collapseChildren( final WiresBaseTreeNode node,
+                                   final Point2D destination,
+                                   final Map<WiresBaseShape, Point2D> locations ) {
+        locations.put( node,
+                       destination );
+        for ( WiresBaseTreeNode child : node.getChildren() ) {
+            collapseChildren( child,
+                              destination,
+                              locations );
+        }
+    }
+
+    private void layout() {
+        //Get layout information
+        final Map<WiresBaseShape, Point2D> layout = getLayoutInformation();
+
+        //Run an animation to move WiresBaseTreeNodes from their current position to the target position
+        root.animate( AnimationTweener.EASE_OUT,
+                      new AnimationProperties(),
+                      ANIMATION_DURATION,
+                      new IAnimationCallback() {
+
+                          private final Map<WiresBaseShape, Pair<Point2D, Point2D>> transformations = new HashMap<WiresBaseShape, Pair<Point2D, Point2D>>();
+
+                          @Override
+                          public void onStart( final IAnimation iAnimation,
+                                               final IAnimationHandle iAnimationHandle ) {
+                              //Reposition nodes. First we store the WiresBaseTreeNode together with its current position and target position
+                              transformations.clear();
+                              for ( Map.Entry<WiresBaseShape, Point2D> e : layout.entrySet() ) {
+                                  transformations.put( e.getKey(),
+                                                       new Pair<Point2D, Point2D>( e.getKey().getLocation(),
+                                                                                   e.getValue() ) );
+                              }
+                          }
+
+                          @Override
+                          public void onFrame( final IAnimation iAnimation,
+                                               final IAnimationHandle iAnimationHandle ) {
+                              //Lienzo's IAnimation.getPercent() passes values > 1.0
+                              final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
+
+                              for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
+                                  //Move each descendant along the line between its origin and the target destination
+                                  final Point2D descendantOrigin = e.getValue().getK1();
+                                  final Point2D descendantTarget = e.getValue().getK2();
+                                  final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;
+                                  final double dy = ( descendantTarget.getY() - descendantOrigin.getY() ) * pct;
+                                  e.getKey().setX( descendantOrigin.getX() + dx );
+                                  e.getKey().setY( descendantOrigin.getY() + dy );
+                              }
+
+                              //Without this call Lienzo doesn't update the Canvas for sub-classes of WiresBaseTreeNode
+                              root.getLayer().draw();
+                          }
+
+                          @Override
+                          public void onClose( final IAnimation iAnimation,
+                                               final IAnimationHandle iAnimationHandle ) {
+                              //Nothing to do
+                          }
+                      } );
+
+        canvasLayer.draw();
+    }
+
+    private static class WiresTreeForTreeLayout extends AbstractTreeForTreeLayout<WiresBaseTreeNode> {
+
+        public WiresTreeForTreeLayout( final WiresBaseTreeNode root ) {
+            super( root );
+        }
+
+        @Override
+        public WiresBaseTreeNode getParent( final WiresBaseTreeNode node ) {
+            return node.getParentNode();
+        }
+
+        @Override
+        public List<WiresBaseTreeNode> getChildrenList( final WiresBaseTreeNode node ) {
+            if ( node.hasCollapsedChildren() ) {
+                return Collections.emptyList();
+            }
+            return node.getChildren();
+        }
+    }
+
+    private static class WiresTreeNodeExtentProvider implements
+                                                     NodeExtentProvider<WiresBaseTreeNode> {
+
+        @Override
+        public double getWidth( final WiresBaseTreeNode node ) {
+            return node.getWidth();
+        }
+
+        @Override
+        public double getHeight( final WiresBaseTreeNode node ) {
+            return node.getHeight();
+        }
     }
 
 }

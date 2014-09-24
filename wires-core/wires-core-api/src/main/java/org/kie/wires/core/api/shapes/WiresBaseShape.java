@@ -68,4 +68,31 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
         layer.draw();
     }
 
+    @Override
+    public boolean equals( Object o ) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof WiresBaseShape ) ) {
+            return false;
+        }
+        if ( !super.equals( o ) ) {
+            return false;
+        }
+
+        WiresBaseShape that = (WiresBaseShape) o;
+
+        if ( !id.equals( that.id ) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + id.hashCode();
+        return result;
+    }
 }
