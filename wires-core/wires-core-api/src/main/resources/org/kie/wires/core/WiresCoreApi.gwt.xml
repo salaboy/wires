@@ -4,5 +4,7 @@
 <module>
 	<inherits name='com.google.gwt.user.User' />
 
+  <inherits name="com.emitrom.lienzo.Lienzo"/>
+
 	<source path="api"></source>
 </module>
