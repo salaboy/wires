@@ -29,7 +29,6 @@ import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.types.Point2D;
-import org.jboss.errai.common.client.util.LogUtil;
 import org.kie.wires.core.api.layout.LayoutManager;
 import org.kie.wires.core.api.layout.RequiresLayoutManager;
 import org.kie.wires.core.api.shapes.RequiresShapesManager;
@@ -155,11 +154,9 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
     //Get the index of the new child connector by determining the angle of existing connectors it lays in between
     private int getChildIndex( final WiresTreeNodeConnector newConnector ) {
         final double newConnectorTheta = getConnectorAngle( newConnector );
-        LogUtil.log( "New theta=" + newConnectorTheta );
         for ( int index = 0; index < connectors.size(); index++ ) {
             final WiresTreeNodeConnector existingConnector = connectors.get( index );
             final double existingConnectorTheta = getConnectorAngle( existingConnector );
-            LogUtil.log( "Existing theta[" + index + "]=" + existingConnectorTheta );
             if ( newConnectorTheta > existingConnectorTheta ) {
                 return index;
             }
