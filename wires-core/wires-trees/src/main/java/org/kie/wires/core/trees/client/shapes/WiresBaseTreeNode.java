@@ -29,6 +29,7 @@ import com.emitrom.lienzo.client.core.event.NodeDragMoveEvent;
 import com.emitrom.lienzo.client.core.event.NodeDragMoveHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.types.Point2D;
+import org.jboss.errai.common.client.util.LogUtil;
 import org.kie.wires.core.api.layout.LayoutManager;
 import org.kie.wires.core.api.layout.RequiresLayoutManager;
 import org.kie.wires.core.api.shapes.RequiresShapesManager;
@@ -135,8 +136,11 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
         getLayer().add( connector );
         connector.moveToBottom();
 
-        children.add( child );
-        connectors.add( connector );
+        final int index = getChildIndex( connector );
+        children.add( index,
+                      child );
+        connectors.add( index,
+                        connector );
         child.setParentNode( this );
 
         //Update connectors when child Node moves
@@ -146,6 +150,29 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
                 connector.getPoints().getPoint( 1 ).set( child.getLocation() );
             }
         } );
+    }
+
+    //Get the index of the new child connector by determining the angle of existing connectors it lays in between
+    private int getChildIndex( final WiresTreeNodeConnector newConnector ) {
+        final double newConnectorTheta = getConnectorAngle( newConnector );
+        LogUtil.log( "New theta=" + newConnectorTheta );
+        for ( int index = 0; index < connectors.size(); index++ ) {
+            final WiresTreeNodeConnector existingConnector = connectors.get( index );
+            final double existingConnectorTheta = getConnectorAngle( existingConnector );
+            LogUtil.log( "Existing theta[" + index + "]=" + existingConnectorTheta );
+            if ( newConnectorTheta > existingConnectorTheta ) {
+                return index;
+            }
+        }
+        return connectors.size();
+    }
+
+    private double getConnectorAngle( final WiresTreeNodeConnector connector ) {
+        final double cdx = connector.getPoints().getPoint( 1 ).getX() - connector.getPoints().getPoint( 0 ).getX();
+        final double cdy = connector.getPoints().getPoint( 1 ).getY() - connector.getPoints().getPoint( 0 ).getY();
+        final double theta = Math.atan2( cdy,
+                                         cdx ) + Math.PI / 2;
+        return ( theta < 0 ? theta + ( 2 * Math.PI ) : theta );
     }
 
     /**
