@@ -25,12 +25,12 @@ import com.emitrom.lienzo.client.core.types.Point2D;
 import org.kie.wires.core.api.layout.LayoutManager;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
-import org.kie.wires.core.trees.client.treelayout.AbstractTreeForTreeLayout;
-import org.kie.wires.core.trees.client.treelayout.Configuration;
-import org.kie.wires.core.trees.client.treelayout.DefaultConfiguration;
-import org.kie.wires.core.trees.client.treelayout.NodeExtentProvider;
-import org.kie.wires.core.trees.client.treelayout.Rectangle2D;
-import org.kie.wires.core.trees.client.treelayout.TreeLayout;
+import org.kie.wires.core.trees.client.layout.treelayout.AbstractTreeForTreeLayout;
+import org.kie.wires.core.trees.client.layout.treelayout.Configuration;
+import org.kie.wires.core.trees.client.layout.treelayout.DefaultConfiguration;
+import org.kie.wires.core.trees.client.layout.treelayout.NodeExtentProvider;
+import org.kie.wires.core.trees.client.layout.treelayout.Rectangle2D;
+import org.kie.wires.core.trees.client.layout.treelayout.TreeLayout;
 
 /**
  * Default Tree layout using an adaptation of https://code.google.com/p/treelayout/ for use with GWT

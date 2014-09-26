@@ -27,12 +27,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kie.wires.core.trees.client.treelayout;
+package org.kie.wires.core.trees.client.layout.treelayout;
 
 import java.util.List;
 
-import org.kie.wires.core.trees.client.treelayout.util.IterableUtil;
-import org.kie.wires.core.trees.client.treelayout.util.ListUtil;
+import org.kie.wires.core.trees.client.layout.treelayout.util.IterableUtil;
+import org.kie.wires.core.trees.client.layout.treelayout.util.IterableUtil;
+import org.kie.wires.core.trees.client.layout.treelayout.util.ListUtil;
 
 /**
  * Provides an easy way to implement the {@link TreeForTreeLayout} interface by

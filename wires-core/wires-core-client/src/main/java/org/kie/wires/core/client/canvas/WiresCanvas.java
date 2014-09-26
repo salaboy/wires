@@ -49,11 +49,11 @@ public class WiresCanvas extends Composite implements ShapesManager,
                                                       MagnetManager {
 
     private FocusableLienzoPanel panel;
-    private List<WiresBaseShape> shapesInCanvas = new ArrayList<WiresBaseShape>();
     private WiresBaseShape selectedShape;
     private ProgressBar progressBar;
 
     protected Layer canvasLayer;
+    protected List<WiresBaseShape> shapesInCanvas = new ArrayList<WiresBaseShape>();
 
     @PostConstruct
     public void init() {

@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kie.wires.core.trees.client.treelayout.util;
+package org.kie.wires.core.trees.client.layout.treelayout.util;
 
 import java.util.Iterator;
 import java.util.List;

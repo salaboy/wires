@@ -15,9 +15,7 @@
  */
 package org.kie.wires.core.trees.client.canvas;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -44,8 +42,6 @@ import org.kie.wires.core.api.layout.RequiresLayoutManager;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.WiresCanvas;
 import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
-import org.kie.wires.core.trees.client.treelayout.AbstractTreeForTreeLayout;
-import org.kie.wires.core.trees.client.treelayout.NodeExtentProvider;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -457,40 +453,6 @@ public class WiresTreesScreen extends WiresCanvas {
                       } );
 
         canvasLayer.draw();
-    }
-
-    private static class WiresTreeForTreeLayout extends AbstractTreeForTreeLayout<WiresBaseTreeNode> {
-
-        public WiresTreeForTreeLayout( final WiresBaseTreeNode root ) {
-            super( root );
-        }
-
-        @Override
-        public WiresBaseTreeNode getParent( final WiresBaseTreeNode node ) {
-            return node.getParentNode();
-        }
-
-        @Override
-        public List<WiresBaseTreeNode> getChildrenList( final WiresBaseTreeNode node ) {
-            if ( node.hasCollapsedChildren() ) {
-                return Collections.emptyList();
-            }
-            return node.getChildren();
-        }
-    }
-
-    private static class WiresTreeNodeExtentProvider implements
-                                                     NodeExtentProvider<WiresBaseTreeNode> {
-
-        @Override
-        public double getWidth( final WiresBaseTreeNode node ) {
-            return node.getWidth();
-        }
-
-        @Override
-        public double getHeight( final WiresBaseTreeNode node ) {
-            return node.getHeight();
-        }
     }
 
 }

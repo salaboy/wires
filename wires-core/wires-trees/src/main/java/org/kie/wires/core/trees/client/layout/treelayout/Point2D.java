@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.wires.core.trees.client.treelayout;
+package org.kie.wires.core.trees.client.layout.treelayout;
 
 /**
- * The original implementation used java.awt.geom.Rectangle2D that is not available for use in GWT.
+ * The original implementation used java.awt.geom.Point2D that is not available for use in GWT.
+ * We further could not use Lienzo's Point2D as it is marked as "final" and hence cannot be extended
+ * as required by TreeLayout.
  */
-public class Rectangle2D {
+public class Point2D {
 
     private double x;
     private double y;
-    private double width;
-    private double height;
 
-    public Rectangle2D( final double x,
-                        final double y,
-                        final double w,
-                        final double h ) {
+    protected Point2D() {
+    }
+
+    public void setLocation( final double x,
+                             final double y ) {
         this.x = x;
         this.y = y;
-        this.width = w;
-        this.height = h;
     }
 
     public double getX() {
@@ -41,14 +40,6 @@ public class Rectangle2D {
 
     public double getY() {
         return y;
-    }
-
-    public double getWidth() {
-        return width;
-    }
-
-    public double getHeight() {
-        return height;
     }
 
 }

@@ -27,31 +27,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.kie.wires.core.trees.client.treelayout;
+package org.kie.wires.core.trees.client.layout.treelayout.util;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
- * Provides the extent (width and height) of a tree node.
- * <p/>
- * Also see <a href="package-summary.html">this overview</a>.
- * @param <TreeNode> <p/>
+ * Util (general purpose) methods dealing with {@link Iterator}.
  * <p/>
  * Adapted from https://code.google.com/p/treelayout/ to be available to GWT clients
  * <p/>
  * @author Udo Borkowski (ub@abego.org)
  */
-public interface NodeExtentProvider<TreeNode> {
+public class IteratorUtil {
+
+    private static class ReverseIterator<T> implements Iterator<T> {
+
+        private ListIterator<T> listIterator;
+
+        public ReverseIterator( List<T> list ) {
+            this.listIterator = list.listIterator( list.size() );
+        }
+
+        @Override
+        public boolean hasNext() {
+            return listIterator.hasPrevious();
+        }
+
+        @Override
+        public T next() {
+            return listIterator.previous();
+        }
+
+        @Override
+        public void remove() {
+            listIterator.remove();
+        }
+    }
 
     /**
-     * Returns the width of the given treeNode.
-     * @param treeNode
-     * @return [result >= 0]
+     * Returns an {@link Iterator} iterating the given list from the end to the
+     * start.
+     * <p/>
+     * I.e. the iterator does the reverse of the {@link List#iterator()}.
+     * @param <T>
+     * @param list
+     * @return a reverse {@link Iterator} of the list
      */
-    double getWidth( TreeNode treeNode );
-
-    /**
-     * Returns the height of the given treeNode.
-     * @param treeNode
-     * @return [result >= 0]
-     */
-    double getHeight( TreeNode treeNode );
+    public static <T> Iterator<T> createReverseIterator( List<T> list ) {
+        return new ReverseIterator<T>( list );
+    }
 }
