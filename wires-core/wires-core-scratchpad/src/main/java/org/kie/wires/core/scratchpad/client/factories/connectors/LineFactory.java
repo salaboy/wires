@@ -19,6 +19,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Line;
 import com.emitrom.lienzo.shared.core.types.LineCap;
+import org.kie.wires.core.api.factories.ShapeDragContext;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.AbstractBaseFactory;
@@ -45,7 +46,7 @@ public class LineFactory extends AbstractBaseFactory<Line> {
     }
 
     @Override
-    public WiresBaseShape getShape() {
+    public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
         return new WiresLine( makeShape() );
     }
 

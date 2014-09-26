@@ -18,6 +18,7 @@ package org.kie.wires.core.scratchpad.client.factories.dynamic;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Rectangle;
+import org.kie.wires.core.api.factories.ShapeDragContext;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.AbstractBaseFactory;
@@ -44,7 +45,7 @@ public class RectangleFactory extends AbstractBaseFactory<Rectangle> {
     }
 
     @Override
-    public WiresBaseShape getShape() {
+    public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
         return new WiresRectangle( makeShape() );
     }
 

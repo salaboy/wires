@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
+import org.kie.wires.core.api.factories.ShapeDragContext;
 import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
@@ -54,7 +55,7 @@ public class ExampleTreeNode3DynamicFactory {
             }
 
             @Override
-            public WiresBaseShape getShape() {
+            public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
                 return new WiresExampleTreeNode3( makeShape() );
             }
 

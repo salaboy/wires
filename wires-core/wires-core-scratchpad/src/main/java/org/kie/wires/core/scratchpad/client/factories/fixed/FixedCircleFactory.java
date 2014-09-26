@@ -18,6 +18,7 @@ package org.kie.wires.core.scratchpad.client.factories.fixed;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
+import org.kie.wires.core.api.factories.ShapeDragContext;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.AbstractBaseFactory;
@@ -43,7 +44,7 @@ public class FixedCircleFactory extends AbstractBaseFactory<Circle> {
     }
 
     @Override
-    public WiresBaseShape getShape() {
+    public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
         return new WiresFixedCircle( makeShape() );
     }
 

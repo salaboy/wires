@@ -36,6 +36,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.wires.core.api.events.ShapeDragCompleteEvent;
 import org.kie.wires.core.api.events.ShapeDragPreviewEvent;
+import org.kie.wires.core.api.factories.ShapeDragContext;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
 import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
@@ -58,6 +59,7 @@ public class StencilPaletteBuilder {
     private Event<ShapeDragPreviewEvent> shapeDragPreviewEvent;
 
     public PaletteShape build( final LienzoPanel dragProxyParentPanel,
+                               final ShapeDragContext dragContext,
                                final ShapeFactory factory ) {
         final PaletteShape paletteShape = new PaletteShape();
         final Rectangle bounding = drawBoundingBox();
@@ -69,14 +71,14 @@ public class StencilPaletteBuilder {
             @Override
             public void callback( final double x,
                                   final double y ) {
-                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( factory.getShape(),
+                shapeDragCompleteEvent.fire( new ShapeDragCompleteEvent( factory.getShape( dragContext ),
                                                                          x,
                                                                          y ) );
             }
         };
 
         //Callback is invoked during the drag operation
-        final WiresBaseShape shape = factory.getShape();
+        final WiresBaseShape shape = factory.getShape( dragContext );
         final ShapeDragProxyPreviewCallback dragPreviewCallback = new ShapeDragProxyPreviewCallback() {
             @Override
             public void callback( final double x,
