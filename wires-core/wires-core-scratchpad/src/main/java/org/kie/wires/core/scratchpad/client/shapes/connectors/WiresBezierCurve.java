@@ -165,6 +165,22 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetMan
         addControlPoint( controlPoint2 );
         addControlPoint( controlPoint3 );
         addControlPoint( controlPoint4 );
+
+        //If Connector is dragged as a whole (i.e. not a ControlPoint) detach it from Magnets
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                final Magnet boundMagnet1 = controlPoint1.getBoundMagnet();
+                final Magnet boundMagnet4 = controlPoint4.getBoundMagnet();
+                if ( boundMagnet1 != null ) {
+                    boundMagnet1.detachControlPoint( controlPoint1 );
+                }
+                if ( boundMagnet4 != null ) {
+                    boundMagnet4.detachControlPoint( controlPoint4 );
+                }
+                getLayer().draw();
+            }
+        } );
     }
 
     @Override
@@ -202,28 +218,6 @@ public class WiresBezierCurve extends WiresBaseDynamicShape implements MagnetMan
             remove( controlLine2 );
             bounding.setAlpha( ALPHA_DESELECTED );
         }
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        super.init( cx,
-                    cy );
-
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                final Magnet boundMagnet1 = controlPoint1.getBoundMagnet();
-                final Magnet boundMagnet4 = controlPoint4.getBoundMagnet();
-                if ( boundMagnet1 != null ) {
-                    boundMagnet1.detachControlPoint( controlPoint1 );
-                }
-                if ( boundMagnet4 != null ) {
-                    boundMagnet4.detachControlPoint( controlPoint4 );
-                }
-                getLayer().draw();
-            }
-        } );
     }
 
     @Override

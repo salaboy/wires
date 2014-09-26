@@ -52,8 +52,8 @@ public class EditableBayesianProbability extends WiresBaseShape implements Seria
 
         add( rectangle );
 
-        init( positionXNode,
-              positionYNode );
+        setX( positionXNode );
+        setY( positionYNode );
         setDraggable( false );
 
         this.parentNode = Maps.newHashMap();

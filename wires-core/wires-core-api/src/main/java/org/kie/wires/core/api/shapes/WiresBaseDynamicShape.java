@@ -30,6 +30,18 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
     private boolean showingMagnets = false;
     private boolean showingControlPoints = false;
 
+    public WiresBaseDynamicShape() {
+        //Update Magnets and ControlPoints when the Shape is dragged
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                updateMagnetOffsets();
+                updateControlPointOffsets();
+                getLayer().draw();
+            }
+        } );
+    }
+
     @Override
     public void addControlPoint( final ControlPoint cp ) {
         controlPoints.add( cp );
@@ -93,23 +105,6 @@ public abstract class WiresBaseDynamicShape extends WiresBaseShape implements Ha
             showingMagnets = false;
             getLayer().draw();
         }
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        super.init( cx,
-                    cy );
-
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                updateMagnetOffsets();
-                updateControlPointOffsets();
-                getLayer().draw();
-            }
-        } );
-
     }
 
     @Override

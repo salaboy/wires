@@ -97,8 +97,8 @@ public class EditableBayesianNode extends WiresBaseShape implements OverridesFac
 
         add( rectangle );
 
-        init( positionXNode,
-              positionYNode );
+        setX( positionXNode );
+        setY( positionYNode );
 
         this.porcentualBars = Maps.newHashMap();
     }

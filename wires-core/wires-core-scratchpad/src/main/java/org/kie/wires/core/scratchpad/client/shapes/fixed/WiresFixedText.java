@@ -66,28 +66,9 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
 
         add( text );
         add( bounding );
-    }
 
-    @Override
-    public void setContainerManager( final ContainerManager containerManager ) {
-        this.containerManager = containerManager;
-    }
-
-    @Override
-    public void setSelected( final boolean isSelected ) {
-        if ( isSelected ) {
-            bounding.setAlpha( ALPHA_SELECTED );
-        } else {
-            bounding.setAlpha( ALPHA_DESELECTED );
-        }
-    }
-
-    @Override
-    public void init( double cx,
-                      double cy ) {
-        super.init( cx,
-                    cy );
-
+        //This class doesn't extend a super-class that handles Containers, so we add it manually
+        //Check for the Shape being added to a Container as it is dragged around
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
 
             @Override
@@ -102,6 +83,7 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
             }
         } );
 
+        //When the drag ends; if it was within a Container add this Shape to the Container
         addNodeDragEndHandler( new NodeDragEndHandler() {
 
             @Override
@@ -152,6 +134,20 @@ public class WiresFixedText extends WiresBaseShape implements RequiresContainerM
                 editTextBox.setFocus( true );
             }
         } );
+    }
+
+    @Override
+    public void setContainerManager( final ContainerManager containerManager ) {
+        this.containerManager = containerManager;
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        if ( isSelected ) {
+            bounding.setAlpha( ALPHA_SELECTED );
+        } else {
+            bounding.setAlpha( ALPHA_DESELECTED );
+        }
     }
 
     @Override

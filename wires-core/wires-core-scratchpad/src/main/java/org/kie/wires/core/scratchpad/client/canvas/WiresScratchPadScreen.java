@@ -174,8 +174,8 @@ public class WiresScratchPadScreen extends WiresCanvas implements ContainerManag
         }
 
         //Add Shape to Canvas
-        wiresShape.init( cx,
-                         cy );
+        wiresShape.setX( cx );
+        wiresShape.setY( cy );
 
         //If we're adding the Shape to a Container notify the Container of a new child. We cannot add Shape
         //to the Container's underlying (impl) Group (which would be ideal) as we can no longer select the

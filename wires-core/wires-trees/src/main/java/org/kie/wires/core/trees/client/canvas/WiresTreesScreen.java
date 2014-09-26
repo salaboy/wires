@@ -251,8 +251,8 @@ public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
         boolean addChildToParent = parent != null;
 
         if ( addShape ) {
-            wiresShape.init( cx,
-                             cy );
+            wiresShape.setX( cx );
+            wiresShape.setY( cy );
 
             if ( addChildToParent ) {
                 parent.addChildNode( (WiresBaseTreeNode) wiresShape );

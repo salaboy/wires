@@ -52,6 +52,20 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
     private ShapesManager shapesManager;
     private LayoutManager layoutManager;
 
+    public WiresBaseTreeNode() {
+        //Update connectors when this Node moves
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                for ( WiresTreeNodeConnector connector : connectors ) {
+                    connector.getPoints().getPoint( 0 ).set( getLocation() );
+                }
+                getLayer().draw();
+            }
+        } );
+    }
+
     @Override
     public void setShapesManager( final ShapesManager shapesManager ) {
         this.shapesManager = shapesManager;
@@ -66,25 +80,6 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
     public boolean contains( final double cx,
                              final double cy ) {
         return false;
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        super.init( cx,
-                    cy );
-
-        //Update connectors when this Node moves
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                for ( WiresTreeNodeConnector connector : connectors ) {
-                    connector.getPoints().getPoint( 0 ).set( getLocation() );
-                }
-                getLayer().draw();
-            }
-        } );
     }
 
     @Override

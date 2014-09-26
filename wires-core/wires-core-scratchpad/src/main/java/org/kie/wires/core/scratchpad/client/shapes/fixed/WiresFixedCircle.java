@@ -44,28 +44,9 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
         bounding.setAlpha( 0.1 );
 
         add( circle );
-    }
 
-    @Override
-    public void setContainerManager( final ContainerManager containerManager ) {
-        this.containerManager = containerManager;
-    }
-
-    @Override
-    public void setSelected( final boolean isSelected ) {
-        if ( isSelected ) {
-            add( bounding );
-        } else {
-            remove( bounding );
-        }
-    }
-
-    @Override
-    public void init( double cx,
-                      double cy ) {
-        super.init( cx,
-                    cy );
-
+        //This class doesn't extend a super-class that handles Containers, so we add it manually
+        //Check for the Shape being added to a Container as it is dragged around
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
 
             @Override
@@ -80,6 +61,7 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
             }
         } );
 
+        //When the drag ends; if it was within a Container add this Shape to the Container
         addNodeDragEndHandler( new NodeDragEndHandler() {
 
             @Override
@@ -92,6 +74,20 @@ public class WiresFixedCircle extends WiresBaseShape implements RequiresContaine
                 getLayer().draw();
             }
         } );
+    }
+
+    @Override
+    public void setContainerManager( final ContainerManager containerManager ) {
+        this.containerManager = containerManager;
+    }
+
+    @Override
+    public void setSelected( final boolean isSelected ) {
+        if ( isSelected ) {
+            add( bounding );
+        } else {
+            remove( bounding );
+        }
     }
 
     @Override

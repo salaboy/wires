@@ -23,17 +23,8 @@ public abstract class WiresScratchPadDefaultShape extends WiresBaseDynamicShape 
 
     private WiresContainer boundContainer;
 
-    @Override
-    public void setContainerManager( final ContainerManager containerManager ) {
-        this.containerManager = containerManager;
-    }
-
-    @Override
-    public void init( double cx,
-                      double cy ) {
-        super.init( cx,
-                    cy );
-
+    public WiresScratchPadDefaultShape() {
+        //Check for the Shape being added to a Container as it is dragged around
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
 
             @Override
@@ -48,6 +39,7 @@ public abstract class WiresScratchPadDefaultShape extends WiresBaseDynamicShape 
             }
         } );
 
+        //When the drag ends; if it was within a Container add this Shape to the Container
         addNodeDragEndHandler( new NodeDragEndHandler() {
 
             @Override
@@ -60,6 +52,11 @@ public abstract class WiresScratchPadDefaultShape extends WiresBaseDynamicShape 
                 getLayer().draw();
             }
         } );
+    }
+
+    @Override
+    public void setContainerManager( final ContainerManager containerManager ) {
+        this.containerManager = containerManager;
     }
 
 }

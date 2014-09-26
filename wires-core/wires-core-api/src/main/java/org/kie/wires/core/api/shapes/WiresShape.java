@@ -29,14 +29,6 @@ public interface WiresShape {
     void setSelected( final boolean isSelected );
 
     /**
-     * Initialise a Shape
-     * @param cx Canvas X coordinate
-     * @param cy Canvas Y coordinate
-     */
-    void init( final double cx,
-               final double cy );
-
-    /**
      * Destroy the shape and any related components
      */
     void destroy();

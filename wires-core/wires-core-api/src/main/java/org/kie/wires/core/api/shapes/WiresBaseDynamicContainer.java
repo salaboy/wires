@@ -28,17 +28,9 @@ public abstract class WiresBaseDynamicContainer extends WiresBaseDynamicShape im
     private List<WiresBaseShape> children = new ArrayList<WiresBaseShape>();
     private List<Pair<WiresBaseShape, Point2D>> dragStartLocations = new ArrayList<Pair<WiresBaseShape, Point2D>>();
 
-    @Override
-    public void setShapesManager( final ShapesManager shapesManager ) {
-        this.shapesManager = shapesManager;
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        super.init( cx,
-                    cy );
-
+    public WiresBaseDynamicContainer() {
+        //Record the start location of Children when the Container is dragged. These are
+        //used to calculate the new positions of Children as the Container is dragged
         addNodeDragStartHandler( new NodeDragStartHandler() {
             @Override
             public void onNodeDragStart( final NodeDragStartEvent nodeDragStartEvent ) {
@@ -51,6 +43,8 @@ public abstract class WiresBaseDynamicContainer extends WiresBaseDynamicShape im
             }
         } );
 
+        //As the Container is dragged update the location of the Children,
+        //using their start location and the DragContext DX, DY
         addNodeDragMoveHandler( new NodeDragMoveHandler() {
             @Override
             public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
@@ -64,6 +58,12 @@ public abstract class WiresBaseDynamicContainer extends WiresBaseDynamicShape im
                 getLayer().draw();
             }
         } );
+
+    }
+
+    @Override
+    public void setShapesManager( final ShapesManager shapesManager ) {
+        this.shapesManager = shapesManager;
     }
 
     @Override

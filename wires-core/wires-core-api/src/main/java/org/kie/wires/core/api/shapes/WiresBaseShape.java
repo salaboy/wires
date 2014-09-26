@@ -34,6 +34,14 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     public WiresBaseShape() {
         id = UUID.uuid();
         setDraggable( true );
+
+        //Clicking the Group selects the Shape
+        addNodeMouseClickHandler( new NodeMouseClickHandler() {
+            @Override
+            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
+                selectionManager.selectShape( WiresBaseShape.this );
+            }
+        } );
     }
 
     @Override
@@ -44,21 +52,6 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     @Override
     public void setSelectionManager( final SelectionManager manager ) {
         this.selectionManager = manager;
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        setX( cx );
-        setY( cy );
-
-        addNodeMouseClickHandler( new NodeMouseClickHandler() {
-            @Override
-            public void onNodeMouseClick( final NodeMouseClickEvent nodeMouseClickEvent ) {
-                selectionManager.selectShape( WiresBaseShape.this );
-            }
-        } );
-
     }
 
     @Override

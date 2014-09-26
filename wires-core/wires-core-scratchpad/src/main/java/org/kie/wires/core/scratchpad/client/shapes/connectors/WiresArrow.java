@@ -104,6 +104,22 @@ public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
         );
         addControlPoint( controlPoint1 );
         addControlPoint( controlPoint2 );
+
+        //If Connector is dragged as a whole (i.e. not a ControlPoint) detach it from Magnets
+        addNodeDragMoveHandler( new NodeDragMoveHandler() {
+            @Override
+            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
+                final Magnet boundMagnet1 = controlPoint1.getBoundMagnet();
+                final Magnet boundMagnet2 = controlPoint2.getBoundMagnet();
+                if ( boundMagnet1 != null ) {
+                    boundMagnet1.detachControlPoint( controlPoint1 );
+                }
+                if ( boundMagnet2 != null ) {
+                    boundMagnet2.detachControlPoint( controlPoint2 );
+                }
+                getLayer().draw();
+            }
+        } );
     }
 
     @Override
@@ -137,28 +153,6 @@ public class WiresArrow extends WiresBaseDynamicShape implements MagnetManager,
         } else {
             remove( bounding );
         }
-    }
-
-    @Override
-    public void init( final double cx,
-                      final double cy ) {
-        super.init( cx,
-                    cy );
-
-        addNodeDragMoveHandler( new NodeDragMoveHandler() {
-            @Override
-            public void onNodeDragMove( final NodeDragMoveEvent nodeDragMoveEvent ) {
-                final Magnet boundMagnet1 = controlPoint1.getBoundMagnet();
-                final Magnet boundMagnet2 = controlPoint2.getBoundMagnet();
-                if ( boundMagnet1 != null ) {
-                    boundMagnet1.detachControlPoint( controlPoint1 );
-                }
-                if ( boundMagnet2 != null ) {
-                    boundMagnet2.detachControlPoint( controlPoint2 );
-                }
-                getLayer().draw();
-            }
-        } );
     }
 
     @Override
