@@ -49,7 +49,7 @@ public class ExampleTreeNode1Factory extends AbstractBaseFactory<Circle> {
 
     @Override
     public boolean builds( final WiresBaseShape shapeType ) {
-        return shapeType instanceof WiresExampleTreeNode1;
+        return shapeType.getClass().getName().equals( WiresExampleTreeNode1.class.getName() );
     }
 
     @Override

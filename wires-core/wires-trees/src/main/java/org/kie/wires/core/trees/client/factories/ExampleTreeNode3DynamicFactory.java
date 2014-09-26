@@ -60,7 +60,7 @@ public class ExampleTreeNode3DynamicFactory {
 
             @Override
             public boolean builds( final WiresBaseShape shapeType ) {
-                return shapeType instanceof WiresExampleTreeNode3;
+                return shapeType.getClass().getName().equals( WiresExampleTreeNode3.class.getName() );
             }
 
             @Override
