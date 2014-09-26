@@ -233,7 +233,8 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
                          }
 
                          //Get new layout information
-                         final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation();
+                         final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation( getTreeRoot(),
+                                                                                                         WiresBaseTreeNode.this.getLayer() );
 
                          //Store required transformations: Shape, Current location, Target location
                          transformations.clear();
@@ -364,7 +365,8 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
                          }
 
                          //Get new layout information
-                         final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation();
+                         final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation( getTreeRoot(),
+                                                                                                         WiresBaseTreeNode.this.getLayer() );
 
                          //Store required transformations: Shape, Current location, Target location
                          transformations.clear();
@@ -419,6 +421,18 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
                  } );
 
         getLayer().draw();
+    }
+
+    /**
+     * Get the root node for the tree in which this node exists
+     * @return The root
+     */
+    private WiresBaseTreeNode getTreeRoot() {
+        WiresBaseTreeNode root = this;
+        while ( root.parent != null ) {
+            root = root.parent;
+        }
+        return root;
     }
 
     /**

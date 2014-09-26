@@ -47,8 +47,8 @@ public class DefaultConfiguration<TreeNode> implements
      * Specifies the constants to be used for this Configuration.
      * @param gapBetweenLevels
      * @param gapBetweenNodes
-     * @param location [default: {@link org.abego.treelayout.Configuration.Location#Top Top}]
-     * @param alignmentInLevel [default: {@link org.abego.treelayout.Configuration.AlignmentInLevel#Center Center}]
+     * @param location [default: {@link Configuration.Location#Top Top}]
+     * @param alignmentInLevel [default: {@link Configuration.AlignmentInLevel#Center Center}]
      */
     public DefaultConfiguration( double gapBetweenLevels,
                                  double gapBetweenNodes,

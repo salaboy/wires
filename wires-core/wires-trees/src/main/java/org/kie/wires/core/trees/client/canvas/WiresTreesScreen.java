@@ -45,11 +45,7 @@ import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.canvas.WiresCanvas;
 import org.kie.wires.core.trees.client.shapes.WiresBaseTreeNode;
 import org.kie.wires.core.trees.client.treelayout.AbstractTreeForTreeLayout;
-import org.kie.wires.core.trees.client.treelayout.Configuration;
-import org.kie.wires.core.trees.client.treelayout.DefaultConfiguration;
 import org.kie.wires.core.trees.client.treelayout.NodeExtentProvider;
-import org.kie.wires.core.trees.client.treelayout.Rectangle2D;
-import org.kie.wires.core.trees.client.treelayout.TreeLayout;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -61,7 +57,7 @@ import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
 @WorkbenchScreen(identifier = "WiresTreesScreen")
-public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
+public class WiresTreesScreen extends WiresCanvas {
 
     private static final int MAX_PROXIMITY = 200;
 
@@ -78,6 +74,9 @@ public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
 
     @Inject
     private Event<ShapeDeletedEvent> shapeDeletedEvent;
+
+    @Inject
+    private LayoutManager layoutManager;
 
     private Menus menus;
 
@@ -319,7 +318,7 @@ public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
 
         //Attach relevant handlers
         if ( shape instanceof RequiresLayoutManager ) {
-            ( (RequiresLayoutManager) shape ).setLayoutManager( this );
+            ( (RequiresLayoutManager) shape ).setLayoutManager( layoutManager );
         }
     }
 
@@ -405,74 +404,10 @@ public class WiresTreesScreen extends WiresCanvas implements LayoutManager {
         return node.hasCollapsedChildren();
     }
 
-    @Override
-    public Map<WiresBaseShape, Point2D> getLayoutInformation() {
-        if ( root == null ) {
-            return Collections.emptyMap();
-        }
-
-        //Layout tree
-        final WiresTreeForTreeLayout treeNodesProvider = new WiresTreeForTreeLayout( root );
-        final WiresTreeNodeExtentProvider treeNodesExtentProvider = new WiresTreeNodeExtentProvider();
-        final Configuration<WiresBaseTreeNode> treeNodesLayoutConfiguration = new DefaultConfiguration<WiresBaseTreeNode>( 50,
-                                                                                                                           50 );
-        final TreeLayout<WiresBaseTreeNode> layout = new TreeLayout<WiresBaseTreeNode>( treeNodesProvider,
-                                                                                        treeNodesExtentProvider,
-                                                                                        treeNodesLayoutConfiguration );
-
-        //Calculate offset so tree appears centred in the X-axis of the Canvas
-        final Map<WiresBaseTreeNode, Rectangle2D> bounds = layout.getNodeBounds();
-        final Rectangle2D rootBounds = bounds.get( root );
-        final double offsetX = ( canvasLayer.getWidth() / 2 ) - rootBounds.getX();
-        final double offsetY = 100;
-
-        final Map<WiresBaseShape, Point2D> locations = new HashMap<WiresBaseShape, Point2D>();
-        for ( Map.Entry<WiresBaseTreeNode, Rectangle2D> e : bounds.entrySet() ) {
-            locations.put( e.getKey(),
-                           new Point2D( e.getValue().getX() + offsetX,
-                                        e.getValue().getY() + offsetY ) );
-        }
-
-        //Collapse children into parent if required
-        collapseChildren( root,
-                          locations );
-
-        return locations;
-    }
-
-    private void collapseChildren( final WiresBaseTreeNode node,
-                                   final Map<WiresBaseShape, Point2D> locations ) {
-        if ( node.hasCollapsedChildren() ) {
-            final Point2D destination = locations.get( node );
-            for ( WiresBaseTreeNode child : node.getChildren() ) {
-                collapseChildren( child,
-                                  destination,
-                                  locations );
-            }
-
-        } else {
-            for ( WiresBaseTreeNode child : node.getChildren() ) {
-                collapseChildren( child,
-                                  locations );
-            }
-        }
-    }
-
-    private void collapseChildren( final WiresBaseTreeNode node,
-                                   final Point2D destination,
-                                   final Map<WiresBaseShape, Point2D> locations ) {
-        locations.put( node,
-                       destination );
-        for ( WiresBaseTreeNode child : node.getChildren() ) {
-            collapseChildren( child,
-                              destination,
-                              locations );
-        }
-    }
-
     private void layout() {
         //Get layout information
-        final Map<WiresBaseShape, Point2D> layout = getLayoutInformation();
+        final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation( root,
+                                                                                        canvasLayer );
 
         //Run an animation to move WiresBaseTreeNodes from their current position to the target position
         root.animate( AnimationTweener.EASE_OUT,

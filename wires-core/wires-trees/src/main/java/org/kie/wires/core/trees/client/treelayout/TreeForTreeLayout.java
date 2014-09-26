@@ -30,15 +30,14 @@
 package org.kie.wires.core.trees.client.treelayout;
 
 /**
- * Represents a tree to be used by the {@link org.abego.treelayout.TreeLayout}.
+ * Represents a tree to be used by the {@link TreeLayout}.
  * <p/>
  * The TreeForTreeLayout interface is designed to best match the implemented
  * layout algorithm and to ensure the algorithm's time complexity promises in
  * all possible cases. However in most situation a client must not deal with all
  * details of this interface and can directly use the
- * {@link org.abego.treelayout.util.AbstractTreeForTreeLayout} to implement this
- * interface or even use the
- * {@link org.abego.treelayout.util.DefaultTreeForTreeLayout} class directly.
+ * {@link AbstractTreeForTreeLayout} to implement this
+ * interface.
  * <p/>
  * Also see <a href="package-summary.html">this overview</a>.
  * @param <TreeNode> <p/>

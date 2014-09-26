@@ -35,7 +35,7 @@ import org.kie.wires.core.trees.client.treelayout.util.IterableUtil;
 import org.kie.wires.core.trees.client.treelayout.util.ListUtil;
 
 /**
- * Provides an easy way to implement the {@link org.abego.treelayout.TreeForTreeLayout} interface by
+ * Provides an easy way to implement the {@link TreeForTreeLayout} interface by
  * defining just two simple methods and a constructor.
  * <p/>
  * To use this class the underlying tree must provide the children as a list
