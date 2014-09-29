@@ -21,9 +21,9 @@ import javax.inject.Inject;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseDownEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseDownHandler;
+import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.TextBaseLine;
@@ -96,27 +96,13 @@ public class StencilPaletteBuilder {
         final ShapeDragProxy dragProxy = factory.getDragProxy( helper,
                                                                dragPreviewCallback,
                                                                dragCompleteCallback );
-        if ( glyph != null ) {
-            addDragHandlers( dragProxyParentPanel,
-                             dragProxy,
-                             glyph.getShape() );
-        }
-
-        if ( description != null ) {
-            addDragHandlers( dragProxyParentPanel,
-                             dragProxy,
-                             description );
-        }
-
-        if ( bounding != null ) {
-            addDragHandlers( dragProxyParentPanel,
-                             dragProxy,
-                             bounding );
-        }
+        addDragHandlers( dragProxyParentPanel,
+                         dragProxy,
+                         paletteShape );
 
         //Build Palette Shape
         paletteShape.setBounding( bounding );
-        paletteShape.setShape( scaleGlyph( glyph ) );
+        paletteShape.setGroup( scaleGlyph( glyph ) );
         paletteShape.setDescription( description );
 
         return paletteShape;
@@ -139,11 +125,11 @@ public class StencilPaletteBuilder {
      * @param glyph
      * @return
      */
-    protected Shape scaleGlyph( final ShapeGlyph glyph ) {
+    protected Group scaleGlyph( final ShapeGlyph glyph ) {
         final double sx = GLYPH_WIDTH / glyph.getWidth();
         final double sy = GLYPH_HEIGHT / glyph.getHeight();
-        final Shape shape = glyph.getShape();
-        return shape.setX( ShapeFactoryUtil.WIDTH_BOUNDING / 2 ).setY( ShapeFactoryUtil.WIDTH_BOUNDING / 2 ).setScale( sx,
+        final Group group = glyph.getGroup();
+        return group.setX( ShapeFactoryUtil.WIDTH_BOUNDING / 2 ).setY( ShapeFactoryUtil.WIDTH_BOUNDING / 2 ).setScale( sx,
                                                                                                                        sy );
     }
 
@@ -186,7 +172,7 @@ public class StencilPaletteBuilder {
 
     private void addDragHandlers( final LienzoPanel dragProxyParentPanel,
                                   final ShapeDragProxy proxy,
-                                  final Shape shape ) {
+                                  final Group shape ) {
         shape.addNodeMouseDownHandler( getShapeDragStartHandler( dragProxyParentPanel,
                                                                  proxy ) );
     }
@@ -197,14 +183,14 @@ public class StencilPaletteBuilder {
 
             @Override
             public void onNodeMouseDown( final NodeMouseDownEvent event ) {
-                final int proxyWidth = proxy.getWidth();
-                final int proxyHeight = proxy.getHeight();
-                final Shape dragShape = proxy.getDragShape();
+                final double proxyWidth = proxy.getWidth();
+                final double proxyHeight = proxy.getHeight();
+                final Group dragShape = proxy.getDragGroup();
                 dragShape.setX( proxyWidth / 2 );
                 dragShape.setY( proxyHeight / 2 );
 
-                final LienzoPanel dragProxyPanel = new LienzoPanel( proxyWidth,
-                                                                    proxyHeight );
+                final LienzoPanel dragProxyPanel = new LienzoPanel( (int) proxyWidth,
+                                                                    (int) proxyHeight );
                 final Layer dragProxyLayer = new Layer();
                 dragProxyLayer.add( dragShape );
                 dragProxyPanel.add( dragProxyLayer );
@@ -225,8 +211,8 @@ public class StencilPaletteBuilder {
 
     private void setDragProxyPosition( final LienzoPanel dragProxyParentPanel,
                                        final LienzoPanel dragProxyPanel,
-                                       final int proxyWidth,
-                                       final int proxyHeight,
+                                       final double proxyWidth,
+                                       final double proxyHeight,
                                        final NodeMouseDownEvent event ) {
         Style style = dragProxyPanel.getElement().getStyle();
         style.setPosition( Style.Position.ABSOLUTE );

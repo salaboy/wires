@@ -68,12 +68,12 @@ public class BayesianNodePaletteFactory extends AbstractBaseFactory<Rectangle> {
     }
 
     @Override
-    protected int getWidth() {
+    protected double getWidth() {
         return SHAPE_SIZE_X;
     }
 
     @Override
-    protected int getHeight() {
+    protected double getHeight() {
         return SHAPE_SIZE_Y;
     }
 

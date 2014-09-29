@@ -15,6 +15,7 @@
  */
 package org.kie.wires.core.client.factories;
 
+import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import org.kie.wires.core.api.factories.FactoryHelper;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
@@ -29,13 +30,15 @@ import org.kie.wires.core.api.factories.ShapeGlyph;
 public abstract class AbstractBaseFactory<T extends Shape<T>> implements ShapeFactory<T> {
 
     @Override
-    public ShapeGlyph<T> getGlyph() {
+    public ShapeGlyph getGlyph() {
         final T shape = makeShape();
+        final Group group = new Group();
+        group.add( shape );
 
-        return new ShapeGlyph<T>() {
+        return new ShapeGlyph() {
             @Override
-            public Shape<T> getShape() {
-                return shape;
+            public Group getGroup() {
+                return group;
             }
 
             @Override
@@ -51,15 +54,17 @@ public abstract class AbstractBaseFactory<T extends Shape<T>> implements ShapeFa
     }
 
     @Override
-    public ShapeDragProxy<T> getDragProxy( final @SuppressWarnings("unused") FactoryHelper helper,
-                                           final ShapeDragProxyPreviewCallback dragPreviewCallback,
-                                           final ShapeDragProxyCompleteCallback dragEndCallBack ) {
+    public ShapeDragProxy getDragProxy( final @SuppressWarnings("unused") FactoryHelper helper,
+                                        final ShapeDragProxyPreviewCallback dragPreviewCallback,
+                                        final ShapeDragProxyCompleteCallback dragEndCallBack ) {
         final T shape = makeShape();
+        final Group group = new Group();
+        group.add( shape );
 
-        return new ShapeDragProxy<T>() {
+        return new ShapeDragProxy() {
             @Override
-            public Shape<T> getDragShape() {
-                return shape;
+            public Group getDragGroup() {
+                return group;
             }
 
             @Override
@@ -77,12 +82,12 @@ public abstract class AbstractBaseFactory<T extends Shape<T>> implements ShapeFa
             }
 
             @Override
-            public int getWidth() {
+            public double getWidth() {
                 return AbstractBaseFactory.this.getWidth();
             }
 
             @Override
-            public int getHeight() {
+            public double getHeight() {
                 return AbstractBaseFactory.this.getHeight();
             }
 
@@ -91,8 +96,8 @@ public abstract class AbstractBaseFactory<T extends Shape<T>> implements ShapeFa
 
     protected abstract T makeShape();
 
-    protected abstract int getWidth();
+    protected abstract double getWidth();
 
-    protected abstract int getHeight();
+    protected abstract double getHeight();
 
 }

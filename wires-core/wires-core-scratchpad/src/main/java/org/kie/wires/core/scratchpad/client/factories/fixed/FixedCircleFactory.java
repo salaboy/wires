@@ -65,12 +65,12 @@ public class FixedCircleFactory extends AbstractBaseFactory<Circle> {
     }
 
     @Override
-    protected int getWidth() {
+    protected double getWidth() {
         return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
     }
 
     @Override
-    protected int getHeight() {
+    protected double getHeight() {
         return ( SHAPE_RADIUS + ShapesUtils.RGB_STROKE_WIDTH_SHAPE ) * 2;
     }
 

@@ -21,8 +21,8 @@ import javax.inject.Inject;
 
 import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
+import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
 import com.emitrom.lienzo.shared.core.types.TextBaseLine;
 import com.google.gwt.user.client.ui.Composite;
@@ -62,22 +62,20 @@ public class StencilLayerBuilder extends Composite {
             }
         };
         layerShape.addNodeMouseClickHandler( handler );
-        glyph.getShape().addNodeMouseClickHandler( handler );
-        description.addNodeMouseClickHandler( handler );
 
         //Build Layer Shape
         layerShape.setBounding( bounding );
         layerShape.setDescription( description );
-        layerShape.setShape( scaleGlyph( glyph ) );
+        layerShape.setGroup( scaleGlyph( glyph ) );
 
         return layerShape;
     }
 
-    private Shape scaleGlyph( final ShapeGlyph glyph ) {
+    private Group scaleGlyph( final ShapeGlyph glyph ) {
         final double sx = GLYPH_WIDTH / glyph.getWidth();
         final double sy = GLYPH_HEIGHT / glyph.getHeight();
-        final Shape shape = glyph.getShape();
-        return shape.setX( ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER / 2 ).setY( ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER / 2 ).setScale( sx,
+        final Group group = glyph.getGroup();
+        return group.setX( ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER / 2 ).setY( ShapeFactoryUtil.HEIGHT_BOUNDING_LAYER / 2 ).setScale( sx,
                                                                                                                                      sy );
     }
 

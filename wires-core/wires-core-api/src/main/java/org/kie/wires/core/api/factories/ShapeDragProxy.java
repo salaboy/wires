@@ -15,18 +15,18 @@
  */
 package org.kie.wires.core.api.factories;
 
-import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.core.shape.Group;
 
 /**
  * Proxy for Shapes being dragged from the Palette
  */
-public interface ShapeDragProxy<T extends Shape<T>> {
+public interface ShapeDragProxy {
 
     /**
-     * Get a Shape that is used as the drag proxy
+     * Get a Group that is used as the drag proxy
      * @return
      */
-    Shape<T> getDragShape();
+    Group getDragGroup();
 
     /**
      * Called during the drag operation
@@ -48,12 +48,12 @@ public interface ShapeDragProxy<T extends Shape<T>> {
      * Height of proxy used to ensure proxy is centered around mouse pointer position
      * @return
      */
-    int getHeight();
+    double getHeight();
 
     /**
      * Width of proxy used to ensure proxy is centered around mouse pointer position
      * @return
      */
-    int getWidth();
+    double getWidth();
 
 }

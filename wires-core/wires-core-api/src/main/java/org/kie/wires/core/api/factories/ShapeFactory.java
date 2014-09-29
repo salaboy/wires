@@ -28,7 +28,7 @@ public interface ShapeFactory<T extends Shape<T>> {
      * Get a glyph to represent the Shape. Used by the Palette Screen and Layers Screen
      * @return
      */
-    ShapeGlyph<T> getGlyph();
+    ShapeGlyph getGlyph();
 
     /**
      * Get a proxy used during and at the end of a drag operation
@@ -37,9 +37,9 @@ public interface ShapeFactory<T extends Shape<T>> {
      * @param dragEndCallBack
      * @return
      */
-    ShapeDragProxy<T> getDragProxy( final FactoryHelper helper,
-                                    final ShapeDragProxyPreviewCallback dragPreviewCallback,
-                                    final ShapeDragProxyCompleteCallback dragEndCallBack );
+    ShapeDragProxy getDragProxy( final FactoryHelper helper,
+                                 final ShapeDragProxyPreviewCallback dragPreviewCallback,
+                                 final ShapeDragProxyCompleteCallback dragEndCallBack );
 
     /**
      * Get a Shape to be created on the Canvas (usually at the end of a drag operation)

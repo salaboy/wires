@@ -17,21 +17,38 @@ package org.kie.wires.core.client.layers;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
 
 public class LayerShape extends Group {
 
+    /**
+     * Add a bounding Rectangle to the LayerShape.
+     * @param bounding If null this parameter is ignored
+     */
     public void setBounding( final Rectangle bounding ) {
-        add( bounding );
+        if ( bounding != null ) {
+            add( bounding );
+        }
     }
 
-    public void setShape( final Shape<?> shape ) {
-        add( shape );
+    /**
+     * Add a Group to the LayerShape.
+     * @param group If null this parameter is ignored
+     */
+    public void setGroup( final Group group ) {
+        if ( group != null ) {
+            add( group );
+        }
     }
 
+    /**
+     * Add Text to the LayerShape.
+     * @param description If null this parameter is ignored
+     */
     public void setDescription( final Text description ) {
-        add( description );
+        if ( description != null ) {
+            add( description );
+        }
     }
 
 }

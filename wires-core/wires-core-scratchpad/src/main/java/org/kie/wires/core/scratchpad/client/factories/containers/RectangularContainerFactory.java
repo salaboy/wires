@@ -70,12 +70,12 @@ public class RectangularContainerFactory extends AbstractBaseFactory<Rectangle> 
     }
 
     @Override
-    protected int getWidth() {
+    protected double getWidth() {
         return SHAPE_SIZE_X + ( ShapesUtils.RGB_STROKE_WIDTH_SHAPE * 2 );
     }
 
     @Override
-    protected int getHeight() {
+    protected double getHeight() {
         return SHAPE_SIZE_Y + ( ShapesUtils.RGB_STROKE_WIDTH_SHAPE * 2 );
     }
 

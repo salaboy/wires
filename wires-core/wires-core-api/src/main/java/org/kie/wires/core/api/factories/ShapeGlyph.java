@@ -15,18 +15,18 @@
  */
 package org.kie.wires.core.api.factories;
 
-import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.core.shape.Group;
 
 /**
  * A Shape Glyph.
  */
-public interface ShapeGlyph<T extends Shape<T>> {
+public interface ShapeGlyph {
 
     /**
-     * Get the glyph's Shape
+     * Get the glyph's Group
      * @return
      */
-    Shape<T> getShape();
+    Group getGroup();
 
     /**
      * Get the glyph's width

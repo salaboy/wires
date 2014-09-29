@@ -80,12 +80,12 @@ public class ArrowFactory extends AbstractBaseFactory<Arrow> {
     }
 
     @Override
-    protected int getWidth() {
+    protected double getWidth() {
         return SHAPE_SIZE_X + 10;
     }
 
     @Override
-    protected int getHeight() {
+    protected double getHeight() {
         return SHAPE_SIZE_Y + 10;
     }
 }

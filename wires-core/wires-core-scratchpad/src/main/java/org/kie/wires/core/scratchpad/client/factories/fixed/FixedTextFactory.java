@@ -86,13 +86,13 @@ public class FixedTextFactory extends AbstractBaseFactory<Text> {
     }
 
     @Override
-    protected int getWidth() {
-        return (int) Math.round( TEXT_WIDTH );
+    protected double getWidth() {
+        return Math.round( TEXT_WIDTH );
     }
 
     @Override
-    protected int getHeight() {
-        return (int) Math.round( TEXT_HEIGHT );
+    protected double getHeight() {
+        return Math.round( TEXT_HEIGHT );
     }
 
 }

@@ -19,7 +19,6 @@ import java.io.Serializable;
 
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Rectangle;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
 
 /**
@@ -40,12 +39,12 @@ public class PaletteShape extends Group implements Serializable {
     }
 
     /**
-     * Add a Shape to the PaletteShape.
-     * @param shape If null this parameter is ignored
+     * Add a Group to the PaletteShape.
+     * @param group If null this parameter is ignored
      */
-    public void setShape( final Shape<?> shape ) {
-        if ( shape != null ) {
-            add( shape );
+    public void setGroup( final Group group ) {
+        if ( group != null ) {
+            add( group );
         }
     }
 
