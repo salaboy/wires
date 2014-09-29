@@ -32,11 +32,13 @@ public interface ShapeFactory<T extends Shape<T>> {
 
     /**
      * Get a proxy used during and at the end of a drag operation
+     * @param helper
      * @param dragPreviewCallback
      * @param dragEndCallBack
      * @return
      */
-    ShapeDragProxy<T> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
+    ShapeDragProxy<T> getDragProxy( final FactoryHelper helper,
+                                    final ShapeDragProxyPreviewCallback dragPreviewCallback,
                                     final ShapeDragProxyCompleteCallback dragEndCallBack );
 
     /**

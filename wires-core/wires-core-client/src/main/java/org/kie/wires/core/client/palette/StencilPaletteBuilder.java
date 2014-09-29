@@ -62,9 +62,12 @@ public class StencilPaletteBuilder {
                                final FactoryHelper helper,
                                final ShapeFactory factory ) {
         final PaletteShape paletteShape = new PaletteShape();
-        final ShapeGlyph glyph = drawGlyph( factory );
-        final Text description = drawDescription( factory );
-        final Rectangle bounding = drawBoundingBox( factory );
+        final ShapeGlyph glyph = drawGlyph( factory,
+                                            helper );
+        final Text description = drawDescription( factory,
+                                                  helper );
+        final Rectangle bounding = drawBoundingBox( factory,
+                                                    helper );
 
         //Callback is invoked when the drag operation ends
         final ShapeDragProxyCompleteCallback dragCompleteCallback = new ShapeDragProxyCompleteCallback() {
@@ -90,7 +93,8 @@ public class StencilPaletteBuilder {
         };
 
         //Attach handles for drag operation
-        final ShapeDragProxy dragProxy = factory.getDragProxy( dragPreviewCallback,
+        final ShapeDragProxy dragProxy = factory.getDragProxy( helper,
+                                                               dragPreviewCallback,
                                                                dragCompleteCallback );
         if ( glyph != null ) {
             addDragHandlers( dragProxyParentPanel,
@@ -122,9 +126,11 @@ public class StencilPaletteBuilder {
      * Return a ShapeGlyph that represents the Factory in the Palette.
      * This implementation delegates this to the ShapeFactory.
      * @param factory ShapeFactory that is capable of providing a default ShapeGlyph
+     * @param helper FactoryHelper that might provide additional information to build a Glyph. Unused by this implementation.
      * @return A ShapeGlyph object or null if one is not required.
      */
-    protected ShapeGlyph drawGlyph( final ShapeFactory factory ) {
+    protected ShapeGlyph drawGlyph( final ShapeFactory factory,
+                                    final @SuppressWarnings("unused") FactoryHelper helper ) {
         return factory.getGlyph();
     }
 
@@ -145,9 +151,11 @@ public class StencilPaletteBuilder {
      * Return Text that represents the Factory in the Palette.
      * This implementation delegates this to the ShapeFactory.
      * @param factory ShapeFactory that is capable of providing a default description
+     * @param helper FactoryHelper that might provide additional information to build a Glyph. Unused by this implementation.
      * @return A Text object or null if one is not required.
      */
-    protected Text drawDescription( final ShapeFactory factory ) {
+    protected Text drawDescription( final ShapeFactory factory,
+                                    final @SuppressWarnings("unused") FactoryHelper helper ) {
         Text text = new Text( factory.getShapeDescription(),
                               ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION,
                               ShapeFactoryUtil.FONT_SIZE_DESCRIPTION );
@@ -162,9 +170,11 @@ public class StencilPaletteBuilder {
      * Return a Rectangle that is the bounding box for the PaletteShape.
      * This implementation does not use the ShapeFactory but sub-classes could.
      * @param factory ShapeFactory that might be useful for sub-classes to build a bounding Rectangle
+     * @param helper FactoryHelper that might provide additional information to build a Glyph. Unused by this implementation.
      * @return A Rectangle object or null if one is not required.
      */
-    protected Rectangle drawBoundingBox( final @SuppressWarnings("unused") ShapeFactory factory ) {
+    protected Rectangle drawBoundingBox( final @SuppressWarnings("unused") ShapeFactory factory,
+                                         final @SuppressWarnings("unused") FactoryHelper helper ) {
         final Rectangle boundingBox = new Rectangle( ShapeFactoryUtil.WIDTH_BOUNDING,
                                                      ShapeFactoryUtil.HEIGHT_BOUNDING );
         boundingBox.setStrokeColor( ShapeFactoryUtil.RGB_STROKE_BOUNDING )

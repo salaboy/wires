@@ -16,6 +16,7 @@
 package org.kie.wires.core.client.factories;
 
 import com.emitrom.lienzo.client.core.shape.Shape;
+import org.kie.wires.core.api.factories.FactoryHelper;
 import org.kie.wires.core.api.factories.ShapeDragProxy;
 import org.kie.wires.core.api.factories.ShapeDragProxyCompleteCallback;
 import org.kie.wires.core.api.factories.ShapeDragProxyPreviewCallback;
@@ -50,7 +51,8 @@ public abstract class AbstractBaseFactory<T extends Shape<T>> implements ShapeFa
     }
 
     @Override
-    public ShapeDragProxy<T> getDragProxy( final ShapeDragProxyPreviewCallback dragPreviewCallback,
+    public ShapeDragProxy<T> getDragProxy( final @SuppressWarnings("unused") FactoryHelper helper,
+                                           final ShapeDragProxyPreviewCallback dragPreviewCallback,
                                            final ShapeDragProxyCompleteCallback dragEndCallBack ) {
         final T shape = makeShape();
 
