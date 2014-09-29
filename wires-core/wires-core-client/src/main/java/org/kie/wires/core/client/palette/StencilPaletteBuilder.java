@@ -49,8 +49,8 @@ import org.kie.wires.core.client.util.ShapeFactoryUtil;
 public class StencilPaletteBuilder {
 
     private static final int ZINDEX = Integer.MAX_VALUE;
-    private static final int GLYPH_WIDTH = 65;
-    private static final int GLYPH_HEIGHT = 65;
+    private static final double GLYPH_WIDTH = 65;
+    private static final double GLYPH_HEIGHT = 65;
 
     @Inject
     private Event<ShapeDragCompleteEvent> shapeDragCompleteEvent;
@@ -62,9 +62,9 @@ public class StencilPaletteBuilder {
                                final FactoryHelper helper,
                                final ShapeFactory factory ) {
         final PaletteShape paletteShape = new PaletteShape();
-        final Rectangle bounding = drawBoundingBox();
-        final ShapeGlyph glyph = factory.getGlyph();
-        final Text description = drawDescription( factory.getShapeDescription() );
+        final ShapeGlyph glyph = drawGlyph( factory );
+        final Text description = drawDescription( factory );
+        final Rectangle bounding = drawBoundingBox( factory );
 
         //Callback is invoked when the drag operation ends
         final ShapeDragProxyCompleteCallback dragCompleteCallback = new ShapeDragProxyCompleteCallback() {
@@ -92,13 +92,23 @@ public class StencilPaletteBuilder {
         //Attach handles for drag operation
         final ShapeDragProxy dragProxy = factory.getDragProxy( dragPreviewCallback,
                                                                dragCompleteCallback );
-        addBoundingHandlers( dragProxyParentPanel,
+        if ( glyph != null ) {
+            addDragHandlers( dragProxyParentPanel,
+                             dragProxy,
+                             glyph.getShape() );
+        }
+
+        if ( description != null ) {
+            addDragHandlers( dragProxyParentPanel,
+                             dragProxy,
+                             description );
+        }
+
+        if ( bounding != null ) {
+            addDragHandlers( dragProxyParentPanel,
                              dragProxy,
                              bounding );
-
-        addShapeHandlers( dragProxyParentPanel,
-                          dragProxy,
-                          glyph.getShape() );
+        }
 
         //Build Palette Shape
         paletteShape.setBounding( bounding );
@@ -108,7 +118,22 @@ public class StencilPaletteBuilder {
         return paletteShape;
     }
 
-    private Shape scaleGlyph( final ShapeGlyph glyph ) {
+    /**
+     * Return a ShapeGlyph that represents the Factory in the Palette.
+     * This implementation delegates this to the ShapeFactory.
+     * @param factory ShapeFactory that is capable of providing a default ShapeGlyph
+     * @return A ShapeGlyph object or null if one is not required.
+     */
+    protected ShapeGlyph drawGlyph( final ShapeFactory factory ) {
+        return factory.getGlyph();
+    }
+
+    /**
+     * Scale the Shape provided by the ShapeFactory as the glyph to fit the PaletteShape.
+     * @param glyph
+     * @return
+     */
+    protected Shape scaleGlyph( final ShapeGlyph glyph ) {
         final double sx = GLYPH_WIDTH / glyph.getWidth();
         final double sy = GLYPH_HEIGHT / glyph.getHeight();
         final Shape shape = glyph.getShape();
@@ -116,7 +141,30 @@ public class StencilPaletteBuilder {
                                                                                                                        sy );
     }
 
-    private Rectangle drawBoundingBox() {
+    /**
+     * Return Text that represents the Factory in the Palette.
+     * This implementation delegates this to the ShapeFactory.
+     * @param factory ShapeFactory that is capable of providing a default description
+     * @return A Text object or null if one is not required.
+     */
+    protected Text drawDescription( final ShapeFactory factory ) {
+        Text text = new Text( factory.getShapeDescription(),
+                              ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION,
+                              ShapeFactoryUtil.FONT_SIZE_DESCRIPTION );
+        text.setFillColor( ShapeFactoryUtil.RGB_TEXT_DESCRIPTION );
+        text.setTextBaseLine( TextBaseLine.MIDDLE );
+        text.setX( 5 );
+        text.setY( 85 );
+        return text;
+    }
+
+    /**
+     * Return a Rectangle that is the bounding box for the PaletteShape.
+     * This implementation does not use the ShapeFactory but sub-classes could.
+     * @param factory ShapeFactory that might be useful for sub-classes to build a bounding Rectangle
+     * @return A Rectangle object or null if one is not required.
+     */
+    protected Rectangle drawBoundingBox( final @SuppressWarnings("unused") ShapeFactory factory ) {
         final Rectangle boundingBox = new Rectangle( ShapeFactoryUtil.WIDTH_BOUNDING,
                                                      ShapeFactoryUtil.HEIGHT_BOUNDING );
         boundingBox.setStrokeColor( ShapeFactoryUtil.RGB_STROKE_BOUNDING )
@@ -126,29 +174,11 @@ public class StencilPaletteBuilder {
         return boundingBox;
     }
 
-    private void addBoundingHandlers( final LienzoPanel dragProxyParentPanel,
-                                      final ShapeDragProxy proxy,
-                                      final Rectangle boundingBox ) {
-        boundingBox.addNodeMouseDownHandler( getShapeDragStartHandler( dragProxyParentPanel,
-                                                                       proxy ) );
-    }
-
-    private void addShapeHandlers( final LienzoPanel dragProxyParentPanel,
-                                   final ShapeDragProxy proxy,
-                                   final Shape shape ) {
+    private void addDragHandlers( final LienzoPanel dragProxyParentPanel,
+                                  final ShapeDragProxy proxy,
+                                  final Shape shape ) {
         shape.addNodeMouseDownHandler( getShapeDragStartHandler( dragProxyParentPanel,
                                                                  proxy ) );
-    }
-
-    private Text drawDescription( final String description ) {
-        Text text = new Text( description,
-                              ShapeFactoryUtil.FONT_FAMILY_DESCRIPTION,
-                              ShapeFactoryUtil.FONT_SIZE_DESCRIPTION );
-        text.setFillColor( ShapeFactoryUtil.RGB_TEXT_DESCRIPTION );
-        text.setTextBaseLine( TextBaseLine.MIDDLE );
-        text.setX( 5 );
-        text.setY( 85 );
-        return text;
     }
 
     private NodeMouseDownHandler getShapeDragStartHandler( final LienzoPanel dragProxyParentPanel,

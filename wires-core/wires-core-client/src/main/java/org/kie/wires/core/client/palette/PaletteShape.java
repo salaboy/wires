@@ -22,20 +22,41 @@ import com.emitrom.lienzo.client.core.shape.Rectangle;
 import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.shape.Text;
 
+/**
+ * A PaletteShape is an icon and text, bound by a rectangle, used in the Palette.
+ */
 public class PaletteShape extends Group implements Serializable {
 
     private static final long serialVersionUID = -6555009991474610157L;
 
-    public void setBounding( Rectangle bounding ) {
-        add( bounding );
+    /**
+     * Add a bounding Rectangle to the PaletteShape.
+     * @param bounding If null this parameter is ignored
+     */
+    public void setBounding( final Rectangle bounding ) {
+        if ( bounding != null ) {
+            add( bounding );
+        }
     }
 
-    public void setShape( Shape<?> shape ) {
-        add( shape );
+    /**
+     * Add a Shape to the PaletteShape.
+     * @param shape If null this parameter is ignored
+     */
+    public void setShape( final Shape<?> shape ) {
+        if ( shape != null ) {
+            add( shape );
+        }
     }
 
-    public void setDescription( Text description ) {
-        add( description );
+    /**
+     * Add Text to the PaletteShape.
+     * @param description If null this parameter is ignored
+     */
+    public void setDescription( final Text description ) {
+        if ( description != null ) {
+            add( description );
+        }
     }
 
 }
