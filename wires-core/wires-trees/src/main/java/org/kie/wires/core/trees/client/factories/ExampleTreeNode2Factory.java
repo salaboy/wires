@@ -18,7 +18,7 @@ package org.kie.wires.core.trees.client.factories;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.Circle;
-import org.kie.wires.core.api.factories.ShapeDragContext;
+import org.kie.wires.core.api.factories.FactoryHelper;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.AbstractBaseFactory;
@@ -44,7 +44,7 @@ public class ExampleTreeNode2Factory extends AbstractBaseFactory<Circle> {
     }
 
     @Override
-    public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
+    public WiresBaseShape getShape( final FactoryHelper helper ) {
         return new WiresExampleTreeNode2( makeShape() );
     }
 

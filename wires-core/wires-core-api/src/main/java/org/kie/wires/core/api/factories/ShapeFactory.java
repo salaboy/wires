@@ -43,7 +43,7 @@ public interface ShapeFactory<T extends Shape<T>> {
      * Get a Shape to be created on the Canvas (usually at the end of a drag operation)
      * @return
      */
-    WiresBaseShape getShape( final ShapeDragContext dragContext );
+    WiresBaseShape getShape( final FactoryHelper helper );
 
     /**
      * Does the Factory build the given shape type

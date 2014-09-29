@@ -23,7 +23,7 @@ import com.emitrom.lienzo.client.core.types.TextMetrics;
 import com.emitrom.lienzo.client.widget.LienzoPanel;
 import com.emitrom.lienzo.shared.core.types.TextAlign;
 import com.emitrom.lienzo.shared.core.types.TextBaseLine;
-import org.kie.wires.core.api.factories.ShapeDragContext;
+import org.kie.wires.core.api.factories.FactoryHelper;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.AbstractBaseFactory;
@@ -63,7 +63,7 @@ public class FixedTextFactory extends AbstractBaseFactory<Text> {
     }
 
     @Override
-    public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
+    public WiresBaseShape getShape( final FactoryHelper helper ) {
         return new WiresFixedText( makeShape() );
     }
 

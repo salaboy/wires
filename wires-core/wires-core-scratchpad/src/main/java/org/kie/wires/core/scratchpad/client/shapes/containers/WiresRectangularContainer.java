@@ -37,18 +37,10 @@ public class WiresRectangularContainer extends WiresBaseDynamicContainer {
     private final ControlPoint controlPoint4;
 
     public WiresRectangularContainer( final Rectangle shape ) {
-        this( shape,
-              shape.getOffset().getX(),
-              shape.getOffset().getY(),
-              shape.getOffset().getX() + shape.getWidth(),
-              shape.getOffset().getY() + shape.getHeight() );
-    }
-
-    public WiresRectangularContainer( final Rectangle shape,
-                                      final double x1,
-                                      final double y1,
-                                      final double x2,
-                                      final double y2 ) {
+        final double x1 = shape.getOffset().getX();
+        final double y1 = shape.getOffset().getY();
+        final double x2 = shape.getOffset().getX() + shape.getWidth();
+        final double y2 = shape.getOffset().getY() + shape.getHeight();
         final double width = Math.abs( x2 - x1 );
         final double height = Math.abs( y2 - y1 );
 

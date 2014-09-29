@@ -18,7 +18,7 @@ package org.kie.wires.core.scratchpad.client.factories.connectors;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.emitrom.lienzo.client.core.shape.BezierCurve;
-import org.kie.wires.core.api.factories.ShapeDragContext;
+import org.kie.wires.core.api.factories.FactoryHelper;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.AbstractBaseFactory;
@@ -45,7 +45,7 @@ public class BezierCurveFactory extends AbstractBaseFactory<BezierCurve> {
     }
 
     @Override
-    public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
+    public WiresBaseShape getShape( final FactoryHelper helper ) {
         return new WiresBezierCurve( makeShape() );
     }
 

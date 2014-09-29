@@ -20,7 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import com.emitrom.lienzo.client.core.shape.Arrow;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import com.emitrom.lienzo.shared.core.types.ArrowType;
-import org.kie.wires.core.api.factories.ShapeDragContext;
+import org.kie.wires.core.api.factories.FactoryHelper;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.api.shapes.WiresBaseShape;
 import org.kie.wires.core.client.factories.AbstractBaseFactory;
@@ -52,7 +52,7 @@ public class ArrowFactory extends AbstractBaseFactory<Arrow> {
     }
 
     @Override
-    public WiresBaseShape getShape( final ShapeDragContext dragContext ) {
+    public WiresBaseShape getShape( final FactoryHelper helper ) {
         return new WiresArrow( makeShape() );
     }
 

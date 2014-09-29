@@ -16,12 +16,12 @@
 package org.kie.wires.core.api.factories;
 
 /**
- * Drag Context for Shapes being dragged from the Palette into a Canvas. The purpose of this is to allow a single
- * ShapeFactory to create multiple (but similar) different Shapes. For example you might have a ShapeFactory that creates
- * "Letters of the Alphabet". It is a single factory and it's "Shape" is a single letter. You could add multiple PaletteShapes
- * to the Palette, one for each letter of the alphabet, and use ShapeDragContext to specify which letter has been selected.
+ * Helper to identify the exact nature of a Shape being dragged from the Palette into a Canvas. The purpose of this is to
+ * allow a single ShapeFactory to create multiple (but similar) different Shapes. For example you might have a ShapeFactory
+ * that creates "Letters of the Alphabet". It is a single factory and it's "Shape" is a single letter. You could add multiple
+ * PaletteShapes to the Palette, one for each letter of the alphabet, and use FactoryHelper to specify which letter has been selected.
  */
-public interface ShapeDragContext<T> {
+public interface FactoryHelper<T> {
 
     T getContext();
 

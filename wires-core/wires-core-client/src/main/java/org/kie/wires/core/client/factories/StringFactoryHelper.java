@@ -15,16 +15,16 @@
  */
 package org.kie.wires.core.client.factories;
 
-import org.kie.wires.core.api.factories.ShapeDragContext;
+import org.kie.wires.core.api.factories.FactoryHelper;
 
 /**
- * Implementation of a ShapeDragContext that has a String context
+ * Implementation of a FactoryHelper that has a String context
  */
-public class StringDragContext implements ShapeDragContext<String> {
+public class StringFactoryHelper implements FactoryHelper<String> {
 
     private String context;
 
-    public StringDragContext( final String context ) {
+    public StringFactoryHelper( final String context ) {
         this.context = context;
     }
 

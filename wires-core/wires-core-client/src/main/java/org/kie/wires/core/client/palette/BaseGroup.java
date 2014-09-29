@@ -27,7 +27,7 @@ import org.kie.wires.core.api.factories.ShapeFactory;
 import org.kie.wires.core.api.factories.categories.Category;
 import org.kie.wires.core.client.canvas.FocusableLienzoPanel;
 import org.kie.wires.core.client.factories.ShapeFactoryCache;
-import org.kie.wires.core.client.factories.StringDragContext;
+import org.kie.wires.core.client.factories.StringFactoryHelper;
 import org.kie.wires.core.client.util.ShapeFactoryUtil;
 import org.kie.wires.core.client.util.ShapesUtils;
 
@@ -63,7 +63,7 @@ public abstract class BaseGroup extends Composite {
         for ( ShapeFactory factory : factoriesCache.getShapeFactories() ) {
             if ( factory.getCategory().equals( category ) ) {
                 shapes.add( stencilBuilder.build( panel,
-                                                  new StringDragContext( factory.getShapeDescription() ),
+                                                  new StringFactoryHelper( factory.getShapeDescription() ),
                                                   factory ) );
             }
         }
