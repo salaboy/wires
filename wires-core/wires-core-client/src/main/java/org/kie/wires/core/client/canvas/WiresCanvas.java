@@ -208,6 +208,9 @@ public class WiresCanvas extends Composite implements ShapesManager,
         if ( shape == null ) {
             return;
         }
+        if ( shape.equals( selectedShape ) ) {
+            return;
+        }
         clearSelection();
         selectedShape = shape;
         selectedShape.setSelected( true );
