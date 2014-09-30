@@ -24,9 +24,10 @@ import org.uberfire.commons.data.Pair;
 public abstract class WiresBaseDynamicContainer extends WiresBaseDynamicShape implements WiresContainer,
                                                                                          RequiresShapesManager {
 
-    private ShapesManager shapesManager;
     private List<WiresBaseShape> children = new ArrayList<WiresBaseShape>();
     private List<Pair<WiresBaseShape, Point2D>> dragStartLocations = new ArrayList<Pair<WiresBaseShape, Point2D>>();
+
+    protected ShapesManager shapesManager;
 
     public WiresBaseDynamicContainer() {
         //Record the start location of Children when the Container is dragged. These are

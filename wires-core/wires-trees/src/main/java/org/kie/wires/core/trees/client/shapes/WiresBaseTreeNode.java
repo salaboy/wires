@@ -49,8 +49,8 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
 
     private int collapsed = 0;
 
-    private ShapesManager shapesManager;
-    private LayoutManager layoutManager;
+    protected ShapesManager shapesManager;
+    protected LayoutManager layoutManager;
 
     public WiresBaseTreeNode() {
         //Update connectors when this Node moves
