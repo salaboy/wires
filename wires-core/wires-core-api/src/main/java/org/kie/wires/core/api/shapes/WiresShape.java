@@ -15,6 +15,10 @@
  */
 package org.kie.wires.core.api.shapes;
 
+import java.util.List;
+
+import com.emitrom.lienzo.client.core.shape.Shape;
+
 public interface WiresShape {
 
     /**
@@ -41,5 +45,39 @@ public interface WiresShape {
      */
     boolean contains( final double cx,
                       final double cy );
+
+    /**
+     * Add a Control to the WiresShape
+     * @param ctrl
+     */
+    void addControl( final Shape ctrl );
+
+    /**
+     * Remove a Control from the WiresShape
+     * @param ctrl
+     */
+    void removeControl( final Shape ctrl );
+
+    /**
+     * Set the Controls for the WiresShape
+     * @param controls
+     */
+    void setControls( final List<Shape> controls );
+
+    /**
+     * Show Controls related to this WiresShape
+     */
+    void showControls();
+
+    /**
+     * Hide Controls related to this WiresShape
+     */
+    void hideControls();
+
+    /**
+     * Are the Controls associated with this WireShape visible
+     * @return true is the Controls are visible
+     */
+    boolean isControlsVisible();
 
 }

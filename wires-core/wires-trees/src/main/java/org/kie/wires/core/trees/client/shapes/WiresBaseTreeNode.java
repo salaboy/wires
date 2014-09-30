@@ -47,6 +47,8 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
     private List<WiresBaseTreeNode> children = new ArrayList<WiresBaseTreeNode>();
     private List<WiresTreeNodeConnector> connectors = new ArrayList<WiresTreeNodeConnector>();
 
+    private IAnimationHandle animationHandle;
+
     private int collapsed = 0;
 
     protected ShapesManager shapesManager;
@@ -211,90 +213,92 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
         if ( !hasChildren() || hasCollapsedChildren() ) {
             return;
         }
+        if ( animationHandle != null ) {
+            animationHandle.stop();
+        }
+        animationHandle = animate( AnimationTweener.EASE_OUT,
+                                   new AnimationProperties(),
+                                   ANIMATION_DURATION,
+                                   new IAnimationCallback() {
 
-        animate( AnimationTweener.EASE_OUT,
-                 new AnimationProperties(),
-                 ANIMATION_DURATION,
-                 new IAnimationCallback() {
+                                       private List<WiresBaseTreeNode> descendants;
+                                       private Map<WiresBaseShape, Pair<Point2D, Point2D>> transformations = new HashMap<WiresBaseShape, Pair<Point2D, Point2D>>();
 
-                     private List<WiresBaseTreeNode> descendants;
-                     private Map<WiresBaseShape, Pair<Point2D, Point2D>> transformations = new HashMap<WiresBaseShape, Pair<Point2D, Point2D>>();
+                                       @Override
+                                       public void onStart( final IAnimation iAnimation,
+                                                            final IAnimationHandle iAnimationHandle ) {
+                                           //Mark all descendants as collapsed, which affects the layout information
+                                           descendants = getDescendants( WiresBaseTreeNode.this );
+                                           for ( WiresBaseTreeNode descendant : descendants ) {
+                                               descendant.collapsed++;
+                                           }
 
-                     @Override
-                     public void onStart( final IAnimation iAnimation,
-                                          final IAnimationHandle iAnimationHandle ) {
-                         //Mark all descendants as collapsed, which affects the layout information
-                         descendants = getDescendants( WiresBaseTreeNode.this );
-                         for ( WiresBaseTreeNode descendant : descendants ) {
-                             descendant.collapsed++;
-                         }
+                                           //Get new layout information
+                                           final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation( getTreeRoot(),
+                                                                                                                           WiresBaseTreeNode.this.getLayer() );
 
-                         //Get new layout information
-                         final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation( getTreeRoot(),
-                                                                                                         WiresBaseTreeNode.this.getLayer() );
+                                           //Store required transformations: Shape, Current location, Target location
+                                           transformations.clear();
+                                           for ( Map.Entry<WiresBaseShape, Point2D> e : layout.entrySet() ) {
+                                               transformations.put( e.getKey(),
+                                                                    new Pair<Point2D, Point2D>( e.getKey().getLocation(),
+                                                                                                e.getValue() ) );
+                                           }
 
-                         //Store required transformations: Shape, Current location, Target location
-                         transformations.clear();
-                         for ( Map.Entry<WiresBaseShape, Point2D> e : layout.entrySet() ) {
-                             transformations.put( e.getKey(),
-                                                  new Pair<Point2D, Point2D>( e.getKey().getLocation(),
-                                                                              e.getValue() ) );
-                         }
+                                           //Allow subclasses to change their appearance
+                                           onCollapseStart();
+                                       }
 
-                         //Allow subclasses to change their appearance
-                         onCollapseStart();
-                     }
+                                       @Override
+                                       public void onFrame( final IAnimation iAnimation,
+                                                            final IAnimationHandle iAnimationHandle ) {
+                                           //Lienzo's IAnimation.getPercent() passes values > 1.0
+                                           final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
 
-                     @Override
-                     public void onFrame( final IAnimation iAnimation,
-                                          final IAnimationHandle iAnimationHandle ) {
-                         //Lienzo's IAnimation.getPercent() passes values > 1.0
-                         final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
+                                           //Move each descendant along the line between its origin and the target destination
+                                           for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
+                                               final Point2D descendantOrigin = e.getValue().getK1();
+                                               final Point2D descendantTarget = e.getValue().getK2();
+                                               final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;
+                                               final double dy = ( descendantTarget.getY() - descendantOrigin.getY() ) * pct;
+                                               e.getKey().setX( descendantOrigin.getX() + dx );
+                                               e.getKey().setY( descendantOrigin.getY() + dy );
+                                           }
 
-                         //Move each descendant along the line between its origin and the target destination
-                         for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
-                             final Point2D descendantOrigin = e.getValue().getK1();
-                             final Point2D descendantTarget = e.getValue().getK2();
-                             final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;
-                             final double dy = ( descendantTarget.getY() - descendantOrigin.getY() ) * pct;
-                             e.getKey().setX( descendantOrigin.getX() + dx );
-                             e.getKey().setY( descendantOrigin.getY() + dy );
-                         }
+                                           for ( WiresBaseTreeNode descendant : descendants ) {
+                                               descendant.setAlpha( 1.0 - pct );
+                                           }
 
-                         for ( WiresBaseTreeNode descendant : descendants ) {
-                             descendant.setAlpha( 1.0 - pct );
-                         }
+                                           //Allow subclasses to change their appearance
+                                           onCollapseProgress( pct );
 
-                         //Allow subclasses to change their appearance
-                         onCollapseProgress( pct );
+                                           //Without this call Lienzo doesn't update the Canvas for sub-classes of WiresBaseTreeNode
+                                           WiresBaseTreeNode.this.getLayer().draw();
+                                       }
 
-                         //Without this call Lienzo doesn't update the Canvas for sub-classes of WiresBaseTreeNode
-                         WiresBaseTreeNode.this.getLayer().draw();
-                     }
+                                       @Override
+                                       public void onClose( final IAnimation iAnimation,
+                                                            final IAnimationHandle iAnimationHandle ) {
+                                           //Hide connectors, descendants and descendants' connectors when complete
+                                           for ( WiresTreeNodeConnector connector : connectors ) {
+                                               connector.setVisible( false );
+                                           }
+                                           for ( WiresBaseTreeNode descendant : descendants ) {
+                                               descendant.setVisible( false );
+                                               for ( WiresTreeNodeConnector connector : descendant.connectors ) {
+                                                   connector.setVisible( false );
+                                               }
+                                           }
 
-                     @Override
-                     public void onClose( final IAnimation iAnimation,
-                                          final IAnimationHandle iAnimationHandle ) {
-                         //Hide connectors, descendants and descendants' connectors when complete
-                         for ( WiresTreeNodeConnector connector : connectors ) {
-                             connector.setVisible( false );
-                         }
-                         for ( WiresBaseTreeNode descendant : descendants ) {
-                             descendant.setVisible( false );
-                             for ( WiresTreeNodeConnector connector : descendant.connectors ) {
-                                 connector.setVisible( false );
-                             }
-                         }
+                                           //Allow subclasses to change their appearance
+                                           onCollapseEnd();
 
-                         //Allow subclasses to change their appearance
-                         onCollapseEnd();
-
-                         //Invoke callback if one was provided
-                         if ( callback != null ) {
-                             callback.execute();
-                         }
-                     }
-                 } );
+                                           //Invoke callback if one was provided
+                                           if ( callback != null ) {
+                                               callback.execute();
+                                           }
+                                       }
+                                   } );
 
         getLayer().draw();
     }
@@ -330,92 +334,94 @@ public abstract class WiresBaseTreeNode extends WiresBaseShape implements Requir
         if ( !hasCollapsedChildren() ) {
             return;
         }
+        if ( animationHandle != null ) {
+            animationHandle.stop();
+        }
+        animationHandle = animate( AnimationTweener.EASE_OUT,
+                                   new AnimationProperties(),
+                                   ANIMATION_DURATION,
+                                   new IAnimationCallback() {
 
-        animate( AnimationTweener.EASE_OUT,
-                 new AnimationProperties(),
-                 ANIMATION_DURATION,
-                 new IAnimationCallback() {
+                                       private List<WiresBaseTreeNode> descendants;
+                                       private Map<WiresBaseShape, Pair<Point2D, Point2D>> transformations = new HashMap<WiresBaseShape, Pair<Point2D, Point2D>>();
 
-                     private List<WiresBaseTreeNode> descendants;
-                     private Map<WiresBaseShape, Pair<Point2D, Point2D>> transformations = new HashMap<WiresBaseShape, Pair<Point2D, Point2D>>();
+                                       @Override
+                                       public void onStart( final IAnimation iAnimation,
+                                                            final IAnimationHandle iAnimationHandle ) {
+                                           //Show connectors to this node's immediate children
+                                           for ( WiresTreeNodeConnector connector : connectors ) {
+                                               connector.setVisible( true );
+                                           }
 
-                     @Override
-                     public void onStart( final IAnimation iAnimation,
-                                          final IAnimationHandle iAnimationHandle ) {
-                         //Show connectors to this node's immediate children
-                         for ( WiresTreeNodeConnector connector : connectors ) {
-                             connector.setVisible( true );
-                         }
+                                           //Show child nodes and connectors if they are not still collapsed
+                                           descendants = getDescendants( WiresBaseTreeNode.this );
+                                           for ( WiresBaseTreeNode descendant : descendants ) {
+                                               descendant.collapsed--;
+                                               if ( descendant.collapsed == 0 ) {
+                                                   descendant.setVisible( true );
+                                               }
+                                           }
+                                           for ( WiresBaseTreeNode descendant : descendants ) {
+                                               for ( WiresTreeNodeConnector connector : descendant.connectors ) {
+                                                   connector.setVisible( !descendant.hasCollapsedChildren() );
+                                               }
+                                           }
 
-                         //Show child nodes and connectors if they are not still collapsed
-                         descendants = getDescendants( WiresBaseTreeNode.this );
-                         for ( WiresBaseTreeNode descendant : descendants ) {
-                             descendant.collapsed--;
-                             if ( descendant.collapsed == 0 ) {
-                                 descendant.setVisible( true );
-                             }
-                         }
-                         for ( WiresBaseTreeNode descendant : descendants ) {
-                             for ( WiresTreeNodeConnector connector : descendant.connectors ) {
-                                 connector.setVisible( !descendant.hasCollapsedChildren() );
-                             }
-                         }
+                                           //Get new layout information
+                                           final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation( getTreeRoot(),
+                                                                                                                           WiresBaseTreeNode.this.getLayer() );
 
-                         //Get new layout information
-                         final Map<WiresBaseShape, Point2D> layout = layoutManager.getLayoutInformation( getTreeRoot(),
-                                                                                                         WiresBaseTreeNode.this.getLayer() );
+                                           //Store required transformations: Shape, Current location, Target location
+                                           transformations.clear();
+                                           for ( Map.Entry<WiresBaseShape, Point2D> e : layout.entrySet() ) {
+                                               transformations.put( e.getKey(),
+                                                                    new Pair<Point2D, Point2D>( e.getKey().getLocation(),
+                                                                                                e.getValue() ) );
+                                           }
 
-                         //Store required transformations: Shape, Current location, Target location
-                         transformations.clear();
-                         for ( Map.Entry<WiresBaseShape, Point2D> e : layout.entrySet() ) {
-                             transformations.put( e.getKey(),
-                                                  new Pair<Point2D, Point2D>( e.getKey().getLocation(),
-                                                                              e.getValue() ) );
-                         }
+                                           //Allow subclasses to change their appearance
+                                           onExpandStart();
+                                       }
 
-                         //Allow subclasses to change their appearance
-                         onExpandStart();
-                     }
+                                       @Override
+                                       public void onFrame( final IAnimation iAnimation,
+                                                            final IAnimationHandle iAnimationHandle ) {
+                                           //Lienzo's IAnimation.getPercent() passes values > 1.0
+                                           final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
 
-                     @Override
-                     public void onFrame( final IAnimation iAnimation,
-                                          final IAnimationHandle iAnimationHandle ) {
-                         //Lienzo's IAnimation.getPercent() passes values > 1.0
-                         final double pct = iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent();
+                                           //Move each descendant along the line between its origin and the target destination
+                                           for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
+                                               final Point2D descendantOrigin = e.getValue().getK1();
+                                               final Point2D descendantTarget = e.getValue().getK2();
+                                               final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;
+                                               final double dy = ( descendantTarget.getY() - descendantOrigin.getY() ) * pct;
+                                               e.getKey().setX( descendantOrigin.getX() + dx );
+                                               e.getKey().setY( descendantOrigin.getY() + dy );
+                                           }
 
-                         //Move each descendant along the line between its origin and the target destination
-                         for ( Map.Entry<WiresBaseShape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
-                             final Point2D descendantOrigin = e.getValue().getK1();
-                             final Point2D descendantTarget = e.getValue().getK2();
-                             final double dx = ( descendantTarget.getX() - descendantOrigin.getX() ) * pct;
-                             final double dy = ( descendantTarget.getY() - descendantOrigin.getY() ) * pct;
-                             e.getKey().setX( descendantOrigin.getX() + dx );
-                             e.getKey().setY( descendantOrigin.getY() + dy );
-                         }
+                                           for ( WiresBaseTreeNode descendant : descendants ) {
+                                               descendant.setAlpha( pct );
+                                           }
 
-                         for ( WiresBaseTreeNode descendant : descendants ) {
-                             descendant.setAlpha( pct );
-                         }
+                                           //Allow subclasses to change their appearance
+                                           onExpandProgress( pct );
 
-                         //Allow subclasses to change their appearance
-                         onExpandProgress( pct );
+                                           //Without this call Lienzo doesn't update the Canvas for sub-classes of WiresBaseTreeNode
+                                           WiresBaseTreeNode.this.getLayer().draw();
+                                       }
 
-                         //Without this call Lienzo doesn't update the Canvas for sub-classes of WiresBaseTreeNode
-                         WiresBaseTreeNode.this.getLayer().draw();
-                     }
+                                       @Override
+                                       public void onClose( final IAnimation iAnimation,
+                                                            final IAnimationHandle iAnimationHandle ) {
+                                           //Allow subclasses to change their appearance
+                                           onExpandEnd();
 
-                     @Override
-                     public void onClose( final IAnimation iAnimation,
-                                          final IAnimationHandle iAnimationHandle ) {
-                         //Allow subclasses to change their appearance
-                         onExpandEnd();
-
-                         //Invoke callback if one was provided
-                         if ( callback != null ) {
-                             callback.execute();
-                         }
-                     }
-                 } );
+                                           //Invoke callback if one was provided
+                                           if ( callback != null ) {
+                                               callback.execute();
+                                           }
+                                       }
+                                   } );
 
         getLayer().draw();
     }
