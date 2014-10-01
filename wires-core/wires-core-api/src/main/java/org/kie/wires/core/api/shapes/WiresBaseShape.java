@@ -31,7 +31,6 @@ import com.emitrom.lienzo.client.core.event.NodeMouseClickEvent;
 import com.emitrom.lienzo.client.core.event.NodeMouseClickHandler;
 import com.emitrom.lienzo.client.core.shape.Group;
 import com.emitrom.lienzo.client.core.shape.Layer;
-import com.emitrom.lienzo.client.core.shape.Shape;
 import com.emitrom.lienzo.client.core.types.Point2D;
 import org.kie.wires.core.api.selection.RequiresSelectionManager;
 import org.kie.wires.core.api.selection.SelectionManager;
@@ -46,7 +45,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     protected String id;
     protected SelectionManager selectionManager;
 
-    protected List<Shape> controls = new ArrayList<Shape>();
+    protected List<Group> controls = new ArrayList<Group>();
     protected boolean isControlsVisible = false;
 
     private static final int ANIMATION_DURATION = 250;
@@ -102,7 +101,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                    new IAnimationCallback() {
 
                                        private final AnimationTweener tweener = AnimationTweener.TweenerBuilder.MAKE_ELASTIC( 1 );
-                                       private final Map<Shape, Pair<Point2D, Point2D>> transformations = new HashMap<Shape, Pair<Point2D, Point2D>>();
+                                       private final Map<Group, Pair<Point2D, Point2D>> transformations = new HashMap<Group, Pair<Point2D, Point2D>>();
 
                                        @Override
                                        public void onStart( final IAnimation iAnimation,
@@ -110,7 +109,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                            //Store required transformations: Control, Current location, Target location
                                            transformations.clear();
                                            for ( int index = 0; index < controls.size(); index++ ) {
-                                               final Shape ctrl = controls.get( index );
+                                               final Group ctrl = controls.get( index );
                                                final Point2D origin = new Point2D( 0,
                                                                                    0 );
                                                final Point2D target = getControlTarget( ctrl );
@@ -130,7 +129,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                            final double pct = tweener.tween( iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent() );
 
                                            //Move each Control along the line between its origin and the target destination
-                                           for ( Map.Entry<Shape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
+                                           for ( Map.Entry<Group, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
                                                final Point2D origin = e.getValue().getK1();
                                                final Point2D target = e.getValue().getK2();
                                                final double dx = ( target.getX() - origin.getX() ) * pct;
@@ -139,7 +138,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                                e.getKey().setY( origin.getY() + dy );
                                            }
 
-                                           for ( Shape ctrl : controls ) {
+                                           for ( Group ctrl : controls ) {
                                                ctrl.setAlpha( iAnimation.getPercent() );
                                            }
 
@@ -170,7 +169,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                    new IAnimationCallback() {
 
                                        private final AnimationTweener tweener = AnimationTweener.TweenerBuilder.MAKE_EASE_IN( 3.0 );
-                                       private final Map<Shape, Pair<Point2D, Point2D>> transformations = new HashMap<Shape, Pair<Point2D, Point2D>>();
+                                       private final Map<Group, Pair<Point2D, Point2D>> transformations = new HashMap<Group, Pair<Point2D, Point2D>>();
 
                                        @Override
                                        public void onStart( final IAnimation iAnimation,
@@ -178,7 +177,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                            //Store required transformations: Control, Current location, Target location
                                            transformations.clear();
                                            for ( int index = 0; index < controls.size(); index++ ) {
-                                               final Shape ctrl = controls.get( index );
+                                               final Group ctrl = controls.get( index );
                                                final Point2D target = new Point2D( 0,
                                                                                    0 );
                                                transformations.put( ctrl,
@@ -193,7 +192,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                            final double pct = tweener.tween( iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent() );
 
                                            //Move each Control along the line between its origin and the target destination
-                                           for ( Map.Entry<Shape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
+                                           for ( Map.Entry<Group, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
                                                final Point2D origin = e.getValue().getK1();
                                                final Point2D target = e.getValue().getK2();
                                                final double dx = ( target.getX() - origin.getX() ) * pct;
@@ -202,7 +201,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                                e.getKey().setY( origin.getY() + dy );
                                            }
 
-                                           for ( Shape ctrl : controls ) {
+                                           for ( Group ctrl : controls ) {
                                                ctrl.setAlpha( 1.0 - iAnimation.getPercent() );
                                            }
 
@@ -213,7 +212,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                        @Override
                                        public void onClose( final IAnimation iAnimation,
                                                             final IAnimationHandle iAnimationHandle ) {
-                                           for ( Shape ctrl : controls ) {
+                                           for ( Group ctrl : controls ) {
                                                WiresBaseShape.this.getLayer().remove( ctrl );
                                            }
                                        }
@@ -221,29 +220,29 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     }
 
     @Override
-    public void addControl( final Shape ctrlToAdd ) {
+    public void addControl( final Group ctrlToAdd ) {
         if ( !isControlsVisible ) {
             controls.add( ctrlToAdd );
             return;
         }
-        final List<Shape> newControls = new ArrayList<Shape>( controls );
+        final List<Group> newControls = new ArrayList<Group>( controls );
         newControls.add( ctrlToAdd );
         setControls( newControls );
     }
 
     @Override
-    public void removeControl( final Shape ctrlToRemove ) {
+    public void removeControl( final Group ctrlToRemove ) {
         if ( !isControlsVisible ) {
             controls.remove( ctrlToRemove );
             return;
         }
-        final List<Shape> newControls = new ArrayList<Shape>( controls );
+        final List<Group> newControls = new ArrayList<Group>( controls );
         newControls.remove( ctrlToRemove );
         setControls( newControls );
     }
 
     @Override
-    public void setControls( final List<Shape> newControls ) {
+    public void setControls( final List<Group> newControls ) {
         if ( !isControlsVisible ) {
             controls.clear();
             controls.addAll( newControls );
@@ -257,11 +256,11 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                    ANIMATION_DURATION,
                                    new IAnimationCallback() {
 
-                                       private final List<Shape> controlsToAdd = new ArrayList<Shape>();
-                                       private final List<Shape> controlsToRemove = new ArrayList<Shape>();
-                                       private final List<Shape> controlsToRemain = new ArrayList<Shape>();
-                                       private final AnimationTweener tweener = AnimationTweener.TweenerBuilder.MAKE_EASE_IN( 3.0 );
-                                       private final Map<Shape, Pair<Point2D, Point2D>> transformations = new HashMap<Shape, Pair<Point2D, Point2D>>();
+                                       private final List<Group> controlsToAdd = new ArrayList<Group>();
+                                       private final List<Group> controlsToRemove = new ArrayList<Group>();
+                                       private final List<Group> controlsToRemain = new ArrayList<Group>();
+                                       private final AnimationTweener tweener = AnimationTweener.TweenerBuilder.MAKE_ELASTIC( 1 );
+                                       private final Map<Group, Pair<Point2D, Point2D>> transformations = new HashMap<Group, Pair<Point2D, Point2D>>();
 
                                        @Override
                                        public void onStart( final IAnimation iAnimation,
@@ -270,7 +269,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                            controlsToAdd.clear();
                                            controlsToAdd.addAll( newControls );
                                            controlsToAdd.removeAll( controls );
-                                           for ( Shape ctrl : controlsToAdd ) {
+                                           for ( Group ctrl : controlsToAdd ) {
                                                ctrl.setLocation( new Point2D( 0,
                                                                               0 ) );
                                                ctrl.setAlpha( 0.0 );
@@ -293,7 +292,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                            controls.clear();
                                            controls.addAll( newControls );
                                            transformations.clear();
-                                           for ( Shape ctrl : controlsToAdd ) {
+                                           for ( Group ctrl : controlsToAdd ) {
                                                final Point2D origin = new Point2D( 0,
                                                                                    0 );
                                                final Point2D target = getControlTarget( ctrl );
@@ -301,7 +300,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                                                     new Pair<Point2D, Point2D>( origin,
                                                                                                 target ) );
                                            }
-                                           for ( Shape ctrl : controlsToRemove ) {
+                                           for ( Group ctrl : controlsToRemove ) {
                                                final Point2D origin = ctrl.getLocation();
                                                final Point2D target = new Point2D( 0,
                                                                                    0 );
@@ -309,7 +308,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                                                     new Pair<Point2D, Point2D>( origin,
                                                                                                 target ) );
                                            }
-                                           for ( Shape ctrl : controlsToRemain ) {
+                                           for ( Group ctrl : controlsToRemain ) {
                                                final Point2D origin = ctrl.getLocation();
                                                final Point2D target = getControlTarget( ctrl );
                                                transformations.put( ctrl,
@@ -324,7 +323,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                            final double pct = tweener.tween( iAnimation.getPercent() > 1.0 ? 1.0 : iAnimation.getPercent() );
 
                                            //Move each Control along the line between its origin and the target destination
-                                           for ( Map.Entry<Shape, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
+                                           for ( Map.Entry<Group, Pair<Point2D, Point2D>> e : transformations.entrySet() ) {
                                                final Point2D origin = e.getValue().getK1();
                                                final Point2D target = e.getValue().getK2();
                                                final double dx = ( target.getX() - origin.getX() ) * pct;
@@ -333,10 +332,10 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                                e.getKey().setY( origin.getY() + dy );
                                            }
 
-                                           for ( Shape ctrl : controlsToAdd ) {
+                                           for ( Group ctrl : controlsToAdd ) {
                                                ctrl.setAlpha( pct );
                                            }
-                                           for ( Shape ctrl : controlsToRemove ) {
+                                           for ( Group ctrl : controlsToRemove ) {
                                                ctrl.setAlpha( 1.0 - pct );
                                            }
 
@@ -348,7 +347,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
                                        public void onClose( final IAnimation iAnimation,
                                                             final IAnimationHandle iAnimationHandle ) {
                                            isControlsVisible = !controls.isEmpty();
-                                           for ( Shape ctrl : controlsToRemove ) {
+                                           for ( Group ctrl : controlsToRemove ) {
                                                WiresBaseShape.this.getLayer().remove( ctrl );
                                            }
                                        }
@@ -367,7 +366,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
      * @param ctrl The Control to position
      * @return The position of the Control
      */
-    protected Point2D getControlTarget( final Shape ctrl ) {
+    protected Point2D getControlTarget( final Group ctrl ) {
         final int offsetY = -( ( controls.size() - 1 ) * DEFAULT_CONTROL_SPACING ) / 2;
         final Point2D target = new Point2D( DEFAULT_CONTROL_POSITION_X_OFFSET,
                                             DEFAULT_CONTROL_POSITION_Y_OFFSET + offsetY + ( controls.indexOf( ctrl ) * DEFAULT_CONTROL_SPACING ) );
@@ -377,7 +376,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     @Override
     public void destroy() {
         if ( isControlsVisible ) {
-            for ( Shape ctrl : controls ) {
+            for ( Group ctrl : controls ) {
                 getLayer().remove( ctrl );
             }
         }
@@ -391,7 +390,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
         if ( controls == null ) {
             return;
         }
-        for ( Shape ctrl : controls ) {
+        for ( Group ctrl : controls ) {
             ctrl.setOffset( getLocation() );
         }
     }

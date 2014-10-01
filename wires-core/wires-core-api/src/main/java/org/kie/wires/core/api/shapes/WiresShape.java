@@ -17,7 +17,7 @@ package org.kie.wires.core.api.shapes;
 
 import java.util.List;
 
-import com.emitrom.lienzo.client.core.shape.Shape;
+import com.emitrom.lienzo.client.core.shape.Group;
 
 public interface WiresShape {
 
@@ -50,19 +50,19 @@ public interface WiresShape {
      * Add a Control to the WiresShape
      * @param ctrl
      */
-    void addControl( final Shape ctrl );
+    void addControl( final Group ctrl );
 
     /**
      * Remove a Control from the WiresShape
      * @param ctrl
      */
-    void removeControl( final Shape ctrl );
+    void removeControl( final Group ctrl );
 
     /**
      * Set the Controls for the WiresShape
      * @param controls
      */
-    void setControls( final List<Shape> controls );
+    void setControls( final List<Group> controls );
 
     /**
      * Show Controls related to this WiresShape
