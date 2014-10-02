@@ -88,6 +88,9 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
 
     @Override
     public void showControls() {
+        if ( controls == null || controls.isEmpty() ) {
+            return;
+        }
         if ( isControlsVisible ) {
             return;
         }
@@ -156,6 +159,9 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
 
     @Override
     public void hideControls() {
+        if ( controls == null || controls.isEmpty() ) {
+            return;
+        }
         if ( !isControlsVisible ) {
             return;
         }
@@ -379,6 +385,7 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
             for ( Group ctrl : controls ) {
                 getLayer().remove( ctrl );
             }
+            isControlsVisible = false;
         }
         Layer layer = getLayer();
         layer.remove( this );
@@ -388,6 +395,9 @@ public abstract class WiresBaseShape extends Group implements WiresShape,
     //Move the Controls to match where the descendant has been moved
     private void updateControlLocations() {
         if ( controls == null ) {
+            return;
+        }
+        if ( !isControlsVisible ) {
             return;
         }
         for ( Group ctrl : controls ) {
