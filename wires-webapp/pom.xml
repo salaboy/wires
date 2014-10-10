@@ -17,6 +17,12 @@
   <description>Wires WebApp</description>
 
   <dependencies>
+    <dependency>
+      <groupId>org.owasp.encoder</groupId>
+      <artifactId>encoder</artifactId>
+      <version>1.1</version>
+    </dependency>
+
     <!--Logs-->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -102,13 +108,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-panel-manager-nswe</artifactId>
-      <version>${uberfire.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- Errai AS -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
@@ -138,7 +137,7 @@
 
     <dependency>
       <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-cdi-jetty</artifactId>
+      <artifactId>errai-security-picketlink</artifactId>
       <version>${errai.version}</version>
     </dependency>
 
@@ -163,6 +162,15 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- PicketLink has a hard dependency on JBoss Logging.
+ Since this app deploys to Jetty, we include this as a runtime-scoped dependency.
+ If deploying to JBoss AS or WildFly, you would set this to provided scope. -->
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>3.1.4.GA</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -185,10 +193,9 @@
         <configuration>
           <module>org.kie.wires.FastCompiledWiresShowcase</module>
           <logLevel>INFO</logLevel>
-          <runTarget>org.kie.wires.WiresShowcase/Wires.html</runTarget>
+          <runTarget>wires.html</runTarget>
           <extraJvmArgs>-Xmx1024m -XX:MaxPermSize=256m</extraJvmArgs>
           <soyc>false</soyc>
-          <server>org.jboss.errai.cdi.server.gwt.JettyLauncher</server>
           <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
           <compileSourcesArtifacts>
             <!-- UberFire -->

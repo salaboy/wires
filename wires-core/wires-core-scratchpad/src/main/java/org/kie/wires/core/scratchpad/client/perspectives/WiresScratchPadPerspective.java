@@ -4,16 +4,16 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
+import org.uberfire.client.workbench.panels.impl.SimpleWorkbenchPanelPresenter;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.CompassPosition;
 import org.uberfire.workbench.model.PanelDefinition;
-import org.uberfire.workbench.model.PanelType;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.Position;
 import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
-
-import static org.uberfire.workbench.model.PanelType.*;
 
 /**
  * A Perspective for Wires Scratch Pad
@@ -33,33 +33,29 @@ public class WiresScratchPadPerspective {
     private static final int MIN_WIDTH_PANEL = 200;
     private static final int WIDTH_PANEL = 300;
 
-    private PerspectiveDefinition perspective;
-
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        this.perspective = new PerspectiveDefinitionImpl( ROOT_SIMPLE );
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( SimpleWorkbenchPanelPresenter.class.getName() );
         perspective.setName( WIRES );
 
         perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( WIRES_CANVAS_SCREEN ) ) );
 
         createPanelWithChild( perspective,
-                              Position.EAST );
+                              CompassPosition.EAST );
 
-        final PanelDefinition panel = new PanelDefinitionImpl( PanelType.MULTI_LIST );
+        final PanelDefinition panel = new PanelDefinitionImpl( MultiListWorkbenchPanelPresenter.class.getName() );
         panel.setMinWidth( MIN_WIDTH_PANEL );
         panel.setWidth( WIDTH_PANEL );
         panel.addPart( new PartDefinitionImpl( new DefaultPlaceRequest( WIRES_PALETTE_SCREEN ) ) );
-        PanelDefinition propertiesPanel = new PanelDefinitionImpl( PanelType.MULTI_LIST );
+        PanelDefinition propertiesPanel = new PanelDefinitionImpl( MultiListWorkbenchPanelPresenter.class.getName() );
         propertiesPanel.setMinWidth( MIN_WIDTH_PANEL );
         propertiesPanel.setWidth( WIDTH_PANEL );
         propertiesPanel.addPart( new PartDefinitionImpl( new DefaultPlaceRequest( WIRES_PROPERTIES_SCREEN ) ) );
-        panel.appendChild( Position.SOUTH,
+        panel.appendChild( CompassPosition.SOUTH,
                            propertiesPanel );
 
-        perspective.getRoot().insertChild( Position.WEST,
+        perspective.getRoot().insertChild( CompassPosition.WEST,
                                            panel );
-
-        perspective.setTransient( true );
 
         return perspective;
     }
@@ -75,7 +71,7 @@ public class WiresScratchPadPerspective {
                                                       WIRES_LAYERS_SCREEN );
         parentPanel.setHeight( 180 );
         parentPanel.setMinHeight( 150 );
-        parentPanel.appendChild( Position.SOUTH,
+        parentPanel.appendChild( CompassPosition.SOUTH,
                                  actionsPanel );
         p.getRoot().insertChild( position,
                                  parentPanel );
@@ -83,7 +79,7 @@ public class WiresScratchPadPerspective {
 
     private PanelDefinition newPanel( final PerspectiveDefinition p,
                                       final String identifierPanel ) {
-        final PanelDefinition panel = new PanelDefinitionImpl( PanelType.MULTI_LIST );
+        final PanelDefinition panel = new PanelDefinitionImpl( MultiListWorkbenchPanelPresenter.class.getName() );
         panel.setWidth( WIDTH_PANEL );
         panel.setMinWidth( MIN_WIDTH_PANEL );
         panel.addPart( new PartDefinitionImpl( new DefaultPlaceRequest( identifierPanel ) ) );

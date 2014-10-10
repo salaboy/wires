@@ -5,7 +5,6 @@
 
   <!-- Uberfire dependencies -->
   <inherits name="org.uberfire.UberfireClientAll"/>
-  <inherits name="org.uberfire.UberfireNSWEManager"/>
 
   <!-- Guvnor dependencies -->
   <inherits name="org.guvnor.structure.GuvnorStructureClient"/>
@@ -36,5 +35,7 @@
   <set-configuration-property name="devModeRedirectEnabled" value="true"/>
   <set-property name="compiler.useSourceMaps" value="true"/>
   <set-configuration-property name='xsiframe.failIfScriptTag' value='false'/>
+
+  <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 
 </module>
