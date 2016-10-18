@@ -19,21 +19,29 @@ package org.kie.wires.backend.server.impl;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.errai.security.shared.api.identity.User;
+import org.jboss.errai.security.shared.service.AuthenticationService;
 import org.uberfire.backend.server.IOWatchServiceNonDotImpl;
 import org.uberfire.commons.cluster.ClusterServiceFactory;
 import org.uberfire.io.IOService;
 import org.uberfire.io.impl.IOServiceDotFileImpl;
 import org.uberfire.io.impl.cluster.IOServiceClusterImpl;
+import org.uberfire.security.authz.AuthorizationManager;
+import org.uberfire.security.impl.authz.RuntimeAuthorizationManager;
 
 @ApplicationScoped
 public class ApplicationScopedProducer {
 
     @Inject
     IOWatchServiceNonDotImpl watchService;
+
+    @Inject
+    private AuthenticationService authenticationService;
 
 //    @Inject
 //    @Named("debug")
@@ -64,4 +72,16 @@ public class ApplicationScopedProducer {
     public IOService ioService() {
         return ioService;
     }
+
+    @Produces
+    @RequestScoped
+    public User getIdentity() {
+        return authenticationService.getUser();
+    }
+
+    @Produces
+    public AuthorizationManager getAuthManager() {
+        return new RuntimeAuthorizationManager();
+    }
+
 }

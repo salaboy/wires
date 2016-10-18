@@ -19,16 +19,16 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
+import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.CompassPosition;
 import org.uberfire.workbench.model.PanelDefinition;
-import org.uberfire.workbench.model.PanelType;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.Position;
 import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
-
-import static org.uberfire.workbench.model.PanelType.*;
 
 /**
  * A Perspective to show Bayesian related panels
@@ -47,22 +47,18 @@ public class WiresBayesianPerspective {
     private static final int MIN_WIDTH_PANEL = 200;
     private static final int WIDTH_PANEL = 300;
 
-    private PerspectiveDefinition perspective;
-
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        this.perspective = new PerspectiveDefinitionImpl( ROOT_STATIC );
+        PerspectiveDefinition perspective = new PerspectiveDefinitionImpl( StaticWorkbenchPanelPresenter.class.getName() );
         perspective.setName( WIRES );
 
         perspective.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( BAYESIAN_SCREEN ) ) );
 
         this.createPanelWithChild( perspective,
-                                   Position.EAST );
+                                   CompassPosition.EAST );
         this.drawPanel( perspective,
-                        Position.SOUTH,
+                        CompassPosition.SOUTH,
                         BAYESIAN_SOUTH_SCREEN );
-
-        perspective.setTransient( true );
 
         return perspective;
     }
@@ -89,7 +85,7 @@ public class WiresBayesianPerspective {
                                                       WIRES_LAYERS_SCREEN );
         parentPanel.setHeight( 180 );
         parentPanel.setMinHeight( 150 );
-        parentPanel.appendChild( Position.SOUTH,
+        parentPanel.appendChild( CompassPosition.SOUTH,
                                  templatePanel );
 
         p.getRoot().insertChild( position,
@@ -99,7 +95,7 @@ public class WiresBayesianPerspective {
     private PanelDefinition newPanel( final PerspectiveDefinition p,
                                       final Position position,
                                       final String identifierPanel ) {
-        final PanelDefinition panel = new PanelDefinitionImpl( PanelType.MULTI_LIST );
+        final PanelDefinition panel = new PanelDefinitionImpl( MultiListWorkbenchPanelPresenter.class.getName() );
         panel.setWidth( WIDTH_PANEL );
         panel.setMinWidth( MIN_WIDTH_PANEL );
         panel.addPart( new PartDefinitionImpl( new DefaultPlaceRequest( identifierPanel ) ) );
